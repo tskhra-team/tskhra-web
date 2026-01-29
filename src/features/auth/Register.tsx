@@ -36,7 +36,7 @@ export default function Register() {
     resolver: yupResolver(registerSchema),
   });
 
-  const { mutate: signUp } = useRegister();
+  const { mutate: signUp, isPending } = useRegister();
 
   const submitForm = (data: RegisterSchemaType) => {
     signUp(data, {
@@ -132,9 +132,10 @@ export default function Register() {
 
               <Button
                 type="submit"
+                disabled={isPending}
                 className="w-full bg-white text-black cursor-pointer border hover:border-white hover:text-white"
               >
-                Register
+                {isPending ? "Registration in progress..." : "Register"}
               </Button>
             </div>
           </form>

@@ -25,12 +25,12 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginSchemaType>({
     resolver: yupResolver(loginSchema),
   });
 
-  const { mutate: login } = useLogin(); // getting token from API
+  const { mutate: login, isPending } = useLogin(); // getting token from API
   const { login: authLogin } = useAuth(); //setting tokens to cookies
 
   const onSubmit = async (data: LoginSchemaType) => {
@@ -103,10 +103,10 @@ export default function Login() {
             <CardFooter className="flex-col gap-4 px-0 mt-8">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
                 className="w-full bg-white text-black cursor-pointer border hover:border-white hover:text-white"
               >
-                {isSubmitting ? "Logging in..." : "Login"}
+                {isPending ? "Logging in..." : "Login"}
               </Button>
             </CardFooter>
           </form>
