@@ -26,6 +26,8 @@ export default function Register() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const from = location.state?.from;
+
   const {
     register,
     handleSubmit,
@@ -33,8 +35,9 @@ export default function Register() {
   } = useForm<RegisterSchemaType>({
     resolver: yupResolver(registerSchema),
   });
-  const from = location.state?.from;
+
   const { mutate: signUp } = useRegister();
+
   const submitForm = (data: RegisterSchemaType) => {
     signUp(data, {
       onSuccess: () => {
@@ -54,7 +57,7 @@ export default function Register() {
   };
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-[#2d2d2d]">
-      <Card className="w-[420px] bg-[#1E1E1E] text-white border-none">
+      <Card className="w-105 bg-[#1E1E1E] text-white border-none">
         <CardHeader>
           <CardTitle>Register to your account</CardTitle>
           <CardDescription>Start your journey here!</CardDescription>
@@ -71,7 +74,7 @@ export default function Register() {
         <CardContent>
           <form onSubmit={handleSubmit(submitForm)}>
             <div className="flex flex-col gap-6">
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
@@ -79,11 +82,11 @@ export default function Register() {
                   {...register("name")}
                   className="mt-2"
                 />
-                <p className="text-red-500 text-sm mt-1 min-h-5">
-                  {errors.name?.message || "\u00A0"}
-                </p>
+                {errors.name && (
+                  <p className="text-red-500 text-sm">{errors.name.message}</p>
+                )}
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -96,7 +99,7 @@ export default function Register() {
                   <p className="text-red-500 text-sm">{errors.email.message}</p>
                 )}
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -111,7 +114,7 @@ export default function Register() {
                   </p>
                 )}
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="confirmPassword">Repeat Password</Label>
                 <Input
                   id="confirmPassword"
@@ -129,7 +132,7 @@ export default function Register() {
 
               <Button
                 type="submit"
-                className="w-full bg-white text-black hover:bg-transparent hover:text-white hover:border-white"
+                className="w-full bg-white text-black cursor-pointer border hover:border-white hover:text-white"
               >
                 Register
               </Button>

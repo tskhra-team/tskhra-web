@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { scrollToElement } from "@/utils";
 import Cookies from "js-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 
 const navItems = [
-  { name: "Buy", scroll: "ecommerce", color: "#3659FA" },
-  { name: "Book", scroll: "booking", color: "#FF6439" },
-  { name: "Swap", scroll: "switching", color: "#A31621" },
+  { name: "Buy", scroll: "buy-section", color: "#3659FA" },
+  { name: "Book", scroll: "book-section", color: "#FF6439" },
+  { name: "Swap", scroll: "swap-section", color: "#A31621" },
 ];
 
 export default function Header() {
@@ -51,7 +52,7 @@ export default function Header() {
             <div
               key={item.name}
               className="relative text-slate-700 px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold"
-              onClick={() => console.log(item.scroll)}
+              onClick={() => scrollToElement(item.scroll)}
             >
               <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">
                 {item.name}

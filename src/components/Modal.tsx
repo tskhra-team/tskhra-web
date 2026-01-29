@@ -22,7 +22,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   const modalContent = (
     <div
-      className={`fixed inset-0 z-[9999] ${
+      className={`fixed  inset-0 z-9999 ${
         position === "center" ? "flex items-center justify-center" : ""
       } transition-all duration-300 ${
         isOpen
@@ -32,7 +32,7 @@ export const Modal: React.FC<ModalProps> = ({
       onClick={handleBackdropClick}
     >
       <div
-        className={`absolute inset-0 bg-black/50 ${
+        className={`absolute  inset-0 bg-black/50 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
         onClick={handleBackdropClick}
@@ -42,7 +42,7 @@ export const Modal: React.FC<ModalProps> = ({
           position === "center"
             ? "relative  w-80 py-2 mx-4 rounded-32"
             : "fixed bottom-0 left-0 right-0 rounded-t-32"
-        } bg-white shadow-xl transition-all duration-300 transform max-w-[700px] mx-auto ${
+        } bg-white shadow-xl transition-all duration-300 transform max-w-175 mx-auto ${
           isOpen
             ? position === "center"
               ? "translate-y-0 opacity-100 scale-100"

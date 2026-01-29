@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -45,14 +47,17 @@ const categories = [
 ];
 
 export default function BookSection() {
+  const navigate = useNavigate();
+
   return (
-    <section className="py-24 px-14 bg-linear-to-br from-orange-50/50 via-white to-orange-50/30 relative overflow-hidden">
-      {/* Decorative Elements */}
+    <section
+      id="book-section"
+      className="py-24 px-14 bg-linear-to-br from-orange-50/50 via-white to-orange-50/30 relative overflow-hidden"
+    >
       <div className="absolute top-0 left-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-400/5 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 text-sm font-semibold uppercase tracking-wider mb-4">
             Booking Platform
@@ -66,14 +71,12 @@ export default function BookSection() {
           </p>
         </div>
 
-        {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {features.map((feature, index) => (
             <div
               key={index}
               className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-orange-100/50 hover:border-orange-300/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
             >
-              {/* Icon Container */}
               <div className="mb-6 relative">
                 <div className="w-16 h-16 bg-linear-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <feature.icon
@@ -84,7 +87,6 @@ export default function BookSection() {
                 <div className="absolute inset-0 bg-orange-400/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
               </div>
 
-              {/* Content */}
               <h3 className="text-xl font-bold text-slate-900 mb-2">
                 {feature.title}
               </h3>
@@ -92,13 +94,11 @@ export default function BookSection() {
                 {feature.description}
               </p>
 
-              {/* Hover Effect */}
               <div className="absolute inset-0 bg-linear-to-br from-orange-500/5 to-red-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
           ))}
         </div>
 
-        {/* Categories */}
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-10 border-2 border-orange-100/50 shadow-xl mb-12">
           <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">
             Popular Booking Categories
@@ -109,12 +109,10 @@ export default function BookSection() {
                 key={index}
                 className="group w-full relative bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
               >
-                {/* Background Gradient */}
                 <div
                   className={`absolute inset-0 bg-linear-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
                 />
 
-                {/* Content */}
                 <div className="relative z-10">
                   <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                     {category.icon}
@@ -127,7 +125,6 @@ export default function BookSection() {
                   </p>
                 </div>
 
-                {/* Decorative Corner */}
                 <div
                   className={`absolute -top-10 -right-10 w-20 h-20 bg-linear-to-br ${category.color} rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
                 />
@@ -136,9 +133,11 @@ export default function BookSection() {
           </div>
         </div>
 
-        {/* CTA */}
         <div className="text-center">
-          <button className="group/btn px-10 py-4 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden">
+          <Button
+            onClick={() => navigate("booking")}
+            className="group/btn px-10 py-4 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden"
+          >
             <span className="relative z-10 flex items-center gap-2">
               Browse All Experiences
               <svg
@@ -155,7 +154,7 @@ export default function BookSection() {
                 />
               </svg>
             </span>
-          </button>
+          </Button>
         </div>
       </div>
     </section>

@@ -40,8 +40,7 @@ export default function Login() {
       //here we sending to api our user data
       onSuccess: (response) => {
         authLogin(response); // if user is exist - back give us token and we set it to cookies
-        // navigate(from || "/");
-        navigate("/");
+        navigate(from || "/");
       },
       onError: (error) => {
         alert(`Something went wrong ${error.message}`);
@@ -70,7 +69,7 @@ export default function Login() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -85,7 +84,7 @@ export default function Login() {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
