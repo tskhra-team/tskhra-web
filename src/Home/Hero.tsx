@@ -39,7 +39,7 @@ const sections = [
     styles: {
       bg: "bg-[#A31621]",
       hoverBg: "hover:bg-[#D94A55]",
-      text: "text-[#1E1E1E]",
+      text: "text-[#A31621]",
       textDark: "text-[#595959]",
       glow: "from-[#A31621]",
     },

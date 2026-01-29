@@ -1,13 +1,14 @@
+import { publicInstance } from "@/api";
 import type { RegisterSchemaType } from "@/features/auth/authSchema";
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 interface IRegisterResponse {
   accessToken: string;
   refreshToken: string;
 }
 
 const register = async (data: RegisterSchemaType) => {
-  const response = await axios.post("fdsfsf", data);
+  const response = await publicInstance.post("/user/register", data);
   return response.data.value;
 };
 
