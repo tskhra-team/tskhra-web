@@ -3,6 +3,7 @@ import {
   Card,
   CardAction,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -43,6 +44,7 @@ export default function Register() {
       <Card className="w-100 bg-[#1E1E1E] text-white border-none">
         <CardHeader>
           <CardTitle>Register to your account</CardTitle>
+          <CardDescription>Start your journey here!</CardDescription>
           <CardAction>
             <Button
               variant="link"
@@ -65,7 +67,7 @@ export default function Register() {
                   {...register("name")}
                 />
                 {errors.name && (
-                  <p className="text-red-400 text-sm">{errors.name.message}</p>
+                  <p className="text-red-500 text-sm">{errors.name.message}</p>
                 )}
               </div>
               <div className="flex flex-col gap-2">
@@ -77,7 +79,7 @@ export default function Register() {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p className="text-red-400 text-sm">{errors.email.message}</p>
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
                 )}
               </div>
               <div className="flex flex-col gap-2">
@@ -89,7 +91,7 @@ export default function Register() {
                   {...register("password")}
                 />
                 {errors.password && (
-                  <p className="text-red-400 text-sm">
+                  <p className="text-red-500 text-sm">
                     {errors.password.message}
                   </p>
                 )}
@@ -103,7 +105,7 @@ export default function Register() {
                   {...register("confirmPassword")}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-400 text-sm">
+                  <p className="text-red-500 text-sm">
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -120,7 +122,7 @@ export default function Register() {
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <div>
-            <span className="text-sm">have account?</span>
+            <span className="text-sm">Already have an account?</span>
             <Button
               variant="link"
               className="px-3 cursor-pointer text-white"

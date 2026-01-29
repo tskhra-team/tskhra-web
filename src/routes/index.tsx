@@ -6,7 +6,7 @@ import { Navigate } from "react-router-dom";
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
-const SwitchingPage = lazy(() => import("@/pages/SwitchingPage"));
+const SwitchingPage = lazy(() => import("@/pages/SwappingPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
@@ -37,7 +37,7 @@ export const routes = [
     ),
   },
   {
-    path: "/switching",
+    path: "/swapping",
     element: (
       <Suspense fallback={<Loader />}>
         <SwitchingPage />
