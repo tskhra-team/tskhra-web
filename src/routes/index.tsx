@@ -1,4 +1,5 @@
 import Loader from "@/components/Loader";
+import AuthLayout from "@/layouts/AuthLayout";
 import { lazy, Suspense } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -43,21 +44,27 @@ export const routes = [
       </Suspense>
     ),
   },
+
   {
-    path: "/login",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <LoginPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/register",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <RegisterPage />
-      </Suspense>
-    ),
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "/login",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <LoginPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <RegisterPage />
+          </Suspense>
+        ),
+      },
+    ],
   },
   {
     path: "*",
