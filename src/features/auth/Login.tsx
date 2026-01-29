@@ -30,7 +30,7 @@ export default function Login() {
     resolver: yupResolver(loginSchema),
   });
 
-  const { mutate: login } = useLogin();
+  const { mutate: login } = useLogin(); //
   const { login: authLogin } = useAuth();
 
   const onSubmit = async (data: LoginSchemaType) => {
