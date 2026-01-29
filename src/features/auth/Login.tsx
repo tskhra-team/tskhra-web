@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { loginSchema, type LoginSchemaType } from "./authSchema";
-import { yupResolver } from "@hookform/resolvers/yup";
-import useLogin from "./useLogin";
 import { useAuth } from "@/context/useAuth";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router-dom";
+import { loginSchema, type LoginSchemaType } from "./authSchema";
+import useLogin from "./useLogin";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -30,23 +30,22 @@ export default function Login() {
     resolver: yupResolver(loginSchema),
   });
 
-  const { mutate: login } = useLogin(); //
-  const { login: authLogin } = useAuth();
+  const { mutate: login } = useLogin(); // getting token from API
+  const { login: authLogin } = useAuth(); //setting tokens to cookies
 
   const onSubmit = async (data: LoginSchemaType) => {
     console.log("LOGIN DATA", data);
 
     login(data, {
+      //here we sending to api our user data
       onSuccess: (response) => {
-        authLogin(response);
+        authLogin(response); // if user is exist - back give us token and we set it to cookies
         navigate(from || "/");
       },
       onError: (error) => {
         alert(`Something went wrong ${error.message}`);
       },
     });
-
-    // navigate(from || "/");
   };
 
   return (

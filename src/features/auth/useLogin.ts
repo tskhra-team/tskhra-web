@@ -9,7 +9,7 @@ interface ILoginResponse {
 }
 
 const login = async (data: LoginSchemaType) => {
-  const response = await publicInstance.post("kajsbfkcj", data);
+  const response = await publicInstance.post("kajsbfkcj", data); //here we need API endpoint
 
   return response.data;
 };

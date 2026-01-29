@@ -69,7 +69,7 @@ const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
         return request;
       },
       (error) => Promise.reject(error.response),
-    );
+    ); //adding in every user request his accessToken
 
     const responseInterceptor = privateInstance.interceptors.response.use(
       (response) => response,
@@ -102,7 +102,7 @@ const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
 
         return Promise.reject(error);
       },
-    );
+    ); //before getting response we checking if user has a accessToken if he handt calling refresh token and settingit
 
     setIsSet(true);
 

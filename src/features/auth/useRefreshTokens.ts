@@ -18,6 +18,7 @@ export const refreshTokens = async (
   } = await publicInstance.post<{ value: IRefreshResponse }>(`wdjhqegdg`, {
     refresh_token: token,
   });
+  //here we refreshing the access and refresh token
 
   return { accessToken: value.access_token, refreshToken: value.refresh_token };
 };
