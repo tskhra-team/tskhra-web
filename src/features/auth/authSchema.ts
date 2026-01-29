@@ -14,26 +14,40 @@ const loginSchema = yup.object({
 type LoginSchemaType = yup.InferType<typeof loginSchema>;
 
 export { loginSchema, type LoginSchemaType };
-export const registerSchema = yup.object({
+
+const registerSchema = yup.object({
   name: yup
     .string()
+    .trim()
     .required("Name is required")
-    .min(2, "Name must be at least 2 characters"),
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be at most 50 characters"),
 
   email: yup
     .string()
+    .trim()
     .required("Email is required")
-    .email("Invalid email format"),
+    .email("Please enter a valid email"),
 
   password: yup
     .string()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[a-z]/, "Password must include at least 1 lowercase letter")
+    .matches(/[A-Z]/, "Password must include at least 1 uppercase letter")
+    .matches(/[0-9]/, "Password must include at least 1 number")
+    .matches(
+      /[^a-zA-Z0-9]/,
+      "Password must include at least 1 special character",
+    ),
 
   confirmPassword: yup
     .string()
-    .required("Please confirm your password")
+    .required("Repeat password is required")
     .oneOf([yup.ref("password")], "Passwords must match"),
 });
 
-export type RegisterSchema = yup.InferType<typeof registerSchema>
+type RegisterSchemaType = yup.InferType<typeof registerSchema>;
+
+export { registerSchema, type RegisterSchemaType };
+
