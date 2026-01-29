@@ -5,6 +5,7 @@ import {
   Card,
   CardAction,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -56,6 +57,7 @@ export default function Register() {
       <Card className="w-[420px] bg-[#1E1E1E] text-white border-none">
         <CardHeader>
           <CardTitle>Register to your account</CardTitle>
+          <CardDescription>Start your journey here!</CardDescription>
           <CardAction>
             <Button
               variant="link"
@@ -77,7 +79,7 @@ export default function Register() {
                   {...register("name")}
                   className="mt-2"
                 />
-                <p className="text-red-400 text-sm mt-1 min-h-5">
+                <p className="text-red-500 text-sm mt-1 min-h-5">
                   {errors.name?.message || "\u00A0"}
                 </p>
               </div>
@@ -90,9 +92,9 @@ export default function Register() {
                   {...register("email")}
                   className="mt-2"
                 />
-                <p className="text-red-400 text-sm mt-1 min-h-5">
-                  {errors.email?.message || "\u00A0"}
-                </p>
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
               <div className="flex flex-col">
                 <Label htmlFor="password">Password</Label>
@@ -103,9 +105,11 @@ export default function Register() {
                   {...register("password")}
                   className="mt-2"
                 />
-                <p className="text-red-400 text-sm mt-1 min-h-5">
-                  {errors.password?.message || "\u00A0"}
-                </p>
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col">
                 <Label htmlFor="confirmPassword">Repeat Password</Label>
@@ -116,9 +120,11 @@ export default function Register() {
                   {...register("confirmPassword")}
                   className="mt-2"
                 />
-                <p className="text-red-400 text-sm mt-1 min-h-5">
-                  {errors.confirmPassword?.message || "\u00A0"}
-                </p>
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
 
               <Button
@@ -132,7 +138,7 @@ export default function Register() {
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <div>
-            <span className="text-sm">Have an account?</span>
+            <span className="text-sm">Already have an account?</span>
             <Button
               variant="link"
               className="px-3 text-white"

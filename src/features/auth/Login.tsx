@@ -40,7 +40,8 @@ export default function Login() {
       //here we sending to api our user data
       onSuccess: (response) => {
         authLogin(response); // if user is exist - back give us token and we set it to cookies
-        navigate(from || "/");
+        // navigate(from || "/");
+        navigate("/");
       },
       onError: (error) => {
         alert(`Something went wrong ${error.message}`);
