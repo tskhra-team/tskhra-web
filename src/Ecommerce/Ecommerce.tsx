@@ -1,4 +1,4 @@
-import Layout from "@/Layout/Layout";
+import Layout from "@/layouts/Layout";
 
 export default function Ecommerce() {
   return (
