@@ -40,9 +40,9 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         className={`${
           position === "center"
-            ? "relative  w-80 py-2 mx-4 rounded-32"
-            : "fixed bottom-0 left-0 right-0 rounded-t-32"
-        } bg-white shadow-xl transition-all duration-300 transform max-w-175 mx-auto ${
+            ? "relative mx-4"
+            : "fixed bottom-0 left-0 right-0"
+        } transition-all duration-300 transform ${
           isOpen
             ? position === "center"
               ? "translate-y-0 opacity-100 scale-100"

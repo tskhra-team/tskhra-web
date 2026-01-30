@@ -159,7 +159,7 @@ export default function Register() {
           </div>
         </CardFooter>
       </Card>
-      <Modal isOpen={open} onClose={handleCloseModal}>
+      <Modal isOpen={true} onClose={handleCloseModal}>
         <RegistrationSuccess onClose={handleContinue} />
       </Modal>
     </div>
