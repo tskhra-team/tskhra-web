@@ -17,6 +17,7 @@ import {
   type RegisterSchemaType,
 } from "@/features/auth/authSchema";
 import useRegister from "@/features/auth/useRegister";
+import Logo from "@/shared/Logo";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -42,6 +43,7 @@ export default function Register() {
     signUp(data, {
       onSuccess: () => {
         setOpen(true);
+        sessionStorage.setItem("userEmail", data.email);
       },
       onError: (error) => {
         console.error(error);
@@ -56,17 +58,22 @@ export default function Register() {
     navigate("/login");
   };
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 relative overflow-hidden">
+    <div className="w-screen h-screen flex flex-col items-center justify-center bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 relative overflow-hidden">
+      <Logo />
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
       </div>
 
-      <Card className="relative z-10 w-105 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl">
+      <Card className="relative z-10 w-105 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
         <CardHeader>
-          <CardTitle className="text-slate-900">Register to your account</CardTitle>
-          <CardDescription className="text-slate-600">Start your journey here!</CardDescription>
+          <CardTitle className="text-slate-900">
+            Register to your account
+          </CardTitle>
+          <CardDescription className="text-slate-600">
+            Start your journey here!
+          </CardDescription>
           <CardAction>
             <Button
               variant="link"
@@ -81,7 +88,9 @@ export default function Register() {
           <form onSubmit={handleSubmit(submitForm)}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="username" className="text-slate-700">Name</Label>
+                <Label htmlFor="username" className="text-slate-700">
+                  Name
+                </Label>
                 <Input
                   id="username"
                   placeholder="Enter your username"
@@ -89,11 +98,15 @@ export default function Register() {
                   className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.username && (
-                  <p className="text-red-500 text-sm">{errors.username.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.username.message}
+                  </p>
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="email" className="text-slate-700">Email</Label>
+                <Label htmlFor="email" className="text-slate-700">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -106,7 +119,10 @@ export default function Register() {
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="password" className="text-slate-700">Password</Label>
+                <Label htmlFor="password" className="text-slate-700">
+                  Password
+                </Label>
+
                 <Input
                   id="password"
                   type="password"
@@ -114,6 +130,7 @@ export default function Register() {
                   {...register("password")}
                   className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
+
                 {errors.password && (
                   <p className="text-red-500 text-sm">
                     {errors.password.message}
@@ -121,7 +138,9 @@ export default function Register() {
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="confirmPassword" className="text-slate-700">Repeat Password</Label>
+                <Label htmlFor="confirmPassword" className="text-slate-700">
+                  Repeat Password
+                </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -148,7 +167,9 @@ export default function Register() {
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <div>
-            <span className="text-sm text-slate-600">Already have an account?</span>
+            <span className="text-sm text-slate-600">
+              Already have an account?
+            </span>
             <Button
               variant="link"
               className="px-3 text-blue-600 hover:text-blue-700"

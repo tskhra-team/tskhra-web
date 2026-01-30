@@ -4,8 +4,8 @@ import { AxiosError } from "axios";
 import type { LoginSchemaType } from "./authSchema";
 
 interface ILoginResponse {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 const login = async (data: LoginSchemaType) => {

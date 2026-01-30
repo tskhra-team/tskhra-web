@@ -15,8 +15,6 @@ export default function Header() {
   const location = useLocation();
   const accessToken = Cookies.get("accessToken");
 
-  console.log(accessToken);
-
   return (
     <>
       <div className="w-full h-16 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
