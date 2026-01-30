@@ -8,7 +8,7 @@ interface IRegisterResponse {
 }
 
 const register = async (data: RegisterSchemaType) => {
-  const response = await publicInstance.post("/user/register", data);
+  const response = await publicInstance.post("/api/users/register", data);
   return response.data.value;
 };
 

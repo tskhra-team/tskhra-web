@@ -14,12 +14,19 @@ const RegistrationSuccess = ({ onClose, redirectTo = "/login" }: RegistrationSuc
   };
 
   return (
-    <div className="w-[520px] max-w-full rounded-[28px] bg-gradient-to-br from-[#EEF0FF] via-white to-[#FFECEC] px-10 py-14 text-center shadow-[0_30px_80px_rgba(0,0,0,0.15)]">
-      <h1 className="text-3xl font-extrabold tracking-tight text-black">
-        Registration Successful 🎉
-      </h1>
+    <div className="w-[520px] max-w-full rounded-2xl bg-white/95 backdrop-blur-xl px-10 py-14 text-center shadow-lg border border-slate-200/60">
+      <div className="mb-6">
+        <div className="mx-auto w-20 h-20 bg-linear-to-br from-blue-400/20 via-orange-400/20 to-red-400/20 rounded-full flex items-center justify-center mb-4">
+          <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-800">
+          Registration Successful!
+        </h1>
+      </div>
 
-      <p className="mx-auto mt-4 max-w-md text-sm text-gray-500">
+      <p className="mx-auto max-w-md text-sm text-slate-600 leading-relaxed">
         Your account has been created successfully.
         <br />
         You can now sign in and start using the platform.
@@ -27,7 +34,7 @@ const RegistrationSuccess = ({ onClose, redirectTo = "/login" }: RegistrationSuc
 
       <button
         onClick={handleContinue}
-        className="mx-auto mt-8 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+        className="mx-auto mt-8 inline-flex items-center justify-center rounded-lg bg-[#1E1E1E] border-2 border-[#1E1E1E] text-white px-8 py-3 text-sm font-semibold transition-all duration-300 hover:bg-[#2E2E2E] hover:border-[#2E2E2E] shadow-md hover:shadow-lg"
       >
         Continue to Login
       </button>
