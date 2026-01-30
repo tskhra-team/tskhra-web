@@ -49,7 +49,7 @@ const sections = [
 export default function Hero() {
   const [activeTab, setActiveTab] = useState("ecommerce");
   return (
-    <main className="mx-auto px-14 py-14 relative z-10 bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 ">
+    <main className="mx-auto px-4 sm:px-8 lg:px-14 py-8 sm:py-12 lg:py-14 relative z-10 bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 ">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
@@ -57,7 +57,7 @@ export default function Hero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-400/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex gap-6 min-h-[75vh] h-[75vh]">
+      <div className="relative z-10 flex flex-col lg:flex-row gap-4 sm:gap-5 lg:gap-6 min-h-[60vh] sm:min-h-[70vh] lg:min-h-[75vh] lg:h-[75vh]">
         {sections.map((section) => (
           <SectionCard
             key={section.id}

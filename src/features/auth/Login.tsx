@@ -49,17 +49,23 @@ export default function Login() {
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-[#2d2d2d]">
-      <Card className="w-100 bg-[#1E1E1E] text-white border-none">
+    <div className="w-screen h-screen flex items-center justify-center bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
+      </div>
+
+      <Card className="relative z-10 w-100 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-slate-900">Login to your account</CardTitle>
+          <CardDescription className="text-slate-600">
             Welcome back, enter your data to continue!{" "}
           </CardDescription>
           <CardAction>
             <Button
               variant="link"
-              className="text-white"
+              className="text-slate-700 hover:text-slate-900"
               onClick={() => navigate(from || "/")}
             >
               Go back
@@ -70,12 +76,13 @@ export default function Login() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-slate-700">Email</Label>
                 <Input
                   id="email"
                   type="text"
                   placeholder="Enter your email"
                   {...register("email")}
+                  className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.email && (
                   <span className="text-red-500 text-sm">
@@ -85,12 +92,13 @@ export default function Login() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-slate-700">Password</Label>
                 <Input
                   id="password"
                   type="password"
                   placeholder="Enter your password"
                   {...register("password")}
+                  className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.password && (
                   <span className="text-red-500 text-sm">
@@ -104,21 +112,21 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-white text-black cursor-pointer border hover:border-white hover:text-white"
+                className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 {isPending ? "Logging in..." : "Login"}
               </Button>
             </CardFooter>
           </form>
           <div className="mt-8 flex items-center justify-center gap-2">
-            <span className="text-sm">Don't have account yet?</span>
+            <span className="text-sm text-slate-600">Don't have account yet?</span>
             <Button
               variant="link"
-              className="px-3 cursor-pointer text-white"
+              className="px-3 cursor-pointer text-blue-600 hover:text-blue-700"
               onClick={() => navigate("/register")}
               type="button"
             >
-              Sing up
+              Sign up
             </Button>
           </div>
         </CardContent>

@@ -56,15 +56,21 @@ export default function Register() {
     navigate("/login");
   };
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-[#2d2d2d]">
-      <Card className="w-105 bg-[#1E1E1E] text-white border-none">
+    <div className="w-screen h-screen flex items-center justify-center bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
+      </div>
+
+      <Card className="relative z-10 w-105 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl">
         <CardHeader>
-          <CardTitle>Register to your account</CardTitle>
-          <CardDescription>Start your journey here!</CardDescription>
+          <CardTitle className="text-slate-900">Register to your account</CardTitle>
+          <CardDescription className="text-slate-600">Start your journey here!</CardDescription>
           <CardAction>
             <Button
               variant="link"
-              className="text-white"
+              className="text-slate-700 hover:text-slate-900"
               onClick={() => navigate(from || "/")}
             >
               Go back
@@ -75,38 +81,38 @@ export default function Register() {
           <form onSubmit={handleSubmit(submitForm)}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name" className="text-slate-700">Name</Label>
                 <Input
                   id="name"
                   placeholder="Enter your name"
                   {...register("name")}
-                  className="mt-2"
+                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.name && (
                   <p className="text-red-500 text-sm">{errors.name.message}</p>
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-slate-700">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
                   {...register("email")}
-                  className="mt-2"
+                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm">{errors.email.message}</p>
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-slate-700">Password</Label>
                 <Input
                   id="password"
                   type="password"
                   placeholder="Enter your password"
                   {...register("password")}
-                  className="mt-2"
+                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.password && (
                   <p className="text-red-500 text-sm">
@@ -115,13 +121,13 @@ export default function Register() {
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Label htmlFor="confirmPassword">Repeat Password</Label>
+                <Label htmlFor="confirmPassword" className="text-slate-700">Repeat Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   placeholder="Repeat your password"
                   {...register("confirmPassword")}
-                  className="mt-2"
+                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm">
@@ -133,7 +139,7 @@ export default function Register() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-white text-black cursor-pointer border hover:border-white hover:text-white"
+                className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 {isPending ? "Registration in progress..." : "Register"}
               </Button>
@@ -142,10 +148,10 @@ export default function Register() {
         </CardContent>
         <CardFooter className="flex-col gap-4">
           <div>
-            <span className="text-sm">Already have an account?</span>
+            <span className="text-sm text-slate-600">Already have an account?</span>
             <Button
               variant="link"
-              className="px-3 text-white"
+              className="px-3 text-blue-600 hover:text-blue-700"
               onClick={() => navigate("/login")}
             >
               Log in

@@ -19,21 +19,21 @@ export default function Header() {
 
   return (
     <>
-      <div className="w-full h-16 bg-white/80 backdrop-blur-xl flex items-center justify-between px-16 border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
+      <div className="w-full h-16 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
         <Logo />
-        <div className="flex gap-4 justify-end">
+        <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-end">
           {accessToken ? (
             "You logged in"
           ) : (
             <>
               <Button
-                className="bg-white border-2  text-[#1E1E1E] w-40 h-10 hover:bg-[#1E1E1E] hover:text-white cursor-pointer transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
+                className="bg-white border-2 text-[#1E1E1E] w-20 sm:w-28 lg:w-40 h-9 lg:h-10 text-xs sm:text-sm lg:text-base hover:bg-[#1E1E1E] hover:text-white cursor-pointer transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
                 onClick={() => navigate("/register")}
               >
                 Sign Up
               </Button>
               <Button
-                className="text-white border-2 border-[#1E1E1E] w-40 h-10 bg-[#1E1E1E] cursor-pointer hover:bg-[#2E2E2E] hover:border-[#2E2E2E] transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
+                className="text-white border-2 border-[#1E1E1E] w-20 sm:w-28 lg:w-40 h-9 lg:h-10 text-xs sm:text-sm lg:text-base bg-[#1E1E1E] cursor-pointer hover:bg-[#2E2E2E] hover:border-[#2E2E2E] transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
                 onClick={() =>
                   navigate("/login", {
                     state: { from: location.pathname },
@@ -46,12 +46,12 @@ export default function Header() {
           )}
         </div>
       </div>
-      <div className="w-full h-14 bg-white/60 backdrop-blur-lg border-b border-slate-200/40 sticky top-16 z-40">
-        <div className="flex h-full justify-center items-center gap-1">
+      <div className="w-full h-12 sm:h-14 bg-white/60 backdrop-blur-lg border-b border-slate-200/40 sticky top-16 z-40">
+        <div className="flex h-full justify-center items-center gap-0.5 sm:gap-1">
           {navItems.map((item) => (
             <div
               key={item.name}
-              className="relative text-slate-700 px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold"
+              className="relative text-slate-700 px-4 sm:px-6 lg:px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold text-sm sm:text-base"
               onClick={() => scrollToElement(item.scroll)}
             >
               <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">
