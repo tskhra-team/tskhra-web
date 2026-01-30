@@ -81,15 +81,15 @@ export default function Register() {
           <form onSubmit={handleSubmit(submitForm)}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <Label htmlFor="name" className="text-slate-700">Name</Label>
+                <Label htmlFor="username" className="text-slate-700">Name</Label>
                 <Input
-                  id="name"
-                  placeholder="Enter your name"
-                  {...register("name")}
+                  id="username"
+                  placeholder="Enter your username"
+                  {...register("username")}
                   className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
-                {errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name.message}</p>
+                {errors.username && (
+                  <p className="text-red-500 text-sm">{errors.username.message}</p>
                 )}
               </div>
               <div className="flex flex-col gap-1">
@@ -139,7 +139,7 @@ export default function Register() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 {isPending ? "Registration in progress..." : "Register"}
               </Button>
@@ -159,7 +159,7 @@ export default function Register() {
           </div>
         </CardFooter>
       </Card>
-      <Modal isOpen={true} onClose={handleCloseModal}>
+      <Modal isOpen={open} onClose={handleCloseModal}>
         <RegistrationSuccess onClose={handleContinue} />
       </Modal>
     </div>

@@ -16,7 +16,7 @@ type LoginSchemaType = yup.InferType<typeof loginSchema>;
 export { loginSchema, type LoginSchemaType };
 
 const registerSchema = yup.object({
-  name: yup
+  username: yup
     .string()
     .trim()
     .required("Name is required")
@@ -50,4 +50,3 @@ const registerSchema = yup.object({
 type RegisterSchemaType = yup.InferType<typeof registerSchema>;
 
 export { registerSchema, type RegisterSchemaType };
-

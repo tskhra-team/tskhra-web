@@ -43,7 +43,8 @@ export default function Login() {
         navigate(from || "/");
       },
       onError: (error) => {
-        alert(`Something went wrong ${error.message}`);
+       console.log(error)
+        // alert(`Something went wrong ${error.message}`);
       },
     });
   };
@@ -112,7 +113,7 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
                 {isPending ? "Logging in..." : "Login"}
               </Button>
