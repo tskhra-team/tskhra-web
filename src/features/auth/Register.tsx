@@ -44,7 +44,7 @@ export default function Register() {
         setOpen(true);
       },
       onError: (error) => {
-        console.error(data);
+        console.error(error);
       },
     });
   };

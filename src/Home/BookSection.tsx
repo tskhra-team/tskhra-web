@@ -52,20 +52,20 @@ export default function BookSection() {
   return (
     <section
       id="book-section"
-      className="py-24 px-14 bg-linear-to-br from-orange-50/50 via-white to-orange-50/30 relative overflow-hidden"
+      className="py-12 sm:py-16 lg:py-24 px-4 sm:px-8 lg:px-14 bg-linear-to-br from-orange-50/50 via-white to-orange-50/30 relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-400/5 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 text-sm font-semibold uppercase tracking-wider mb-4">
+        <div className="text-center mb-12 sm:mb-16">
+          <div className="inline-block px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-orange-100 text-orange-600 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-3 sm:mb-4">
             Booking Platform
           </div>
-          <h2 className="text-5xl font-black text-slate-900 mb-4 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight px-4">
             Book Amazing Experiences
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto px-4">
             Reserve unforgettable moments with ease—from dining to adventures,
             all in one place
           </p>
@@ -99,28 +99,28 @@ export default function BookSection() {
           ))}
         </div>
 
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-10 border-2 border-orange-100/50 shadow-xl mb-12">
-          <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 border-2 border-orange-100/50 shadow-xl mb-12">
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 sm:mb-8 text-center">
             Popular Booking Categories
           </h3>
-          <div className="flex justify-between gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {categories.map((category, index) => (
               <div
                 key={index}
-                className="group w-full relative bg-white rounded-2xl p-6 border-2 border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
+                className="group relative bg-white rounded-xl lg:rounded-2xl p-5 sm:p-6 border-2 border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
               >
                 <div
                   className={`absolute inset-0 bg-linear-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
                 />
 
                 <div className="relative z-10">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
                     {category.icon}
                   </div>
-                  <h4 className="text-lg font-bold text-slate-900 mb-1">
+                  <h4 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
                     {category.name}
                   </h4>
-                  <p className="text-sm text-slate-500 font-medium">
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
                     {category.description}
                   </p>
                 </div>
@@ -136,12 +136,12 @@ export default function BookSection() {
         <div className="text-center">
           <Button
             onClick={() => navigate("booking")}
-            className="group/btn px-10 py-4 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden"
+            className="group/btn px-6 sm:px-8 lg:px-10 py-3 sm:py-4 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white text-sm sm:text-base font-bold rounded-xl lg:rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2">
               Browse All Experiences
               <svg
-                className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform duration-300"
+                className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-x-1 transition-transform duration-300"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
