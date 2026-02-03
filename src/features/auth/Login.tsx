@@ -10,11 +10,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/context/useAuth";
-import Logo from "@/shared/Logo";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loginSchema, type LoginSchemaType } from "./authSchema";
@@ -24,7 +22,6 @@ export default function Login() {
   const navigate = useNavigate();
   const localtion = useLocation();
   const from = localtion.state?.from;
-  const [showPass, setShowPass] = useState(false);
   const userEmail = sessionStorage.getItem("userEmail");
 
   const {
@@ -57,14 +54,7 @@ export default function Login() {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <Logo />
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
-      </div>
-
+    <>
       <Card className="relative z-10 w-100 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
         <CardHeader>
           <CardTitle className="text-slate-900">
@@ -83,6 +73,7 @@ export default function Login() {
             </Button>
           </CardAction>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
@@ -103,40 +94,16 @@ export default function Login() {
                   </span>
                 )}
               </div>
-
               <div className="flex flex-col gap-1">
                 <Label htmlFor="password" className="text-slate-700">
                   Password
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPass ? "text" : "password"}
-                    placeholder="Enter your password"
-                    {...register("password")}
-                    className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() => setShowPass((prev) => !prev)}
-                    tabIndex={-1}
-                  >
-                    {showPass ? (
-                      <EyeOffIcon
-                        className="h-4 w-4 text-slate-500 hover:text-slate-700 transition-colors"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <EyeIcon
-                        className="h-4 w-4 text-slate-500 hover:text-slate-700 transition-colors"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </Button>
-                </div>
+                <PasswordInput
+                  id="password"
+                  placeholder="Enter your password"
+                  {...register("password")}
+                  className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                />
                 {errors.password && (
                   <span className="text-red-500 text-sm">
                     {errors.password.message}
@@ -155,6 +122,7 @@ export default function Login() {
               </Button>
             </CardFooter>
           </form>
+
           <div className="mt-8 flex items-center justify-center gap-2">
             <span className="text-sm text-slate-600">
               Don't have account yet?
@@ -170,6 +138,6 @@ export default function Login() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

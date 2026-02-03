@@ -12,12 +12,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   registerSchema,
   type RegisterSchemaType,
 } from "@/features/auth/authSchema";
 import useRegister from "@/features/auth/useRegister";
-import Logo from "@/shared/Logo";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,15 +58,8 @@ export default function Register() {
     navigate("/login");
   };
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 relative overflow-hidden">
-      <Logo />
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
-      </div>
-
-      <Card className="relative z-10 w-105 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
+    <>
+      <Card className="relative z-10 w-100 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
         <CardHeader>
           <CardTitle className="text-slate-900">
             Register to your account
@@ -84,6 +77,7 @@ export default function Register() {
             </Button>
           </CardAction>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit(submitForm)}>
             <div className="flex flex-col gap-6">
@@ -93,14 +87,15 @@ export default function Register() {
                 </Label>
                 <Input
                   id="username"
+                  type="text"
                   placeholder="Enter your username"
                   {...register("username")}
-                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                  className=" bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.username && (
-                  <p className="text-red-500 text-sm">
+                  <span className="text-red-500 text-sm">
                     {errors.username.message}
-                  </p>
+                  </span>
                 )}
               </div>
               <div className="flex flex-col gap-1">
@@ -109,52 +104,55 @@ export default function Register() {
                 </Label>
                 <Input
                   id="email"
-                  type="email"
+                  type="text"
                   placeholder="Enter your email"
                   {...register("email")}
-                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                  className=" bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                  <span className="text-red-500 text-sm">
+                    {errors.email.message}
+                  </span>
                 )}
               </div>
+
               <div className="flex flex-col gap-1">
                 <Label htmlFor="password" className="text-slate-700">
                   Password
                 </Label>
 
-                <Input
+                <PasswordInput
                   id="password"
-                  type="password"
                   placeholder="Enter your password"
                   {...register("password")}
-                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                  className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
 
                 {errors.password && (
-                  <p className="text-red-500 text-sm">
+                  <span className="text-red-500 text-sm">
                     {errors.password.message}
-                  </p>
+                  </span>
                 )}
               </div>
               <div className="flex flex-col gap-1">
                 <Label htmlFor="confirmPassword" className="text-slate-700">
                   Repeat Password
                 </Label>
-                <Input
+                <PasswordInput
                   id="confirmPassword"
-                  type="password"
                   placeholder="Repeat your password"
                   {...register("confirmPassword")}
-                  className="mt-2 bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                  className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
+                  <span className="text-red-500 text-sm">
                     {errors.confirmPassword.message}
-                  </p>
+                  </span>
                 )}
               </div>
+            </div>
 
+            <CardFooter className="flex-col gap-4 px-0 mt-8">
               <Button
                 type="submit"
                 disabled={isPending}
@@ -162,27 +160,26 @@ export default function Register() {
               >
                 {isPending ? "Registration in progress..." : "Register"}
               </Button>
-            </div>
+            </CardFooter>
           </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-4">
-          <div>
+
+          <div className="mt-8 flex items-center justify-center gap-2">
             <span className="text-sm text-slate-600">
               Already have an account?
             </span>
             <Button
               variant="link"
-              className="px-3 text-blue-600 hover:text-blue-700"
+              className="px-3 cursor-pointer text-blue-600 hover:text-blue-700"
               onClick={() => navigate("/login")}
             >
               Log in
             </Button>
           </div>
-        </CardFooter>
+        </CardContent>
       </Card>
       <Modal isOpen={open} onClose={handleCloseModal}>
         <RegistrationSuccess onClose={handleContinue} />
       </Modal>
-    </div>
+    </>
   );
 }
