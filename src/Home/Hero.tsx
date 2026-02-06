@@ -1,53 +1,52 @@
 import SectionCard from "@/Home/SectionCard";
 import { useState } from "react";
-
-const sections = [
-  {
-    id: "ecommerce",
-    title: "Buy",
-    description:
-      "Discover an endless collection of premium products curated just for you. From everyday essentials to luxury finds, enjoy seamless shopping with secure payments and lightning-fast delivery to your doorstep.",
-    buttonText: "Start Shopping",
-    styles: {
-      bg: "bg-[#3659FA]",
-      hoverBg: "hover:bg-[#6B88FC]",
-      text: "text-[#3659FA]",
-      textDark: "text-[#A4B4FF]",
-      glow: "from-[#3659FA]",
-    },
-  },
-  {
-    id: "booking",
-    title: "Book",
-    description:
-      "Reserve your perfect experience with just a few clicks. Whether it's a cozy restaurant, exciting adventure, or professional service, we make booking effortless so you can focus on what matters most.",
-    buttonText: "Reserve Now",
-    styles: {
-      bg: "bg-[#FF6439]",
-      hoverBg: "hover:bg-[#FF8E6B]",
-      text: "text-[#FF6439]",
-      textDark: "text-[#6DED80]",
-      glow: "from-[#FF6439]",
-    },
-  },
-  {
-    id: "swapping",
-    title: "Swap",
-    description:
-      "Exchange anything from books, electronics, and furniture to skills, services, and memberships. Turn what you don't need into what you want through smart swapping with verified users in our trusted community.",
-    buttonText: "Start Swapping",
-    styles: {
-      bg: "bg-[#A31621]",
-      hoverBg: "hover:bg-[#D94A55]",
-      text: "text-[#A31621]",
-      textDark: "text-[#595959]",
-      glow: "from-[#A31621]",
-    },
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Hero() {
   const [activeTab, setActiveTab] = useState("ecommerce");
+  const { t } = useTranslation("home");
+
+  const sections = [
+    {
+      id: "ecommerce",
+      title: t("hero.ecommerce.title"),
+      description: t("hero.ecommerce.description"),
+      buttonText: t("hero.ecommerce.button"),
+      styles: {
+        bg: "bg-[#3659FA]",
+        hoverBg: "hover:bg-[#6B88FC]",
+        text: "text-[#3659FA]",
+        textDark: "text-[#A4B4FF]",
+        glow: "from-[#3659FA]",
+      },
+    },
+    {
+      id: "booking",
+      title: t("hero.booking.title"),
+      description: t("hero.booking.description"),
+      buttonText: t("hero.booking.button"),
+      styles: {
+        bg: "bg-[#FF6439]",
+        hoverBg: "hover:bg-[#FF8E6B]",
+        text: "text-[#FF6439]",
+        textDark: "text-[#6DED80]",
+        glow: "from-[#FF6439]",
+      },
+    },
+    {
+      id: "swapping",
+      title: t("hero.swapping.title"),
+      description: t("hero.swapping.description"),
+      buttonText: t("hero.swapping.button"),
+      styles: {
+        bg: "bg-[#A31621]",
+        hoverBg: "hover:bg-[#D94A55]",
+        text: "text-[#A31621]",
+        textDark: "text-[#595959]",
+        glow: "from-[#A31621]",
+      },
+    },
+  ];
   return (
     <main className="mx-auto px-4 sm:px-8 lg:px-14 py-8 sm:py-12 lg:py-14 relative z-10 bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 ">
       {/* Decorative Background Elements */}
