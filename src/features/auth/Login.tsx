@@ -14,10 +14,10 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/context/useAuth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLoginSchema, type LoginSchemaType } from "./authSchema";
 import useLogin from "./useLogin";
-import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -120,7 +120,9 @@ export default function Login() {
                 disabled={isPending}
                 className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                {isPending ? t("auth:login.buttonLoading") : t("auth:login.button")}
+                {isPending
+                  ? t("auth:login.buttonLoading")
+                  : t("auth:login.button")}
               </Button>
             </CardFooter>
           </form>
