@@ -8,11 +8,19 @@ interface AuthState {
   accessToken: string;
   refreshToken: string;
 }
+type UserTypes = {
+  status: string;
+  userName: string;
+  userEmail: string;
+  createDate: string;
+}
+
 export interface AuthContextType {
   authState: AuthState | null;
   login: (data: AuthState) => void;
   logout: () => void;
   setTokens: (tokens: AuthState | null) => void;
+  user: UserTypes;
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -21,6 +29,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     accessToken: Cookies.get("accessToken") || "",
     refreshToken: Cookies.get("refreshToken") || "",
   });
+
+  const user: UserTypes = {
+    status: "none",
+    userName: "Anano Topuria",
+    userEmail: 'mail@gmail.com',
+    createDate: '19-20-2026',
+  }
 
   const login = (data: AuthState) => {
     setAuthState(data);
@@ -68,6 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         setTokens,
+        user
       }}
     >
       {children}

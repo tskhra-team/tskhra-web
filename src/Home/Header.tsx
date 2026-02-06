@@ -1,6 +1,17 @@
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/useAuth";
 import { scrollToElement } from "@/utils";
 import Cookies from "js-cookie";
+import { LogOut, User } from "lucide-react";
+import Avatar from "react-avatar";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 
@@ -14,14 +25,20 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const accessToken = Cookies.get("accessToken");
+  const { logout } = useAuth();
+  const {user} = useAuth()
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
-    <>
+    <div>
       <div className="w-full h-16 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
         <Logo />
-        <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-end">
+        <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-end items-center">
           {accessToken ? (
-            "You logged in"
+           <div>dsfsfsfsf</div>
           ) : (
             <>
               <Button
@@ -39,7 +56,32 @@ export default function Header() {
                 }
               >
                 Log in
-              </Button>{" "}
+              </Button>
+              <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Avatar name={user.userName} size="40" round />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => navigate("/profile")}
+                  className="cursor-pointer"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             </>
           )}
         </div>
@@ -67,6 +109,6 @@ export default function Header() {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

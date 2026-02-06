@@ -1,11 +1,11 @@
+import { useAuth } from "@/context/useAuth";
 import Logo from "@/shared/Logo";
-import Cookies from "js-cookie";
 import { Navigate, Outlet } from "react-router-dom";
 
 export default function AuthLayout() {
-  const accessToken = Cookies.get("accessToken");
+  const {authState}  = useAuth()
 
-  if (accessToken) {
+  if (authState?.accessToken) {
     return <Navigate to="/" />;
   }
 
