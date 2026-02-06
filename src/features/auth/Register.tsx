@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import {
-  registerSchema,
+  getRegisterSchema,
   type RegisterSchemaType,
 } from "@/features/auth/authSchema";
 import useRegister from "@/features/auth/useRegister";
@@ -22,19 +22,21 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from;
+  const { t } = useTranslation(["auth", "common"]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterSchemaType>({
-    resolver: yupResolver(registerSchema),
+    resolver: yupResolver(getRegisterSchema(t)),
   });
 
   const { mutate: signUp, isPending } = useRegister();
@@ -62,10 +64,10 @@ export default function Register() {
       <Card className="relative z-10 w-100 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
         <CardHeader>
           <CardTitle className="text-slate-900">
-            Register to your account
+            {t("auth:register.title")}
           </CardTitle>
           <CardDescription className="text-slate-600">
-            Start your journey here!
+            {t("auth:register.description")}
           </CardDescription>
           <CardAction>
             <Button
@@ -73,7 +75,7 @@ export default function Register() {
               className="text-slate-700 hover:text-slate-900"
               onClick={() => navigate(from || "/")}
             >
-              Go back
+              {t("common:buttons.goBack")}
             </Button>
           </CardAction>
         </CardHeader>
@@ -83,12 +85,12 @@ export default function Register() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
                 <Label htmlFor="username" className="text-slate-700">
-                  Name
+                  {t("common:form.name")}
                 </Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Enter your username"
+                  placeholder={t("common:form.namePlaceholder")}
                   {...register("username")}
                   className=" bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
@@ -100,12 +102,12 @@ export default function Register() {
               </div>
               <div className="flex flex-col gap-1">
                 <Label htmlFor="email" className="text-slate-700">
-                  Email
+                  {t("common:form.email")}
                 </Label>
                 <Input
                   id="email"
                   type="text"
-                  placeholder="Enter your email"
+                  placeholder={t("common:form.emailPlaceholder")}
                   {...register("email")}
                   className=" bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
@@ -118,12 +120,12 @@ export default function Register() {
 
               <div className="flex flex-col gap-1">
                 <Label htmlFor="password" className="text-slate-700">
-                  Password
+                  {t("common:form.password")}
                 </Label>
 
                 <PasswordInput
                   id="password"
-                  placeholder="Enter your password"
+                  placeholder={t("common:form.passwordPlaceholder")}
                   {...register("password")}
                   className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
@@ -136,11 +138,11 @@ export default function Register() {
               </div>
               <div className="flex flex-col gap-1">
                 <Label htmlFor="confirmPassword" className="text-slate-700">
-                  Repeat Password
+                  {t("common:form.repeatPassword")}
                 </Label>
                 <PasswordInput
                   id="confirmPassword"
-                  placeholder="Repeat your password"
+                  placeholder={t("common:form.repeatPasswordPlaceholder")}
                   {...register("confirmPassword")}
                   className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
@@ -158,21 +160,21 @@ export default function Register() {
                 disabled={isPending}
                 className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                {isPending ? "Registration in progress..." : "Register"}
+                {isPending ? t("auth:register.buttonLoading") : t("auth:register.button")}
               </Button>
             </CardFooter>
           </form>
 
           <div className="mt-8 flex items-center justify-center gap-2">
             <span className="text-sm text-slate-600">
-              Already have an account?
+              {t("auth:register.hasAccount")}
             </span>
             <Button
               variant="link"
               className="px-3 cursor-pointer text-blue-600 hover:text-blue-700"
               onClick={() => navigate("/login")}
             >
-              Log in
+              {t("auth:register.loginLink")}
             </Button>
           </div>
         </CardContent>
