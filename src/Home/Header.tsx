@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
 import { scrollToElement } from "@/utils";
-import Cookies from "js-cookie";
 import { LogOut, User } from "lucide-react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
@@ -20,9 +19,8 @@ import Logo from "../shared/Logo";
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const accessToken = Cookies.get("accessToken");
-  const { logout } = useAuth();
-  const { user } = useAuth();
+  const { logout, user, authState } = useAuth();
+  // const { user } = useAuth();
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -30,9 +28,24 @@ export default function Header() {
   const { t } = useTranslation("common");
 
   const navItems = [
-    { name: t("nav.buy"), scroll: "buy-section", color: "#3659FA" },
-    { name: t("nav.book"), scroll: "book-section", color: "#FF6439" },
-    { name: t("nav.swap"), scroll: "swap-section", color: "#A31621" },
+    {
+      name: t("nav.buy"),
+      scroll: "buy-section",
+      redirect: "ecommerce",
+      color: "#3659FA",
+    },
+    {
+      name: t("nav.book"),
+      scroll: "book-section",
+      redirect: "booking",
+      color: "#FF6439",
+    },
+    {
+      name: t("nav.swap"),
+      scroll: "swap-section",
+      redirect: "swapping",
+      color: "#A31621",
+    },
   ];
 
   return (
@@ -41,8 +54,32 @@ export default function Header() {
         <Logo />
         <div className="flex gap-2 sm:gap-3 lg:gap-4 justify-end">
           <LanguageSwitcher />
-          {accessToken ? (
-            t("auth.loggedIn")
+          {authState?.accessToken ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Avatar name={user?.userName} size="40" round />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => navigate("/profile")}
+                  className="cursor-pointer"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <>
               <Button
@@ -61,31 +98,6 @@ export default function Header() {
               >
                 Log in
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                    <Avatar name={user?.userName} size="40" round />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => navigate("/profile")}
-                    className="cursor-pointer"
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="cursor-pointer text-red-600 focus:text-red-600"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign Out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </>
           )}
         </div>
@@ -96,7 +108,10 @@ export default function Header() {
             <div
               key={item.name}
               className="relative text-slate-700 px-4 sm:px-6 lg:px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold text-sm sm:text-base"
-              onClick={() => scrollToElement(item.scroll)}
+              onClick={() => {
+                if (location.pathname === "/") scrollToElement(item.scroll);
+                else navigate(`/${item.redirect}`);
+              }}
             >
               <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">
                 {item.name}

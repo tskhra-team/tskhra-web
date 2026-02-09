@@ -37,6 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     userName: "Anano Topuria",
     userEmail: "mail@gmail.com",
     createDate: "19-20-2026",
+    phoneNumber: "908765673832",
+    gender: "female",
   });
 
   const login = (data: AuthState) => {

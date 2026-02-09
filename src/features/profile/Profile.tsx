@@ -23,7 +23,7 @@ export default function Profile() {
           name={user?.userName}
           size="60"
           round
-          className="md:!w-20 md:!h-20"
+          className="md:w-20! md:h-20!"
         />
         <div className="flex flex-col flex-1">
           <p className="text-xl md:text-2xl font-semibold">{user?.userName}</p>

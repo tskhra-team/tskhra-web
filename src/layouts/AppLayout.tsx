@@ -15,7 +15,7 @@ export default function AppLayout() {
     }
   }, [user, isSuccess, setUser]);
 
-  if (!authState?.accessToken) {
+  if (authState?.accessToken) {
     return <Navigate to="/login" />;
   }
   return (
