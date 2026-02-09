@@ -1,52 +1,56 @@
 import * as yup from "yup";
+import type { TFunction } from "i18next";
 
-const loginSchema = yup.object({
+const getLoginSchema = (t: TFunction) => yup.object({
   email: yup
     .string()
-    .email("Invalid email format")
-    .required("Email is required"),
+    .email(t("common:validation.emailInvalidFormat"))
+    .required(t("common:validation.emailRequired")),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
+    .matches(/^\S*$/, t("common:validation.passwordNoSpaces"))
+    .min(8, t("common:validation.passwordMin"))
+    .required(t("common:validation.passwordRequired")),
 });
 
-type LoginSchemaType = yup.InferType<typeof loginSchema>;
+type LoginSchemaType = yup.InferType<ReturnType<typeof getLoginSchema>>;
 
-export { loginSchema, type LoginSchemaType };
+export { getLoginSchema, type LoginSchemaType };
 
-const registerSchema = yup.object({
+const getRegisterSchema = (t: TFunction) => yup.object({
   username: yup
     .string()
     .trim()
-    .required("Name is required")
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name must be at most 50 characters"),
+    .required(t("common:validation.nameRequired"))
+    .min(2, t("common:validation.nameMin"))
+    .max(50, t("common:validation.nameMax")),
 
   email: yup
     .string()
     .trim()
-    .required("Email is required")
-    .email("Please enter a valid email"),
+    .required(t("common:validation.emailRequired"))
+    .email(t("common:validation.emailInvalid")),
 
   password: yup
     .string()
-    .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must include at least 1 lowercase letter")
-    .matches(/[A-Z]/, "Password must include at least 1 uppercase letter")
-    .matches(/[0-9]/, "Password must include at least 1 number")
+    .required(t("common:validation.passwordRequired"))
+    .matches(/^\S*$/, t("common:validation.passwordNoSpaces"))
+    .min(8, t("common:validation.passwordMin"))
+    .matches(/[a-z]/, t("common:validation.passwordLowercase"))
+    .matches(/[A-Z]/, t("common:validation.passwordUppercase"))
+    .matches(/[0-9]/, t("common:validation.passwordNumber"))
     .matches(
       /[^a-zA-Z0-9]/,
-      "Password must include at least 1 special character",
+      t("common:validation.passwordSpecial"),
     ),
 
   confirmPassword: yup
     .string()
-    .required("Repeat password is required")
-    .oneOf([yup.ref("password")], "Passwords must match"),
+    .required(t("common:validation.repeatPasswordRequired"))
+    .matches(/^\S*$/, t("common:validation.passwordNoSpaces"))
+    .oneOf([yup.ref("password")], t("common:validation.passwordsMatch")),
 });
 
-type RegisterSchemaType = yup.InferType<typeof registerSchema>;
+type RegisterSchemaType = yup.InferType<ReturnType<typeof getRegisterSchema>>;
 
-export { registerSchema, type RegisterSchemaType };
+export { getRegisterSchema, type RegisterSchemaType };

@@ -14,8 +14,9 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/context/useAuth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { loginSchema, type LoginSchemaType } from "./authSchema";
+import { getLoginSchema, type LoginSchemaType } from "./authSchema";
 import useLogin from "./useLogin";
 
 export default function Login() {
@@ -23,13 +24,14 @@ export default function Login() {
   const localtion = useLocation();
   const from = localtion.state?.from;
   const userEmail = sessionStorage.getItem("userEmail");
+  const { t } = useTranslation(["auth", "common"]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginSchemaType>({
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(getLoginSchema(t)),
     defaultValues: {
       email: userEmail || "",
     },
@@ -58,10 +60,10 @@ export default function Login() {
       <Card className="relative z-10 w-100 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
         <CardHeader>
           <CardTitle className="text-slate-900">
-            Login to your account
+            {t("auth:login.title")}
           </CardTitle>
           <CardDescription className="text-slate-600">
-            Welcome back, enter your data to continue!{" "}
+            {t("auth:login.description")}{" "}
           </CardDescription>
           <CardAction>
             <Button
@@ -69,7 +71,7 @@ export default function Login() {
               className="text-slate-700 hover:text-slate-900"
               onClick={() => navigate(from || "/")}
             >
-              Go back
+              {t("common:buttons.goBack")}
             </Button>
           </CardAction>
         </CardHeader>
@@ -79,12 +81,12 @@ export default function Login() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
                 <Label htmlFor="email" className="text-slate-700">
-                  Email
+                  {t("common:form.email")}
                 </Label>
                 <Input
                   id="email"
                   type="text"
-                  placeholder="Enter your email"
+                  placeholder={t("common:form.emailPlaceholder")}
                   {...register("email")}
                   className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
@@ -96,11 +98,11 @@ export default function Login() {
               </div>
               <div className="flex flex-col gap-1">
                 <Label htmlFor="password" className="text-slate-700">
-                  Password
+                  {t("common:form.password")}
                 </Label>
                 <PasswordInput
                   id="password"
-                  placeholder="Enter your password"
+                  placeholder={t("common:form.passwordPlaceholder")}
                   {...register("password")}
                   className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
@@ -118,14 +120,16 @@ export default function Login() {
                 disabled={isPending}
                 className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                {isPending ? "Logging in..." : "Login"}
+                {isPending
+                  ? t("auth:login.buttonLoading")
+                  : t("auth:login.button")}
               </Button>
             </CardFooter>
           </form>
 
           <div className="mt-8 flex items-center justify-center gap-2">
             <span className="text-sm text-slate-600">
-              Don't have account yet?
+              {t("auth:login.noAccount")}
             </span>
             <Button
               variant="link"
@@ -133,7 +137,7 @@ export default function Login() {
               onClick={() => navigate("/register")}
               type="button"
             >
-              Sign up
+              {t("auth:login.signUpLink")}
             </Button>
           </div>
         </CardContent>

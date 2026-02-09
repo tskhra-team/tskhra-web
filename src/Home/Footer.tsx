@@ -2,6 +2,7 @@ import { scrollToElement } from "@/utils";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
+import { useTranslation } from "react-i18next";
 
 const contactInfo = [
   { Icon: Mail, text: "makingscience@tskhra.com" },
@@ -11,18 +12,19 @@ const contactInfo = [
 
 export default function Footer() {
   const navigate = useNavigate();
+  const { t } = useTranslation("home");
 
   const footerLinks = {
-    Product: [
-      { name: "Buy", func: () => navigate("/ecommerce") },
-      { name: "Book", func: () => navigate("/booking") },
-      { name: "Swap", func: () => navigate("/swapping") },
+    [t("footer.links.product")]: [
+      { name: t("footer.links.buy"), func: () => navigate("/ecommerce") },
+      { name: t("footer.links.book"), func: () => navigate("/booking") },
+      { name: t("footer.links.swap"), func: () => navigate("/swapping") },
     ],
-    Company: [{ name: "About Us", func: () => scrollToElement("about-us") }],
-    Legal: [
-      { name: "Privacy Policy", func: () => console.log() },
-      { name: "Terms of Service", func: () => console.log() },
-      { name: "Cookie Policy", func: () => console.log() },
+    [t("footer.links.company")]: [{ name: t("footer.links.aboutUs"), func: () => scrollToElement("about-us") }],
+    [t("footer.links.legal")]: [
+      { name: t("footer.links.privacy"), func: () => console.log() },
+      { name: t("footer.links.terms"), func: () => console.log() },
+      { name: t("footer.links.cookies"), func: () => console.log() },
     ],
   };
 
@@ -39,8 +41,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Logo color="white" />
             <p className="text-slate-400 leading-relaxed mb-6 mt-4">
-              Your all-in-one platform for buying premium products, booking
-              amazing experiences, and swapping with a trusted community.
+              {t("footer.brand.description")}
             </p>
           </div>
 
@@ -83,20 +84,20 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div>
               <h3 className="text-white font-bold text-lg sm:text-xl mb-2">
-                Subscribe to Our Newsletter
+                {t("footer.newsletter.title")}
               </h3>
               <p className="text-slate-400 text-sm sm:text-base">
-                Get the latest updates, deals, and news delivered to your inbox.
+                {t("footer.newsletter.description")}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t("footer.newsletter.placeholder")}
                 className="flex-1 px-4 py-2.5 sm:py-3 bg-slate-800 border border-slate-700 rounded-lg sm:rounded-xl text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
               />
               <button className="px-6 py-2.5 sm:py-3 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap">
-                Subscribe
+                {t("footer.newsletter.button")}
               </button>
             </div>
           </div>
@@ -105,17 +106,17 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 text-sm">
-            &copy; 2026 Tskhra. All rights reserved.
+            {t("footer.copyright")}
           </p>
           <div className="flex gap-6 text-sm">
             <a className="text-slate-400 hover:text-white transition-colors">
-              Privacy
+              {t("footer.links.privacyShort")}
             </a>
             <a className="text-slate-400 hover:text-white transition-colors">
-              Terms
+              {t("footer.links.termsShort")}
             </a>
             <a className="text-slate-400 hover:text-white transition-colors">
-              Cookies
+              {t("footer.links.cookiesShort")}
             </a>
           </div>
         </div>
