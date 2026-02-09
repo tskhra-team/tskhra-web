@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/useAuth";
+import ProfileForm from "@/features/profile/ProfileForm";
 import { useState } from "react";
 import Avatar from "react-avatar";
 
@@ -11,37 +12,39 @@ export default function Profile() {
     history: "History",
     info: "Info",
     "payment-methods": "Payment Methods",
+    settings: "Account Settings"
   };
 
   return (
-    <main className="px-20 py-10">
-      <div className="flex gap-5 items-center mb-8">
-        <Avatar name={user.userName} size="80" round />
-        <div className="flex flex-col">
-          <p className="text-2xl font-semibold">{user.userName}</p>
-          <p className="text-gray-600">Status: {user.status}</p>
-          <p className="text-sm text-gray-500">{user.userEmail}</p>
+    <main className="px-4 sm:px-8 md:px-12 lg:px-20 py-6 md:py-10">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-5 items-start md:items-center mb-6 md:mb-8">
+        <Avatar name={user.userName} size="60" round className="md:!w-20 md:!h-20" />
+        <div className="flex flex-col flex-1">
+          <p className="text-xl md:text-2xl font-semibold">{user.userName}</p>
+          <p className="text-sm md:text-base text-gray-600">Status: {user.status}</p>
+          <p className="text-xs md:text-sm text-gray-500">{user.userEmail}</p>
         </div>
-        <p className="text-5xl pl-20 font-bold">
+        <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl md:pl-8 lg:pl-20 font-bold">
           {tabNames[activeTab as keyof typeof tabNames]}
         </p>
       </div>
-      <div className="flex gap-8">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
         <Tabs
           defaultValue="info"
           orientation="vertical"
           onValueChange={(value) => setActiveTab(value)}
-          className="w-full"
+          className="w-full flex flex-col lg:flex-row"
         >
-          <TabsList className="flex flex-col items-start w-80">
-            <TabsTrigger value="info">Info</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
-            <TabsTrigger value="payment-methods">Payment Methods</TabsTrigger>
+          <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start">
+            <TabsTrigger value="info" className="w-full justify-start">Info</TabsTrigger>
+            <TabsTrigger value="history" className="w-full justify-start">History</TabsTrigger>
+            <TabsTrigger value="payment-methods" className="w-full justify-start">Payment Methods</TabsTrigger>
+            <TabsTrigger value="settings" className="w-full justify-start">Account Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="info" className="flex-1">
-            <div className="bg-white px-6">
-              <h3 className="text-xl font-semibold mb-4">
+            <div className="bg-white px-4 md:px-6">
+              <h3 className="text-lg md:text-xl font-semibold mb-4">
                 Personal Information
               </h3>
               <div className="space-y-3">
@@ -79,7 +82,7 @@ export default function Profile() {
               </div>
 
               <TabsContent value="buying">
-                <div className="bg-white p-6 ">
+                <div className="bg-white p-6">
                   <div className="space-y-4">
                     <div className="p-4 border rounded-lg">
                       <p className="font-medium">Order #12345</p>
@@ -113,7 +116,7 @@ export default function Profile() {
               </TabsContent>
 
               <TabsContent value="booking">
-                <div className="bg-white p-6 ">
+                <div className="bg-white p-6">
                   <div className="space-y-4">
                     <div className="p-4 border rounded-lg">
                       <p className="font-medium">Booking #BK789</p>
@@ -152,7 +155,7 @@ export default function Profile() {
               </TabsContent>
 
               <TabsContent value="swapping">
-                <div className="bg-white p-6 ">
+                <div className="bg-white p-6">
                   <div className="space-y-4">
                     <div className="p-4 border rounded-lg">
                       <p className="font-medium">Swap #SW456</p>
@@ -196,28 +199,36 @@ export default function Profile() {
           </TabsContent>
 
           <TabsContent value="payment-methods" className="flex-1">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-xl font-semibold mb-4">Payment Methods</h3>
-              <div className="space-y-4">
-                <div className="p-4 border rounded-lg flex items-center justify-between">
+            <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+              <h3 className="text-lg md:text-xl font-semibold mb-4">Payment Methods</h3>
+              <div className="space-y-3 md:space-y-4">
+                <div className="p-3 md:p-4 border rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div>
-                    <p className="font-medium">Visa •••• 4242</p>
-                    <p className="text-sm text-gray-600">Expires 12/2026</p>
+                    <p className="font-medium text-sm md:text-base">Visa •••• 4242</p>
+                    <p className="text-xs md:text-sm text-gray-600">Expires 12/2026</p>
                   </div>
-                  <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded">
+                  <span className="text-xs md:text-sm bg-green-100 text-green-800 px-2 py-1 rounded whitespace-nowrap">
                     Default
                   </span>
                 </div>
-                <div className="p-4 border rounded-lg flex items-center justify-between">
+                <div className="p-3 md:p-4 border rounded-lg flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Mastercard •••• 8888</p>
-                    <p className="text-sm text-gray-600">Expires 08/2027</p>
+                    <p className="font-medium text-sm md:text-base">Mastercard •••• 8888</p>
+                    <p className="text-xs md:text-sm text-gray-600">Expires 08/2027</p>
                   </div>
                 </div>
               </div>
-              <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button className="mt-4 px-3 md:px-4 py-2 text-sm md:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto">
                 Add New Payment Method
               </button>
+            </div>
+          </TabsContent>
+          <TabsContent value="settings" className="flex-1">
+            <div className="bg-white px-4 md:px-6">
+              <h3 className="text-lg md:text-xl font-semibold mb-4">Account Settings</h3>
+              <div className="space-y-3">
+                <ProfileForm />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
