@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/useAuth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "lucide-react";
-import Avatar from "react-avatar";
 import { useState } from "react";
+import Avatar from "react-avatar";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PasswordChangeModal from "./PasswordChangeModal";
@@ -68,7 +68,12 @@ function ProfileForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
       <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
         <div className="relative">
-          <Avatar name={user.userName} size="60" round className="md:!w-20 md:!h-20" />
+          <Avatar
+            name={user.userName}
+            size="60"
+            round
+            className="md:w-20! md:h-20!"
+          />
           <button
             type="button"
             className="absolute bottom-0 right-0 bg-gray-200 rounded-full p-1.5 md:p-2 hover:bg-gray-300"
@@ -143,7 +148,9 @@ function ProfileForm() {
             <option value="other">სხვა</option>
           </select>
           {errors.gender && (
-            <p className="text-red-500 text-xs md:text-sm mt-1">{errors.gender.message}</p>
+            <p className="text-red-500 text-xs md:text-sm mt-1">
+              {errors.gender.message}
+            </p>
           )}
         </div>
 
@@ -215,7 +222,9 @@ function ProfileForm() {
           className="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
         />
         {errors.email && (
-          <p className="text-red-500 text-xs md:text-sm mt-1">{errors.email.message}</p>
+          <p className="text-red-500 text-xs md:text-sm mt-1">
+            {errors.email.message}
+          </p>
         )}
       </div>
 

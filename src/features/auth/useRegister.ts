@@ -4,12 +4,12 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 const register = async (data: RegisterSchemaType) => {
-  const response = await publicInstance.post("/api/users/register", data);
+  const response = await publicInstance.post("/users/register", data);
   return response.data.value;
 };
 
 const useRegister = () => {
-  return useMutation<{success: boolean}, AxiosError, RegisterSchemaType>({
+  return useMutation<{ success: boolean }, AxiosError, RegisterSchemaType>({
     mutationFn: register,
   });
 };

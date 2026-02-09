@@ -15,12 +15,9 @@ export const refreshTokens = async (
 ): Promise<TransFormedRefreshRes> => {
   const {
     data: { value },
-  } = await publicInstance.post<{ value: IRefreshResponse }>(
-    `user/refrest-token`,
-    {
-      refresh_token: token,
-    },
-  );
+  } = await publicInstance.post<{ value: IRefreshResponse }>(`/auth/resfresh`, {
+    refresh_token: token,
+  });
   //here we refreshing the access and refresh token
 
   return { accessToken: value.access_token, refreshToken: value.refresh_token };

@@ -1,3 +1,4 @@
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,17 +13,16 @@ import { scrollToElement } from "@/utils";
 import Cookies from "js-cookie";
 import { LogOut, User } from "lucide-react";
 import Avatar from "react-avatar";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { useTranslation } from "react-i18next";
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const accessToken = Cookies.get("accessToken");
   const { logout } = useAuth();
-  const {user} = useAuth()
+  const { user } = useAuth();
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -62,30 +62,30 @@ export default function Header() {
                 Log in
               </Button>
               <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                  <Avatar name={user.userName} size="40" round />
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => navigate("/profile")}
-                  className="cursor-pointer"
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="cursor-pointer text-red-600 focus:text-red-600"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign Out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                    <Avatar name={user.userName} size="40" round />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => navigate("/profile")}
+                    className="cursor-pointer"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="cursor-pointer text-red-600 focus:text-red-600"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           )}
         </div>
