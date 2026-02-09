@@ -1,18 +1,19 @@
 import { useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { useCallback, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from "react";
 
+import type { UserType } from "@/features/profile/useGetUser";
 import { AuthContext } from "./useAuth";
 
 interface AuthState {
   accessToken: string;
   refreshToken: string;
-}
-type UserTypes = {
-  status: string;
-  userName: string;
-  userEmail: string;
-  createDate: string;
 }
 
 export interface AuthContextType {
@@ -20,7 +21,8 @@ export interface AuthContextType {
   login: (data: AuthState) => void;
   logout: () => void;
   setTokens: (tokens: AuthState | null) => void;
-  user: UserTypes;
+  user: UserType | null;
+  setUser: Dispatch<SetStateAction<UserType | null>>;
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -30,12 +32,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     refreshToken: Cookies.get("refreshToken") || "",
   });
 
-  const user: UserTypes = {
+  const [user, setUser] = useState<UserType | null>({
     status: "none",
     userName: "Anano Topuria",
-    userEmail: 'mail@gmail.com',
-    createDate: '19-20-2026',
-  }
+    userEmail: "mail@gmail.com",
+    createDate: "19-20-2026",
+  });
 
   const login = (data: AuthState) => {
     setAuthState(data);
@@ -52,6 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setAuthState(null);
     queryClient.clear();
+    setUser(null);
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
   };
@@ -83,7 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         setTokens,
-        user
+        user,
+        setUser,
       }}
     >
       {children}

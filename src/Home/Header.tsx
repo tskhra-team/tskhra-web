@@ -64,7 +64,7 @@ export default function Header() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                    <Avatar name={user.userName} size="40" round />
+                    <Avatar name={user?.userName} size="40" round />
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">

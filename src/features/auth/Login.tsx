@@ -16,6 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { getLoginSchema, type LoginSchemaType } from "./authSchema";
 import useLogin from "./useLogin";
 
@@ -33,7 +34,7 @@ export default function Login() {
   } = useForm<LoginSchemaType>({
     resolver: yupResolver(getLoginSchema(t)),
     defaultValues: {
-      email: userEmail || "",
+      username: userEmail || "",
     },
   });
 
@@ -49,8 +50,25 @@ export default function Login() {
         navigate(from || "/");
       },
       onError: (error) => {
-        console.log(error);
-        // alert(`Something went wrong ${error.message}`);
+        const errorMessage = error.response?.data?.message || error.message;
+
+        if (error.response?.status === 401) {
+          toast.error(errorMessage || "Invalid credentials", {
+            position: "top-center",
+          });
+        } else if (error.response?.status === 404) {
+          toast.error(errorMessage || "User not found", {
+            position: "top-center",
+          });
+        } else if (error.response?.status === 500) {
+          toast.error(errorMessage || "Server error - Please try again later", {
+            position: "top-center",
+          });
+        } else {
+          toast.error(errorMessage || "Login failed", {
+            position: "top-center",
+          });
+        }
       },
     });
   };
@@ -84,15 +102,15 @@ export default function Login() {
                   {t("common:form.email")}
                 </Label>
                 <Input
-                  id="email"
+                  id="username"
                   type="text"
                   placeholder={t("common:form.emailPlaceholder")}
-                  {...register("email")}
+                  {...register("username")}
                   className="bg-white border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
                 />
-                {errors.email && (
+                {errors.username && (
                   <span className="text-red-500 text-sm">
-                    {errors.email.message}
+                    {errors.username.message}
                   </span>
                 )}
               </div>

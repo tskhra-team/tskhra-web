@@ -21,8 +21,9 @@ import useRegister from "@/features/auth/useRegister";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Register() {
   const [open, setOpen] = useState(false);
@@ -48,10 +49,25 @@ export default function Register() {
         sessionStorage.setItem("userEmail", data.email);
       },
       onError: (error) => {
-        console.error(error);
+        const errorMessage = error.response?.data?.message || error.message;
+
+        if (error.response?.status === 409) {
+          toast.error(errorMessage || "User already exists", {
+            position: "top-center",
+          });
+        } else if (error.response?.status === 500) {
+          toast.error(errorMessage || "Server error - Please try again later", {
+            position: "top-center",
+          });
+        } else {
+          toast.error(errorMessage || "Registration failed", {
+            position: "top-center",
+          });
+        }
       },
     });
   };
+
   const handleCloseModal = () => {
     setOpen(false);
   };
@@ -160,7 +176,9 @@ export default function Register() {
                 disabled={isPending}
                 className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                {isPending ? t("auth:register.buttonLoading") : t("auth:register.button")}
+                {isPending
+                  ? t("auth:register.buttonLoading")
+                  : t("auth:register.button")}
               </Button>
             </CardFooter>
           </form>

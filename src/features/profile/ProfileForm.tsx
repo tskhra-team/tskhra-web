@@ -26,7 +26,7 @@ const profileSchema = yup.object().shape({
     .required("Birth year is required")
     .min(1900, "Invalid birth year")
     .max(new Date().getFullYear(), "Birth year cannot be in the future"),
-  personalNumber: yup.string().optional(),
+  personalNumber: yup.string().defined(""),
   phoneCountryCode: yup.string().required("Country code is required"),
   phoneNumber: yup
     .string()
@@ -48,14 +48,14 @@ function ProfileForm() {
   } = useForm<ProfileFormData>({
     resolver: yupResolver(profileSchema),
     defaultValues: {
-      firstName: user.userName.split(" ")[0] || "",
-      lastName: user.userName.split(" ")[1] || "",
+      firstName: user?.userName?.split(" ")[0] || "",
+      lastName: user?.userName?.split(" ")[1] || "",
       gender: "female",
       birthYear: 1994,
       personalNumber: "",
       phoneCountryCode: "+995",
       phoneNumber: "555218953",
-      email: user.userEmail,
+      email: user?.userEmail,
     },
   });
 
@@ -69,7 +69,7 @@ function ProfileForm() {
       <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
         <div className="relative">
           <Avatar
-            name={user.userName}
+            name={user?.userName}
             size="60"
             round
             className="md:w-20! md:h-20!"
@@ -96,7 +96,7 @@ function ProfileForm() {
         </div>
         <div>
           <p className="text-xs md:text-sm text-gray-600">გამარჯობა,</p>
-          <p className="text-lg md:text-2xl font-semibold">{user.userName}</p>
+          <p className="text-lg md:text-2xl font-semibold">{user?.userName}</p>
         </div>
       </div>
 

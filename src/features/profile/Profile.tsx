@@ -20,17 +20,17 @@ export default function Profile() {
     <main className="px-4 sm:px-8 md:px-12 lg:px-20 py-6 md:py-10">
       <div className="flex flex-col md:flex-row gap-4 md:gap-5 items-start md:items-center mb-6 md:mb-8">
         <Avatar
-          name={user.userName}
+          name={user?.userName}
           size="60"
           round
           className="md:!w-20 md:!h-20"
         />
         <div className="flex flex-col flex-1">
-          <p className="text-xl md:text-2xl font-semibold">{user.userName}</p>
+          <p className="text-xl md:text-2xl font-semibold">{user?.userName}</p>
           <p className="text-sm md:text-base text-gray-600">
-            Status: {user.status}
+            Status: {user?.status}
           </p>
-          <p className="text-xs md:text-sm text-gray-500">{user.userEmail}</p>
+          <p className="text-xs md:text-sm text-gray-500">{user?.userEmail}</p>
         </div>
         <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl md:pl-8 lg:pl-20 font-bold">
           {tabNames[activeTab as keyof typeof tabNames]}
@@ -66,19 +66,19 @@ export default function Profile() {
               <div className="space-y-3">
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Full Name</p>
-                  <p className="font-medium">{user.userName}</p>
+                  <p className="font-medium">{user?.userName}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Email</p>
-                  <p className="font-medium">{user.userEmail}</p>
+                  <p className="font-medium">{user?.userEmail}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Account Created</p>
-                  <p className="font-medium">{user.createDate}</p>
+                  <p className="font-medium">{user?.createDate}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Status</p>
-                  <p className="font-medium">{user.status}</p>
+                  <p className="font-medium">{user?.status}</p>
                 </div>
               </div>
             </div>
