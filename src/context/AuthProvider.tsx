@@ -33,12 +33,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [user, setUser] = useState<UserType | null>({
-    status: "none",
-    userName: "Anano Topuria",
-    userEmail: "mail@gmail.com",
+    status: true,
+    userName: "KukiLeki",
+    firstName: "Kuki",
+    secondName: "Leki",
+    userEmail: "kukileki@gmail.com",
     createDate: "19-20-2026",
     phoneNumber: "908765673832",
     gender: "female",
+    birthDate: "29-10-2004",
   });
 
   const login = (data: AuthState) => {

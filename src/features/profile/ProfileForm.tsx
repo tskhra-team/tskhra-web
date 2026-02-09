@@ -21,8 +21,8 @@ const profileSchema = yup.object().shape({
     .string()
     .required("Gender is required")
     .oneOf(["male", "female", "other"], "Please select a valid gender"),
-  birthYear: yup
-    .number()
+  birthDate: yup
+    .string()
     .required("Birth year is required")
     .min(1900, "Invalid birth year")
     .max(new Date().getFullYear(), "Birth year cannot be in the future"),
@@ -40,6 +40,10 @@ type ProfileFormData = yup.InferType<typeof profileSchema>;
 function ProfileForm() {
   const { user } = useAuth();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  let fullName = user?.userName;
+  if (user?.firstName && user?.secondName) {
+    fullName = user?.firstName + " " + user?.secondName;
+  }
 
   const {
     register,
@@ -48,13 +52,12 @@ function ProfileForm() {
   } = useForm<ProfileFormData>({
     resolver: yupResolver(profileSchema),
     defaultValues: {
-      firstName: user?.userName?.split(" ")[0] || "",
-      lastName: user?.userName?.split(" ")[1] || "",
-      gender: "female",
-      birthYear: 1994,
-      personalNumber: "",
+      firstName: user?.firstName,
+      lastName: user?.secondName,
+      gender: user?.gender,
+      birthDate: user?.birthDate,
       phoneCountryCode: "+995",
-      phoneNumber: "555218953",
+      phoneNumber: user?.phoneNumber,
       email: user?.userEmail,
     },
   });
@@ -70,10 +73,10 @@ function ProfileForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4 md:space-y-6"
       >
-        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="relative">
             <Avatar
-              name={user?.userName}
+              name={fullName}
               size="60"
               round
               className="md:w-20! md:h-20!"
@@ -100,9 +103,7 @@ function ProfileForm() {
           </div>
           <div>
             <p className="text-xs md:text-sm text-gray-600">გამარჯობა,</p>
-            <p className="text-lg md:text-2xl font-semibold">
-              {user?.userName}
-            </p>
+            <p className="text-lg md:text-2xl font-semibold">{fullName}</p>
           </div>
         </div>
 
@@ -166,35 +167,20 @@ function ProfileForm() {
             </label>
             <div className="relative">
               <input
-                {...register("birthYear")}
+                {...register("birthDate")}
                 type="number"
                 className="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <Calendar className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 w-4 md:w-5 h-4 md:h-5 text-gray-400 pointer-events-none" />
             </div>
-            {errors.birthYear && (
+            {errors.birthDate && (
               <p className="text-red-500 text-xs md:text-sm mt-1">
-                {errors.birthYear.message}
+                {errors.birthDate.message}
               </p>
             )}
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-            პირადი ნომერი
-          </label>
-          <input
-            {...register("personalNumber")}
-            type="text"
-            className="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.personalNumber && (
-            <p className="text-red-500 text-xs md:text-sm mt-1">
-              {errors.personalNumber.message}
-            </p>
-          )}
-        </div>
         <div>
           <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
             ტელეფონის ნომერი<span className="text-red-500">*</span>
