@@ -1,17 +1,19 @@
-import Cookies from "node_modules/@types/js-cookie";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/useAuth";
+import Footer from "@/Home/Footer";
+import Header from "@/Home/Header";
+import { Navigate, Outlet } from "react-router-dom";
 
 export default function AppLayout() {
-  const accessToken = Cookies.get("accessToken");
-  const navigate = useNavigate();
+  const {authState} = useAuth() 
 
-  if (!accessToken) {
-    navigate("/login");
+if (authState?.accessToken) {
+    return <Navigate to="/login" />;
   }
-
   return (
     <div>
+      <Header />
       <Outlet />
+      <Footer />
     </div>
   );
 }

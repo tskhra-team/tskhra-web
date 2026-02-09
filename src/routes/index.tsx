@@ -1,5 +1,7 @@
 import Loader from "@/components/Loader";
+import AppLayout from "@/layouts/AppLayout";
 import AuthLayout from "@/layouts/AuthLayout";
+import ProfilePage from "@/pages/ProfilePage";
 import { lazy, Suspense } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -43,6 +45,20 @@ export const routes = [
         <SwitchingPage />
       </Suspense>
     ),
+  },
+  
+  {
+    element: <AppLayout />,
+    children: [
+      {
+        path: "/profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ProfilePage />
+          </Suspense>
+        ),
+      },
+    ],
   },
 
   {
