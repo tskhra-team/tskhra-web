@@ -18,6 +18,7 @@ export default function AppLayout() {
   if (!authState?.accessToken) {
     return <Navigate to="/login" />;
   }
+
   return (
     <div>
       <Header />

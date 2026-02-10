@@ -1,6 +1,7 @@
 import Loader from "@/components/Loader";
 import AppLayout from "@/layouts/AppLayout";
 import AuthLayout from "@/layouts/AuthLayout";
+import MainLayout from "@/layouts/MainLayout";
 import ProfilePage from "@/pages/ProfilePage";
 import { lazy, Suspense } from "react";
 import { Navigate } from "react-router-dom";
@@ -14,39 +15,47 @@ const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
 
 export const routes = [
+  // Main Layout - Public pages with main Header + Footer
   {
-    path: "/",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <HomePage />
-      </Suspense>
-    ),
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <EcommercePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/swapping",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SwitchingPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/booking",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <BookingPage />
+          </Suspense>
+        ),
+      },
+    ],
   },
-  {
-    path: "/ecommerce",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <EcommercePage />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/booking",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <BookingPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/swapping",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <SwitchingPage />
-      </Suspense>
-    ),
-  },
-  
+
+
+  // App Layout - Protected routes with main Header + Footer
   {
     element: <AppLayout />,
     children: [
@@ -58,9 +67,18 @@ export const routes = [
           </Suspense>
         ),
       },
+      {
+        path: "/booking",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ProfilePage />
+          </Suspense>
+        ),
+      },
     ],
   },
 
+  // Auth Layout - Login/Register pages
   {
     element: <AuthLayout />,
     children: [
@@ -82,6 +100,8 @@ export const routes = [
       },
     ],
   },
+
+  // 404 - Redirect to home
   {
     path: "*",
     element: <Navigate to="/" replace />,
