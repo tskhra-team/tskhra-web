@@ -1,13 +1,8 @@
 import { publicInstance } from "@/api";
 import type { RegisterSchemaType } from "@/features/auth/authSchema";
+import type { ErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-
-interface ErrorResponse {
-  status: number;
-  message: string;
-  timestamp: string;
-}
 
 const register = async (data: RegisterSchemaType) => {
   const response = await publicInstance.post("/users/register", data);
@@ -15,7 +10,11 @@ const register = async (data: RegisterSchemaType) => {
 };
 
 const useRegister = () => {
-  return useMutation<{ success: boolean }, AxiosError<ErrorResponse>, RegisterSchemaType>({
+  return useMutation<
+    { success: boolean },
+    AxiosError<ErrorResponse>,
+    RegisterSchemaType
+  >({
     mutationFn: register,
   });
 };

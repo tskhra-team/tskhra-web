@@ -2,57 +2,78 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/useAuth";
 import ProfileForm from "@/features/profile/ProfileForm";
-import { useState } from "react";
 import Avatar from "react-avatar";
+import { useSearchParams } from "react-router-dom";
 
 export default function Profile() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("info");
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get("section") || "info";
+  const verificationStatus = user?.status ? "Verified" : "Not verified";
+  const isFullnameExist = user?.firstName && user?.secondName;
+  const fullName = isFullnameExist
+    ? user?.firstName + " " + user?.secondName
+    : user?.userName;
   const tabNames = {
     history: "History",
-    info: "Info",
+    info: "Personal Infrormation",
     paymentMethods: "Payment Methods",
     settings: "Account Settings",
   };
 
   return (
     <main className="px-4 sm:px-8 md:px-12 lg:px-20 py-6 md:py-10">
-      <div className="flex flex-col md:flex-row gap-4 md:gap-5 items-start md:items-center mb-6 md:mb-8">
-        <Avatar
-          name={user?.userName}
-          size="60"
-          round
-          className="md:w-20! md:h-20!"
-        />
-        <div className="flex flex-col flex-1">
-          <p className="text-xl md:text-2xl font-semibold">{user?.userName}</p>
-          <p className="text-sm md:text-base text-gray-600">
-            Status: {user?.status}
-          </p>
-          <p className="text-xs md:text-sm text-gray-500">{user?.userEmail}</p>
+      <div className="flex flex-col justify-between md:flex-row gap-4 md:gap-5 items-start md:items-center mb-6 md:mb-8">
+        <div
+          className={`flex gap-4 items-center transition-all duration-500 ease-in-out ${
+            tab !== "settings"
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-4 pointer-events-none absolute"
+          }`}
+        >
+          <Avatar
+            name={fullName}
+            size="60"
+            round
+            className="md:w-20! md:h-20!"
+          />
+          <div className="flex flex-col flex-1">
+            <p className="text-xl md:text-2xl font-semibold">{fullName}</p>
+            <p className="text-sm md:text-base text-gray-600">
+              Status: {verificationStatus}
+            </p>
+            <p className="text-xs md:text-sm text-gray-500">
+              {user?.userEmail}
+            </p>
+          </div>
         </div>
-        <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl md:pl-8 lg:pl-20 font-bold">
-          {tabNames[activeTab as keyof typeof tabNames]}
+        <p
+          className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-all duration-500 ${
+            tab === "settings" ? "md:ml-auto md:pl-0" : "md:pl-8 lg:pl-20"
+          }`}
+        >
+          {tabNames[tab as keyof typeof tabNames]}
         </p>
       </div>
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
         <Tabs
-          defaultValue="info"
+          defaultValue={tab}
           orientation="vertical"
-          onValueChange={(value) => setActiveTab(value)}
+          onValueChange={(value) => {
+            setSearchParams((params) => {
+              params.set("section", value);
+              return params;
+            });
+          }}
           className="w-full flex flex-col lg:flex-row"
         >
           <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start">
             <TabsTrigger value="info" className="w-full justify-start">
-              Info
+              Personal Information
             </TabsTrigger>
             <TabsTrigger value="history" className="w-full justify-start">
               History
             </TabsTrigger>
-            {/* <TabsTrigger value="paymentMethod" className="w-full justify-start">
-              Payment Methods
-            </TabsTrigger> */}
             <TabsTrigger value="settings" className="w-full justify-start">
               Account Settings
             </TabsTrigger>
@@ -60,25 +81,33 @@ export default function Profile() {
 
           <TabsContent value="info" className="flex-1">
             <div className="bg-white px-4 md:px-6">
-              <h3 className="text-lg md:text-xl font-semibold mb-4">
-                Personal Information
-              </h3>
               <div className="space-y-3">
                 <div className="p-4 border rounded-lg">
-                  <p className="text-sm text-gray-600">Full Name</p>
+                  <p className="text-sm text-gray-600">Username</p>
                   <p className="font-medium">{user?.userName}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Email</p>
                   <p className="font-medium">{user?.userEmail}</p>
                 </div>
+                {isFullnameExist && (
+                  <div className="p-4 border rounded-lg">
+                    <p className="text-sm text-gray-600">Full Name</p>
+                    <p className="font-medium">{fullName}</p>
+                  </div>
+                )}
+
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Account Created</p>
                   <p className="font-medium">{user?.createDate}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Status</p>
-                  <p className="font-medium">{user?.status}</p>
+                  <p
+                    className={`font-medium ${user?.status ? "text-green-500" : "text-red-500"} `}
+                  >
+                    {verificationStatus}
+                  </p>
                 </div>
               </div>
             </div>
@@ -251,9 +280,6 @@ export default function Profile() {
           </TabsContent>
           <TabsContent value="settings" className="flex-1">
             <div className="bg-white px-4 md:px-6">
-              <h3 className="text-lg md:text-xl font-semibold mb-4">
-                Account Settings
-              </h3>
               <div className="space-y-3">
                 <ProfileForm />
               </div>
