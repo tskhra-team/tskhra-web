@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 
 export default function AuthLayout() {
   const { authState } = useAuth();
-
+  
   if (authState?.accessToken) {
     return <Navigate to="/" />;
   }
