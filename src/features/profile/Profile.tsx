@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/context/useAuth";
 import ProfileForm from "@/features/profile/ProfileForm";
+import useGetUser from "@/features/profile/useGetProfile";
 import { Plus } from "lucide-react";
 import Avatar from "react-avatar";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Profile() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { data: user } = useGetUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("section") || "info";
   const verificationStatus = user?.status ? "Verified" : "Not verified";

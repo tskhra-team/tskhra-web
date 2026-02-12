@@ -24,10 +24,11 @@ import { useState } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
 import PasswordChangeModal from "./PasswordChangeModal";
+import useGetUser from "@/features/user/useGetUser";
 
 function ProfileForm() {
   const [enableEdit, setEnableEdit] = useState(true);
-  const { user } = useAuth();
+  const { data: user } = useGetUser();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   let fullName = user?.userName;
   if (user?.firstName && user?.secondName) {

@@ -8,6 +8,13 @@ import { useLocation } from "react-router-dom";
 
 export default function Header() {
   const location = useLocation();
+  const { logout, user, authState } = useAuth();
+  // const { user } = useAuth();
+  const handleLogout = () => {
+    logout();
+    // navigate("/");
+  };
+  const { t } = useTranslation("common");
   const accessToken = Cookies.get("accessToken");
 
   // Check if user is authenticated
