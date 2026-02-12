@@ -23,7 +23,7 @@ export default function SubcategoryView({ subcategories }: SubcategoryViewProps)
   };
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       {subcategories.map((subcategory) => {
         const translationKey = categoryNameToKey[subcategory.name];
         const displayName = translationKey ? t(translationKey) : subcategory.name;
@@ -32,10 +32,10 @@ export default function SubcategoryView({ subcategories }: SubcategoryViewProps)
           <button
             key={subcategory.name}
             onClick={() => handleSubcategoryClick(subcategory.name)}
-            className="group rounded-xl border bg-white p-4 transition-all hover:shadow-md h-50 flex flex-col text-left"
+            className="group rounded-xl border bg-white p-3 sm:p-4 transition-all hover:shadow-md h-40 sm:h-50 flex flex-col text-left"
           >
             {subcategory.imageUrl && (
-              <div className="mb-3 flex-1 overflow-hidden rounded-lg bg-gray-100">
+              <div className="mb-2 sm:mb-3 flex-1 overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={subcategory.imageUrl}
                   alt={displayName}
@@ -44,11 +44,11 @@ export default function SubcategoryView({ subcategories }: SubcategoryViewProps)
               </div>
             )}
             {subcategory.iconUrl && !subcategory.imageUrl && (
-              <div className="mb-3 flex-1 flex items-center justify-center rounded-lg bg-gray-100">
-                <img src={subcategory.iconUrl} alt="" className="h-16 w-16" />
+              <div className="mb-2 sm:mb-3 flex-1 flex items-center justify-center rounded-lg bg-gray-100">
+                <img src={subcategory.iconUrl} alt="" className="h-12 w-12 sm:h-16 sm:w-16" />
               </div>
             )}
-            <h4 className="text-sm font-medium text-gray-900 group-hover:text-blue-600">
+            <h4 className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-blue-600">
               {displayName}
             </h4>
           </button>
