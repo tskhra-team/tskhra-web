@@ -9,6 +9,7 @@ export default function AppLayout() {
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
+
   return (
     <div>
       <Header />
