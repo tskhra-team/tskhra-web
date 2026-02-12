@@ -48,10 +48,12 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
         categories={data}
         activeIndex={activeIndex}
         onSelect={handleSelectCategory}
+        categoryDisplayName={categoryDisplayName}
       />
 
+      {/* Desktop subcategory panel - hidden on mobile */}
       {activeCategory && (
-        <div className="absolute left-full top-0 z-50 min-w-300 h-125 overflow-hidden rounded-2xl border bg-white p-10 shadow-2xl">
+        <div className="hidden lg:block absolute left-full top-0 z-50 min-w-300 h-125 overflow-hidden rounded-2xl border bg-white p-10 shadow-2xl">
           <h3 className="mb-6 text-lg font-semibold">{categoryDisplayName}</h3>
           <SubcategoryView subcategories={activeCategory?.childItems} />
         </div>
