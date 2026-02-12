@@ -2,11 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/useAuth";
 import ProfileForm from "@/features/profile/ProfileForm";
+import { Plus } from "lucide-react";
 import Avatar from "react-avatar";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Profile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("section") || "info";
   const verificationStatus = user?.status ? "Verified" : "Not verified";
@@ -108,6 +110,25 @@ export default function Profile() {
                   >
                     {verificationStatus}
                   </p>
+                </div>
+                <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">
+                        გახდი სერვისის პროვაიდერი
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        გამოაქვეყნე შენი სერვისი და მიაწოდე მომხმარებლებს
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => navigate("/create-service")}
+                      className="flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Plus className="w-4 h-4" />
+                      შექმენი სერვისი
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

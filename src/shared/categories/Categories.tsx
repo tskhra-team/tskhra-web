@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import CategoryNav from "./CategoryNav";
 import SubcategoryView from "./SubcategoryView";
 import { categoryNameToKey } from "./categoryTranslations";
@@ -9,7 +10,19 @@ import { useCategories } from "./useCategories";
 export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const { data, isLoading, error } = useCategories(platform);
   const { t } = useTranslation("categories");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  // Sync activeIndex with URL params
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam && data) {
+      const index = data.findIndex(cat => cat.name.toLowerCase() === categoryParam.toLowerCase());
+      if (index !== -1) {
+        setActiveIndex(index);
+      }
+    }
+  }, [searchParams, data]);
 
   const activeCategory = useMemo(() => activeIndex !== null ? data?.[activeIndex] : null, [data, activeIndex]);
 
@@ -20,12 +33,21 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const translationKey = activeCategory?.name ? categoryNameToKey[activeCategory.name] : null;
   const categoryDisplayName = translationKey ? t(translationKey) : activeCategory?.name;
 
+  const handleSelectCategory = (index: number | null, categoryName?: string) => {
+    setActiveIndex(index);
+    if (index !== null && categoryName) {
+      setSearchParams({ category: categoryName.toLowerCase() });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   return (
     <div className="relative z-10" onMouseLeave={() => setActiveIndex(null)}>
       <CategoryNav
         categories={data}
         activeIndex={activeIndex}
-        onSelect={setActiveIndex}
+        onSelect={handleSelectCategory}
       />
 
       {activeCategory && (

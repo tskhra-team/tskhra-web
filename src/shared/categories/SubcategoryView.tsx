@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import type { CategoryItem } from "./types";
 import { categoryNameToKey } from "./categoryTranslations";
 
@@ -8,10 +9,18 @@ interface SubcategoryViewProps {
 
 export default function SubcategoryView({ subcategories }: SubcategoryViewProps) {
   const { t } = useTranslation("categories");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (!subcategories || subcategories.length === 0) {
     return <div className="text-sm text-gray-500">No subcategories available.</div>;
   }
+
+  const handleSubcategoryClick = (subcategoryName: string) => {
+    const category = searchParams.get("category");
+    if (category) {
+      setSearchParams({ category, subcategory: subcategoryName.toLowerCase() });
+    }
+  };
 
   return (
     <div className="grid grid-cols-4 gap-6">
@@ -20,10 +29,10 @@ export default function SubcategoryView({ subcategories }: SubcategoryViewProps)
         const displayName = translationKey ? t(translationKey) : subcategory.name;
 
         return (
-          <a
+          <button
             key={subcategory.name}
-            href={subcategory.url || "#"}
-            className="group rounded-xl border bg-white p-4 transition-all hover:shadow-md h-50 flex flex-col"
+            onClick={() => handleSubcategoryClick(subcategory.name)}
+            className="group rounded-xl border bg-white p-4 transition-all hover:shadow-md h-50 flex flex-col text-left"
           >
             {subcategory.imageUrl && (
               <div className="mb-3 flex-1 overflow-hidden rounded-lg bg-gray-100">
@@ -42,7 +51,7 @@ export default function SubcategoryView({ subcategories }: SubcategoryViewProps)
             <h4 className="text-sm font-medium text-gray-900 group-hover:text-blue-600">
               {displayName}
             </h4>
-          </a>
+          </button>
         );
       })}
     </div>

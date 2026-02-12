@@ -5,7 +5,7 @@ import { categoryNameToKey } from "./categoryTranslations";
 interface CategoryNavProps {
   categories: CategoryItem[];
   activeIndex: number | null;
-  onSelect: (index: number | null) => void;
+  onSelect: (index: number | null, categoryName?: string) => void;
 }
 
 export default function CategoryNav({ categories, activeIndex, onSelect }: CategoryNavProps) {
@@ -22,7 +22,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect }: Categ
             <li key={category.name}>
               <button
                 onMouseEnter={() => onSelect(index)}
-                onClick={() => onSelect(index)}
+                onClick={() => onSelect(index, category.name)}
                 className={`w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors ${
                   index === activeIndex
                     ? "bg-blue-50 text-blue-700"
