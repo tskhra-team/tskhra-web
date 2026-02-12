@@ -5,9 +5,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 
 export default function AuthLayout() {
-  const { authState } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  if (authState?.accessToken) {
+  if (isAuthenticated) {
     return <Navigate to="/" />;
   }
 

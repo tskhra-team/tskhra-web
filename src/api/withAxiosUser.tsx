@@ -1,10 +1,9 @@
-import Cookies from "js-cookie";
-import type { FC, MutableRefObject, ReactElement, ReactNode } from "react";
+import type { FC, ReactElement, ReactNode } from "react";
 import { memo, useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import { useAuth } from "@/context/useAuth";
-import { refreshTokens } from "@/features/auth/useRefreshTokens";
+import { keycloakClient } from "@/features/auth/useKeycloak";
 import { privateInstance } from ".";
 
 interface Props {
@@ -14,7 +13,7 @@ interface Props {
 type SubscribeCallback = (token: string) => void;
 
 let refreshSubscribers: Array<SubscribeCallback> = [];
-function onRrefreshed(token: string) {
+function onRefreshed(token: string) {
   refreshSubscribers.forEach((cb) => cb(token));
 }
 
@@ -22,39 +21,37 @@ function subscribeTokenRefresh(cb: SubscribeCallback) {
   refreshSubscribers.push(cb);
 }
 
-const refreshTokenHandler = async (
-  setTokens: (
-    tokens: { accessToken: string; refreshToken: string } | null,
-  ) => void,
-  actualAccessRef: MutableRefObject<string | undefined>,
-) => {
-  const refreshToken = Cookies.get("refreshToken");
-  if (refreshToken) {
-    try {
-      const { accessToken: newAccess, refreshToken: newRefresh } =
-        await refreshTokens(refreshToken);
-      actualAccessRef.current = newAccess;
-      setTokens({ accessToken: newAccess, refreshToken: newRefresh });
-      return newAccess;
-    } catch {
-      setTokens(null);
-      window.location.href = "/login";
+const refreshTokenHandler = async (actualAccessRef: {
+  current: string | undefined;
+}) => {
+  try {
+    // Use Keycloak's built-in token refresh (minValidity forces refresh)
+    const refreshed = await keycloakClient.updateToken(5);
+
+    if (refreshed && keycloakClient.token) {
+      actualAccessRef.current = keycloakClient.token;
+      return keycloakClient.token;
     }
-  } else {
-    setTokens(null);
-    window.location.href = "/login";
+  } catch (error) {
+    console.error("Failed to refresh token:", error);
+    // Token refresh failed - logout and redirect
+    keycloakClient.logout();
   }
   return null;
 };
 
 const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
-  const { authState, setTokens } = useAuth();
+  const { token, isAuthenticated } = useAuth();
   const [isSet, setIsSet] = useState<boolean>(false);
-  const actualAccessRef = useRef<string | undefined>(authState?.accessToken);
+  const actualAccessRef = useRef<string | undefined>(token);
   const isProcessingRef = useRef<boolean>(false);
-  const accessToken = Cookies.get("accessToken");
   const searchParams = new URLSearchParams(window.location.search);
   const paymentStatus = searchParams.get("paymentStatus");
+
+  // Update ref when token changes
+  useEffect(() => {
+    actualAccessRef.current = token;
+  }, [token]);
 
   useEffect(() => {
     if (!actualAccessRef.current) return;
@@ -69,29 +66,31 @@ const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
         return request;
       },
       (error) => Promise.reject(error.response),
-    ); //adding in every user request his accessToken
+    );
 
     const responseInterceptor = privateInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
-        if (error.response?.status === 401) {
+
+        // Handle 401 errors by refreshing Keycloak token
+        if (error.response?.status === 401 && !originalRequest._retry) {
           if (!isProcessingRef.current) {
             isProcessingRef.current = true;
-            const newToken = await refreshTokenHandler(
-              setTokens,
-              actualAccessRef,
-            );
+            originalRequest._retry = true;
+
+            const newToken = await refreshTokenHandler(actualAccessRef);
             isProcessingRef.current = false;
 
             if (newToken) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              onRrefreshed(newToken);
+              onRefreshed(newToken);
               refreshSubscribers = [];
               return privateInstance.request(originalRequest);
             }
           }
 
+          // Queue requests while refresh is in progress
           return new Promise((resolve) => {
             subscribeTokenRefresh((token: string) => {
               originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -102,7 +101,7 @@ const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
 
         return Promise.reject(error);
       },
-    ); //before getting response we checking if user has a accessToken if he handt calling refresh token and settingit
+    );
 
     setIsSet(true);
 
@@ -111,11 +110,12 @@ const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
       privateInstance.interceptors.response.eject(responseInterceptor);
       refreshSubscribers = [];
     };
-  }, [authState?.accessToken, setTokens]);
+  }, [token]);
 
-  if (!accessToken) {
-    return <Navigate to="login" state={paymentStatus} />;
+  if (!isAuthenticated || !token) {
+    return <Navigate to="/login" state={paymentStatus} />;
   }
+
   return <>{isSet && children}</>;
 };
 

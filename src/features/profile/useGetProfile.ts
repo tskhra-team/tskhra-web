@@ -12,18 +12,17 @@ export type UserType = {
   gender: string | undefined;
   birthDate: string | undefined;
 };
-const getUser = async () => {
-  const response = await privateInstance.get("/users/status"); //random endpoint here now
+const getProfile = async () => {
+  const response = await privateInstance.get("/user/profile"); //random endpoint here now
 
   return response.data;
 };
 
-const useGetUser = () => {
+const useGetProfile = () => {
   return useQuery<UserType, AxiosError>({
-    queryFn: getUser,
-    queryKey: ["getUser"],
-    enabled: false, // DELETE THIS WHEN ENDPOINT IS READY!!!!
+    queryFn: getProfile,
+    queryKey: ["getProfile"],
   });
 };
 
-export default useGetUser;
+export default useGetProfile;

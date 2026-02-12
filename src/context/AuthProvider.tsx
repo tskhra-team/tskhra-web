@@ -1,14 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
-import Cookies from "js-cookie";
-import {
-  useCallback,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
+import { type ReactNode } from "react";
 
-import type { UserType } from "@/features/profile/useGetUser";
+import Loader from "@/components/Loader";
+import { useKeycloak } from "@/features/auth/useKeycloak";
 import { AuthContext } from "./useAuth";
 
 interface AuthState {
@@ -17,82 +11,49 @@ interface AuthState {
 }
 
 export interface AuthContextType {
-  authState: AuthState | null;
-  login: (data: AuthState) => void;
+  // Keycloak properties
+  isAuthenticated: boolean;
+  token: string | undefined;
+  refreshToken: string | undefined;
+
+  // Auth actions
+  login: () => void;
   logout: () => void;
-  setTokens: (tokens: AuthState | null) => void;
-  user: UserType | null;
-  setUser: Dispatch<SetStateAction<UserType | null>>;
+  register: () => void;
+
+  // Legacy compatibility (used in AppLayout)
+  authState: AuthState | null;
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
-  const [authState, setAuthState] = useState<AuthState | null>({
-    accessToken: Cookies.get("accessToken") || "",
-    refreshToken: Cookies.get("refreshToken") || "",
-  });
+  const keycloak = useKeycloak();
 
-  const [user, setUser] = useState<UserType | null>({
-    status: false,
-    userName: "test",
-    firstName: "",
-    secondName: "",
-    userEmail: "testTEST@gmail.com",
-    createDate: "19-20-2026",
-    phoneNumber: "",
-    gender: "",
-    birthDate: "",
-  });
-
-  const login = (data: AuthState) => {
-    setAuthState(data);
-    Cookies.set("accessToken", data.accessToken, {
-      secure: true,
-      sameSite: "Strict",
-    });
-    Cookies.set("refreshToken", data.refreshToken, {
-      secure: true,
-      sameSite: "Strict",
-    });
-  };
-
-  const logout = () => {
-    setAuthState(null);
+  const handleLogout = () => {
+    keycloak.logout();
     queryClient.clear();
-    setUser(null);
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
   };
 
-  const setTokens = useCallback((tokens: AuthState | null) => {
-    if (!tokens) {
-      setAuthState(null);
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
-      return;
-    }
+  // Legacy compatibility - map Keycloak token to old authState format
+  const authState: AuthState | null = keycloak.token
+    ? { accessToken: keycloak.token, refreshToken: keycloak.refreshToken || "" }
+    : null;
 
-    setAuthState(tokens);
-
-    Cookies.set("accessToken", tokens.accessToken, {
-      secure: true,
-      sameSite: "Strict",
-    });
-    Cookies.set("refreshToken", tokens.refreshToken, {
-      secure: true,
-      sameSite: "Strict",
-    });
-  }, []);
+  // Show loading state while Keycloak initializes
+  if (keycloak.isLoading) {
+    return <Loader />;
+  }
 
   return (
     <AuthContext.Provider
       value={{
+        isAuthenticated: keycloak.isAuthenticated,
+        token: keycloak.token,
+        refreshToken: keycloak.refreshToken,
+        login: keycloak.login,
+        logout: handleLogout,
+        register: keycloak.register,
         authState,
-        login,
-        logout,
-        setTokens,
-        user,
-        setUser,
       }}
     >
       {children}

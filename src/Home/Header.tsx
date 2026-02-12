@@ -23,7 +23,7 @@ export default function Header() {
   // const { user } = useAuth();
   const handleLogout = () => {
     logout();
-    navigate("/");
+    // navigate("/");
   };
   const { t } = useTranslation("common");
 
