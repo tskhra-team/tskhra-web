@@ -9,21 +9,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
+import useGetUser from "@/features/user/useGetUser";
 import { LogOut, User } from "lucide-react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 
-interface TopBarProps {
-  isAuthenticated: boolean;
-}
-
-export default function TopBar({ isAuthenticated }: TopBarProps) {
+export default function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation("common");
-  const { logout, user } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+  const { data: user } = useGetUser();
 
   const handleLogout = () => {
     logout();

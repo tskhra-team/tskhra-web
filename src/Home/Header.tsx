@@ -4,52 +4,35 @@ import AuthenticatedHeader from "@/Home/AuthenticatedHeader";
 import PublicHeader from "@/Home/PublicHeader";
 import SwappingHeader from "@/Swapping/SwappingHeader";
 import Cookies from "js-cookie";
+import type { ReactElement } from "react";
 import { useLocation } from "react-router-dom";
+
+const headerMap: Record<string, ReactElement> = {
+  "/profile": <AuthenticatedHeader />,
+  "/ecommerce": <EcommerceHeader />,
+  "/booking": <BookingHeader />,
+  "/swapping": <SwappingHeader />,
+};
 
 export default function Header() {
   const location = useLocation();
-  const { logout, user, authState } = useAuth();
-  // const { user } = useAuth();
-  const handleLogout = () => {
-    logout();
-    // navigate("/");
-  };
-  const { t } = useTranslation("common");
   const accessToken = Cookies.get("accessToken");
-
-  // Check if user is authenticated
   const isAuthenticated = !!accessToken;
 
-  // Determine which header to render based on location and auth status
-  const renderHeader = () => {
-    // For profile page, always show authenticated header
-    if (location.pathname === "/profile") {
-      return <AuthenticatedHeader />;
-    }
+  // Check for exact match first
+  const exactMatch = headerMap[location.pathname];
+  if (exactMatch) return exactMatch;
 
-    // For ecommerce page, show EcommerceHeader
-    if (location.pathname === "/ecommerce") {
-      return <EcommerceHeader />;
-    }
+  // Check for booking paths (includes /booking/*)
+  if (location.pathname.includes("/booking")) {
+    return <BookingHeader />;
+  }
 
-    // For booking page, show BookingHeader
-    if (location.pathname.includes("/booking")) {
-      return <BookingHeader />;
-    }
+  // For home page - check auth status
+  if (location.pathname === "/") {
+    return isAuthenticated ? <AuthenticatedHeader /> : <PublicHeader />;
+  }
 
-    // For swapping page, show SwappingHeader
-    if (location.pathname === "/swapping") {
-      return <SwappingHeader />;
-    }
-
-    // For home page - check auth status
-    if (location.pathname === "/") {
-      return isAuthenticated ? <AuthenticatedHeader /> : <PublicHeader />;
-    }
-
-    // Default to public header
-    return <PublicHeader />;
-  };
-
-  return <>{renderHeader()}</>;
+  // Default to public header
+  return <PublicHeader />;
 }

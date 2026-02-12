@@ -13,51 +13,76 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAuth } from "@/context/useAuth";
 import {
   profileSchema,
   type ProfileFormData,
 } from "@/features/profile/profileSchema";
+import useGetProfile from "@/features/profile/useGetProfile";
+import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar as CalendarIcon, Pencil } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import PasswordChangeModal from "./PasswordChangeModal";
-import useGetUser from "@/features/user/useGetUser";
 
 function ProfileForm() {
-  const [enableEdit, setEnableEdit] = useState(true);
-  const { data: user } = useGetUser();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const { data: profile } = useGetProfile();
+  const { mutate: updateProfile, isPending } = useUpdateProfile();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  let fullName = user?.userName;
-  if (user?.firstName && user?.secondName) {
-    fullName = user?.firstName + " " + user?.secondName;
+  let fullName = profile?.userName;
+  if (profile?.firstName && profile?.lastName) {
+    fullName = profile?.firstName + " " + profile?.lastName;
   }
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<ProfileFormData>({
     resolver: yupResolver(profileSchema),
     defaultValues: {
-      firstName: user?.firstName || undefined,
-      lastName: user?.secondName || undefined,
-      gender: user?.gender || undefined,
-      birthDate: user?.birthDate
-        ? new Date(user.birthDate.split("-").reverse().join("-"))
-        : undefined,
-      phoneCountryCode: "+995",
-      phoneNumber: user?.phoneNumber || undefined,
-      email: user?.userEmail,
+      firstName: "",
+      lastName: "",
+      gender: "",
+      phoneNumber: "",
+      birthDate: new Date(),
+      email: "",
+      personalNumber: "",
+      phoneCountryCode: "",
     },
   });
 
+  // Update form when profile data loads
+  useEffect(() => {
+    if (profile) {
+      reset({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        gender: profile.gender,
+        birthDate: profile.birthDate
+          ? new Date(profile.birthDate.split("-").reverse().join("-"))
+          : undefined,
+        phoneCountryCode: "+995",
+        phoneNumber: profile.phoneNumber,
+        email: profile.userEmail,
+      });
+    }
+  }, [profile, reset]);
+
   const onSubmit = (data: ProfileFormData) => {
-    console.log("Form data:", data);
-    // Handle form submission here
+    updateProfile(data, {
+      onSuccess: () => {
+        setIsEditMode(false);
+      },
+      onError: () => {
+        toast.error("Something went wrong");
+      },
+    });
   };
 
   return (
@@ -74,7 +99,7 @@ function ProfileForm() {
               round
               className="md:w-20! md:h-20!"
             />
-            {!enableEdit && (
+            {isEditMode && (
               <button
                 type="button"
                 className="absolute bottom-0 right-0 bg-gray-200 rounded-full p-1.5 md:p-2 hover:bg-gray-300"
@@ -113,11 +138,11 @@ function ProfileForm() {
               type="text"
               placeholder="სახელი"
               className={`transition-all duration-300 ${
-                enableEdit
-                  ? "border-gray-200 bg-gray-50"
-                  : "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-left-1"
+                isEditMode
+                  ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-left-1"
+                  : "border-gray-200 bg-gray-50"
               }`}
-              disabled={enableEdit}
+              disabled={!isEditMode}
             />
             {errors.firstName && (
               <p className="text-red-500 text-xs md:text-sm mt-1">
@@ -134,11 +159,11 @@ function ProfileForm() {
               type="text"
               placeholder="გვარი"
               className={`transition-all duration-300 ${
-                enableEdit
-                  ? "border-gray-200 bg-gray-50"
-                  : "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-right-1"
+                isEditMode
+                  ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-right-1"
+                  : "border-gray-200 bg-gray-50"
               }`}
-              disabled={enableEdit}
+              disabled={!isEditMode}
             />
             {errors.lastName && (
               <p className="text-red-500 text-xs md:text-sm mt-1">
@@ -160,13 +185,13 @@ function ProfileForm() {
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
-                  disabled={enableEdit}
+                  disabled={!isEditMode}
                 >
                   <SelectTrigger
                     className={`w-full transition-all duration-300 ${
-                      enableEdit
-                        ? "border-gray-200 bg-gray-50"
-                        : "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-left-1"
+                      isEditMode
+                        ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-left-1"
+                        : "border-gray-200 bg-gray-50"
                     }`}
                   >
                     <SelectValue placeholder="აირჩიეთ სქესი" />
@@ -197,12 +222,12 @@ function ProfileForm() {
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
-                      disabled={enableEdit}
+                      disabled={!isEditMode}
                       variant="outline"
                       className={`w-full justify-start text-left font-normal px-2 md:px-3 py-1.5 md:py-2 text-sm md:text-base border rounded-lg transition-all duration-300 ${
-                        enableEdit
-                          ? "border-gray-200 bg-gray-50 hover:bg-gray-100"
-                          : "border-green-500 border-2 shadow-lg shadow-green-100 bg-white hover:bg-gray-50 animate-in slide-in-from-right-1"
+                        isEditMode
+                          ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white hover:bg-gray-50 animate-in slide-in-from-right-1"
+                          : "border-gray-200 bg-gray-50 hover:bg-gray-100"
                       }`}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
@@ -253,12 +278,12 @@ function ProfileForm() {
               {...register("phoneNumber")}
               type="text"
               className={`flex-1 transition-all duration-300 ${
-                enableEdit
-                  ? "border-gray-200 bg-gray-50"
-                  : "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-bottom-2"
+                isEditMode
+                  ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-bottom-2"
+                  : "border-gray-200 bg-gray-50"
               }`}
               placeholder="ტელეფონის ნომერი"
-              disabled={enableEdit}
+              disabled={!isEditMode}
             />
           </div>
           {errors.phoneNumber && (
@@ -297,16 +322,16 @@ function ProfileForm() {
         </div> */}
 
         <div className="flex flex-col sm:flex-row gap-2 md:gap-3 pt-4">
-          {enableEdit ? (
+          {!isEditMode ? (
             <Button
               type="button"
-              className="px-6 py-3 text-sm md:text-base 
-bg-blue-500 hover:bg-blue-600 
-text-white rounded-xl 
-transition-all duration-200 
-w-full sm:w-auto border-0 
+              className="px-6 py-3 text-sm md:text-base
+bg-blue-500 hover:bg-blue-600
+text-white rounded-xl
+transition-all duration-200
+w-full sm:w-auto border-0
 flex items-center gap-2"
-              onClick={() => setEnableEdit((value) => !value)}
+              onClick={() => setIsEditMode((value) => !value)}
             >
               <Pencil className="h-4 w-4" />
               მონაცემების შეცვლა
@@ -317,15 +342,19 @@ flex items-center gap-2"
                 type="button"
                 variant="outline"
                 className="px-4 md:px-6 py-2 text-sm md:text-base border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 w-full sm:w-auto"
-                onClick={() => setEnableEdit((value) => !value)}
+                onClick={() => {
+                  setIsEditMode(false);
+                  reset();
+                }}
               >
                 გაუქმება
               </Button>
               <Button
                 type="submit"
-                className="px-4 md:px-6 py-2 text-sm md:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md"
+                disabled={isPending}
+                className="px-4 md:px-6 py-2 text-sm md:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                შენახვა
+                {isPending ? "მიმდინარეობს..." : "შენახვა"}
               </Button>
             </div>
           )}

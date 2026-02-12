@@ -1,20 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileForm from "@/features/profile/ProfileForm";
-import useGetUser from "@/features/profile/useGetProfile";
+import useGetProfile from "@/features/profile/useGetProfile";
 import { Plus } from "lucide-react";
 import Avatar from "react-avatar";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Profile() {
-  const { data: user } = useGetUser();
+  const { data: profile } = useGetProfile();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("section") || "info";
-  const verificationStatus = user?.status ? "Verified" : "Not verified";
-  const isFullnameExist = user?.firstName && user?.secondName;
+  const verificationStatus = profile?.status ? "Verified" : "Not verified";
+  const isFullnameExist = profile?.firstName && profile?.lastName;
   const fullName = isFullnameExist
-    ? user?.firstName + " " + user?.secondName
-    : user?.userName;
+    ? profile?.firstName + " " + profile?.lastName
+    : profile?.userName;
   const tabNames = {
     history: "History",
     info: "Personal Infrormation",
@@ -44,7 +45,7 @@ export default function Profile() {
               Status: {verificationStatus}
             </p>
             <p className="text-xs md:text-sm text-gray-500">
-              {user?.userEmail}
+              {profile?.userEmail}
             </p>
           </div>
         </div>
@@ -85,11 +86,11 @@ export default function Profile() {
               <div className="space-y-3">
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Username</p>
-                  <p className="font-medium">{user?.userName}</p>
+                  <p className="font-medium">{profile?.userName}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Email</p>
-                  <p className="font-medium">{user?.userEmail}</p>
+                  <p className="font-medium">{profile?.userEmail}</p>
                 </div>
                 {isFullnameExist && (
                   <div className="p-4 border rounded-lg">
@@ -100,12 +101,12 @@ export default function Profile() {
 
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Account Created</p>
-                  <p className="font-medium">{user?.createDate}</p>
+                  <p className="font-medium">{profile?.createDate}</p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <p className="text-sm text-gray-600">Status</p>
                   <p
-                    className={`font-medium ${user?.status ? "text-green-500" : "text-red-500"} `}
+                    className={`font-medium ${profile?.status ? "text-green-500" : "text-red-500"} `}
                   >
                     {verificationStatus}
                   </p>

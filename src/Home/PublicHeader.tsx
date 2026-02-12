@@ -4,7 +4,7 @@ import HomeNavigation from "@/components/navigations/HomeNavigation";
 export default function PublicHeader() {
   return (
     <div>
-      <TopBar isAuthenticated={false} />
+      <TopBar />
       <HomeNavigation />
     </div>
   );
