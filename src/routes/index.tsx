@@ -1,3 +1,4 @@
+import WithAxiosUser from "@/api/withAxiosUser";
 import Loader from "@/components/Loader";
 import AppLayout from "@/layouts/AppLayout";
 import AuthLayout from "@/layouts/AuthLayout";
@@ -73,10 +74,13 @@ export const routes = [
     ],
   },
 
-
   // App Layout - Protected routes with main Header + Footer
   {
-    element: <AppLayout />,
+    element: (
+      <WithAxiosUser>
+        <AppLayout />,
+      </WithAxiosUser>
+    ),
     children: [
       {
         path: "/profile",

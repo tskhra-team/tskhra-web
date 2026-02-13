@@ -19,6 +19,7 @@ import {
 } from "@/features/profile/profileSchema";
 import useGetProfile from "@/features/profile/useGetProfile";
 import useUpdateProfile from "@/features/profile/useUpdateProfile";
+import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar as CalendarIcon, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -29,13 +30,18 @@ import PasswordChangeModal from "./PasswordChangeModal";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
-  const { data: profile } = useGetProfile();
+  const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [timeZone, setTimeZone] = useState<string>();
   let fullName = profile?.userName;
   if (profile?.firstName && profile?.lastName) {
     fullName = profile?.firstName + " " + profile?.lastName;
   }
+
+  useEffect(() => {
+    setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  }, []);
 
   const {
     register,
@@ -51,9 +57,6 @@ function ProfileForm() {
       gender: "",
       phoneNumber: "",
       birthDate: new Date(),
-      email: "",
-      personalNumber: "",
-      phoneCountryCode: "",
     },
   });
 
@@ -64,20 +67,24 @@ function ProfileForm() {
         firstName: profile.firstName,
         lastName: profile.lastName,
         gender: profile.gender,
-        birthDate: profile.birthDate
-          ? new Date(profile.birthDate.split("-").reverse().join("-"))
-          : undefined,
+        birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
         phoneCountryCode: "+995",
-        phoneNumber: profile.phoneNumber,
-        email: profile.userEmail,
+        phoneNumber: profile.phoneNumber?.slice(4),
       });
     }
   }, [profile, reset]);
 
   const onSubmit = (data: ProfileFormData) => {
     updateProfile(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         setIsEditMode(false);
+        refetch();
+        queryClient.invalidateQueries({
+          queryKey: ["getUser"],
+        });
+        toast.success("User have been successfully updated!", {
+          position: "top-center",
+        });
       },
       onError: () => {
         toast.error("Something went wrong");
@@ -186,6 +193,7 @@ function ProfileForm() {
                   onValueChange={field.onChange}
                   value={field.value}
                   disabled={!isEditMode}
+                  key={field.value}
                 >
                   <SelectTrigger
                     className={`w-full transition-all duration-300 ${
@@ -197,9 +205,9 @@ function ProfileForm() {
                     <SelectValue placeholder="აირჩიეთ სქესი" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="female">მდედრობითი</SelectItem>
-                    <SelectItem value="male">მამრობითი</SelectItem>
-                    <SelectItem value="other">სხვა</SelectItem>
+                    <SelectItem value="FEMALE">მდედრობითი</SelectItem>
+                    <SelectItem value="MALE">მამრობითი</SelectItem>
+                    <SelectItem value="OTHER">სხვა</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -249,6 +257,7 @@ function ProfileForm() {
                       }}
                       fromYear={1900}
                       toYear={new Date().getFullYear()}
+                      timeZone={timeZone}
                     />
                   </PopoverContent>
                 </Popover>
@@ -268,7 +277,6 @@ function ProfileForm() {
           </label>
           <div className="flex gap-2">
             <Input
-              {...register("phoneCountryCode")}
               type="text"
               className="w-16 md:w-20"
               placeholder="+995"
@@ -297,17 +305,12 @@ function ProfileForm() {
             ელფოსტა
           </label>
           <Input
-            {...register("email")}
+            placeholder={profile?.userEmail}
             type="email"
             readOnly
             disabled
             className="bg-gray-100 cursor-not-allowed"
           />
-          {errors.email && (
-            <p className="text-red-500 text-xs md:text-sm mt-1">
-              {errors.email.message}
-            </p>
-          )}
         </div>
 
         {/* <div className="pt-2">
@@ -323,19 +326,21 @@ function ProfileForm() {
 
         <div className="flex flex-col sm:flex-row gap-2 md:gap-3 pt-4">
           {!isEditMode ? (
-            <Button
-              type="button"
-              className="px-6 py-3 text-sm md:text-base
+            <>
+              <Button
+                type="button"
+                className="px-6 py-3 text-sm md:text-base
 bg-blue-500 hover:bg-blue-600
 text-white rounded-xl
 transition-all duration-200
 w-full sm:w-auto border-0
 flex items-center gap-2"
-              onClick={() => setIsEditMode((value) => !value)}
-            >
-              <Pencil className="h-4 w-4" />
-              მონაცემების შეცვლა
-            </Button>
+                onClick={() => setIsEditMode((value) => !value)}
+              >
+                <Pencil className="h-4 w-4" />
+                მონაცემების შეცვლა
+              </Button>
+            </>
           ) : (
             <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
               <Button

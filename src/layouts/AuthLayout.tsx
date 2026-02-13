@@ -2,7 +2,6 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/context/useAuth";
 import Logo from "@/shared/Logo";
 import { Navigate, Outlet } from "react-router-dom";
-import { Toaster } from "sonner";
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth();
@@ -22,7 +21,6 @@ export default function AuthLayout() {
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/20 rounded-full blur-3xl" />
         </div>
         <Outlet />
-        <Toaster />
       </div>
     </>
   );

@@ -8,11 +8,11 @@ const updateProfile = async (data: ProfileFormData) => {
   const { birthDate, ...rest } = data;
   const updateData = {
     birthDate: data.birthDate
-      ? data.birthDate.toISOString().split("T")[0]
+      ? `${data.birthDate.getFullYear()}-${String(data.birthDate.getMonth() + 1).padStart(2, "0")}-${String(data.birthDate.getDate()).padStart(2, "0")}`
       : undefined,
     ...rest,
   };
-  const response = await privateInstance.put("user-profile/me", updateData);
+  const response = await privateInstance.post("user-profile/me", updateData);
 
   return response.data;
 };

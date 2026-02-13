@@ -1,21 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/context/useAuth";
+import HistoryTab from "@/features/profile/HistoryTab";
+import InfoTab from "@/features/profile/InfoTab";
 import ProfileForm from "@/features/profile/ProfileForm";
 import useGetProfile from "@/features/profile/useGetProfile";
-import { Plus } from "lucide-react";
 import Avatar from "react-avatar";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export default function Profile() {
   const { data: profile } = useGetProfile();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { token } = useAuth();
   const tab = searchParams.get("section") || "info";
-  const verificationStatus = profile?.status ? "Verified" : "Not verified";
+  const verificationStatus = profile?.status;
   const isFullnameExist = profile?.firstName && profile?.lastName;
   const fullName = isFullnameExist
     ? profile?.firstName + " " + profile?.lastName
     : profile?.userName;
+
+  const tabs = [
+    { value: "info", label: "Personal Information" },
+    { value: "history", label: "History" },
+    { value: "settings", label: "Account Settings" },
+  ];
+
   const tabNames = {
     history: "History",
     info: "Personal Infrormation",
@@ -42,7 +51,7 @@ export default function Profile() {
           <div className="flex flex-col flex-1">
             <p className="text-xl md:text-2xl font-semibold">{fullName}</p>
             <p className="text-sm md:text-base text-gray-600">
-              Status: {verificationStatus}
+              Status: {verificationStatus ? "Verified" : "Not Verified"}
             </p>
             <p className="text-xs md:text-sm text-gray-500">
               {profile?.userEmail}
@@ -69,199 +78,34 @@ export default function Profile() {
           }}
           className="w-full flex flex-col lg:flex-row"
         >
-          <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start">
-            <TabsTrigger value="info" className="w-full justify-start">
-              Personal Information
-            </TabsTrigger>
-            <TabsTrigger value="history" className="w-full justify-start">
-              History
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="w-full justify-start">
-              Account Settings
-            </TabsTrigger>
+          <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start ">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="w-full justify-start p-4 text-md"
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
+          {/*====== Info Tab ===== */}
           <TabsContent value="info" className="flex-1">
-            <div className="bg-white px-4 md:px-6">
-              <div className="space-y-3">
-                <div className="p-4 border rounded-lg">
-                  <p className="text-sm text-gray-600">Username</p>
-                  <p className="font-medium">{profile?.userName}</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <p className="text-sm text-gray-600">Email</p>
-                  <p className="font-medium">{profile?.userEmail}</p>
-                </div>
-                {isFullnameExist && (
-                  <div className="p-4 border rounded-lg">
-                    <p className="text-sm text-gray-600">Full Name</p>
-                    <p className="font-medium">{fullName}</p>
-                  </div>
-                )}
-
-                <div className="p-4 border rounded-lg">
-                  <p className="text-sm text-gray-600">Account Created</p>
-                  <p className="font-medium">{profile?.createDate}</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <p className="text-sm text-gray-600">Status</p>
-                  <p
-                    className={`font-medium ${profile?.status ? "text-green-500" : "text-red-500"} `}
-                  >
-                    {verificationStatus}
-                  </p>
-                </div>
-                <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">
-                        გახდი სერვისის პროვაიდერი
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-4">
-                        გამოაქვეყნე შენი სერვისი და მიაწოდე მომხმარებლებს
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => navigate("/create-service")}
-                      className="flex items-center gap-2 whitespace-nowrap"
-                    >
-                      <Plus className="w-4 h-4" />
-                      შექმენი სერვისი
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <InfoTab
+              profile={profile}
+              isFullnameExist={isFullnameExist}
+              fullName={fullName}
+              verificationStatus={verificationStatus}
+            />
           </TabsContent>
 
+          {/* =====History Tab===== */}
           <TabsContent
             value="history"
-            className="rounded-lg shadow-sm border p-6"
+            className="bg-linear-to-br from-gray-50 to-blue-50/30 px-4 md:px-6 py-8 rounded-2xl"
           >
-            <Tabs defaultValue="buying" orientation="horizontal">
-              <div className="flex justify-center mb-6">
-                <TabsList style={{ flexDirection: "row" }}>
-                  <TabsTrigger value="buying">Buying</TabsTrigger>
-                  <TabsTrigger value="booking">Booking</TabsTrigger>
-                  <TabsTrigger value="swapping">Swapping</TabsTrigger>
-                </TabsList>
-              </div>
-
-              <TabsContent value="buying">
-                <div className="bg-white p-6">
-                  <div className="space-y-4">
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Order #12345</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-15</p>
-                      <p className="text-sm text-gray-600">
-                        Product: Laptop Stand
-                      </p>
-                      <p className="text-sm text-gray-600">Status: Completed</p>
-                      <p className="text-sm font-semibold">Total: $150.00</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Order #12344</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-10</p>
-                      <p className="text-sm text-gray-600">
-                        Product: Wireless Mouse
-                      </p>
-                      <p className="text-sm text-gray-600">Status: Shipped</p>
-                      <p className="text-sm font-semibold">Total: $89.99</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Order #12343</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-05</p>
-                      <p className="text-sm text-gray-600">
-                        Product: USB Cable
-                      </p>
-                      <p className="text-sm text-gray-600">Status: Delivered</p>
-                      <p className="text-sm font-semibold">Total: $12.99</p>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="booking">
-                <div className="bg-white p-6">
-                  <div className="space-y-4">
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Booking #BK789</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-20</p>
-                      <p className="text-sm text-gray-600">
-                        Service: Photography Session
-                      </p>
-                      <p className="text-sm text-gray-600">Duration: 2 hours</p>
-                      <p className="text-sm text-gray-600">Status: Confirmed</p>
-                      <p className="text-sm font-semibold">Total: $200.00</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Booking #BK788</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-12</p>
-                      <p className="text-sm text-gray-600">
-                        Service: Business Consultation
-                      </p>
-                      <p className="text-sm text-gray-600">Duration: 1 hour</p>
-                      <p className="text-sm text-gray-600">Status: Completed</p>
-                      <p className="text-sm font-semibold">Total: $50.00</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Booking #BK787</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-03</p>
-                      <p className="text-sm text-gray-600">
-                        Service: Dental Checkup
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Duration: 30 minutes
-                      </p>
-                      <p className="text-sm text-gray-600">Status: Completed</p>
-                      <p className="text-sm font-semibold">Total: $75.00</p>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="swapping">
-                <div className="bg-white p-6">
-                  <div className="space-y-4">
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Swap #SW456</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-18</p>
-                      <p className="text-sm text-gray-600">
-                        Your Item: Gaming Keyboard
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Received Item: Mechanical Keyboard
-                      </p>
-                      <p className="text-sm text-gray-600">Status: Completed</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Swap #SW455</p>
-                      <p className="text-sm text-gray-600">Date: 2026-01-08</p>
-                      <p className="text-sm text-gray-600">
-                        Your Item: Headphones
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Received Item: Speakers
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Status: In Progress
-                      </p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <p className="font-medium">Swap #SW454</p>
-                      <p className="text-sm text-gray-600">Date: 2025-12-28</p>
-                      <p className="text-sm text-gray-600">
-                        Your Item: Monitor 24"
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Received Item: Monitor 27"
-                      </p>
-                      <p className="text-sm text-gray-600">Status: Completed</p>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+            <HistoryTab />
           </TabsContent>
 
           <TabsContent value="paymentMethod" className="flex-1">

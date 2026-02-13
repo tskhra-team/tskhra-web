@@ -22,7 +22,7 @@ const profileSchema = yup.object().shape({
     .test(
       "valid-gender",
       "Please select a valid gender",
-      (value) => !value || ["male", "female", "other"].includes(value),
+      (value) => !value || ["MALE", "FEMALE", "OTHER"].includes(value),
     )
     .default(""),
   birthDate: yup
@@ -33,7 +33,6 @@ const profileSchema = yup.object().shape({
       (value) => !value || value <= new Date(),
     )
     .default(new Date()),
-  personalNumber: yup.string().default(""),
   phoneCountryCode: yup
     .string()
     .required("Country code is required")
@@ -45,11 +44,6 @@ const profileSchema = yup.object().shape({
       "Phone number must be 9 digits",
       (value) => !value || /^[0-9]{9}$/.test(value),
     )
-    .default(""),
-  email: yup
-    .string()
-    .email("Invalid email")
-    .required("Email is required")
     .default(""),
 });
 

@@ -13,19 +13,30 @@ import useGetUser from "@/features/user/useGetUser";
 import { LogOut, User } from "lucide-react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 
 export default function TopBar() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { t } = useTranslation("common");
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, login, register } = useAuth();
   const { data: user } = useGetUser();
+  let fullName = user?.userName;
+  if (user?.firstName && user?.lastName) {
+    fullName = user?.firstName + " " + user?.lastName;
+  }
+
+  const handleLogin = () => {
+    login(); // This will redirect to Keycloak login page
+  };
+
+  const handleRegister = () => {
+    register(); // This will redirect to Keycloak registration page
+  };
 
   const handleLogout = () => {
-    logout();
     navigate("/");
+    logout();
   };
 
   return (
@@ -37,7 +48,7 @@ export default function TopBar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                <Avatar name={user?.userName} size="40" round />
+                <Avatar name={fullName} size="40" round />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -63,17 +74,13 @@ export default function TopBar() {
           <>
             <Button
               className="bg-white border-2 text-[#1E1E1E] w-20 sm:w-28 lg:w-40 h-9 lg:h-10 text-xs sm:text-sm lg:text-base hover:bg-[#1E1E1E] hover:text-white cursor-pointer transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
-              onClick={() => navigate("/register")}
+              onClick={() => handleRegister()}
             >
               {t("auth.signUp")}
             </Button>
             <Button
               className="text-white border-2 border-[#1E1E1E] w-20 sm:w-28 lg:w-40 h-9 lg:h-10 text-xs sm:text-sm lg:text-base bg-[#1E1E1E] cursor-pointer hover:bg-[#2E2E2E] hover:border-[#2E2E2E] transition-all duration-300 font-semibold shadow-md hover:shadow-lg"
-              onClick={() =>
-                navigate("/login", {
-                  state: { from: location.pathname },
-                })
-              }
+              onClick={() => handleLogin()}
             >
               Log in
             </Button>

@@ -6,12 +6,12 @@ import type { AxiosError } from "axios";
 export type UserType = {
   userName: string;
   firstName: string | undefined;
-  secondName: string | undefined;
+  lastName: string | undefined;
   userEmail: string;
 };
 
 const getUser = async () => {
-  const response = await privateInstance.get("/user/me");
+  const response = await privateInstance.get("/users/me");
 
   return response.data;
 };
