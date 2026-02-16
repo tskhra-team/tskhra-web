@@ -29,7 +29,7 @@ export const platformColors: Record<Platform, PlatformColors> = {
       hover: "#F3F4F6", // Subtle gray hover
     },
     subcategoryPanel: {
-      background: "#fff", // Primary orange for panel
+      background: "#FF6439", // Primary orange for panel
     },
   },
   ecommerce: {
