@@ -8,6 +8,11 @@ const profileSchema = yup.object().shape({
       "First name must be at least 2 characters",
       (value) => !value || value.length >= 2,
     )
+    .test(
+      "max-length",
+      "First name must be at most 50 characters",
+      (value) => !value || value.length <= 50,
+    )
     .default(""),
   lastName: yup
     .string()
@@ -15,6 +20,11 @@ const profileSchema = yup.object().shape({
       "min-length",
       "Last name must be at least 2 characters",
       (value) => !value || value.length >= 2,
+    )
+    .test(
+      "max-length",
+      "Last name must be at most 50 characters",
+      (value) => !value || value.length <= 50,
     )
     .default(""),
   gender: yup

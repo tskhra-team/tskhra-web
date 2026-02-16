@@ -50,7 +50,6 @@ export default function Hero() {
     },
   ];
 
-  console.log(isAuthenticated);
   return (
     <main className="mx-auto px-4 sm:px-8 lg:px-14 py-8 sm:py-12 lg:py-14 relative z-10 bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 ">
       {/* Decorative Background Elements */}

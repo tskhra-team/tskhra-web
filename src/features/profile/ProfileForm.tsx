@@ -18,26 +18,34 @@ import {
   type ProfileFormData,
 } from "@/features/profile/profileSchema";
 import useGetProfile from "@/features/profile/useGetProfile";
+import useUnVerify from "@/features/profile/useUnVerify";
 import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar as CalendarIcon, Pencil } from "lucide-react";
+import { Calendar as CalendarIcon, Pencil, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import PasswordChangeModal from "./PasswordChangeModal";
+import VerifyUser from "./VerifyUser";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(false);
   const [timeZone, setTimeZone] = useState<string>();
+  const { t } = useTranslation("profile");
   let fullName = profile?.userName;
   if (profile?.firstName && profile?.lastName) {
     fullName = profile?.firstName + " " + profile?.lastName;
   }
+
+  //TESTS ONLY
+  const { mutate: unVerifyUser } = useUnVerify();
 
   useEffect(() => {
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -82,21 +90,29 @@ function ProfileForm() {
         queryClient.invalidateQueries({
           queryKey: ["getUser"],
         });
-        toast.success("User have been successfully updated!", {
+        toast.success(t("form.messages.updateSuccess"), {
           position: "top-center",
         });
       },
       onError: () => {
-        toast.error("Something went wrong");
+        toast.error(t("form.messages.updateError"));
       },
     });
   };
+
+  const isUserhasAllData = Boolean(
+    profile?.firstName &&
+    profile?.lastName &&
+    profile?.gender &&
+    profile?.birthDate &&
+    profile?.phoneNumber,
+  );
 
   return (
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 md:space-y-6"
+        className="space-y-4 md:space-y-6 bg-linear-to-br from-gray-50 to-blue-50/30 px-4 md:px-6 py-8 rounded-2xl"
       >
         <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="relative">
@@ -129,7 +145,7 @@ function ProfileForm() {
             )}
           </div>
           <div>
-            <p className="text-xs md:text-sm text-gray-600">გამარჯობა,</p>
+            <p className="text-xs md:text-sm text-gray-600">{t("form.hello")},</p>
             <p className="text-lg md:text-2xl font-semibold">{fullName}</p>
           </div>
         </div>
@@ -138,12 +154,12 @@ function ProfileForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-              სახელი
+              {t("form.firstName")}
             </label>
             <Input
               {...register("firstName")}
               type="text"
-              placeholder="სახელი"
+              placeholder={t("form.placeholders.firstName")}
               className={`transition-all duration-300 ${
                 isEditMode
                   ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-left-1"
@@ -159,12 +175,12 @@ function ProfileForm() {
           </div>
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-              გვარი
+              {t("form.lastName")}
             </label>
             <Input
               {...register("lastName")}
               type="text"
-              placeholder="გვარი"
+              placeholder={t("form.placeholders.lastName")}
               className={`transition-all duration-300 ${
                 isEditMode
                   ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-right-1"
@@ -183,7 +199,7 @@ function ProfileForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-              სქესი
+              {t("form.gender.label")}
             </label>
             <Controller
               name="gender"
@@ -202,12 +218,12 @@ function ProfileForm() {
                         : "border-gray-200 bg-gray-50"
                     }`}
                   >
-                    <SelectValue placeholder="აირჩიეთ სქესი" />
+                    <SelectValue placeholder={t("form.gender.placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="FEMALE">მდედრობითი</SelectItem>
-                    <SelectItem value="MALE">მამრობითი</SelectItem>
-                    <SelectItem value="OTHER">სხვა</SelectItem>
+                    <SelectItem value="FEMALE">{t("form.gender.female")}</SelectItem>
+                    <SelectItem value="MALE">{t("form.gender.male")}</SelectItem>
+                    <SelectItem value="OTHER">{t("form.gender.other")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -221,7 +237,7 @@ function ProfileForm() {
 
           <div>
             <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-              დაბადების თარიღი
+              {t("form.birthDate.label")}
             </label>
             <Controller
               name="birthDate"
@@ -242,7 +258,7 @@ function ProfileForm() {
                       {field.value ? (
                         field.value.toLocaleDateString()
                       ) : (
-                        <span className="text-gray-500">აირჩიეთ თარიღი</span>
+                        <span className="text-gray-500">{t("form.birthDate.placeholder")}</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -273,7 +289,7 @@ function ProfileForm() {
 
         <div>
           <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-            ტელეფონის ნომერი
+            {t("form.phoneNumber")}
           </label>
           <div className="flex gap-2">
             <Input
@@ -290,7 +306,7 @@ function ProfileForm() {
                   ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-bottom-2"
                   : "border-gray-200 bg-gray-50"
               }`}
-              placeholder="ტელეფონის ნომერი"
+              placeholder={t("form.placeholders.phoneNumber")}
               disabled={!isEditMode}
             />
           </div>
@@ -302,7 +318,7 @@ function ProfileForm() {
         </div>
         <div>
           <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-            ელფოსტა
+            {t("form.email")}
           </label>
           <Input
             placeholder={profile?.userEmail}
@@ -329,16 +345,55 @@ function ProfileForm() {
             <>
               <Button
                 type="button"
-                className="px-6 py-3 text-sm md:text-base
-bg-blue-500 hover:bg-blue-600
-text-white rounded-xl
-transition-all duration-200
-w-full sm:w-auto border-0
-flex items-center gap-2"
+                className="px-6 py-3 text-sm md:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-200 w-full sm:w-auto border-0 flex items-center gap-2"
                 onClick={() => setIsEditMode((value) => !value)}
               >
                 <Pencil className="h-4 w-4" />
-                მონაცემების შეცვლა
+                {t("form.editInfo")}
+              </Button>
+
+              {!profile?.status && (
+                <Button
+                  type="button"
+                  className="w-full sm:w-auto bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => {
+                    if (!isUserhasAllData) {
+                      toast.info(t("form.messages.allFieldsRequired"), {
+                        position: "top-center",
+                      });
+                      setIsEditMode((edit) => !edit);
+                    } else {
+                      setIsVerifyUserOpen(true);
+                    }
+                  }}
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  {t("form.goToVerification")}
+                </Button>
+              )}
+
+              <Button
+                type="button"
+                onClick={() => {
+                  unVerifyUser(undefined, {
+                    onSuccess: () => {
+                      toast.success(t("form.messages.unverifySuccess"), {
+                        position: "top-center",
+                      });
+                      refetch();
+                      queryClient.invalidateQueries({
+                        queryKey: ["getUser"],
+                      });
+                    },
+                    onError: () => {
+                      toast.error(t("form.messages.unverifyError"), {
+                        position: "top-center",
+                      });
+                    },
+                  });
+                }}
+              >
+                TEST ONLY UNVERIFY
               </Button>
             </>
           ) : (
@@ -352,14 +407,14 @@ flex items-center gap-2"
                   reset();
                 }}
               >
-                გაუქმება
+                {t("form.cancel")}
               </Button>
               <Button
                 type="submit"
                 disabled={isPending}
                 className="px-4 md:px-6 py-2 text-sm md:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isPending ? "მიმდინარეობს..." : "შენახვა"}
+                {isPending ? t("form.saving") : t("form.save")}
               </Button>
             </div>
           )}
@@ -369,6 +424,7 @@ flex items-center gap-2"
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
       />
+      <VerifyUser open={isVerifyUserOpen} onOpenChange={setIsVerifyUserOpen} />
     </>
   );
 }
