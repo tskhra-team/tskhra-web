@@ -206,8 +206,7 @@ export default function ServiceForm() {
           <p className="text-sm text-red-600 mt-1">{errors.address.message}</p>
         )}
       </div>
-
-      {/* Main Image */}
+      {/* Main Image 1*/}
       <div>
         <label className="block text-sm font-medium mb-2">
           სერვისის მთავარი სურათი
