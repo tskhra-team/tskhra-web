@@ -1,0 +1,70 @@
+{
+  "tabs": {
+    "info": "Personal Information",
+    "history": "History",
+    "settings": "Account Settings",
+    "paymentMethods": "Payment Methods"
+  },
+  "infoTab": {
+    "username": "Username",
+    "email": "Email",
+    "fullName": "Full Name",
+    "accountCreated": "Account Created",
+    "accountStatus": "Account Status",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "active": "Active",
+    "becomeProvider": {
+      "title": "Become a Service Provider",
+      "description": "Publish your service and provide it to customers. Start earning today!",
+      "button": "Create Service"
+    }
+  },
+  "profileHeader": {
+    "status": "Status"
+  },
+  "form": {
+    "hello": "Hello",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "gender": {
+      "label": "Gender",
+      "placeholder": "Select Gender",
+      "female": "Female",
+      "male": "Male",
+      "other": "Other"
+    },
+    "birthDate": {
+      "label": "Birth Date",
+      "placeholder": "Select Date"
+    },
+    "phoneNumber": "Phone Number",
+    "email": "Email",
+    "changePassword": "Change Password",
+    "editInfo": "Edit Information",
+    "goToVerification": "Go to Verification",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "placeholders": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number"
+    },
+    "messages": {
+      "updateSuccess": "User has been successfully updated!",
+      "updateError": "Something went wrong",
+      "allFieldsRequired": "All fields must be filled!",
+      "unverifySuccess": "Unverified successfully",
+      "unverifyError": "An error occurred, please try again"
+    }
+  },
+  "verifyDialog": {
+    "title": "You are not verified!",
+    "description": "To add a service, you must complete verification!",
+    "whyTitle": "Why is verification needed?",
+    "whyDescription": "Verification ensures security and quality on our platform.",
+    "close": "Close",
+    "goToVerification": "Go to Verification"
+  }
+}

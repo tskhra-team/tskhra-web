@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import VerifyDialog from "@/features/profile/VerifyDialog";
 import type { ProfileType } from "@/types";
 import {
   AtSign,
@@ -10,7 +11,9 @@ import {
   UserCircle,
   XCircle,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 type InfoTabType = {
   profile: ProfileType | undefined;
@@ -26,7 +29,8 @@ export default function InfoTab({
   verificationStatus,
 }: InfoTabType) {
   const navigate = useNavigate();
-  console.log(fullName);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { t } = useTranslation("profile");
 
   return (
     <div className="bg-linear-to-br from-gray-50 to-blue-50/30 px-4 md:px-6 py-8 rounded-2xl">
@@ -36,11 +40,11 @@ export default function InfoTab({
           <div className="p-3 bg-linear-to-br from-blue-600 to-blue-700 rounded-xl shadow-md">
             <User className="w-5 h-5 text-white" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-              Username
+              {t("infoTab.username")}
             </p>
-            <p className="font-semibold text-gray-900 text-lg">
+            <p className="font-semibold text-gray-900 text-lg wrap-break-word">
               {profile?.userName}
             </p>
           </div>
@@ -51,11 +55,11 @@ export default function InfoTab({
           <div className="p-3 bg-linear-to-br from-indigo-600 to-indigo-700 rounded-xl shadow-md">
             <AtSign className="w-5 h-5 text-white" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-              Email
+              {t("infoTab.email")}
             </p>
-            <p className="font-semibold text-gray-900 text-lg">
+            <p className="font-semibold text-gray-900 text-lg wrap-break-word">
               {profile?.userEmail}
             </p>
           </div>
@@ -67,11 +71,11 @@ export default function InfoTab({
             <div className="p-3 bg-linear-to-br from-cyan-600 to-cyan-700 rounded-xl shadow-md">
               <UserCircle className="w-5 h-5 text-white" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-                Full Name
+                {t("infoTab.fullName")}
               </p>
-              <p className="font-semibold text-gray-900 text-lg">{fullName}</p>
+              <p className="font-semibold text-gray-900 text-lg wrap-break-word">{fullName}</p>
             </div>
           </div>
         )}
@@ -83,7 +87,7 @@ export default function InfoTab({
           </div>
           <div className="flex-1">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-              Account Created
+              {t("infoTab.accountCreated")}
             </p>
             <p className="font-semibold text-gray-900 text-lg">
               {profile?.createDate}
@@ -108,7 +112,7 @@ export default function InfoTab({
           </div>
           <div className="flex-1">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-              Account Status
+              {t("infoTab.accountStatus")}
             </p>
             <div className="flex items-center gap-2">
               <p
@@ -116,11 +120,11 @@ export default function InfoTab({
                   verificationStatus ? "text-emerald-700" : "text-red-600"
                 }`}
               >
-                {verificationStatus ? "Verified" : "Not Verified"}
+                {verificationStatus ? t("infoTab.verified") : t("infoTab.notVerified")}
               </p>
               {verificationStatus && (
                 <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200/50 shadow-sm">
-                  Active
+                  {t("infoTab.active")}
                 </span>
               )}
             </div>
@@ -129,6 +133,7 @@ export default function InfoTab({
       </div>
 
       {/* Service Provider CTA */}
+
       <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-purple-700 p-6 md:p-8 rounded-3xl shadow-2xl shadow-blue-500/30">
         {/* Animated background elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse" />
@@ -139,23 +144,30 @@ export default function InfoTab({
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-6 h-6 text-yellow-300 animate-pulse" />
               <h3 className="text-xl md:text-2xl font-bold text-white">
-                გახდი სერვისის პროვაიდერი
+                {t("infoTab.becomeProvider.title")}
               </h3>
             </div>
             <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-2xl">
-              გამოაქვეყნე შენი სერვისი და მიაწოდე მომხმარებლებს. დაიწყე
-              შემოსავლის მიღება დღესვე!
+              {t("infoTab.becomeProvider.description")}
             </p>
           </div>
           <Button
-            onClick={() => navigate("/create-service")}
+            onClick={() => {
+              if (!verificationStatus) {
+                setIsDialogOpen(true);
+              } else {
+                navigate("/create-service");
+              }
+            }}
             className="flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-semibold px-6 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 whitespace-nowrap border-2 border-white/20"
           >
             <Plus className="w-5 h-5" />
-            შექმენი სერვისი
+            {t("infoTab.becomeProvider.button")}
           </Button>
         </div>
       </div>
+
+      <VerifyDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
     </div>
   );
 }
