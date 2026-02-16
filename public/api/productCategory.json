@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Electronics",
+    "platforms": ["ecommerce"],
+    "childItems": [
+      {
+        "name": "Phones",
+        "platforms": ["ecommerce"]
+      },
+      {
+        "name": "Laptops",
+        "platforms": ["ecommerce"]
+      },
+      {
+        "name": "Accessories",
+        "platforms": ["ecommerce"]
+      }
+    ]
+  },
+  {
+    "name": "Clothing",
+    "platforms": ["ecommerce", "switching"],
+    "childItems": [
+      {
+        "name": "Men's Clothing",
+        "platforms": ["ecommerce", "switching"]
+      },
+      {
+        "name": "Women's Clothing",
+        "platforms": ["ecommerce", "switching"]
+      },
+      {
+        "name": "Kids' Clothing",
+        "platforms": ["ecommerce", "switching"]
+      }
+    ]
+  },
+  {
+    "name": "Services",
+    "platforms": ["booking"],
+    "childItems": [
+      {
+        "name": "Hair & Beauty",
+        "platforms": ["booking"]
+      },
+      {
+        "name": "Healthcare",
+        "platforms": ["booking"]
+      },
+      {
+        "name": "Home Services",
+        "platforms": ["booking"]
+      }
+    ]
+  },
+  {
+    "name": "Books",
+    "platforms": ["ecommerce", "switching"],
+    "childItems": [
+      {
+        "name": "Fiction",
+        "platforms": ["ecommerce", "switching"]
+      },
+      {
+        "name": "Non-Fiction",
+        "platforms": ["ecommerce", "switching"]
+      },
+      {
+        "name": "Textbooks",
+        "platforms": ["ecommerce", "switching"]
+      }
+    ]
+  },
+  {
+    "name": "Sports & Outdoors",
+    "platforms": ["ecommerce", "switching"],
+    "childItems": [
+      {
+        "name": "Sports Equipment",
+        "platforms": ["ecommerce", "switching"]
+      },
+      {
+        "name": "Outdoor Gear",
+        "platforms": ["ecommerce", "switching"]
+      },
+      {
+        "name": "Fitness",
+        "platforms": ["ecommerce", "switching"]
+      }
+    ]
+  }
+]

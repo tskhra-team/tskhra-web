@@ -1,87 +1,76 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useAuth } from "@/context/useAuth";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-
-// const loginSchema = yup.
 
 export default function Login() {
   const navigate = useNavigate();
-  const localtion = useLocation();
+  const location = useLocation();
+  const from = location.state?.from;
+  const { t } = useTranslation(["auth", "common"]);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const from = localtion.state?.from;
+  const { login, register, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from || "/");
+    }
+  }, [isAuthenticated, navigate, from]);
+
+  const handleLogin = () => {
+    setIsRedirecting(true);
+    login(); // This will redirect to Keycloak login page
+  };
+
+  const handleRegister = () => {
+    setIsRedirecting(true);
+    register(); // This will redirect to Keycloak registration page
+  };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-[#2d2d2d]">
-      <Card className="w-100 bg-[#1E1E1E] text-white border-none">
+    <>
+      <Card className="relative z-10 w-100 bg-white/90 backdrop-blur-xl text-slate-900 border-2 border-slate-200/50 shadow-xl mt-6">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Welcome back, enter your data to continue!{" "}
-          </CardDescription>
-          <CardAction>
-            <Button
-              variant="link"
-              className="text-white"
-              onClick={() => navigate(from || "/")}
-            >
-              Go back
-            </Button>
-          </CardAction>
+          <CardTitle className="text-slate-900">Choose your option</CardTitle>
+          {/* <CardDescription className="text-slate-600"></CardDescription> */}
         </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-4">
+
+        <CardContent className="flex flex-col gap-4">
+          <CardDescription className="text-slate-600">
+            Already have account?
+          </CardDescription>
+
           <Button
-            type="submit"
-            className="w-full bg-white text-black cursor-pointer border hover:border-white hover:text-white"
-            onClick={() => navigate(from || "/")}
+            onClick={handleLogin}
+            disabled={isRedirecting}
+            className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
           >
-            Login
+            {isRedirecting ? "Wait a second..." : t("auth:login.button")}
           </Button>
-          <div>
-            <span className="text-sm">Don't have account yet?</span>
-            <Button
-              variant="link"
-              className="px-3 cursor-pointer text-white"
-              onClick={() => navigate("/register")}
-            >
-              Sing up
-            </Button>
-          </div>
-        </CardFooter>
+
+          <CardDescription className="text-slate-600">
+            Don't have account yet? Start yor journie here?
+          </CardDescription>
+
+          <Button
+            onClick={handleRegister}
+            disabled={isRedirecting}
+            className="w-full bg-[#1E1E1E] hover:bg-[#2E2E2E] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+          >
+            {isRedirecting ? "Wait a second..." : t("auth:register.button")}
+          </Button>
+        </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

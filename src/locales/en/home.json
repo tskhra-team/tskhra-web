@@ -1,0 +1,46 @@
+{
+  "hero": {
+    "ecommerce": {
+      "title": "Buy",
+      "description": "Discover an endless collection of premium products curated just for you. From everyday essentials to luxury finds, enjoy seamless shopping with secure payments and lightning-fast delivery to your doorstep.",
+      "button": "Start Shopping"
+    },
+    "booking": {
+      "title": "Book",
+      "description": "Reserve your perfect experience with just a few clicks. Whether it's a cozy restaurant, exciting adventure, or professional service, we make booking effortless so you can focus on what matters most.",
+      "button": "Reserve Now"
+    },
+    "swapping": {
+      "title": "Swap",
+      "description": "Exchange anything from books, electronics, and furniture to skills, services, and memberships. Turn what you don't need into what you want through smart swapping with verified users in our trusted community.",
+      "button": "Start Swapping"
+    }
+  },
+  "footer": {
+    "brand": {
+      "description": "Your all-in-one platform for buying premium products, booking amazing experiences, and swapping with a trusted community."
+    },
+    "newsletter": {
+      "title": "Subscribe to Our Newsletter",
+      "description": "Get the latest updates, deals, and news delivered to your inbox.",
+      "placeholder": "Enter your email",
+      "button": "Subscribe"
+    },
+    "copyright": "© 2026 Tskhra. All rights reserved.",
+    "links": {
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "buy": "Buy",
+      "book": "Book",
+      "swap": "Swap",
+      "aboutUs": "About Us",
+      "privacy": "Privacy Policy",
+      "privacyShort": "Privacy",
+      "terms": "Terms of Service",
+      "termsShort": "Terms",
+      "cookies": "Cookie Policy",
+      "cookiesShort": "Cookies"
+    }
+  }
+}

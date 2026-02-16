@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "buy": "ყიდვა",
+    "book": "დაჯავშნა",
+    "swap": "გაცვლა"
+  },
+  "auth": {
+    "signUp": "რეგისტრაცია",
+    "logIn": "შესვლა",
+    "loggedIn": "თქვენ შესული ხართ"
+  },
+  "form": {
+    "email": "ელ-ფოსტა ან სახელი",
+    "password": "პაროლი",
+    "name": "სახელი",
+    "repeatPassword": "გაიმეორეთ პაროლი",
+    "emailPlaceholder": "შეიყვანეთ ელ-ფოსტა",
+    "passwordPlaceholder": "შეიყვანეთ პაროლი",
+    "namePlaceholder": "შეიყვანეთ მომხმარებლის სახელი",
+    "repeatPasswordPlaceholder": "გაიმეორეთ პაროლი"
+  },
+  "buttons": {
+    "goBack": "უკან დაბრუნება",
+    "continue": "გაგრძელება"
+  },
+  "validation": {
+    "nameRequired": "სახელი აუცილებელია",
+    "nameMin": "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს",
+    "nameMax": "სახელი უნდა შეიცავდეს მაქსიმუმ 50 სიმბოლოს",
+    "emailAndUserRequired": "ელ-ფოსტა ან სახელი აუცილებელია",
+    "emailRequired": "ელ-ფოსტა აუცილებელია",
+    "emailInvalid": "შეიყვანეთ სწორი ელ-ფოსტა",
+    "emailInvalidFormat": "ელ-ფოსტის არასწორი ფორმატი",
+    "passwordRequired": "პაროლი აუცილებელია",
+    "passwordNoSpaces": "პაროლი არ უნდა შეიცავდეს ცარიელ სივრცეებს",
+    "passwordMin": "პაროლი უნდა შეიცავდეს მინიმუმ 8 სიმბოლოს",
+    "passwordLowercase": "პაროლი უნდა შეიცავდეს მინიმუმ 1 პატარა ასოს",
+    "passwordUppercase": "პაროლი უნდა შეიცავდეს მინიმუმ 1 დიდ ასოს",
+    "passwordNumber": "პაროლი უნდა შეიცავდეს მინიმუმ 1 ციფრს",
+    "passwordSpecial": "პაროლი უნდა შეიცავდეს მინიმუმ 1 სპეციალურ სიმბოლოს",
+    "repeatPasswordRequired": "გაიმეორეთ პაროლი",
+    "passwordsMatch": "პაროლები უნდა ემთხვეოდეს ერთმანეთს"
+  }
+}

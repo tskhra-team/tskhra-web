@@ -1,19 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const logoTextMap: Record<string, string> = {
-  "/": "TSKHRA",
-  "/ecommerce": "ECOMMERCE",
-  "/switching": "SWITCHING",
-  "/booking": "BOOKING",
-};
-
-export default function Logo() {
-  const location = useLocation();
-  const logoText = logoTextMap[location.pathname];
-  console.log(logoText);
+export default function Logo({ color = "black" }: { color?: string }) {
   return (
-    <Link to="/" className="font-bold text-2xl text-white">
-      {logoText}
+    <Link to="/" className={`font-bold text-2xl`} style={{ color }}>
+      TSKHRA
     </Link>
   );
 }
