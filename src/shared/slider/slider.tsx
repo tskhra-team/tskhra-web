@@ -39,7 +39,7 @@ function BannerSlider() {
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto lg:w-150 lg:mt-20 xl:mt-0 xl:w-full">
       <Slider {...settings}>
         {banners.map((banner) => (
           <div key={banner.id} className="relative w-full overflow-hidden rounded-2xl">
