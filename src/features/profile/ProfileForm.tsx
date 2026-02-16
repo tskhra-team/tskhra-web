@@ -298,16 +298,33 @@ function ProfileForm() {
               placeholder="+995"
               disabled
             />
-            <Input
-              {...register("phoneNumber")}
-              type="text"
-              className={`flex-1 transition-all duration-300 ${
-                isEditMode
-                  ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-bottom-2"
-                  : "border-gray-200 bg-gray-50"
-              }`}
-              placeholder={t("form.placeholders.phoneNumber")}
-              disabled={!isEditMode}
+            <Controller
+              name="phoneNumber"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="text"
+                  className={`flex-1 transition-all duration-300 ${
+                    isEditMode
+                      ? "border-green-500 border-2 shadow-lg shadow-green-100 bg-white animate-in slide-in-from-bottom-2"
+                      : "border-gray-200 bg-gray-50"
+                  }`}
+                  placeholder={t("form.placeholders.phoneNumber")}
+                  disabled={!isEditMode}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    field.onChange(value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (!/^[0-9]$/.test(e.key) &&
+                        !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key) &&
+                        !(e.ctrlKey || e.metaKey)) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              )}
             />
           </div>
           {errors.phoneNumber && (

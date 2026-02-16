@@ -4,9 +4,9 @@ import { useSearchParams } from "react-router-dom";
 import CategoryNav from "./CategoryNav";
 import SubcategoryView from "./SubcategoryView";
 import { categoryNameToKey } from "./categoryTranslations";
+import { getPlatformColors } from "./platformColors";
 import type { Platform } from "./types";
 import { useCategories } from "./useCategories";
-import { getPlatformColors } from "./platformColors";
 
 export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const { data, isLoading, error } = useCategories(platform);
@@ -60,7 +60,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   return (
     <div
-      className="relative left-1 sm:left-2 lg:left-10 z-50"
+      className="relative  left-1 sm:left-2 lg:left-10 z-50"
       onMouseLeave={() => setActiveIndex(null)}
     >
       <CategoryNav
@@ -74,11 +74,19 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       {/* Desktop subcategory panel - hidden on mobile */}
       {activeCategory && (
         <div
-          className="hidden lg:block absolute left-full top-0 min-w-300 h-125 overflow-hidden rounded-2xl border p-10 shadow-2xl lg:min-w-190 xl:min-w-300"
-          style={{ backgroundColor: colors.subcategoryPanel.background, zIndex: 9999 }}
+          className="hidden  lg:block absolute left-full top-0 min-w-175 h-126 overflow-hidden rounded-2xl border p-6 shadow-2xl xl:min-w-250"
+          style={{
+            backgroundColor: colors.subcategoryPanel.background,
+            zIndex: 9999,
+          }}
         >
-          <h3 className="mb-6 text-lg font-semibold text-white">{categoryDisplayName}</h3>
-          <SubcategoryView subcategories={activeCategory?.childItems} platform={platform} />
+          <h3 className="mb-6  text-lg font-semibold text-white">
+            {categoryDisplayName}
+          </h3>
+          <SubcategoryView
+            subcategories={activeCategory?.childItems}
+            platform={platform}
+          />
         </div>
       )}
     </div>

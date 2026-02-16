@@ -12,8 +12,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 type InfoTabType = {
   profile: ProfileType | undefined;
@@ -75,7 +75,9 @@ export default function InfoTab({
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
                 {t("infoTab.fullName")}
               </p>
-              <p className="font-semibold text-gray-900 text-lg wrap-break-word">{fullName}</p>
+              <p className="font-semibold text-gray-900 text-lg wrap-break-word">
+                {fullName}
+              </p>
             </div>
           </div>
         )}
@@ -120,7 +122,9 @@ export default function InfoTab({
                   verificationStatus ? "text-emerald-700" : "text-red-600"
                 }`}
               >
-                {verificationStatus ? t("infoTab.verified") : t("infoTab.notVerified")}
+                {verificationStatus
+                  ? t("infoTab.verified")
+                  : t("infoTab.notVerified")}
               </p>
               {verificationStatus && (
                 <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200/50 shadow-sm">
