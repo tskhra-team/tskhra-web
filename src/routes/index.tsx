@@ -98,14 +98,6 @@ export const routes = [
           </Suspense>
         ),
       },
-      {
-        path: "/booking",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <ProfilePage />
-          </Suspense>
-        ),
-      },
     ],
   },
 
@@ -118,14 +110,6 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <LoginPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/register",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <RegisterPage />
           </Suspense>
         ),
       },

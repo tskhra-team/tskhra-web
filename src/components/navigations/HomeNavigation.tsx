@@ -1,13 +1,39 @@
 import { scrollToElement } from "@/utils";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function HomeNavigation() {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  function handleClick(item: any) {
+    if (location.pathname === "/profile") {
+      return navigate(item.redirect);
+    } else {
+      return scrollToElement(item.scroll);
+    }
+  }
 
   const navItems = [
-    { name: t("nav.buy"), scroll: "buy-section", color: "#3659FA" },
-    { name: t("nav.book"), scroll: "book-section", color: "#FF6439" },
-    { name: t("nav.swap"), scroll: "swap-section", color: "#A31621" },
+    {
+      name: t("nav.buy"),
+      scroll: "buy-section",
+      redirect: "/ecommerce",
+      color: "#3659FA",
+    },
+    {
+      name: t("nav.book"),
+      scroll: "book-section",
+      redirect: "/booking",
+      color: "#FF6439",
+    },
+    {
+      name: t("nav.swap"),
+      scroll: "swap-section",
+      redirect: "/swapping",
+      color: "#A31621",
+    },
   ];
 
   return (
@@ -17,7 +43,7 @@ export default function HomeNavigation() {
           <div
             key={item.name}
             className="relative text-slate-700 px-4 sm:px-6 lg:px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold text-sm sm:text-base"
-            onClick={() => scrollToElement(item.scroll)}
+            onClick={() => handleClick(item)}
           >
             <span className="relative z-10 group-hover:scale-105 transition-transform duration-300">
               {item.name}

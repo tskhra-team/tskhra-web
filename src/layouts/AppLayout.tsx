@@ -7,7 +7,7 @@ export default function AppLayout() {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return (

@@ -1,3 +1,4 @@
+import WithAxiosUser from "@/api/withAxiosUser";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,31 +46,33 @@ export default function TopBar() {
       <div className="flex gap-2 sm:gap-3 lg:gap-4 items-center justify-end">
         <LanguageSwitcher />
         {isAuthenticated ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                <Avatar name={fullName} size="40" round />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigate("/profile")}
-                className="cursor-pointer"
-              >
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="cursor-pointer text-red-600 focus:text-red-600"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Sign Out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <WithAxiosUser>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <Avatar name={fullName} size="40" round />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => navigate("/profile")}
+                  className="cursor-pointer"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </WithAxiosUser>
         ) : (
           <>
             <Button
