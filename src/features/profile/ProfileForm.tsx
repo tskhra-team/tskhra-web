@@ -26,16 +26,15 @@ import { Calendar as CalendarIcon, Pencil, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import PasswordChangeModal from "./PasswordChangeModal";
+import { toast } from "sonner";
+
 import VerifyUser from "./VerifyUser";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(false);
   const [timeZone, setTimeZone] = useState<string>();
   const { t } = useTranslation("profile");
@@ -84,7 +83,7 @@ function ProfileForm() {
 
   const onSubmit = (data: ProfileFormData) => {
     updateProfile(data, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         setIsEditMode(false);
         refetch();
         queryClient.invalidateQueries({
@@ -437,10 +436,7 @@ function ProfileForm() {
           )}
         </div>
       </form>
-      <PasswordChangeModal
-        isOpen={isPasswordModalOpen}
-        onClose={() => setIsPasswordModalOpen(false)}
-      />
+    
       <VerifyUser open={isVerifyUserOpen} onOpenChange={setIsVerifyUserOpen} />
     </>
   );

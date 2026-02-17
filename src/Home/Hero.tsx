@@ -1,4 +1,3 @@
-import { useAuth } from "@/context/useAuth";
 import SectionCard from "@/Home/SectionCard";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,7 +5,6 @@ import { useTranslation } from "react-i18next";
 export default function Hero() {
   const [activeTab, setActiveTab] = useState("ecommerce");
   const { t } = useTranslation("home");
-  const { isAuthenticated } = useAuth();
 
   const sections = [
     {
