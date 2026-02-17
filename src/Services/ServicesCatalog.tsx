@@ -1,11 +1,17 @@
 import { mockServices } from "@/Booking/mockSerrvices";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { scrollToTop } from "@/utils";
 import { Clock, DollarSign, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function ServicesCatalog() {
   const navigate = useNavigate();
+
+  const handkleClick = (id: string) => {
+    scrollToTop();
+    navigate(`/services/${id}`);
+  };
 
   return (
     <div className="container mx-auto px-2 py-8">
@@ -17,11 +23,11 @@ export default function ServicesCatalog() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockServices.map((service, index) => (
+        {mockServices.map((service) => (
           <Card
-            key={index}
+            key={service.id}
             className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => navigate(`/services/${index}`)}
+            onClick={() => handkleClick(service.id)}
           >
             <div className="aspect-video w-full overflow-hidden">
               <img

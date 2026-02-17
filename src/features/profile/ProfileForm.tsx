@@ -23,7 +23,7 @@ import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar as CalendarIcon, Pencil, ShieldCheck } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -33,15 +33,19 @@ import VerifyUser from "./VerifyUser";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(false);
   const [timeZone, setTimeZone] = useState<string>();
   const { t } = useTranslation("profile");
-  let fullName = profile?.userName;
-  if (profile?.firstName && profile?.lastName) {
-    fullName = profile?.firstName + " " + profile?.lastName;
-  }
+
+  const fullName = useMemo(() => {
+    if (profile?.firstName && profile?.lastName) {
+      return profile.firstName + " " + profile.lastName;
+    }
+    return profile?.userName;
+  }, [profile?.firstName, profile?.lastName, profile?.userName]);
 
   //TESTS ONLY
   const { mutate: unVerifyUser } = useUnVerify();
@@ -74,7 +78,9 @@ function ProfileForm() {
         firstName: profile.firstName,
         lastName: profile.lastName,
         gender: profile.gender,
-        birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
+        birthDate: profile.birthDate
+          ? new Date(profile.birthDate)
+          : new Date(new Date().getFullYear() - 8, 11),
         phoneCountryCode: "+995",
         phoneNumber: profile.phoneNumber?.slice(4),
       });
@@ -144,7 +150,9 @@ function ProfileForm() {
             )}
           </div>
           <div>
-            <p className="text-xs md:text-sm text-gray-600">{t("form.hello")},</p>
+            <p className="text-xs md:text-sm text-gray-600">
+              {t("form.hello")},
+            </p>
             <p className="text-lg md:text-2xl font-semibold">{fullName}</p>
           </div>
         </div>
@@ -220,9 +228,15 @@ function ProfileForm() {
                     <SelectValue placeholder={t("form.gender.placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="FEMALE">{t("form.gender.female")}</SelectItem>
-                    <SelectItem value="MALE">{t("form.gender.male")}</SelectItem>
-                    <SelectItem value="OTHER">{t("form.gender.other")}</SelectItem>
+                    <SelectItem value="FEMALE">
+                      {t("form.gender.female")}
+                    </SelectItem>
+                    <SelectItem value="MALE">
+                      {t("form.gender.male")}
+                    </SelectItem>
+                    <SelectItem value="OTHER">
+                      {t("form.gender.other")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -242,7 +256,7 @@ function ProfileForm() {
               name="birthDate"
               control={control}
               render={({ field }) => (
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       disabled={!isEditMode}
@@ -257,7 +271,9 @@ function ProfileForm() {
                       {field.value ? (
                         field.value.toLocaleDateString()
                       ) : (
-                        <span className="text-gray-500">{t("form.birthDate.placeholder")}</span>
+                        <span className="text-gray-500">
+                          {t("form.birthDate.placeholder")}
+                        </span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -269,9 +285,10 @@ function ProfileForm() {
                       captionLayout="dropdown"
                       onSelect={(date) => {
                         field.onChange(date);
+                        setIsCalendarOpen(false);
                       }}
-                      fromYear={1900}
-                      toYear={new Date().getFullYear()}
+                      startMonth={new Date(1925, 0)}
+                      endMonth={new Date(new Date().getFullYear() - 8, 11)}
                       timeZone={timeZone}
                     />
                   </PopoverContent>
@@ -312,13 +329,23 @@ function ProfileForm() {
                   placeholder={t("form.placeholders.phoneNumber")}
                   disabled={!isEditMode}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
+                    const value = e.target.value.replace(/\D/g, "");
                     field.onChange(value);
                   }}
                   onKeyDown={(e) => {
-                    if (!/^[0-9]$/.test(e.key) &&
-                        !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key) &&
-                        !(e.ctrlKey || e.metaKey)) {
+                    if (
+                      !/^[0-9]$/.test(e.key) &&
+                      ![
+                        "Backspace",
+                        "Delete",
+                        "Tab",
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "Home",
+                        "End",
+                      ].includes(e.key) &&
+                      !(e.ctrlKey || e.metaKey)
+                    ) {
                       e.preventDefault();
                     }
                   }}
@@ -396,10 +423,10 @@ function ProfileForm() {
                       toast.success(t("form.messages.unverifySuccess"), {
                         position: "top-center",
                       });
-                      refetch();
                       queryClient.invalidateQueries({
                         queryKey: ["getUser"],
                       });
+                      refetch();
                     },
                     onError: () => {
                       toast.error(t("form.messages.unverifyError"), {
@@ -436,7 +463,7 @@ function ProfileForm() {
           )}
         </div>
       </form>
-    
+
       <VerifyUser open={isVerifyUserOpen} onOpenChange={setIsVerifyUserOpen} />
     </>
   );

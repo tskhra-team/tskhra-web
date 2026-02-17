@@ -6,7 +6,9 @@ const profileSchema = yup.object().shape({
     .test(
       "letters-only",
       "First name must contain only letters",
-      (value) => !value || /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
+      (value) =>
+        !value ||
+        /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
     )
     .test(
       "min-length",
@@ -24,7 +26,9 @@ const profileSchema = yup.object().shape({
     .test(
       "letters-only",
       "Last name must contain only letters",
-      (value) => !value || /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
+      (value) =>
+        !value ||
+        /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
     )
     .test(
       "min-length",
@@ -52,7 +56,24 @@ const profileSchema = yup.object().shape({
       "Birth date cannot be in the future",
       (value) => !value || value <= new Date(),
     )
-    .default(new Date()),
+    .test("min-age", "You must be at least 12 years old", (value) => {
+      if (!value) return true;
+      const today = new Date();
+      const birthDate = new Date(value);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      // Если день рождения в этом году еще не наступил, вычитаем год
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      return age >= 12;
+    })
+    .default(new Date(new Date().getFullYear() - 8, 11)),
   phoneCountryCode: yup
     .string()
     .required("Country code is required")

@@ -3,6 +3,7 @@
 // but images are URLs because FileList can't be represented in JSON.
 
 export type MockService = {
+  id: string;
   title: string;
   city: string;
   district?: string;
@@ -31,6 +32,7 @@ export type MockService = {
 
 export const mockServices: MockService[] = [
   {
+    id: "1",
     title: "ქორწილის ფოტოგრაფია — სრული პაკეტი",
     city: "თბილისი",
     district: "ვაკე",
@@ -55,6 +57,7 @@ export const mockServices: MockService[] = [
     ],
   },
   {
+    id: "2",
     title: "ბინის გენერალური დალაგება",
     city: "თბილისი",
     district: "საბურთალო",
@@ -75,6 +78,7 @@ export const mockServices: MockService[] = [
     galleryImageUrls: ["https://picsum.photos/id/105/800/600"],
   },
   {
+    id: "3",
     title: "მანქანის დეტეილინგი + სალონის ქიმწმენდა",
     city: "თბილისი",
     district: "გლდანი",
@@ -98,6 +102,7 @@ export const mockServices: MockService[] = [
     ],
   },
   {
+    id: "4",
     title: "ინგლისურის ინდივიდუალური გაკვეთილები (A2–C1)",
     city: "ბათუმი",
     district: "ძველი ბათუმი",
@@ -115,6 +120,7 @@ export const mockServices: MockService[] = [
     galleryImageUrls: ["https://picsum.photos/id/24/800/600"],
   },
   {
+    id: "5",
     title: "ნამცხვრების შეკვეთა — დაბადების დღე / ივენთი",
     city: "ქუთაისი",
     district: "ცენტრი",
