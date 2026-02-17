@@ -32,7 +32,7 @@ const refreshTokenHandler = async (actualAccessRef: {
       actualAccessRef.current = keycloakClient.token;
       return keycloakClient.token;
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to refresh token:", error);
     // Token refresh failed - logout and redirect
     keycloakClient.logout();

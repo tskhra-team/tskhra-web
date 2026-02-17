@@ -10,13 +10,15 @@ const queryClient = new QueryClient({
       retryOnMount: false,
     },
     mutations: {
-      onError: (error: AxiosError) => {
-        if (error.response?.status === 401) {
-          toast.error("Unauthorized - Please log in");
-        } else if (error.response?.status === 500) {
-          toast.error("Server error - Please try again later");
-        } else if (!error.response) {
-          toast.error("Network error - Check your connection");
+      onError: (error) => {
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 401) {
+            toast.error("Unauthorized - Please log in");
+          } else if (error.response?.status === 500) {
+            toast.error("Server error - Please try again later");
+          } else if (!error.response) {
+            toast.error("Network error - Check your connection");
+          }
         }
       },
     },

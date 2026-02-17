@@ -36,7 +36,7 @@ export const useKeycloak = () => {
             }
           });
         };
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Failed to initialize Keycloak:", error);
       } finally {
         setIsLoading(false);

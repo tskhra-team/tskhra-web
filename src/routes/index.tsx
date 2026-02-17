@@ -16,7 +16,7 @@ const ServicesCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const ServiceDetailsPage = lazy(() => import("@/pages/ServiceDetailsPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
-const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
+
 
 export const routes = [
   // Main Layout - Public pages with main Header + Footer
