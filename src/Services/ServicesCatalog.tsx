@@ -1,16 +1,16 @@
 import { mockServices } from "@/Booking/mockSerrvices";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Clock, DollarSign, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Clock, DollarSign } from "lucide-react";
 
 export default function ServicesCatalog() {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-2 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Services Catalog</h1>
+        <h1 className="text-3xl font-bold mb-2">კატალოგი</h1>
         <p className="text-muted-foreground">
           Browse our collection of professional services
         </p>
