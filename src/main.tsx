@@ -16,5 +16,5 @@ createRoot(document.getElementById("root")!).render(
       </StrictMode>
     </AuthProvider>
     <Toaster />
-  </QueryClientProvider>,
+  </QueryClientProvider>
 );
