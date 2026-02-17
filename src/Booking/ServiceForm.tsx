@@ -42,6 +42,7 @@ const serviceFormSchema = yup.object({
   estimatedTime: yup.string().optional(),
   price: yup
     .number()
+    .transform((value, originalValue) => originalValue === "" ? undefined : value)
     .typeError("ფასი უნდა იყოს რიცხვი")
     .required("ფასი აუცილებელია")
     .min(0, "ფასი უნდა იყოს დადებითი"),
@@ -87,7 +88,25 @@ const serviceFormSchema = yup.object({
     .matches(/^https?:\/\/.+/, "URL უნდა იწყებოდეს http:// ან https://"),
 });
 
-type ServiceFormData = yup.InferType<typeof serviceFormSchema>;
+interface ServiceFormData {
+  title?: string;
+  city?: string;
+  district?: string;
+  description?: string;
+  address?: string;
+  mainImage?: FileList;
+  galleryImages?: FileList;
+  categoryId?: string;
+  subcategoryId?: string;
+  estimatedTime?: string;
+  price?: number;
+  priceMin?: number;
+  priceMax?: number;
+  websiteUrl?: string;
+  email?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+}
 
 export default function ServiceForm() {
   const { t } = useTranslation("categories");
@@ -101,23 +120,25 @@ export default function ServiceForm() {
     setValue,
     formState: { errors },
   } = useForm<ServiceFormData>({
-    resolver: yupResolver(serviceFormSchema),
+    resolver: yupResolver(serviceFormSchema) as any,
     defaultValues: {
       title: "",
       city: "",
-      district: "",
+      district: undefined,
       description: "",
       address: "",
+      mainImage: undefined,
+      galleryImages: undefined,
       categoryId: "",
-      subcategoryId: "",
-      estimatedTime: "",
+      subcategoryId: undefined,
+      estimatedTime: undefined,
       price: undefined,
       priceMin: undefined,
       priceMax: undefined,
-      websiteUrl: "",
+      websiteUrl: undefined,
       email: "",
-      facebookUrl: "",
-      instagramUrl: "",
+      facebookUrl: undefined,
+      instagramUrl: undefined,
     },
   });
 
