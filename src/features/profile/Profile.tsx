@@ -1,17 +1,18 @@
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/context/useAuth";
 import HistoryTab from "@/features/profile/HistoryTab";
 import InfoTab from "@/features/profile/InfoTab";
 import ProfileForm from "@/features/profile/ProfileForm";
 import useGetProfile from "@/features/profile/useGetProfile";
+import { History, Settings, UserCircle } from "lucide-react";
 import Avatar from "react-avatar";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Profile() {
   const { data: profile } = useGetProfile();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { token } = useAuth();
+  const { t } = useTranslation("profile");
+  // const { token } = useAuth();
   const tab = searchParams.get("section") || "info";
   const verificationStatus = profile?.status;
   const isFullnameExist = profile?.firstName && profile?.lastName;
@@ -20,16 +21,16 @@ export default function Profile() {
     : profile?.userName;
 
   const tabs = [
-    { value: "info", label: "Personal Information" },
-    { value: "history", label: "History" },
-    { value: "settings", label: "Account Settings" },
+    { value: "info", label: t("tabs.info"), icon: UserCircle },
+    { value: "history", label: t("tabs.history"), icon: History },
+    { value: "settings", label: t("tabs.settings"), icon: Settings },
   ];
 
   const tabNames = {
-    history: "History",
-    info: "Personal Infrormation",
-    paymentMethods: "Payment Methods",
-    settings: "Account Settings",
+    history: t("tabs.history"),
+    info: t("tabs.info"),
+    paymentMethods: t("tabs.paymentMethods"),
+    settings: t("tabs.settings"),
   };
 
   return (
@@ -51,7 +52,7 @@ export default function Profile() {
           <div className="flex flex-col flex-1">
             <p className="text-xl md:text-2xl font-semibold">{fullName}</p>
             <p className="text-sm md:text-base text-gray-600">
-              Status: {verificationStatus ? "Verified" : "Not Verified"}
+              {t("profileHeader.status")}: {verificationStatus ? t("infoTab.verified") : t("infoTab.notVerified")}
             </p>
             <p className="text-xs md:text-sm text-gray-500">
               {profile?.userEmail}
@@ -68,7 +69,7 @@ export default function Profile() {
       </div>
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
         <Tabs
-          defaultValue={tab}
+          value={tab}
           orientation="vertical"
           onValueChange={(value) => {
             setSearchParams((params) => {
@@ -79,15 +80,19 @@ export default function Profile() {
           className="w-full flex flex-col lg:flex-row"
         >
           <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start ">
-            {tabs.map((tab) => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="w-full justify-start p-4 text-md"
-              >
-                {tab.label}
-              </TabsTrigger>
-            ))}
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="w-full justify-start p-4 text-md gap-3"
+                >
+                  <Icon className="w-5 h-5" />
+                  {tab.label}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
           {/*====== Info Tab ===== */}
@@ -108,7 +113,7 @@ export default function Profile() {
             <HistoryTab />
           </TabsContent>
 
-          <TabsContent value="paymentMethod" className="flex-1">
+          {/* <TabsContent value="paymentMethod" className="flex-1">
             <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
               <h3 className="text-lg md:text-xl font-semibold mb-4">
                 Payment Methods
@@ -142,7 +147,8 @@ export default function Profile() {
                 Add New Payment Method
               </Button>
             </div>
-          </TabsContent>
+          </TabsContent> */}
+
           <TabsContent value="settings" className="flex-1">
             <div className="bg-white px-4 md:px-6">
               <div className="space-y-3">

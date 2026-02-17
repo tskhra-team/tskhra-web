@@ -4,17 +4,37 @@ const profileSchema = yup.object().shape({
   firstName: yup
     .string()
     .test(
+      "letters-only",
+      "First name must contain only letters",
+      (value) => !value || /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
+    )
+    .test(
       "min-length",
       "First name must be at least 2 characters",
       (value) => !value || value.length >= 2,
+    )
+    .test(
+      "max-length",
+      "First name must be at most 50 characters",
+      (value) => !value || value.length <= 50,
     )
     .default(""),
   lastName: yup
     .string()
     .test(
+      "letters-only",
+      "Last name must contain only letters",
+      (value) => !value || /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
+    )
+    .test(
       "min-length",
       "Last name must be at least 2 characters",
       (value) => !value || value.length >= 2,
+    )
+    .test(
+      "max-length",
+      "Last name must be at most 50 characters",
+      (value) => !value || value.length <= 50,
     )
     .default(""),
   gender: yup
@@ -40,9 +60,14 @@ const profileSchema = yup.object().shape({
   phoneNumber: yup
     .string()
     .test(
-      "phone-format",
-      "Phone number must be 9 digits",
-      (value) => !value || /^[0-9]{9}$/.test(value),
+      "numbers-only",
+      "Phone number must contain only numbers",
+      (value) => !value || /^[0-9]*$/.test(value),
+    )
+    .test(
+      "phone-length",
+      "Phone number must be exactly 9 digits",
+      (value) => !value || value.length === 9,
     )
     .default(""),
 });
