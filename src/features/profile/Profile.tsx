@@ -1,12 +1,23 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import HistoryTab from "@/features/profile/HistoryTab";
-import InfoTab from "@/features/profile/InfoTab";
-import ProfileForm from "@/features/profile/ProfileForm";
+import {
+  HistoryTabSkeleton,
+  InfoTabSkeleton,
+  ProfileFormSkeleton,
+} from "@/features/profile/LoadingSkeletons";
 import useGetProfile from "@/features/profile/useGetProfile";
 import { History, Settings, UserCircle } from "lucide-react";
+import { lazy, memo, Suspense } from "react";
 import Avatar from "react-avatar";
-import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
+
+// Lazy load tab components for better performance
+const InfoTab = lazy(() => import("@/features/profile/InfoTab"));
+const HistoryTab = lazy(() => import("@/features/profile/HistoryTab"));
+const ProfileForm = lazy(() => import("@/features/profile/ProfileForm"));
+
+// Memoize Avatar to prevent unnecessary re-renders
+const MemoizedAvatar = memo(Avatar);
 
 export default function Profile() {
   const { data: profile } = useGetProfile();
@@ -34,7 +45,7 @@ export default function Profile() {
   };
 
   return (
-    <main className="px-4 sm:px-8 md:px-12 lg:px-20 py-6 md:py-10">
+    <main className="px-4 sm:px-8 md:px-12 lg:px-20 py-6 md:py-10 ">
       <div className="flex flex-col justify-between md:flex-row gap-4 md:gap-5 items-start md:items-center mb-6 md:mb-8">
         <div
           className={`flex gap-4 items-center transition-all duration-500 ease-in-out ${
@@ -43,7 +54,7 @@ export default function Profile() {
               : "opacity-0 -translate-y-4 pointer-events-none absolute"
           }`}
         >
-          <Avatar
+          <MemoizedAvatar
             name={fullName}
             size="60"
             round
@@ -52,7 +63,10 @@ export default function Profile() {
           <div className="flex flex-col flex-1">
             <p className="text-xl md:text-2xl font-semibold">{fullName}</p>
             <p className="text-sm md:text-base text-gray-600">
-              {t("profileHeader.status")}: {verificationStatus ? t("infoTab.verified") : t("infoTab.notVerified")}
+              {t("profileHeader.status")}:{" "}
+              {verificationStatus
+                ? t("infoTab.verified")
+                : t("infoTab.notVerified")}
             </p>
             <p className="text-xs md:text-sm text-gray-500">
               {profile?.userEmail}
@@ -97,64 +111,32 @@ export default function Profile() {
 
           {/*====== Info Tab ===== */}
           <TabsContent value="info" className="flex-1">
-            <InfoTab
-              profile={profile}
-              isFullnameExist={isFullnameExist}
-              fullName={fullName}
-              verificationStatus={verificationStatus}
-            />
+            <Suspense fallback={<InfoTabSkeleton />}>
+              <InfoTab
+                profile={profile}
+                isFullnameExist={isFullnameExist}
+                fullName={fullName}
+                verificationStatus={verificationStatus}
+              />
+            </Suspense>
           </TabsContent>
 
           {/* =====History Tab===== */}
-          <TabsContent
-            value="history"
-            className="bg-linear-to-br from-gray-50 to-blue-50/30 px-4 md:px-6 py-8 rounded-2xl"
-          >
-            <HistoryTab />
+          <TabsContent value="history" className="flex-1">
+            <Suspense fallback={<HistoryTabSkeleton />}>
+              <HistoryTab />
+            </Suspense>
           </TabsContent>
 
-          {/* <TabsContent value="paymentMethod" className="flex-1">
-            <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg md:text-xl font-semibold mb-4">
-                Payment Methods
-              </h3>
-              <div className="space-y-3 md:space-y-4">
-                <div className="p-3 md:p-4 border rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div>
-                    <p className="font-medium text-sm md:text-base">
-                      Visa •••• 4242
-                    </p>
-                    <p className="text-xs md:text-sm text-gray-600">
-                      Expires 12/2026
-                    </p>
-                  </div>
-                  <span className="text-xs md:text-sm bg-green-100 text-green-800 px-2 py-1 rounded whitespace-nowrap">
-                    Default
-                  </span>
-                </div>
-                <div className="p-3 md:p-4 border rounded-lg flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-sm md:text-base">
-                      Mastercard •••• 8888
-                    </p>
-                    <p className="text-xs md:text-sm text-gray-600">
-                      Expires 08/2027
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <Button className="mt-4 px-3 md:px-4 py-2 text-sm md:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto">
-                Add New Payment Method
-              </Button>
-            </div>
-          </TabsContent> */}
-
+          {/* =====ProfileForm Tab===== */}
           <TabsContent value="settings" className="flex-1">
-            <div className="bg-white px-4 md:px-6">
-              <div className="space-y-3">
-                <ProfileForm />
-              </div>
-            </div>
+            {/* <div className="bg-white px-4 md:px-6">
+              <div className="space-y-3"> */}
+            <Suspense fallback={<ProfileFormSkeleton />}>
+              <ProfileForm />
+            </Suspense>
+            {/* </div>
+            </div> */}
           </TabsContent>
         </Tabs>
       </div>

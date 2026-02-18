@@ -33,6 +33,9 @@ export default function ServicesCatalog() {
               <img
                 src={service.mainImageUrl}
                 alt={service.title}
+                loading="lazy"
+                width={800}
+                height={450}
                 className="w-full h-full object-cover hover:scale-105 transition-transform"
               />
             </div>

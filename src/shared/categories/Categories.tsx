@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import CategoryNav from "./CategoryNav";
+import CategorySkeleton from "./CategorySkeleton";
 import SubcategoryView from "./SubcategoryView";
 import { categoryNameToKey } from "./categoryTranslations";
 import { getPlatformColors } from "./platformColors";
@@ -33,7 +34,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
     [data, activeIndex],
   );
 
-  if (isLoading) return <div className="p-6 text-sm">Loading…</div>;
+  if (isLoading) return <CategorySkeleton />;
   if (error)
     return <div className="p-6 text-sm text-red-600">{error.message}</div>;
   if (!data || data.length === 0)
@@ -60,7 +61,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   return (
     <div
-      className="relative  left-1 sm:left-2 lg:left-10 z-50"
+      className="relative left-1 sm:left-2 lg:left-10 z-50"
       onMouseLeave={() => setActiveIndex(null)}
     >
       <CategoryNav
@@ -74,13 +75,13 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       {/* Desktop subcategory panel - hidden on mobile */}
       {activeCategory && (
         <div
-          className="hidden  lg:block absolute left-full top-0 min-w-175 h-126 overflow-hidden rounded-2xl border p-6 shadow-2xl xl:min-w-250"
+          className="hidden lg:block absolute left-full top-0 min-w-175 h-126 overflow-hidden rounded-2xl border p-6 shadow-2xl xl:min-w-250 animate-in fade-in slide-in-from-left-4 duration-200"
           style={{
             backgroundColor: colors.subcategoryPanel.background,
             zIndex: 9999,
           }}
         >
-          <h3 className="mb-6  text-lg font-semibold text-white">
+          <h3 className="mb-6 text-lg font-semibold text-white transition-opacity duration-300">
             {categoryDisplayName}
           </h3>
           <SubcategoryView

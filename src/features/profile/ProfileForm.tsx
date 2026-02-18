@@ -23,9 +23,12 @@ import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar as CalendarIcon, Pencil, ShieldCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, memo } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
+
+// Memoize Avatar to prevent unnecessary re-renders
+const MemoizedAvatar = memo(Avatar);
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -121,7 +124,7 @@ function ProfileForm() {
       >
         <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="relative">
-            <Avatar
+            <MemoizedAvatar
               name={fullName}
               size="60"
               round
@@ -277,21 +280,23 @@ function ProfileForm() {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      defaultMonth={field.value}
-                      captionLayout="dropdown"
-                      onSelect={(date) => {
-                        field.onChange(date);
-                        setIsCalendarOpen(false);
-                      }}
-                      startMonth={new Date(1925, 0)}
-                      endMonth={new Date(new Date().getFullYear() - 8, 11)}
-                      timeZone={timeZone}
-                    />
-                  </PopoverContent>
+                  {isCalendarOpen && (
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        defaultMonth={field.value}
+                        captionLayout="dropdown"
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
+                        startMonth={new Date(1925, 0)}
+                        endMonth={new Date(new Date().getFullYear() - 8, 11)}
+                        timeZone={timeZone}
+                      />
+                    </PopoverContent>
+                  )}
                 </Popover>
               )}
             />

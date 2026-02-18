@@ -30,6 +30,9 @@ export default function CategoryNav({
                 className="h-6 w-6"
                 src={cat.iconUrl || "/default-icon.png"}
                 alt={cat.name}
+                loading="lazy"
+                width={24}
+                height={24}
               />
               <span className="text-sm font-medium">{cat.name}</span>
             </button>

@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 import { useTranslation } from "react-i18next";
+import { memo } from "react";
 
 const contactInfo = [
   { Icon: Mail, text: "makingscience@tskhra.com" },
@@ -10,7 +11,7 @@ const contactInfo = [
   { Icon: MapPin, text: "13 Mikheil Tamarashvili St, Tbilisi 0162" },
 ];
 
-export default function Footer() {
+function Footer() {
   const navigate = useNavigate();
   const { t } = useTranslation("home");
 
@@ -124,3 +125,6 @@ export default function Footer() {
     </footer>
   );
 }
+
+// Memoize Footer to prevent unnecessary re-renders
+export default memo(Footer);

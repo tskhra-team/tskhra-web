@@ -36,7 +36,7 @@ export default function InfoTab({
     <div className="bg-linear-to-br from-gray-50 to-blue-50/30 px-4 md:px-6 py-8 rounded-2xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         {/* Username Card */}
-        <div className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl hover:shadow-md transition-shadow duration-200">
+        <div className="flex items-center gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200">
           <div className="p-3 bg-linear-to-br from-blue-600 to-blue-700 rounded-xl shadow-md">
             <User className="w-5 h-5 text-white" />
           </div>
@@ -51,7 +51,7 @@ export default function InfoTab({
         </div>
 
         {/* Email Card */}
-        <div className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl hover:shadow-md transition-shadow duration-200">
+        <div className="flex items-center gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200">
           <div className="p-3 bg-linear-to-br from-indigo-600 to-indigo-700 rounded-xl shadow-md">
             <AtSign className="w-5 h-5 text-white" />
           </div>
@@ -67,7 +67,7 @@ export default function InfoTab({
 
         {/* Full Name Card */}
         {isFullnameExist && (
-          <div className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl hover:shadow-md transition-shadow duration-200">
+          <div className="flex items-center gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200">
             <div className="p-3 bg-linear-to-br from-cyan-600 to-cyan-700 rounded-xl shadow-md">
               <UserCircle className="w-5 h-5 text-white" />
             </div>
@@ -83,7 +83,7 @@ export default function InfoTab({
         )}
 
         {/* Account Created Card */}
-        <div className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl hover:shadow-md transition-shadow duration-200">
+        <div className="flex items-center gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200">
           <div className="p-3 bg-linear-to-br from-orange-600 to-orange-700 rounded-xl shadow-md">
             <Calendar className="w-5 h-5 text-white" />
           </div>
@@ -98,7 +98,7 @@ export default function InfoTab({
         </div>
 
         {/* Status Card */}
-        <div className="flex items-center gap-4 p-5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl hover:shadow-md transition-shadow duration-200 md:col-span-2">
+        <div className="flex items-center gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200 md:col-span-2">
           <div
             className={`p-3 rounded-xl shadow-md ${
               verificationStatus
@@ -140,13 +140,13 @@ export default function InfoTab({
 
       <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-purple-700 p-6 md:p-8 rounded-3xl shadow-2xl shadow-blue-500/30">
         {/* Animated background elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl" />
 
         <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-6 h-6 text-yellow-300 animate-pulse" />
+              <Sparkles className="w-6 h-6 text-yellow-300" />
               <h3 className="text-xl md:text-2xl font-bold text-white">
                 {t("infoTab.becomeProvider.title")}
               </h3>

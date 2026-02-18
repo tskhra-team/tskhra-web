@@ -52,6 +52,9 @@ export default function ServiceDetails() {
             <img
               src={service.mainImageUrl}
               alt={service.title}
+              loading="eager"
+              width={1200}
+              height={675}
               className="w-full h-full object-cover"
             />
           </div>
@@ -67,6 +70,9 @@ export default function ServiceDetails() {
                   <img
                     src={url}
                     alt={`Gallery ${index + 1}`}
+                    loading="lazy"
+                    width={400}
+                    height={225}
                     className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
                   />
                 </div>

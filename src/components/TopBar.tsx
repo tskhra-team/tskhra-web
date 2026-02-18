@@ -1,5 +1,6 @@
 import WithAxiosUser from "@/api/withAxiosUser";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import SearchBar from "@/components/SeacrhBar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -43,6 +44,7 @@ export default function TopBar() {
   return (
     <div className="w-full h-16 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
       <Logo />
+      <SearchBar />
       <div className="flex gap-2 sm:gap-3 lg:gap-4 items-center justify-end">
         <LanguageSwitcher />
         {isAuthenticated ? (

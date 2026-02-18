@@ -27,6 +27,9 @@ function Node({ item }: { item: CategoryItem }) {
         className="mt-3 h-20 w-full object-contain"
         src={item.imageUrl || "/default-subcategory.png"}
         alt={item.name}
+        loading="lazy"
+        width={300}
+        height={80}
       />
     </a>
   );

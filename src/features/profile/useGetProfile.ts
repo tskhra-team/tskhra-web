@@ -13,6 +13,8 @@ const useGetProfile = () => {
   return useQuery<ProfileType, AxiosError>({
     queryFn: getProfile,
     queryKey: ["getProfile"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 50 * 1000,
   });
 };
 
