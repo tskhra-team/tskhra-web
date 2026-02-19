@@ -10,7 +10,7 @@ import { History, Settings, ShieldCheck, UserCircle } from "lucide-react";
 import { lazy, memo, Suspense } from "react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 // Lazy load tab components for better performance
 const InfoTab = lazy(() => import("@/features/profile/InfoTab"));
@@ -23,6 +23,7 @@ const MemoizedAvatar = memo(Avatar);
 export default function Profile() {
   const { data: profile } = useGetProfile();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { t } = useTranslation("profile");
   // const { token } = useAuth();
   const tab = searchParams.get("section") || "info";
@@ -112,7 +113,10 @@ export default function Profile() {
             </TabsList>
 
             {!profile?.status && (
-              <Button className="w-full justify text-md bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 gap-4 p-8 mt-6 shadow-lg hover:shadow-xl transition-all duration-300 border-0 group rounded-4xl">
+              <Button
+                className="w-full justify text-md bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 gap-4 p-8 mt-6 shadow-lg hover:shadow-xl transition-all duration-300 border-0 group rounded-4xl"
+                onClick={() => navigate("/verification")}
+              >
                 <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors">
                   <ShieldCheck className="w-6 h-6 text-white" />
                 </div>

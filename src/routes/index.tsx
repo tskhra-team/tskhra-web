@@ -16,7 +16,7 @@ const ServicesCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const ServiceDetailsPage = lazy(() => import("@/pages/ServiceDetailsPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
-
+const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
 
 export const routes = [
   // Main Layout - Public pages with main Header + Footer
@@ -78,7 +78,7 @@ export const routes = [
   {
     element: (
       <WithAxiosUser>
-        <AppLayout />,
+        <AppLayout />
       </WithAxiosUser>
     ),
     children: [
@@ -87,6 +87,14 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <ProfilePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/verification",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <VerificationPage />
           </Suspense>
         ),
       },
