@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   HistoryTabSkeleton,
@@ -5,7 +6,7 @@ import {
   ProfileFormSkeleton,
 } from "@/features/profile/LoadingSkeletons";
 import useGetProfile from "@/features/profile/useGetProfile";
-import { History, Settings, UserCircle } from "lucide-react";
+import { History, Settings, ShieldCheck, UserCircle } from "lucide-react";
 import { lazy, memo, Suspense } from "react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
@@ -93,21 +94,34 @@ export default function Profile() {
           }}
           className="w-full flex flex-col lg:flex-row"
         >
-          <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start ">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  className="w-full justify-start p-4 text-md gap-3"
-                >
-                  <Icon className="w-5 h-5" />
-                  {tab.label}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+          <div>
+            <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start ">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="w-full justify-start p-4 text-md gap-3"
+                  >
+                    <Icon className="w-5 h-5" />
+                    {tab.label}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
+            {!profile?.status && (
+              <Button className="w-full justify text-md bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 gap-4 p-8 mt-6 shadow-lg hover:shadow-xl transition-all duration-300 border-0 group rounded-4xl">
+                <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors">
+                  <ShieldCheck className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-semibold text-white">
+                  Become a verified user!
+                </span>
+              </Button>
+            )}
+          </div>
 
           {/*====== Info Tab ===== */}
           <TabsContent value="info" className="flex-1">
