@@ -1,4 +1,4 @@
-import { ShieldCheck } from "lucide-react";
+import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 
 type VerifiedUser = {
@@ -20,14 +20,14 @@ export default function BlurVerifiedUser({
         <div className="text-center space-y-4 bg-background/80 backdrop-blur-sm p-8 rounded-lg">
           <div className="flex justify-center">
             <div className="p-4 bg-linear-to-br from-green-500 to-green-600 rounded-full shadow-lg">
-              <ShieldCheck className="w-12 h-12 text-white" />
+              <Check className="w-12 h-12 text-white" />
             </div>
           </div>
           <p className="text-3xl font-semibold text-green-500">
             You are a verified user!
           </p>
           <p className="text-muted-foreground">
-            *A verified user cannot change his data
+            *a verified user cannot change his data
           </p>
         </div>
       </div>
