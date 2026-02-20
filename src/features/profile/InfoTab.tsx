@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import VerifyDialog from "@/features/profile/VerifyDialog";
 import type { ProfileType } from "@/types";
+import { scrollToTop } from "@/utils";
 import {
   AtSign,
   Calendar,
@@ -168,7 +169,10 @@ export default function InfoTab({
                 if (!verificationStatus) {
                   setIsDialogOpen(true);
                 } else {
-                  navigate("/create-service");
+                  scrollToTop();
+                  navigate("/create-booking-service", {
+                    state: { isVerified: verificationStatus },
+                  });
                 }
               }}
               className="flex items-center gap-2 bg-white text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-semibold px-6 py-3 rounded-xl"
@@ -196,7 +200,10 @@ export default function InfoTab({
                 if (!verificationStatus) {
                   setIsDialogOpen(true);
                 } else {
-                  navigate("/create-product");
+                  scrollToTop();
+                  navigate("/create-product", {
+                    state: { isVerified: verificationStatus },
+                  });
                 }
               }}
               className="flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl"
