@@ -13,12 +13,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
+import ServiceFormSkeleton from "./ServiceFormSkeleton";
 
 const serviceFormSchema = yup.object({
-  title: yup.string().required("სათაური აუცილებელია").min(3, "სათაური უნდა იყოს მინიმუმ 3 სიმბოლო"),
+  title: yup
+    .string()
+    .required("სათაური აუცილებელია")
+    .min(3, "სათაური უნდა იყოს მინიმუმ 3 სიმბოლო"),
   city: yup.string().required("ქალაქი აუცილებელია"),
   district: yup.string().optional(),
-  description: yup.string().required("აღწერა აუცილებელია").min(10, "აღწერა უნდა იყოს მინიმუმ 10 სიმბოლო"),
+  description: yup
+    .string()
+    .required("აღწერა აუცილებელია")
+    .min(10, "აღწერა უნდა იყოს მინიმუმ 10 სიმბოლო"),
   address: yup.string().required("მისამართი აუცილებელია"),
   mainImage: yup
     .mixed<FileList>()
@@ -42,7 +49,9 @@ const serviceFormSchema = yup.object({
   estimatedTime: yup.string().optional(),
   price: yup
     .number()
-    .transform((value, originalValue) => originalValue === "" ? undefined : value)
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value,
+    )
     .typeError("ფასი უნდა იყოს რიცხვი")
     .required("ფასი აუცილებელია")
     .min(0, "ფასი უნდა იყოს დადებითი"),
@@ -51,31 +60,42 @@ const serviceFormSchema = yup.object({
     .typeError("მინიმალური ფასი უნდა იყოს რიცხვი")
     .optional()
     .min(0, "ფასი უნდა იყოს დადებითი")
-    .test("price-range", "მინიმალური ფასი უნდა იყოს ნაკლები მაქსიმალურზე", function(value) {
-      const { priceMax } = this.parent;
-      if (value && priceMax) {
-        return value <= priceMax;
-      }
-      return true;
-    }),
+    .test(
+      "price-range",
+      "მინიმალური ფასი უნდა იყოს ნაკლები მაქსიმალურზე",
+      function (value) {
+        const { priceMax } = this.parent;
+        if (value && priceMax) {
+          return value <= priceMax;
+        }
+        return true;
+      },
+    ),
   priceMax: yup
     .number()
     .typeError("მაქსიმალური ფასი უნდა იყოს რიცხვი")
     .optional()
     .min(0, "ფასი უნდა იყოს დადებითი")
-    .test("price-range", "მაქსიმალური ფასი უნდა იყოს მეტი მინიმალურზე", function(value) {
-      const { priceMin } = this.parent;
-      if (value && priceMin) {
-        return value >= priceMin;
-      }
-      return true;
-    }),
+    .test(
+      "price-range",
+      "მაქსიმალური ფასი უნდა იყოს მეტი მინიმალურზე",
+      function (value) {
+        const { priceMin } = this.parent;
+        if (value && priceMin) {
+          return value >= priceMin;
+        }
+        return true;
+      },
+    ),
   websiteUrl: yup
     .string()
     .optional()
     .url("URL უნდა იყოს სწორი ფორმატის")
     .matches(/^https?:\/\/.+/, "URL უნდა იწყებოდეს http:// ან https://"),
-  email: yup.string().required("ელ-ფოსტა აუცილებელია").email("არასწორი ელ-ფოსტის ფორმატი"),
+  email: yup
+    .string()
+    .required("ელ-ფოსტა აუცილებელია")
+    .email("არასწორი ელ-ფოსტის ფორმატი"),
   facebookUrl: yup
     .string()
     .optional()
@@ -163,11 +183,14 @@ export default function ServiceForm() {
   };
 
   if (isLoading) {
-    return <div className="p-6">Loading categories...</div>;
+    return <ServiceFormSkeleton />;
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl mx-auto space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-3xl mx-auto space-y-6"
+    >
       <div>
         <label className="block text-sm font-medium mb-2">
           სერვისის სათაური
@@ -185,10 +208,7 @@ export default function ServiceForm() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-2">ქალაქი</label>
-          <Input
-            {...register("city")}
-            placeholder="ქალაქი"
-          />
+          <Input {...register("city")} placeholder="ქალაქი" />
           {errors.city && (
             <p className="text-sm text-red-600 mt-1">{errors.city.message}</p>
           )}
@@ -197,7 +217,9 @@ export default function ServiceForm() {
           <label className="block text-sm font-medium mb-2">რაიონი</label>
           <Input {...register("district")} placeholder="რაიონი" />
           {errors.district && (
-            <p className="text-sm text-red-600 mt-1">{errors.district.message}</p>
+            <p className="text-sm text-red-600 mt-1">
+              {errors.district.message}
+            </p>
           )}
         </div>
       </div>
@@ -212,17 +234,16 @@ export default function ServiceForm() {
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
         />
         {errors.description && (
-          <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>
+          <p className="text-sm text-red-600 mt-1">
+            {errors.description.message}
+          </p>
         )}
       </div>
 
       {/* Address */}
       <div>
         <label className="block text-sm font-medium mb-2">მისამართი</label>
-        <Input
-          {...register("address")}
-          placeholder="შეიყვანეთ მისამართი"
-        />
+        <Input {...register("address")} placeholder="შეიყვანეთ მისამართი" />
         {errors.address && (
           <p className="text-sm text-red-600 mt-1">{errors.address.message}</p>
         )}
@@ -232,13 +253,11 @@ export default function ServiceForm() {
         <label className="block text-sm font-medium mb-2">
           სერვისის მთავარი სურათი
         </label>
-        <Input
-          type="file"
-          accept="image/*"
-          {...register("mainImage")}
-        />
+        <Input type="file" accept="image/*" {...register("mainImage")} />
         {errors.mainImage && (
-          <p className="text-sm text-red-600 mt-1">{errors.mainImage.message}</p>
+          <p className="text-sm text-red-600 mt-1">
+            {errors.mainImage.message}
+          </p>
         )}
       </div>
 
@@ -254,7 +273,9 @@ export default function ServiceForm() {
           {...register("galleryImages")}
         />
         {errors.galleryImages && (
-          <p className="text-sm text-red-600 mt-1">{errors.galleryImages.message}</p>
+          <p className="text-sm text-red-600 mt-1">
+            {errors.galleryImages.message}
+          </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
           შეგიძლიათ აირჩიოთ რამდენიმე სურათი
@@ -298,7 +319,9 @@ export default function ServiceForm() {
             )}
           />
           {errors.categoryId && (
-            <p className="text-sm text-red-600 mt-1">{errors.categoryId.message}</p>
+            <p className="text-sm text-red-600 mt-1">
+              {errors.categoryId.message}
+            </p>
           )}
         </div>
 
@@ -325,7 +348,10 @@ export default function ServiceForm() {
                       ? t(translationKey)
                       : subcategory.name;
                     return (
-                      <SelectItem key={subcategory.name} value={subcategory.name}>
+                      <SelectItem
+                        key={subcategory.name}
+                        value={subcategory.name}
+                      >
                         {displayName}
                       </SelectItem>
                     );
@@ -335,22 +361,24 @@ export default function ServiceForm() {
             )}
           />
           {errors.subcategoryId && (
-            <p className="text-sm text-red-600 mt-1">{errors.subcategoryId.message}</p>
+            <p className="text-sm text-red-600 mt-1">
+              {errors.subcategoryId.message}
+            </p>
           )}
         </div>
       </div>
 
       {/* Estimated Time */}
       <div>
-        <label className="block text-sm font-medium mb-2">
-          სავარაუდო დრო
-        </label>
+        <label className="block text-sm font-medium mb-2">სავარაუდო დრო</label>
         <Input
           {...register("estimatedTime")}
           placeholder="მაგ: 2 საათი, 3 დღე, 1 კვირა"
         />
         {errors.estimatedTime && (
-          <p className="text-sm text-red-600 mt-1">{errors.estimatedTime.message}</p>
+          <p className="text-sm text-red-600 mt-1">
+            {errors.estimatedTime.message}
+          </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
           რამდენი დრო სჭირდება სერვისის გასაწევად
@@ -359,9 +387,7 @@ export default function ServiceForm() {
 
       {/* Price */}
       <div>
-        <label className="block text-sm font-medium mb-2">
-          ფასი
-        </label>
+        <label className="block text-sm font-medium mb-2">ფასი</label>
         <Input
           type="number"
           step="0.01"
@@ -387,7 +413,9 @@ export default function ServiceForm() {
               placeholder="მინ. ფასი"
             />
             {errors.priceMin && (
-              <p className="text-sm text-red-600 mt-1">{errors.priceMin.message}</p>
+              <p className="text-sm text-red-600 mt-1">
+                {errors.priceMin.message}
+              </p>
             )}
           </div>
           <div>
@@ -398,7 +426,9 @@ export default function ServiceForm() {
               placeholder="მაქს. ფასი"
             />
             {errors.priceMax && (
-              <p className="text-sm text-red-600 mt-1">{errors.priceMax.message}</p>
+              <p className="text-sm text-red-600 mt-1">
+                {errors.priceMax.message}
+              </p>
             )}
           </div>
         </div>
@@ -407,7 +437,6 @@ export default function ServiceForm() {
         </p>
       </div>
 
-    
       {/* Website URL */}
       <div>
         <label className="block text-sm font-medium mb-2">
@@ -419,7 +448,9 @@ export default function ServiceForm() {
           placeholder="https://example.com"
         />
         {errors.websiteUrl && (
-          <p className="text-sm text-red-600 mt-1">{errors.websiteUrl.message}</p>
+          <p className="text-sm text-red-600 mt-1">
+            {errors.websiteUrl.message}
+          </p>
         )}
       </div>
 
@@ -439,16 +470,16 @@ export default function ServiceForm() {
       {/* Social Media URLs */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Facebook URL
-          </label>
+          <label className="block text-sm font-medium mb-2">Facebook URL</label>
           <Input
             type="url"
             {...register("facebookUrl")}
             placeholder="https://facebook.com/yourpage"
           />
           {errors.facebookUrl && (
-            <p className="text-sm text-red-600 mt-1">{errors.facebookUrl.message}</p>
+            <p className="text-sm text-red-600 mt-1">
+              {errors.facebookUrl.message}
+            </p>
           )}
         </div>
         <div>
@@ -461,7 +492,9 @@ export default function ServiceForm() {
             placeholder="https://instagram.com/youraccount"
           />
           {errors.instagramUrl && (
-            <p className="text-sm text-red-600 mt-1">{errors.instagramUrl.message}</p>
+            <p className="text-sm text-red-600 mt-1">
+              {errors.instagramUrl.message}
+            </p>
           )}
         </div>
       </div>

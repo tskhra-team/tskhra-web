@@ -11,7 +11,9 @@ const HomePage = lazy(() => import("@/pages/HomePage"));
 const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
 const SwitchingPage = lazy(() => import("@/pages/SwappingPage"));
-const CreateServicePage = lazy(() => import("@/pages/CreateServicePage"));
+const CreateBookingServicePage = lazy(
+  () => import("@/pages/CreateBookingServicePage"),
+);
 const ServicesCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const ServiceDetailsPage = lazy(() => import("@/pages/ServiceDetailsPage"));
 
@@ -99,10 +101,10 @@ export const routes = [
         ),
       },
       {
-        path: "/create-service",
+        path: "/create-booking-service",
         element: (
           <Suspense fallback={<Loader />}>
-            <CreateServicePage />
+            <CreateBookingServicePage />
           </Suspense>
         ),
       },
