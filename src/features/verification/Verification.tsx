@@ -17,11 +17,13 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function Verification() {
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
+  const { t } = useTranslation("verification");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,9 +33,9 @@ export default function Verification() {
   });
 
   const steps = [
-    { id: 1, title: "Personal Info", icon: User },
-    { id: 2, title: "ID Card", icon: CreditCard },
-    { id: 3, title: "Face Photo", icon: Camera },
+    { id: 1, title: t("steps.personalInfo"), icon: User },
+    { id: 2, title: t("steps.idCard"), icon: CreditCard },
+    { id: 3, title: t("steps.facePhoto"), icon: Camera },
   ];
 
   const handleNext = () => {
@@ -49,7 +51,7 @@ export default function Verification() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br py-12 px-4">
+    <div className="h-auto bg-linear-to-br py-12 px-4">
       <Button
         type="button"
         variant="link"
@@ -57,7 +59,7 @@ export default function Verification() {
         onClick={() => navigate("/profile")}
       >
         <ArrowLeft />
-        Go back
+        {t("navigation.goBack")}
       </Button>
       <div className="max-w-4xl mx-auto">
         {/* Step Indicators */}
@@ -114,19 +116,19 @@ export default function Verification() {
             <div className="space-y-6 animate-in fade-in duration-500">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Personal Information
+                  {t("step1.title")}
                 </h2>
-                <p className="text-gray-600">
-                  Please provide your personal details
-                </p>
+                <p className="text-gray-600">{t("step1.description")}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">
+                    {t("step1.firstName.label")}
+                  </Label>
                   <Input
                     id="firstName"
-                    placeholder="Enter your first name"
+                    placeholder={t("step1.firstName.placeholder")}
                     value={formData.firstName}
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
@@ -136,10 +138,10 @@ export default function Verification() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">{t("step1.lastName.label")}</Label>
                   <Input
                     id="lastName"
-                    placeholder="Enter your last name"
+                    placeholder={t("step1.lastName.placeholder")}
                     value={formData.lastName}
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
@@ -149,7 +151,9 @@ export default function Verification() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="birthDate">Birth Date</Label>
+                  <Label htmlFor="birthDate">
+                    {t("step1.birthDate.label")}
+                  </Label>
                   <Input
                     id="birthDate"
                     type="date"
@@ -162,10 +166,12 @@ export default function Verification() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="personalID">Personal ID</Label>
+                  <Label htmlFor="personalID">
+                    {t("step1.personalID.label")}
+                  </Label>
                   <Input
                     id="personalID"
-                    placeholder="Enter your personal ID"
+                    placeholder={t("step1.personalID.placeholder")}
                     value={formData.personalID}
                     onChange={(e) =>
                       handleInputChange("personalID", e.target.value)
@@ -175,7 +181,7 @@ export default function Verification() {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="gender">Gender</Label>
+                  <Label htmlFor="gender">{t("step1.gender.label")}</Label>
                   <Select
                     value={formData.gender}
                     onValueChange={(value) =>
@@ -183,11 +189,17 @@ export default function Verification() {
                     }
                   >
                     <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select your gender" />
+                      <SelectValue
+                        placeholder={t("step1.gender.placeholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="M">Male</SelectItem>
-                      <SelectItem value="F">Female</SelectItem>
+                      <SelectItem value="M">
+                        {t("step1.gender.male")}
+                      </SelectItem>
+                      <SelectItem value="F">
+                        {t("step1.gender.female")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -200,17 +212,15 @@ export default function Verification() {
             <div className="space-y-6 animate-in fade-in duration-500">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  ID Card Upload
+                  {t("step2.title")}
                 </h2>
-                <p className="text-gray-600">
-                  Please upload photos of your ID card
-                </p>
+                <p className="text-gray-600">{t("step2.description")}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Front Side */}
                 <div className="space-y-3">
-                  <Label>Front Side</Label>
+                  <Label>{t("step2.frontSide.label")}</Label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-green-500 transition-colors cursor-pointer group">
                     <div className="flex flex-col items-center justify-center text-center space-y-3">
                       <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
@@ -218,10 +228,10 @@ export default function Verification() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-700">
-                          Upload Front Side
+                          {t("step2.frontSide.uploadText")}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Click to browse or drag and drop
+                          {t("step2.frontSide.dragDropText")}
                         </p>
                       </div>
                     </div>
@@ -230,7 +240,7 @@ export default function Verification() {
 
                 {/* Back Side */}
                 <div className="space-y-3">
-                  <Label>Back Side</Label>
+                  <Label>{t("step2.backSide.label")}</Label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-green-500 transition-colors cursor-pointer group">
                     <div className="flex flex-col items-center justify-center text-center space-y-3">
                       <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
@@ -238,10 +248,10 @@ export default function Verification() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-700">
-                          Upload Back Side
+                          {t("step2.backSide.uploadText")}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Click to browse or drag and drop
+                          {t("step2.backSide.dragDropText")}
                         </p>
                       </div>
                     </div>
@@ -251,8 +261,8 @@ export default function Verification() {
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                  <strong>Note:</strong> Make sure your ID card is clearly
-                  visible and all details are readable
+                  <strong>{t("step2.note.title")}</strong>{" "}
+                  {t("step2.note.description")}
                 </p>
               </div>
             </div>
@@ -263,11 +273,9 @@ export default function Verification() {
             <div className="space-y-6 animate-in fade-in duration-500">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Face Photo
+                  {t("step3.title")}
                 </h2>
-                <p className="text-gray-600">
-                  Upload a clear photo of your face for verification
-                </p>
+                <p className="text-gray-600">{t("step3.description")}</p>
               </div>
 
               <div className="max-w-md mx-auto">
@@ -278,10 +286,10 @@ export default function Verification() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-700 text-lg">
-                        Upload Face Photo
+                        {t("step3.uploadText")}
                       </p>
                       <p className="text-sm text-gray-500 mt-2">
-                        Click to browse or drag and drop
+                        {t("step3.dragDropText")}
                       </p>
                     </div>
                   </div>
@@ -290,13 +298,13 @@ export default function Verification() {
 
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <p className="text-sm text-amber-800">
-                  <strong>Requirements:</strong>
+                  <strong>{t("step3.requirements.title")}</strong>
                 </p>
                 <ul className="text-sm text-amber-800 mt-2 space-y-1 list-disc list-inside">
-                  <li>Look directly at the camera</li>
-                  <li>Ensure good lighting</li>
-                  <li>Remove sunglasses and hats</li>
-                  <li>Keep a neutral expression</li>
+                  <li>{t("step3.requirements.lookAtCamera")}</li>
+                  <li>{t("step3.requirements.goodLighting")}</li>
+                  <li>{t("step3.requirements.removeSunglasses")}</li>
+                  <li>{t("step3.requirements.neutralExpression")}</li>
                 </ul>
               </div>
             </div>
@@ -310,7 +318,7 @@ export default function Verification() {
               disabled={currentStep === 1}
               className="px-8 h-12"
             >
-              Previous
+              {t("buttons.previous")}
             </Button>
 
             {currentStep < 3 ? (
@@ -318,11 +326,11 @@ export default function Verification() {
                 onClick={handleNext}
                 className="px-8 h-12 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
               >
-                Next Step
+                {t("buttons.nextStep")}
               </Button>
             ) : (
               <Button className="px-8 h-12 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                Submit Verification
+                {t("buttons.submit")}
               </Button>
             )}
           </div>

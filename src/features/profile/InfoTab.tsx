@@ -4,9 +4,11 @@ import type { ProfileType } from "@/types";
 import {
   AtSign,
   Calendar,
+  CalendarClock,
   CheckCircle2,
   Plus,
-  Sparkles,
+  ShieldCheck,
+  ShoppingBag,
   User,
   UserCircle,
   XCircle,
@@ -98,76 +100,111 @@ export default function InfoTab({
         </div>
 
         {/* Status Card */}
-        <div className="flex items-center gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200 md:col-span-2">
-          <div
-            className={`p-3 rounded-xl shadow-md ${
-              verificationStatus
-                ? "bg-linear-to-br from-emerald-600 to-emerald-700"
-                : "bg-linear-to-br from-red-500 to-red-600"
-            }`}
-          >
-            {verificationStatus ? (
-              <CheckCircle2 className="w-5 h-5 text-white" />
-            ) : (
-              <XCircle className="w-5 h-5 text-white" />
-            )}
-          </div>
-          <div className="flex-1">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
-              {t("infoTab.accountStatus")}
-            </p>
-            <div className="flex items-center gap-2">
-              <p
-                className={`font-semibold text-lg ${
-                  verificationStatus ? "text-emerald-700" : "text-red-600"
-                }`}
-              >
-                {verificationStatus
-                  ? t("infoTab.verified")
-                  : t("infoTab.notVerified")}
-              </p>
-              {verificationStatus && (
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200/50 shadow-sm">
-                  {t("infoTab.active")}
-                </span>
+        <div className="flex flex-col md:items-center md:justify-between xl:flex-row  gap-4 p-5 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-shadow duration-200 md:col-span-2">
+          <div className="flex items-center gap-4">
+            <div
+              className={`p-3 rounded-xl shadow-md ${
+                verificationStatus
+                  ? "bg-linear-to-br from-emerald-600 to-emerald-700"
+                  : "bg-linear-to-br from-red-500 to-red-600"
+              }`}
+            >
+              {verificationStatus ? (
+                <CheckCircle2 className="w-5 h-5 text-white" />
+              ) : (
+                <XCircle className="w-5 h-5 text-white" />
               )}
             </div>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-0.5">
+                {t("infoTab.accountStatus")}
+              </p>
+              <div className="flex items-center gap-2">
+                <p
+                  className={`font-semibold text-lg ${
+                    verificationStatus ? "text-emerald-700" : "text-red-600"
+                  }`}
+                >
+                  {verificationStatus
+                    ? t("infoTab.verified")
+                    : t("infoTab.notVerified")}
+                </p>
+              </div>
+            </div>
           </div>
+
+          {!verificationStatus && (
+            <Button
+              className=" cursor-pointer text-md bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 gap-4 p-8 shadow-lg hover:shadow-xl transition-all duration-300 border-0 group rounded-4xl"
+              onClick={() => navigate("/verification")}
+            >
+              <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors">
+                <ShieldCheck className="w-6 h-6 text-white" />
+              </div>
+              <span className="font-semibold text-white">
+                {t("infoTab.goToVerification")}
+              </span>
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Service Provider CTA */}
-
-      <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-purple-700 p-6 md:p-8 rounded-3xl shadow-2xl shadow-blue-500/30">
-        {/* Animated background elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl" />
-
-        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-6 h-6 text-yellow-300" />
+      {/* Service Provider CTA Cards */}
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Booking Services Card */}
+        <div className="flex-1 bg-linear-to-br from-orange-400 via-orange-500 to-orange-600 p-6 md:p-8 rounded-3xl">
+          <div className="flex flex-col items-start justify-between h-50">
+            <div className="flex items-center gap-2">
+              <CalendarClock className="w-8 h-8 text-white" />
               <h3 className="text-xl md:text-2xl font-bold text-white">
-                {t("infoTab.becomeProvider.title")}
+                {t("infoTab.becomeBookingProvider.title")}
               </h3>
             </div>
-            <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-2xl">
-              {t("infoTab.becomeProvider.description")}
+            <p className="text-orange-50 text-sm md:text-base leading-relaxed">
+              {t("infoTab.becomeBookingProvider.description")}
             </p>
+            <Button
+              onClick={() => {
+                if (!verificationStatus) {
+                  setIsDialogOpen(true);
+                } else {
+                  navigate("/create-service");
+                }
+              }}
+              className="flex items-center gap-2 bg-white text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-semibold px-6 py-3 rounded-xl"
+            >
+              <Plus className="w-5 h-5" />
+              {t("infoTab.becomeBookingProvider.button")}
+            </Button>
           </div>
-          <Button
-            onClick={() => {
-              if (!verificationStatus) {
-                setIsDialogOpen(true);
-              } else {
-                navigate("/create-service");
-              }
-            }}
-            className="flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-semibold px-6 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 whitespace-nowrap border-2 border-white/20"
-          >
-            <Plus className="w-5 h-5" />
-            {t("infoTab.becomeProvider.button")}
-          </Button>
+        </div>
+
+        {/* E-commerce Services Card */}
+        <div className="flex-1 bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 p-6 md:p-8 rounded-3xl">
+          <div className="flex flex-col items-start justify-between h-50">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-8 h-8 text-white" />
+              <h3 className="text-xl md:text-2xl font-bold text-white">
+                {t("infoTab.becomeProductProvider.title")}
+              </h3>
+            </div>
+            <p className="text-blue-50 text-sm md:text-base leading-relaxed">
+              {t("infoTab.becomeProductProvider.description")}
+            </p>
+            <Button
+              onClick={() => {
+                if (!verificationStatus) {
+                  setIsDialogOpen(true);
+                } else {
+                  navigate("/create-product");
+                }
+              }}
+              className="flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl"
+            >
+              <Plus className="w-5 h-5" />
+              {t("infoTab.becomeProductProvider.button")}
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   HistoryTabSkeleton,
@@ -6,11 +5,11 @@ import {
   ProfileFormSkeleton,
 } from "@/features/profile/LoadingSkeletons";
 import useGetProfile from "@/features/profile/useGetProfile";
-import { History, Settings, ShieldCheck, UserCircle } from "lucide-react";
+import { History, Settings, UserCircle } from "lucide-react";
 import { lazy, memo, Suspense } from "react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 // Lazy load tab components for better performance
 const InfoTab = lazy(() => import("@/features/profile/InfoTab"));
@@ -23,9 +22,7 @@ const MemoizedAvatar = memo(Avatar);
 export default function Profile() {
   const { data: profile } = useGetProfile();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { t } = useTranslation("profile");
-  // const { token } = useAuth();
   const tab = searchParams.get("section") || "info";
   const verificationStatus = profile?.status;
   const isFullnameExist = profile?.firstName && profile?.lastName;
@@ -42,7 +39,6 @@ export default function Profile() {
   const tabNames = {
     history: t("tabs.history"),
     info: t("tabs.info"),
-    paymentMethods: t("tabs.paymentMethods"),
     settings: t("tabs.settings"),
   };
 
@@ -76,7 +72,7 @@ export default function Profile() {
           </div>
         </div>
         <p
-          className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-all duration-500 ${
+          className={`text-xl uppercase sm:text-xl md:text-xl lg:text-3xl font-bold transition-all duration-500 ${
             tab === "settings" ? "md:ml-auto md:pl-0" : "md:pl-8 lg:pl-20"
           }`}
         >
@@ -111,20 +107,6 @@ export default function Profile() {
                 );
               })}
             </TabsList>
-
-            {!profile?.status && (
-              <Button
-                className="w-full justify text-md bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 gap-4 p-8 mt-6 shadow-lg hover:shadow-xl transition-all duration-300 border-0 group rounded-4xl"
-                onClick={() => navigate("/verification")}
-              >
-                <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors">
-                  <ShieldCheck className="w-6 h-6 text-white" />
-                </div>
-                <span className="font-semibold text-white">
-                  Become a verified user!
-                </span>
-              </Button>
-            )}
           </div>
 
           {/*====== Info Tab ===== */}
@@ -148,13 +130,9 @@ export default function Profile() {
 
           {/* =====ProfileForm Tab===== */}
           <TabsContent value="settings" className="flex-1">
-            {/* <div className="bg-white px-4 md:px-6">
-              <div className="space-y-3"> */}
             <Suspense fallback={<ProfileFormSkeleton />}>
               <ProfileForm />
             </Suspense>
-            {/* </div>
-            </div> */}
           </TabsContent>
         </Tabs>
       </div>

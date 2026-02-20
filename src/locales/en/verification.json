@@ -1,0 +1,75 @@
+{
+  "alreadyVerified": {
+    "title": "Already Verified!",
+    "description": "Your account has already been verified. You have full access to all features."
+  },
+  "navigation": {
+    "goBack": "Go back"
+  },
+  "steps": {
+    "personalInfo": "Personal Info",
+    "idCard": "ID Card",
+    "facePhoto": "Face Photo"
+  },
+  "step1": {
+    "title": "Personal Information",
+    "description": "Please provide your personal details",
+    "firstName": {
+      "label": "First Name",
+      "placeholder": "Enter your first name"
+    },
+    "lastName": {
+      "label": "Last Name",
+      "placeholder": "Enter your last name"
+    },
+    "birthDate": {
+      "label": "Birth Date"
+    },
+    "personalID": {
+      "label": "Personal ID",
+      "placeholder": "Enter your personal ID"
+    },
+    "gender": {
+      "label": "Gender",
+      "placeholder": "Select your gender",
+      "male": "Male",
+      "female": "Female"
+    }
+  },
+  "step2": {
+    "title": "ID Card Upload",
+    "description": "Please upload photos of your ID card",
+    "frontSide": {
+      "label": "Front Side",
+      "uploadText": "Upload Front Side",
+      "dragDropText": "Click to browse or drag and drop"
+    },
+    "backSide": {
+      "label": "Back Side",
+      "uploadText": "Upload Back Side",
+      "dragDropText": "Click to browse or drag and drop"
+    },
+    "note": {
+      "title": "Note:",
+      "description": "Make sure your ID card is clearly visible and all details are readable"
+    }
+  },
+  "step3": {
+    "title": "Face Photo",
+    "description": "Upload a clear photo of your face for verification",
+    "uploadText": "Upload Face Photo",
+    "dragDropText": "Click to browse or drag and drop",
+    "requirements": {
+      "title": "Requirements:",
+      "lookAtCamera": "Look directly at the camera",
+      "goodLighting": "Ensure good lighting",
+      "removeSunglasses": "Remove sunglasses and hats",
+      "neutralExpression": "Keep a neutral expression"
+    }
+  },
+  "buttons": {
+    "previous": "Previous",
+    "nextStep": "Next Step",
+    "submit": "Submit Verification"
+  }
+}

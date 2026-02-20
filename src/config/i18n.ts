@@ -11,6 +11,7 @@ import ecommerceEN from '../locales/en/ecommerce.json';
 import swappingEN from '../locales/en/swapping.json';
 import categoriesEN from '../locales/en/categories.json';
 import profileEN from '../locales/en/profile.json';
+import verificationEN from '../locales/en/verification.json';
 import commonKA from '../locales/ka/common.json';
 import homeKA from '../locales/ka/home.json';
 import authKA from '../locales/ka/auth.json';
@@ -19,6 +20,7 @@ import ecommerceKA from '../locales/ka/ecommerce.json';
 import swappingKA from '../locales/ka/swapping.json';
 import categoriesKA from '../locales/ka/categories.json';
 import profileKA from '../locales/ka/profile.json';
+import verificationKA from '../locales/ka/verification.json';
 
 i18n
   .use(LanguageDetector) // Detect browser language
@@ -34,6 +36,7 @@ i18n
         swapping: swappingEN,
         categories: categoriesEN,
         profile: profileEN,
+        verification: verificationEN,
       },
       ka: {
         common: commonKA,
@@ -44,6 +47,7 @@ i18n
         swapping: swappingKA,
         categories: categoriesKA,
         profile: profileKA,
+        verification: verificationKA,
       },
     },
     fallbackLng: 'en', // Fallback language

@@ -163,8 +163,8 @@ function ProfileForm() {
           </div>
 
           {profile?.status && (
-            <Button type="button" variant="link">
-              Change profile picture
+            <Button type="button" variant="link" className="cursor-pointer">
+              {t("form.changePrfPic")}
             </Button>
           )}
         </div>

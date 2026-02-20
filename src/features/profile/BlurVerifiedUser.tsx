@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 type VerifiedUser = {
   children: ReactNode;
@@ -10,6 +11,7 @@ export default function BlurVerifiedUser({
   children,
   isVerified,
 }: VerifiedUser) {
+  const { t } = useTranslation("profile");
   if (!isVerified) return <>{children}</>;
 
   return (
@@ -24,10 +26,10 @@ export default function BlurVerifiedUser({
             </div>
           </div>
           <p className="text-3xl font-semibold text-green-500">
-            You are a verified user!
+            {t("form.alreadyVerified.title")}
           </p>
           <p className="text-muted-foreground">
-            *a verified user cannot change his data
+            {t("form.alreadyVerified.description")}
           </p>
         </div>
       </div>
