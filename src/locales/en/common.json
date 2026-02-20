@@ -7,7 +7,9 @@
   "auth": {
     "signUp": "Sign Up",
     "logIn": "Log in",
-    "loggedIn": "You logged in"
+    "myProfile": "My Profile",
+    "profile": "Profile",
+    "singOut": "Sing Out"
   },
   "form": {
     "email": "Email",
