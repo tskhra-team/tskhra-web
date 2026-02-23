@@ -7,7 +7,8 @@ export default function CreateBookingServicePage() {
   const navigate = useNavigate();
 
   if (!profile?.status) {
-    return navigate("/");
+    navigate("/");
+    return null;
   }
 
   return <CreateBookingService />;

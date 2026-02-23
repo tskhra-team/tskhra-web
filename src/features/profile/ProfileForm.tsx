@@ -303,8 +303,10 @@ function ProfileForm() {
                             field.onChange(date);
                             setIsCalendarOpen(false);
                           }}
-                          startMonth={new Date(new Date().getFullYear() - 100, 0)}
-                          endMonth={new Date(new Date().getFullYear() - 8, 11)}
+                          startMonth={
+                            new Date(new Date().getFullYear() - 100, 0)
+                          }
+                          endMonth={new Date(new Date().getFullYear() - 16, 11)}
                           timeZone={timeZone}
                         />
                       </PopoverContent>

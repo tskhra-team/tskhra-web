@@ -16,6 +16,7 @@ const CreateBookingServicePage = lazy(
 );
 const ServicesCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const ServiceDetailsPage = lazy(() => import("@/pages/ServiceDetailsPage"));
+const MyServicesPage = lazy(() => import("@/pages/MyServicesPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
@@ -105,6 +106,14 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <CreateBookingServicePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/my-services",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <MyServicesPage />
           </Suspense>
         ),
       },

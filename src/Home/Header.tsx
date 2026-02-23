@@ -7,6 +7,10 @@ import { useLocation } from "react-router-dom";
 export default function Header() {
   const location = useLocation();
 
+  if (location.pathname.includes("/my-services")) {
+    return null;
+  }
+
   // Check for booking paths (includes /booking/*)
   if (location.pathname.includes("/booking")) {
     return <BookingHeader />;

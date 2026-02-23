@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
-import { LogOut, User } from "lucide-react";
+import { Cog, LogOut, User } from "lucide-react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -64,6 +64,13 @@ export default function TopBar() {
                 >
                   <User className="mr-2 h-4 w-4" />
                   <span>{t("auth.profile")}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/my-services")}
+                  className="cursor-pointer"
+                >
+                  <Cog className="mr-2 h-4 w-4" />
+                  <span>My Services</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}

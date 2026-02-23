@@ -56,7 +56,7 @@ const profileSchema = yup.object().shape({
       "Birth date cannot be in the future",
       (value) => !value || value <= new Date(),
     )
-    .test("min-age", "You must be at least 12 years old", (value) => {
+    .test("min-age", "You must be at least 16 years old", (value) => {
       if (!value) return true;
       const today = new Date();
       const birthDate = new Date(value);
