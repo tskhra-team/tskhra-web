@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { scrollToTop } from "@/utils";
 import { Briefcase, User } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import ServiceForm from "./ServiceForm";
@@ -32,6 +33,11 @@ export default function CreateBookingService() {
       </div>
     );
   }
+
+  const handleClick = (type: string) => {
+    setSearchParams({ type: type });
+    scrollToTop();
+  };
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -82,7 +88,7 @@ export default function CreateBookingService() {
                 </li>
               </ul>
               <Button
-                onClick={() => setSearchParams({ type: "individual" })}
+                onClick={() => handleClick("individual")}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11"
               >
                 Get Started
@@ -126,7 +132,7 @@ export default function CreateBookingService() {
                 </li>
               </ul>
               <Button
-                onClick={() => setSearchParams({ type: "business" })}
+                onClick={() => handleClick("business")}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11"
               >
                 Get Started
