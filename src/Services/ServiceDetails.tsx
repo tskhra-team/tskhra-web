@@ -1,16 +1,19 @@
-import { mockServices } from "@/Booking/mockSerrvices";
+import {
+  mockBusinesses,
+  minutesToTime,
+  getDayName,
+} from "@/Booking/mockBusinesses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   MapPin,
-  Clock,
-  DollarSign,
-  Mail,
-  Globe,
+  Phone,
   Facebook,
   Instagram,
   ArrowLeft,
+  Briefcase,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -18,20 +21,34 @@ export default function ServiceDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const service = mockServices[Number(id)];
+  const business = mockBusinesses[Number(id)];
 
-  if (!service) {
+  if (!business) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Service not found</h1>
+          <h1 className="text-2xl font-bold mb-4">Business not found</h1>
           <Button onClick={() => navigate("/services")}>
-            Back to Services
+            Back to Businesses
           </Button>
         </div>
       </div>
     );
   }
+
+  // Get call type badge color
+  const getCallTypeBadge = () => {
+    switch (business.callType) {
+      case "outcall":
+        return <Badge variant="secondary">Outcall Only</Badge>;
+      case "onsite":
+        return <Badge variant="default">Onsite Only</Badge>;
+      case "both":
+        return <Badge variant="outline">Outcall & Onsite</Badge>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -41,8 +58,20 @@ export default function ServiceDetails() {
         onClick={() => navigate("/services")}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Services
+        Back to Businesses
       </Button>
+
+      {/* Business Header */}
+      <div className="mb-6">
+        <div className="flex items-start justify-between gap-4 mb-2">
+          <h1 className="text-3xl font-bold">{business.businessName}</h1>
+          {getCallTypeBadge()}
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Briefcase className="w-4 h-4" />
+          <span>{business.category}</span>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
@@ -50,8 +79,8 @@ export default function ServiceDetails() {
           {/* Main Image */}
           <div className="aspect-video w-full overflow-hidden rounded-xl">
             <img
-              src={service.mainImageUrl}
-              alt={service.title}
+              src={business.mainImageUrl}
+              alt={business.businessName}
               loading="eager"
               width={1200}
               height={675}
@@ -60,9 +89,9 @@ export default function ServiceDetails() {
           </div>
 
           {/* Gallery */}
-          {service.galleryImageUrls && service.galleryImageUrls.length > 0 && (
+          {business.galleryImageUrls && business.galleryImageUrls.length > 0 && (
             <div className="grid grid-cols-3 gap-4">
-              {service.galleryImageUrls.map((url, index) => (
+              {business.galleryImageUrls.map((url: string, index: number) => (
                 <div
                   key={index}
                   className="aspect-video overflow-hidden rounded-lg"
@@ -83,94 +112,126 @@ export default function ServiceDetails() {
           {/* Description */}
           <Card>
             <CardHeader>
-              <CardTitle>Description</CardTitle>
+              <CardTitle>About</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                {service.description}
+                {business.description}
               </p>
             </CardContent>
           </Card>
 
-          {/* Additional Details */}
+          {/* Services Offered */}
           <Card>
             <CardHeader>
-              <CardTitle>Service Details</CardTitle>
+              <CardTitle>Services Offered</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Category</p>
-                  <p className="font-medium">{service.categoryId}</p>
-                </div>
-                {service.subcategoryId && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">
-                      Subcategory
-                    </p>
-                    <p className="font-medium">{service.subcategoryId}</p>
-                  </div>
-                )}
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">{service.address}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {service.city}
-                    {service.district && `, ${service.district}`}
-                  </p>
-                </div>
-              </div>
-
-              {service.estimatedTime && (
-                <>
-                  <Separator />
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-muted-foreground" />
-                    <div>
+            <CardContent>
+              <div className="space-y-4">
+                {business.services.map((service, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-semibold text-lg">{service.name}</h3>
+                      <div className="text-right">
+                        <p className="text-xl font-bold">₾{service.price}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {service.time >= 60
+                            ? `${Math.floor(service.time / 60)}h ${service.time % 60 > 0 ? `${service.time % 60}m` : ""}`
+                            : `${service.time}m`}
+                        </p>
+                      </div>
+                    </div>
+                    {service.description && (
                       <p className="text-sm text-muted-foreground">
-                        Estimated Time
+                        {service.description}
                       </p>
-                      <p className="font-medium">{service.estimatedTime}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Working Hours */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Working Hours</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {business.workTimes.map((workTime, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center py-2"
+                  >
+                    <span className="font-medium">{getDayName(workTime.day)}</span>
+                    <span className="text-muted-foreground">
+                      {minutesToTime(workTime.startTime)} -{" "}
+                      {minutesToTime(workTime.endTime)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {business.restTimes && business.restTimes.length > 0 && (
+                <>
+                  <Separator className="my-4" />
+                  <div>
+                    <p className="text-sm font-medium mb-2">Break Times:</p>
+                    <div className="space-y-1">
+                      {business.restTimes.map((restTime, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center text-sm text-muted-foreground"
+                        >
+                          <span>{getDayName(restTime.day)}</span>
+                          <span>
+                            {minutesToTime(restTime.startTime)} -{" "}
+                            {minutesToTime(restTime.endTime)}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </>
               )}
             </CardContent>
           </Card>
+
+          {/* Location */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Location</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-muted-foreground mt-0.5" />
+                <div>
+                  {business.address && (
+                    <p className="font-medium">{business.address}</p>
+                  )}
+                  <p className="text-muted-foreground">{business.city}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Pricing Card */}
+          {/* Action Buttons */}
           <Card>
             <CardHeader>
-              <CardTitle>Pricing</CardTitle>
+              <CardTitle>Book a Service</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-6 h-6" />
-                <div>
-                  <p className="text-3xl font-bold">{service.price}</p>
-                  {service.priceMin && service.priceMax && (
-                    <p className="text-sm text-muted-foreground">
-                      Range: ${service.priceMin} - ${service.priceMax}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <Separator />
-
+            <CardContent className="space-y-3">
               <Button className="w-full" size="lg">
                 Book Now
               </Button>
               <Button className="w-full" variant="outline">
-                Contact Provider
+                Contact Business
               </Button>
             </CardContent>
           </Card>
@@ -181,29 +242,19 @@ export default function ServiceDetails() {
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <a
-                href={`mailto:${service.email}`}
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-                <span className="text-sm">{service.email}</span>
-              </a>
-
-              {service.websiteUrl && (
+              {business.info.phoneNumber && (
                 <a
-                  href={service.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`tel:${business.info.phoneNumber}`}
                   className="flex items-center gap-2 hover:text-primary transition-colors"
                 >
-                  <Globe className="w-5 h-5" />
-                  <span className="text-sm">Website</span>
+                  <Phone className="w-5 h-5" />
+                  <span className="text-sm">{business.info.phoneNumber}</span>
                 </a>
               )}
 
-              {service.facebookUrl && (
+              {business.info.facebookUrl && (
                 <a
-                  href={service.facebookUrl}
+                  href={business.info.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-primary transition-colors"
@@ -213,9 +264,9 @@ export default function ServiceDetails() {
                 </a>
               )}
 
-              {service.instagramUrl && (
+              {business.info.instagramUrl && (
                 <a
-                  href={service.instagramUrl}
+                  href={business.info.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-primary transition-colors"
