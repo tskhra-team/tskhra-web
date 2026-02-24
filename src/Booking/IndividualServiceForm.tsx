@@ -1,5 +1,10 @@
+import {
+  IndividualBusiessSchema,
+  type IndividualBusinessFormData,
+} from "@/Booking/IndividualBusinessSchema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -13,187 +18,22 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import * as yup from "yup";
 import ServiceFormSkeleton from "./ServiceFormSkeleton";
-
-const serviceFormSchema = yup.object({
-  businessName: yup
-    .string()
-    .required("სათაური აუცილებელია")
-    .min(3, "სათაური უნდა იყოს მინიმუმ 3 სიმბოლო"),
-  serviceType: yup
-    .string()
-    .required("აირჩიეთ მომსახურების ტიპი")
-    .oneOf(["outcall", "onsite", "both"], "არასწორი მომსახურების ტიპი"),
-  city: yup.string().required("ქალაქი აუცილებელია"),
-  district: yup.string().optional(),
-  description: yup
-    .string()
-    .required("აღწერა აუცილებელია")
-    .min(10, "აღწერა უნდა იყოს მინიმუმ 10 სიმბოლო"),
-  address: yup.string().required("მისამართი აუცილებელია"),
-  mainImage: yup
-    .mixed<FileList>()
-    .required("მთავარი სურათი აუცილებელია")
-    .test("fileLength", "მთავარი სურათი აუცილებელია", (value) => {
-      return value && value.length > 0;
-    })
-    .test("fileType", "მხოლოდ სურათის ფაილები დაშვებულია", (value) => {
-      if (!value || value.length === 0) return true;
-      return value[0]?.type?.startsWith("image/");
-    }),
-  galleryImages: yup
-    .mixed<FileList>()
-    .optional()
-    .test("fileType", "მხოლოდ სურათის ფაილები დაშვებულია", (value) => {
-      if (!value || value.length === 0) return true;
-      return Array.from(value).every((file) => file.type.startsWith("image/"));
-    }),
-  categoryId: yup.string().required("კატეგორია აუცილებელია"),
-  subcategoryId: yup.string().optional(),
-  estimatedTime: yup.string().optional(),
-  workingSchedule: yup
-    .object()
-    .test(
-      "at-least-one-day",
-      "აირჩიეთ მინიმუმ ერთი სამუშაო დღე",
-      function (value) {
-        if (!value) return false;
-        return Object.values(value).some((day: any) => day?.enabled === true);
-      },
-    )
-    .test(
-      "valid-times",
-      "შეავსეთ სამუშაო საათები ყველა არჩეულ დღეს",
-      function (value) {
-        if (!value) return true;
-        for (const day of Object.values(value) as any[]) {
-          if (day?.enabled) {
-            if (!day.startTime || !day.endTime) {
-              return false;
-            }
-            // Проверка что время в формате HH:MM
-            const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-            if (
-              !timeRegex.test(day.startTime) ||
-              !timeRegex.test(day.endTime)
-            ) {
-              return this.createError({
-                message: "დრო უნდა იყოს ფორმატში HH:MM",
-              });
-            }
-            // Проверка что минуты делятся на 5
-            const startMinutes = parseInt(day.startTime.split(":")[1]);
-            const endMinutes = parseInt(day.endTime.split(":")[1]);
-            if (startMinutes % 5 !== 0 || endMinutes % 5 !== 0) {
-              return this.createError({
-                message: "წუთები უნდა იყოს 5-ის ჯერადი (00, 05, 10...)",
-              });
-            }
-            // Проверка что время окончания позже начала
-            if (day.startTime >= day.endTime) {
-              return this.createError({
-                message: "დასრულების დრო უნდა იყოს დაწყების დროზე გვიან",
-              });
-            }
-          }
-        }
-        return true;
-      },
-    )
-    .required("სამუშაო გრაფიკი აუცილებელია"),
-  services: yup
-    .array()
-    .of(
-      yup.object({
-        name: yup.string().required("სერვისის სახელი აუცილებელია"),
-        price: yup
-          .number()
-          .required("ფასი აუცილებელია")
-          .min(0, "ფასი უნდა იყოს დადებითი"),
-        duration: yup
-          .number()
-          .required("ხანგრძლივობა აუცილებელია")
-          .min(5, "მინიმუმ 5 წუთი")
-          .test("divisible-by-5", "უნდა იყოს 5-ის ჯერადი", (value) => {
-            return value ? value % 5 === 0 : false;
-          }),
-      }),
-    )
-    .min(1, "დაამატეთ მინიმუმ ერთი სერვისი")
-    .required("სერვისები აუცილებელია"),
-  websiteUrl: yup
-    .string()
-    .optional()
-    .url("URL უნდა იყოს სწორი ფორმატის")
-    .matches(/^https?:\/\/.+/, "URL უნდა იწყებოდეს http:// ან https://"),
-  email: yup
-    .string()
-    .required("ელ-ფოსტა აუცილებელია")
-    .email("არასწორი ელ-ფოსტის ფორმატი"),
-  facebookUrl: yup
-    .string()
-    .optional()
-    .url("URL უნდა იყოს სწორი ფორმატის")
-    .matches(/^https?:\/\/.+/, "URL უნდა იწყებოდეს http:// ან https://"),
-  instagramUrl: yup
-    .string()
-    .optional()
-    .url("URL უნდა იყოს სწორი ფორმატის")
-    .matches(/^https?:\/\/.+/, "URL უნდა იწყებოდეს http:// ან https://"),
-});
-
-interface WorkingDay {
-  enabled: boolean;
-  startTime: string;
-  endTime: string;
-}
-
-interface WorkingSchedule {
-  monday?: WorkingDay;
-  tuesday?: WorkingDay;
-  wednesday?: WorkingDay;
-  thursday?: WorkingDay;
-  friday?: WorkingDay;
-  saturday?: WorkingDay;
-  sunday?: WorkingDay;
-}
-
-interface Service {
-  name: string;
-  price: number;
-  duration: number; // в минутах
-}
-
-interface ServiceFormData {
-  businessName?: string;
-  serviceType?: "outcall" | "onsite" | "both";
-  city?: string;
-  district?: string;
-  description?: string;
-  address?: string;
-  mainImage?: FileList;
-  galleryImages?: FileList;
-  categoryId?: string;
-  subcategoryId?: string;
-  estimatedTime?: string;
-  workingSchedule?: WorkingSchedule;
-  services?: Service[];
-  websiteUrl?: string;
-  email?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
-}
+import useCreaetIndividualBusiness from "./useCreateIndividualBusiness";
+import useUploadPhotos from "./useUploadPhotos";
 
 export default function IndividualServiceForm() {
   const { t } = useTranslation("categories");
   const { data: categories, isLoading } = useCategories("booking");
+  const createBusiness = useCreaetIndividualBusiness();
+  const uploadPhotos = useUploadPhotos();
 
-  const [newService, setNewService] = useState<{
-    name: string;
-    price: string;
-    duration: string;
-  }>({ name: "", price: "", duration: "" });
+  const [newService, setNewService] = useState({
+    name: "",
+    price: 0,
+    duration: 0,
+    description: "",
+  });
 
   const {
     register,
@@ -202,61 +42,53 @@ export default function IndividualServiceForm() {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<ServiceFormData>({
-    resolver: yupResolver(serviceFormSchema) as any,
+  } = useForm<IndividualBusinessFormData>({
+    resolver: yupResolver(IndividualBusiessSchema) as any,
     defaultValues: {
       businessName: "",
-      serviceType: undefined, //calTYpe
+      callType: undefined,
       city: "",
-      // district: undefined,
-      description: "",
       address: "",
-      mainImage: undefined,
-      galleryImages: undefined,
-      categoryId: "",
-      subcategoryId: undefined,
-      estimatedTime: undefined,
-      workingSchedule: {
-        monday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-        tuesday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-        wednesday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-        thursday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-        friday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-        saturday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-        sunday: { enabled: false, startTime: "09:00", endTime: "18:00" },
-      },
+      description: "",
+      images: undefined,
+      mainCategory: "",
+      subCategory: "",
+      workTimes: [],
+      restTimes: [],
       services: [],
-      websiteUrl: undefined,
-      email: "",
-      facebookUrl: undefined,
-      instagramUrl: undefined,
+      info: {
+        phoneNumber: "",
+        facebookUrl: "",
+        instagramUrl: "",
+      },
     },
   });
-
-  const categoryId = watch("categoryId");
-  const serviceType = watch("serviceType");
+  const callType = watch("callType");
+  const mainCategory = watch("mainCategory");
   const services = watch("services");
-  const selectedCategory = categories?.find((cat) => cat.name === categoryId);
+  const selectedCategory = categories?.find((cat) => cat.name === mainCategory);
 
   const addService = () => {
-    const price = parseFloat(newService.price);
-    const duration = parseInt(newService.duration);
-
-    if (!newService.name || isNaN(price) || isNaN(duration)) {
+    if (!newService.name || newService.price <= 0 || newService.duration <= 0) {
       return;
     }
 
-    if (duration % 5 !== 0 || duration < 5) {
+    if (newService.duration % 5 !== 0 || newService.duration < 5) {
       return;
     }
 
     const currentServices = services || [];
     setValue("services", [
       ...currentServices,
-      { name: newService.name, price, duration },
+      {
+        name: newService.name,
+        price: newService.price,
+        duration: newService.duration,
+        description: newService.description,
+      },
     ]);
 
-    setNewService({ name: "", price: "", duration: "" });
+    setNewService({ name: "", price: 0, duration: 0, description: "" });
   };
 
   const removeService = (index: number) => {
@@ -267,19 +99,27 @@ export default function IndividualServiceForm() {
     );
   };
 
-  const onSubmit = (data: ServiceFormData) => {
-    console.log("Form submitted:", data);
-    console.log("Main image:", data.mainImage?.[0]);
-    console.log("Gallery images:", Array.from(data.galleryImages || []));
-    console.log("Estimated time:", data.estimatedTime);
-    console.log("Working schedule:", data.workingSchedule);
-    console.log("Services:", data.services);
-    // TODO: Implement form submission logic
+  const onSubmit = async (data: IndividualBusinessFormData) => {
+    try {
+      const result = await createBusiness.mutateAsync(data);
+
+      // if (result.businessId && data.images) {
+      //   await uploadPhotos.mutateAsync({
+      //     businessId: result.businessId,
+      //     data,
+      //   });
+      // }
+
+      alert("სერვისი წარმატებით გამოქვეყნდა!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.");
+    }
   };
 
   const handleCategoryChange = (value: string) => {
-    setValue("categoryId", value);
-    setValue("subcategoryId", "");
+    setValue("mainCategory", value);
+    setValue("subCategory", "");
   };
 
   if (isLoading) {
@@ -311,7 +151,7 @@ export default function IndividualServiceForm() {
           როგორ აპირებთ მომხმარებლის მომსახურებას?
         </label>
         <Controller
-          name="serviceType"
+          name="callType"
           control={control}
           render={({ field }) => (
             <div className="flex gap-2">
@@ -342,10 +182,8 @@ export default function IndividualServiceForm() {
             </div>
           )}
         />
-        {errors.serviceType && (
-          <p className="text-sm text-red-600 mt-1">
-            {errors.serviceType.message}
-          </p>
+        {errors.callType && (
+          <p className="text-sm text-red-600 mt-1">{errors.callType.message}</p>
         )}
       </div>
 
@@ -353,20 +191,16 @@ export default function IndividualServiceForm() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-2">ქალაქი</label>
-          <Input
-            {...register("city")}
-            // disabled={serviceType === "outcall"}
-            placeholder="ქალაქი"
-          />
+          <Input {...register("city")} placeholder="ქალაქი" />
           {errors.city && (
             <p className="text-sm text-red-600 mt-1">{errors.city.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">მისამართი</label>
+          <Label className="block text-sm font-medium mb-2">მისამართი</Label>
           <Input
             {...register("address")}
-            disabled={serviceType === "outcall"}
+            disabled={callType === "outcall"}
             placeholder="შეიყვანეთ მისამართი"
           />
           {errors.address && (
@@ -393,15 +227,29 @@ export default function IndividualServiceForm() {
         )}
       </div>
 
-      {/* Main Image 1*/}
+      {/* Main Image */}
       <div>
         <label className="block text-sm font-medium mb-2">
           სერვისის მთავარი სურათი
         </label>
-        <Input type="file" accept="image/*" {...register("mainImage")} />
-        {errors.mainImage && (
+        <Controller
+          name="images.businessPhoto"
+          control={control}
+          render={({ field: { onChange, value, ...field } }) => (
+            <Input
+              type="file"
+              accept="image/*"
+              {...field}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                onChange(file);
+              }}
+            />
+          )}
+        />
+        {errors.images?.businessPhoto && (
           <p className="text-sm text-red-600 mt-1">
-            {errors.mainImage.message}
+            {errors.images.businessPhoto.message}
           </p>
         )}
       </div>
@@ -411,19 +259,29 @@ export default function IndividualServiceForm() {
         <label className="block text-sm font-medium mb-2">
           გალერეის სურათები
         </label>
-        <Input
-          type="file"
-          accept="image/*"
-          multiple
-          {...register("galleryImages")}
+        <Controller
+          name="images.galleryPhoto"
+          control={control}
+          render={({ field: { onChange, value, ...field } }) => (
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              {...field}
+              onChange={(e) => {
+                const files = e.target.files ? Array.from(e.target.files) : [];
+                onChange(files);
+              }}
+            />
+          )}
         />
-        {errors.galleryImages && (
+        {errors.images?.galleryPhoto && (
           <p className="text-sm text-red-600 mt-1">
-            {errors.galleryImages.message}
+            {errors.images.galleryPhoto.message}
           </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
-          შეგიძლიათ აირჩიოთ რამდენიმე სურათი
+          შეგიძლიათ აირჩიოთ რამდენიმე სურათი (მაქსიმუმ 4)
         </p>
       </div>
 
@@ -434,7 +292,7 @@ export default function IndividualServiceForm() {
             აირჩიე კატეგორია
           </label>
           <Controller
-            name="categoryId"
+            name="mainCategory"
             control={control}
             render={({ field }) => (
               <Select
@@ -463,9 +321,9 @@ export default function IndividualServiceForm() {
               </Select>
             )}
           />
-          {errors.categoryId && (
+          {errors.mainCategory && (
             <p className="text-sm text-red-600 mt-1">
-              {errors.categoryId.message}
+              {errors.mainCategory.message}
             </p>
           )}
         </div>
@@ -475,13 +333,13 @@ export default function IndividualServiceForm() {
             აირჩიე ქვეკატეგორია
           </label>
           <Controller
-            name="subcategoryId"
+            name="subCategory"
             control={control}
             render={({ field }) => (
               <Select
                 value={field.value}
                 onValueChange={field.onChange}
-                disabled={!categoryId}
+                disabled={!mainCategory}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="აირჩიე ქვეკატეგორია" />
@@ -505,9 +363,9 @@ export default function IndividualServiceForm() {
               </Select>
             )}
           />
-          {errors.subcategoryId && (
+          {errors.subCategory && (
             <p className="text-sm text-red-600 mt-1">
-              {errors.subcategoryId.message}
+              {errors.subCategory.message}
             </p>
           )}
         </div>
@@ -519,33 +377,50 @@ export default function IndividualServiceForm() {
           სამუშაო გრაფიკი
         </label>
         <Controller
-          name="workingSchedule"
+          name="workTimes"
           control={control}
           render={({ field }) => {
             const days = [
-              { value: "monday", label: "ორშაბათი" },
-              { value: "tuesday", label: "სამშაბათი" },
-              { value: "wednesday", label: "ოთხშაბათი" },
-              { value: "thursday", label: "ხუთშაბათი" },
-              { value: "friday", label: "პარასკევი" },
-              { value: "saturday", label: "შაბათი" },
-              { value: "sunday", label: "კვირა" },
+              { value: "MON", label: "ორშაბათი" },
+              { value: "TUE", label: "სამშაბათი" },
+              { value: "WED", label: "ოთხშაბათი" },
+              { value: "THU", label: "ხუთშაბათი" },
+              { value: "FRI", label: "პარასკევი" },
+              { value: "SAT", label: "შაბათი" },
+              { value: "SUN", label: "კვირა" },
             ];
 
-            const toggleDay = (dayKey: string) => {
-              const currentSchedule = field.value || {};
-              const daySchedule =
-                currentSchedule[dayKey as keyof WorkingSchedule];
+            const timeToMinutes = (time: string) => {
+              const [hours, minutes] = time.split(":").map(Number);
+              return hours * 60 + minutes;
+            };
 
-              field.onChange({
-                ...currentSchedule,
-                [dayKey]: {
-                  ...daySchedule,
-                  enabled: !daySchedule?.enabled,
-                  startTime: daySchedule?.startTime || "09:00",
-                  endTime: daySchedule?.endTime || "18:00",
-                },
-              });
+            const minutesToTime = (minutes: number) => {
+              const hours = Math.floor(minutes / 60);
+              const mins = minutes % 60;
+              return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+            };
+
+            const toggleDay = (dayKey: string) => {
+              const currentTimes = field.value || [];
+              const existingIndex = currentTimes.findIndex(
+                (t) => t.weekDay === dayKey,
+              );
+
+              if (existingIndex >= 0) {
+                field.onChange(
+                  currentTimes.filter((_, i) => i !== existingIndex),
+                );
+              } else {
+                field.onChange([
+                  ...currentTimes,
+                  {
+                    weekDay: dayKey,
+                    startTime: 540,
+                    endTime: 1080,
+                  },
+                ]);
+              }
             };
 
             const updateTime = (
@@ -553,25 +428,22 @@ export default function IndividualServiceForm() {
               timeType: "startTime" | "endTime",
               value: string,
             ) => {
-              const currentSchedule = field.value || {};
-              const daySchedule =
-                currentSchedule[dayKey as keyof WorkingSchedule];
-
-              field.onChange({
-                ...currentSchedule,
-                [dayKey]: {
-                  ...daySchedule,
-                  [timeType]: value,
-                },
-              });
+              const currentTimes = field.value || [];
+              const minutes = timeToMinutes(value);
+              field.onChange(
+                currentTimes.map((t) =>
+                  t.weekDay === dayKey ? { ...t, [timeType]: minutes } : t,
+                ),
+              );
             };
 
             return (
               <div className="space-y-3">
                 {days.map((day) => {
-                  const daySchedule =
-                    field.value?.[day.value as keyof WorkingSchedule];
-                  const isEnabled = daySchedule?.enabled || false;
+                  const daySchedule = (field.value || []).find(
+                    (t) => t.weekDay === day.value,
+                  );
+                  const isEnabled = !!daySchedule;
 
                   return (
                     <div
@@ -587,11 +459,11 @@ export default function IndividualServiceForm() {
                         {day.label}
                       </Button>
 
-                      {isEnabled && (
+                      {isEnabled && daySchedule && (
                         <div className="flex items-center gap-2 flex-1">
                           <Input
                             type="time"
-                            value={daySchedule?.startTime || "09:00"}
+                            value={minutesToTime(daySchedule.startTime)}
                             onChange={(e) =>
                               updateTime(day.value, "startTime", e.target.value)
                             }
@@ -601,7 +473,7 @@ export default function IndividualServiceForm() {
                           <span>-</span>
                           <Input
                             type="time"
-                            value={daySchedule?.endTime || "18:00"}
+                            value={minutesToTime(daySchedule.endTime)}
                             onChange={(e) =>
                               updateTime(day.value, "endTime", e.target.value)
                             }
@@ -617,9 +489,9 @@ export default function IndividualServiceForm() {
             );
           }}
         />
-        {errors.workingSchedule && (
+        {errors.workTimes && (
           <p className="text-sm text-red-600 mt-1">
-            {errors.workingSchedule.message}
+            {errors.workTimes.message}
           </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
@@ -651,9 +523,12 @@ export default function IndividualServiceForm() {
               <Input
                 type="number"
                 step="0.01"
-                value={newService.price}
+                value={newService.price || ""}
                 onChange={(e) =>
-                  setNewService({ ...newService, price: e.target.value })
+                  setNewService({
+                    ...newService,
+                    price: Number(e.target.value),
+                  })
                 }
                 placeholder="0.00"
               />
@@ -666,13 +541,28 @@ export default function IndividualServiceForm() {
                 type="number"
                 step="5"
                 min="5"
-                value={newService.duration}
+                value={newService.duration || ""}
                 onChange={(e) =>
-                  setNewService({ ...newService, duration: e.target.value })
+                  setNewService({
+                    ...newService,
+                    duration: Number(e.target.value),
+                  })
                 }
                 placeholder="30"
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1">
+              აღწერა (არასავალდებულო)
+            </label>
+            <Input
+              value={newService.description}
+              onChange={(e) =>
+                setNewService({ ...newService, description: e.target.value })
+              }
+              placeholder="სერვისის აღწერა"
+            />
           </div>
           <Button
             type="button"
@@ -697,6 +587,11 @@ export default function IndividualServiceForm() {
                   <p className="text-sm text-gray-600">
                     {service.price} ₾ • {service.duration} წუთი
                   </p>
+                  {service.description && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      {service.description}
+                    </p>
+                  )}
                 </div>
                 <Button
                   type="button"
@@ -723,31 +618,16 @@ export default function IndividualServiceForm() {
 
       {/* Website URL */}
       <div>
-        <label className="block text-sm font-medium mb-2">
-          ვებ-გვერდის URL
-        </label>
+        <label className="block text-sm font-medium mb-2">ნომერი</label>
         <Input
-          type="url"
-          {...register("websiteUrl")}
-          placeholder="https://example.com"
+          type="text"
+          {...register("info.phoneNumber")}
+          placeholder="+995511111111"
         />
-        {errors.websiteUrl && (
+        {errors.info?.phoneNumber && (
           <p className="text-sm text-red-600 mt-1">
-            {errors.websiteUrl.message}
+            {errors.info.phoneNumber.message}
           </p>
-        )}
-      </div>
-
-      {/* Email */}
-      <div>
-        <label className="block text-sm font-medium mb-2">ელ-ფოსტა</label>
-        <Input
-          type="email"
-          {...register("email")}
-          placeholder="example@email.com"
-        />
-        {errors.email && (
-          <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
         )}
       </div>
 
@@ -756,13 +636,13 @@ export default function IndividualServiceForm() {
         <div>
           <label className="block text-sm font-medium mb-2">Facebook URL</label>
           <Input
-            type="url"
-            {...register("facebookUrl")}
+            type="text"
+            {...register("info.facebookUrl")}
             placeholder="https://facebook.com/yourpage"
           />
-          {errors.facebookUrl && (
+          {errors.info?.facebookUrl && (
             <p className="text-sm text-red-600 mt-1">
-              {errors.facebookUrl.message}
+              {errors.info.facebookUrl.message}
             </p>
           )}
         </div>
@@ -771,13 +651,13 @@ export default function IndividualServiceForm() {
             Instagram URL
           </label>
           <Input
-            type="url"
-            {...register("instagramUrl")}
+            type="text"
+            {...register("info.instagramUrl")}
             placeholder="https://instagram.com/youraccount"
           />
-          {errors.instagramUrl && (
+          {errors.info?.instagramUrl && (
             <p className="text-sm text-red-600 mt-1">
-              {errors.instagramUrl.message}
+              {errors.info.instagramUrl.message}
             </p>
           )}
         </div>
@@ -788,7 +668,14 @@ export default function IndividualServiceForm() {
         <Button type="button" variant="outline">
           გაუქმება
         </Button>
-        <Button type="submit">გამოაქვეყნე სერვისი</Button>
+        <Button
+          type="submit"
+          disabled={createBusiness.isPending || uploadPhotos.isPending}
+        >
+          {createBusiness.isPending || uploadPhotos.isPending
+            ? "მიმდინარეობს..."
+            : "გამოაქვეყნე სერვისი"}
+        </Button>
       </div>
     </form>
   );

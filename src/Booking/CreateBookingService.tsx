@@ -22,8 +22,7 @@ export default function CreateBookingService() {
         {selectedType === "individual" ? (
           <>
             <h1 className="text-3xl font-bold mb-6">Individual Business</h1>
-            <IndividualServiceForm />{" "}
-            {/*here should be IndividualServiceForm */}
+            <IndividualServiceForm />
           </>
         ) : (
           <>
