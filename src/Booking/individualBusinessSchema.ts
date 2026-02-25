@@ -19,14 +19,33 @@ const imagesSchema = yup.object().shape({
   galleryPhoto: yup
     .array()
     .of(fileValidation.required())
+    .min(1, "At least one gallery photo is required")
     .max(4, "You can upload up to 4 photos only")
     .required("At least one gallery photo is required"),
 });
 
 const workTimesSchema = yup.object().shape({
   weekDay: yup.string().required("Week day Day is requiered"),
-  startTime: yup.number().required("Start time is requiered").min(0).max(1440),
-  endTime: yup.number().required("End time is requiered").min(0).max(1440),
+  startTime: yup
+    .number()
+    .typeError("Start time must be a valid number")
+    .required("Start time is requiered")
+    .min(0, "Start time cannot be negative")
+    .max(1440, "Start time cannot exceed 24 hours")
+    .test("is-multiple-of-5", "Start time must be in 5-minute intervals", (value) => {
+      if (value === undefined || value === null || isNaN(value)) return false;
+      return value % 5 === 0;
+    }),
+  endTime: yup
+    .number()
+    .typeError("End time must be a valid number")
+    .required("End time is requiered")
+    .min(0, "End time cannot be negative")
+    .max(1440, "End time cannot exceed 24 hours")
+    .test("is-multiple-of-5", "End time must be in 5-minute intervals", (value) => {
+      if (value === undefined || value === null || isNaN(value)) return false;
+      return value % 5 === 0;
+    }),
 });
 
 const serviceSchema = yup.object().shape({

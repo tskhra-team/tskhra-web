@@ -1,13 +1,21 @@
 import CreateBookingService from "@/Booking/CreateBookingService";
-import useGetProfile from "@/features/profile/useGetProfile";
+import useGetUser from "@/features/user/useGetUser";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function CreateBookingServicePage() {
-  const { data: profile } = useGetProfile();
+  const { data: user, isLoading } = useGetUser();
   const navigate = useNavigate();
 
-  if (!profile?.status) {
-    navigate("/");
+  useEffect(() => {
+    if (!isLoading && !user?.isVerified) {
+      navigate("/");
+    }
+  }, [user, isLoading, navigate]);
+
+  console.log(user?.isVerified);
+
+  if (isLoading || !user?.isVerified) {
     return null;
   }
 

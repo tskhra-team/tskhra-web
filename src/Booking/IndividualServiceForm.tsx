@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import ServiceFormSkeleton from "./ServiceFormSkeleton";
 import useCreaetIndividualBusiness from "./useCreateIndividualBusiness";
 import useUploadPhotos from "./useUploadPhotos";
+import WorkingSchedule from "./WorkingSchedule";
 
 export default function IndividualServiceForm() {
   const { t } = useTranslation("categories");
@@ -118,7 +119,6 @@ export default function IndividualServiceForm() {
   const onSubmit = async (data: IndividualBusinessFormData) => {
     try {
       const result = await createBusiness.mutateAsync(data);
-      // Если нужно загружать фото отдельным запросом, раскомментируйте код ниже:
       // if (result.businessId && data.images) {
       //   await uploadPhotos.mutateAsync({
       //     businessId: result.businessId,
@@ -144,7 +144,7 @@ export default function IndividualServiceForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-3xl mx-auto space-y-6"
+      className="max-w-4xl mx-auto space-y-6"
     >
       {/* Business Name */}
       <div className="my-12">
@@ -383,149 +383,37 @@ export default function IndividualServiceForm() {
 
       {/* Working Schedule */}
       <div className="mb-16">
-        <Label className="block text-lg font-medium mb-2">
+        <Label className="block text-lg font-medium mb-4">
           სამუშაო გრაფიკი
         </Label>
         <Controller
           name="workTimes"
           control={control}
-          render={({ field }) => {
-            const days = [
-              { value: "MON", label: "ორშაბათი" },
-              { value: "TUE", label: "სამშაბათი" },
-              { value: "WED", label: "ოთხშაბათი" },
-              { value: "THU", label: "ხუთშაბათი" },
-              { value: "FRI", label: "პარასკევი" },
-              { value: "SAT", label: "შაბათი" },
-              { value: "SUN", label: "კვირა" },
-            ];
-
-            const timeToMinutes = (time: string) => {
-              const [hours, minutes] = time.split(":").map(Number);
-              return hours * 60 + minutes;
-            };
-
-            const minutesToTime = (minutes: number) => {
-              const hours = Math.floor(minutes / 60);
-              const mins = minutes % 60;
-              return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-            };
-
-            const toggleDay = (dayKey: string) => {
-              const currentTimes = field.value || [];
-              const existingIndex = currentTimes.findIndex(
-                (t) => t.weekDay === dayKey,
-              );
-
-              if (existingIndex >= 0) {
-                field.onChange(
-                  currentTimes.filter((_, i) => i !== existingIndex),
-                );
-              } else {
-                field.onChange([
-                  ...currentTimes,
-                  { weekDay: dayKey, startTime: 540, endTime: 1080 },
-                ]);
-              }
-            };
-
-            const updateTime = (
-              dayKey: string,
-              timeType: "startTime" | "endTime",
-              value: string,
-            ) => {
-              const currentTimes = field.value || [];
-              const minutes = timeToMinutes(value);
-              field.onChange(
-                currentTimes.map((t) =>
-                  t.weekDay === dayKey ? { ...t, [timeType]: minutes } : t,
-                ),
-              );
-            };
-
-            return (
-              <div className="space-y-3">
-                {days.map((day) => {
-                  const dayIndex = (field.value || []).findIndex(
-                    (t) => t.weekDay === day.value,
-                  );
-                  const daySchedule =
-                    dayIndex >= 0 ? field.value[dayIndex] : null;
-                  const isEnabled = !!daySchedule;
-
-                  // Достаем ошибку конкретного дня из массива ошибок RHF
-                  const dayErrors =
-                    Array.isArray(errors.workTimes) && dayIndex >= 0
-                      ? (errors.workTimes[dayIndex] as any)
-                      : null;
-
-                  return (
-                    <div key={day.value} className="flex flex-col gap-1">
-                      <div className="flex items-center gap-4 p-3 border rounded-md">
-                        <Button
-                          type="button"
-                          variant={isEnabled ? "default" : "outline"}
-                          onClick={() => toggleDay(day.value)}
-                          className="w-32"
-                        >
-                          {day.label}
-                        </Button>
-
-                        {isEnabled && daySchedule && (
-                          <div className="flex items-center gap-2 flex-1">
-                            <Input
-                              type="time"
-                              value={minutesToTime(daySchedule.startTime)}
-                              onChange={(e) =>
-                                updateTime(
-                                  day.value,
-                                  "startTime",
-                                  e.target.value,
-                                )
-                              }
-                              step="300"
-                              className={`w-32 ${dayErrors?.startTime ? "border-red-500" : ""}`}
-                            />
-                            <span>-</span>
-                            <Input
-                              type="time"
-                              value={minutesToTime(daySchedule.endTime)}
-                              onChange={(e) =>
-                                updateTime(day.value, "endTime", e.target.value)
-                              }
-                              step="300"
-                              className={`w-32 ${dayErrors?.endTime ? "border-red-500" : ""}`}
-                            />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Ошибки для конкретного дня */}
-                      {dayErrors?.startTime && (
-                        <p className="text-xs text-red-600 pl-4">
-                          {dayErrors.startTime.message}
-                        </p>
-                      )}
-                      {dayErrors?.endTime && (
-                        <p className="text-xs text-red-600 pl-4">
-                          {dayErrors.endTime.message}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          }}
+          render={({ field: workField }) => (
+            <Controller
+              name="restTimes"
+              control={control}
+              render={({ field: restField }) => (
+                <WorkingSchedule
+                  workTimes={workField.value || []}
+                  restTimes={restField.value || []}
+                  onWorkTimesChange={workField.onChange}
+                  onRestTimesChange={restField.onChange}
+                  workTimesErrors={errors.workTimes}
+                  restTimesErrors={errors.restTimes}
+                />
+              )}
+            />
+          )}
         />
-        {/*  Global error if day isnt choosen */}
+        {/*  Global error if day isn't chosen */}
         {errors.workTimes && !Array.isArray(errors.workTimes) && (
           <p className="text-xs text-red-500 font-bold mt-2">
             {errors.workTimes.message as string}
           </p>
         )}
-        <p className="text-xs text-gray-500 mt-1">
-          აირჩიეთ სამუშაო დღეები და საათები (წუთები უნდა იყოს 5-ის ჯერადი)
+        <p className="text-xs text-gray-500 mt-2">
+          აირჩიეთ სამუშაო დღეები და საათები. დასვენების დრო არასავალდებულოა.
         </p>
       </div>
 
@@ -545,7 +433,7 @@ export default function IndividualServiceForm() {
                 onChange={(e) =>
                   setNewService({ ...newService, name: e.target.value })
                 }
-                placeholder="მაგ: სტრიჟკა"
+                placeholder="მაგ: თმის შეჭრა"
               />
             </div>
             <div>
@@ -603,9 +491,9 @@ export default function IndividualServiceForm() {
             დაამატე სერვისი
           </Button>
 
-          {/* Локальная ошибка добавления сервиса */}
+          {/* local error adding service */}
           {serviceError && (
-            <p className="text-sm text-red-600 mt-2 text-center">
+            <p className="text-sm text-red-500 mt-2 text-center">
               {serviceError}
             </p>
           )}
@@ -635,7 +523,7 @@ export default function IndividualServiceForm() {
                   variant="outline"
                   size="sm"
                   onClick={() => removeService(index)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-red-500 hover:text-red-700"
                 >
                   წაშლა
                 </Button>
@@ -644,12 +532,14 @@ export default function IndividualServiceForm() {
           </div>
         )}
 
-        {/* Глобальная ошибка (например, если нет ни одного сервиса) */}
-        {errors.services && !Array.isArray(errors.services) && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.services.message as string}
-          </p>
-        )}
+        {/*  global error(if we dont have any services)  */}
+        {errors.services &&
+          !Array.isArray(errors.services) &&
+          services.length === 0 && (
+            <p className="text-xs text-red-500 font-bold mt-2">
+              {errors.services.message as string}
+            </p>
+          )}
         <p className="text-xs text-gray-500 mt-1">
           დაამატეთ სერვისები, რომლებსაც სთავაზობთ (ხანგრძლივობა უნდა იყოს 5-ის
           ჯერადი)
@@ -704,16 +594,14 @@ export default function IndividualServiceForm() {
 
       {/* Submit Button */}
       <div className="flex justify-end gap-4 pt-4">
-        <Button type="button" variant="outline">
-          გაუქმება
-        </Button>
         <Button
           type="submit"
           disabled={createBusiness.isPending || uploadPhotos.isPending}
+          className="p-8 cursor-pointer"
         >
           {createBusiness.isPending || uploadPhotos.isPending
             ? "მიმდინარეობს..."
-            : "გამოაქვეყნე სერვისი"}
+            : "ბიზნესის დამატება"}
         </Button>
       </div>
     </form>

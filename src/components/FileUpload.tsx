@@ -25,7 +25,9 @@ export default function FileUpload({
     const incomingFiles = Array.from(files);
 
     if (value.length + incomingFiles.length > maxFiles) {
-      toast(`You can add only ${maxFiles} photos here`);
+      toast.warning(`You can add only ${maxFiles} photos here`, {
+        position: "top-center",
+      });
       return;
     }
 

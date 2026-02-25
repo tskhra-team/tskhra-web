@@ -102,7 +102,7 @@ export const routes = [
         ),
       },
       {
-        path: "/create-booking-service",
+        path: "/create-booking-business",
         element: (
           <Suspense fallback={<Loader />}>
             <CreateBookingServicePage />

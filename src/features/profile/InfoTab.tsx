@@ -170,7 +170,7 @@ export default function InfoTab({
                   setIsDialogOpen(true);
                 } else {
                   scrollToTop();
-                  navigate("/create-booking-service", {
+                  navigate("/create-booking-business", {
                     state: { isVerified: verificationStatus },
                   });
                 }
