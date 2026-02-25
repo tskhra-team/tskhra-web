@@ -1,27 +1,34 @@
 import {
-  mockBusinesses,
-  minutesToTime,
   getDayName,
+  minutesToTime,
+  mockBusinesses,
 } from "@/Booking/mockBusinesses";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useParams } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  MapPin,
-  Phone,
+  Briefcase,
+  ChevronDown,
+  Clock,
   Facebook,
   Instagram,
-  ArrowLeft,
-  Briefcase,
+  MapPin,
+  Phone,
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ServiceDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [showWorkingHours, setShowWorkingHours] = useState(false);
+  const servicesRef = useRef<HTMLDivElement>(null);
 
   const business = mockBusinesses[Number(id)];
+
+  const scrollToServices = () => {
+    servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   if (!business) {
     return (
@@ -52,14 +59,24 @@ export default function ServiceDetails() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        className="mb-6"
-        onClick={() => navigate("/services")}
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Businesses
-      </Button>
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+        <button
+          onClick={() => navigate("/")}
+          className="hover:text-foreground transition-colors"
+        >
+          Home
+        </button>
+        <span>•</span>
+        <button
+          onClick={() => navigate("/services")}
+          className="hover:text-foreground transition-colors"
+        >
+          Services
+        </button>
+        <span>•</span>
+        <span className="text-foreground font-medium">{business.businessName}</span>
+      </div>
 
       {/* Business Header */}
       <div className="mb-6">
@@ -122,7 +139,7 @@ export default function ServiceDetails() {
           </Card>
 
           {/* Services Offered */}
-          <Card>
+          <Card ref={servicesRef}>
             <CardHeader>
               <CardTitle>Services Offered</CardTitle>
             </CardHeader>
@@ -155,51 +172,7 @@ export default function ServiceDetails() {
             </CardContent>
           </Card>
 
-          {/* Working Hours */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Working Hours</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {business.workTimes.map((workTime, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center py-2"
-                  >
-                    <span className="font-medium">{getDayName(workTime.day)}</span>
-                    <span className="text-muted-foreground">
-                      {minutesToTime(workTime.startTime)} -{" "}
-                      {minutesToTime(workTime.endTime)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              {business.restTimes && business.restTimes.length > 0 && (
-                <>
-                  <Separator className="my-4" />
-                  <div>
-                    <p className="text-sm font-medium mb-2">Break Times:</p>
-                    <div className="space-y-1">
-                      {business.restTimes.map((restTime, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center text-sm text-muted-foreground"
-                        >
-                          <span>{getDayName(restTime.day)}</span>
-                          <span>
-                            {minutesToTime(restTime.startTime)} -{" "}
-                            {minutesToTime(restTime.endTime)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
+         
           {/* Location */}
           <Card>
             <CardHeader>
@@ -224,14 +197,11 @@ export default function ServiceDetails() {
           {/* Action Buttons */}
           <Card>
             <CardHeader>
-              <CardTitle>Book a Service</CardTitle>
+              <CardTitle>{business.businessName}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full" size="lg">
+              <Button className="w-full cursor-pointer" size="lg" onClick={scrollToServices}>
                 Book Now
-              </Button>
-              <Button className="w-full" variant="outline">
-                Contact Business
               </Button>
             </CardContent>
           </Card>
@@ -274,6 +244,44 @@ export default function ServiceDetails() {
                   <Instagram className="w-5 h-5" />
                   <span className="text-sm">Instagram</span>
                 </a>
+              )}
+            </CardContent>
+          </Card>
+           <Card>
+            <CardContent>
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => setShowWorkingHours(!showWorkingHours)}
+              >
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  <span className="font-medium">
+                    Open until {minutesToTime(business.workTimes[new Date().getDay()]?.endTime || business.workTimes[0].endTime)}
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`w-5 h-5 text-muted-foreground transition-transform ${showWorkingHours ? 'rotate-180' : ''}`}
+                />
+              </div>
+
+              {/* Days list */}
+              {showWorkingHours && (
+                <div className="space-y-3 mt-4 pt-3 border-t">
+                  {business.workTimes.map((workTime, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <span>{getDayName(workTime.day)}</span>
+                      </div>
+                      <span className="text-muted-foreground">
+                        {minutesToTime(workTime.startTime)} - {minutesToTime(workTime.endTime)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               )}
             </CardContent>
           </Card>
