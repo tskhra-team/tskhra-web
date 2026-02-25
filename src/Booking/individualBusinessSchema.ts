@@ -10,7 +10,12 @@ const fileValidation = yup
   });
 
 const imagesSchema = yup.object().shape({
-  businessPhoto: fileValidation.required("Business photo is required"),
+  businessPhoto: yup
+    .array()
+    .of(fileValidation.required())
+    .min(1, "Business photo is required")
+    .max(1, "You can upload only 1 business photo")
+    .required("Business photo is required"),
   galleryPhoto: yup
     .array()
     .of(fileValidation.required())
@@ -28,8 +33,8 @@ const serviceSchema = yup.object().shape({
   name: yup
     .string()
     .required("Service name is requiered")
-    .min(2, "Service Name should contain at least 2 ")
-    .max(20, "Service Name can't contain more than 20 symbols"),
+    .min(2, "Service Name should contain at least 2 letters")
+    .max(20, "Service Name can't contain more than 20 letters"),
   price: yup
     .number()
     .required("Price is requiered")
@@ -49,18 +54,23 @@ const IndividualBusiessSchema = yup.object().shape({
     .string()
     .required("Business name is requiered")
     .min(2, "Business Name should contain at least 2 ")
-    .max(20, "Business Name can't contain more than 20 symbols"),
+    .max(40, "Business Name can't contain more than 20 symbols"),
   callType: yup
     .mixed<"outcall" | "onsite" | "both">()
     .oneOf(["outcall", "onsite", "both"])
     .required("Call type is requiered"),
   city: yup.string().required("City is requiered"),
-  address: yup.string().optional(),
+  address: yup.string().when("callType", {
+    is: (val: string) => val !== "outcall",
+    then: (schema) =>
+      schema.required("Address is required when not an outcall"),
+    otherwise: (schema) => schema.optional(),
+  }),
   description: yup
     .string()
     .required("Description is requiered")
     .min(10, "Description should containt at least 10 lettesr")
-    .max(100, "Description can't contain more than 100 letters"),
+    .max(250, "Description can't contain more than 100 letters"),
   images: imagesSchema.required("Photos are requiered"),
   mainCategory: yup.string().required("Main category is requiered"),
   subCategory: yup.string().required("Sub category is requiered"),

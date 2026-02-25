@@ -2,6 +2,7 @@ import {
   IndividualBusiessSchema,
   type IndividualBusinessFormData,
 } from "@/Booking/IndividualBusinessSchema";
+import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,12 +29,15 @@ export default function IndividualServiceForm() {
   const createBusiness = useCreaetIndividualBusiness();
   const uploadPhotos = useUploadPhotos();
 
+  // Локальный стейт для создания нового сервиса
   const [newService, setNewService] = useState({
     name: "",
     price: 0,
     duration: 0,
     description: "",
   });
+  // Локальный стейт для ошибок при добавлении сервиса
+  const [serviceError, setServiceError] = useState("");
 
   const {
     register,
@@ -50,7 +54,10 @@ export default function IndividualServiceForm() {
       city: "",
       address: "",
       description: "",
-      images: undefined,
+      images: {
+        businessPhoto: [],
+        galleryPhoto: [],
+      },
       mainCategory: "",
       subCategory: "",
       workTimes: [],
@@ -63,17 +70,26 @@ export default function IndividualServiceForm() {
       },
     },
   });
+
   const callType = watch("callType");
   const mainCategory = watch("mainCategory");
   const services = watch("services");
   const selectedCategory = categories?.find((cat) => cat.name === mainCategory);
 
   const addService = () => {
-    if (!newService.name || newService.price <= 0 || newService.duration <= 0) {
+    // Сбрасываем ошибку перед новой проверкой
+    setServiceError("");
+
+    if (!newService.name || newService.name.length < 2) {
+      setServiceError("სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს");
       return;
     }
-
-    if (newService.duration % 5 !== 0 || newService.duration < 5) {
+    if (newService.price <= 0) {
+      setServiceError("ფასი უნდა იყოს 0-ზე მეტი");
+      return;
+    }
+    if (newService.duration < 5 || newService.duration % 5 !== 0) {
+      setServiceError("ხანგრძლივობა უნდა იყოს 5-ის ჯერადი (მინიმუმ 5)");
       return;
     }
 
@@ -102,14 +118,13 @@ export default function IndividualServiceForm() {
   const onSubmit = async (data: IndividualBusinessFormData) => {
     try {
       const result = await createBusiness.mutateAsync(data);
-
+      // Если нужно загружать фото отдельным запросом, раскомментируйте код ниже:
       // if (result.businessId && data.images) {
       //   await uploadPhotos.mutateAsync({
       //     businessId: result.businessId,
       //     data,
       //   });
       // }
-
       alert("სერვისი წარმატებით გამოქვეყნდა!");
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -131,25 +146,24 @@ export default function IndividualServiceForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-3xl mx-auto space-y-6"
     >
-      <div>
-        <label className="block text-sm font-medium mb-2">
+      {/* Business Name */}
+      <div className="my-12">
+        <Label className="block text-lg font-medium mb-2">
           თქვენი პირადი ბიზნესის სახელი
-        </label>
-        <Input
-          {...register("businessName")}
-          placeholder="შეიყვანეთ ბიზნენის სახელი"
-        />
+        </Label>
+        <Input {...register("businessName")} placeholder="" />
         {errors.businessName && (
-          <p className="text-sm text-red-600 mt-1">
+          <p className="text-xs text-red-500 font-bold mt-2">
             {errors.businessName.message}
           </p>
         )}
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-2">
+      {/* Call Type */}
+      <div className="mb-12">
+        <Label className="block text-lg font-medium mb-2">
           როგორ აპირებთ მომხმარებლის მომსახურებას?
-        </label>
+        </Label>
         <Controller
           name="callType"
           control={control}
@@ -183,28 +197,33 @@ export default function IndividualServiceForm() {
           )}
         />
         {errors.callType && (
-          <p className="text-sm text-red-600 mt-1">{errors.callType.message}</p>
+          <p className="text-xs text-red-500 font-bold mt-2">
+            {errors.callType.message}
+          </p>
         )}
       </div>
 
-      {/* City and District */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* City and Address */}
+      <div className="grid grid-cols-2 gap-4 mb-12">
         <div>
-          <label className="block text-sm font-medium mb-2">ქალაქი</label>
+          <Label className="block text-lg font-medium mb-2">ქალაქი</Label>
           <Input {...register("city")} placeholder="ქალაქი" />
           {errors.city && (
-            <p className="text-sm text-red-600 mt-1">{errors.city.message}</p>
+            <p className="text-xs text-red-500 font-bold mt-2">
+              {errors.city.message}
+            </p>
           )}
         </div>
         <div>
-          <Label className="block text-sm font-medium mb-2">მისამართი</Label>
+          <Label className="block text-lg font-medium mb-2">მისამართი</Label>
           <Input
             {...register("address")}
             disabled={callType === "outcall"}
             placeholder="შეიყვანეთ მისამართი"
           />
-          {errors.address && (
-            <p className="text-sm text-red-600 mt-1">
+
+          {errors.address && callType !== "outcall" && (
+            <p className="text-xs text-red-500 font-bold mt-2">
               {errors.address.message}
             </p>
           )}
@@ -212,8 +231,8 @@ export default function IndividualServiceForm() {
       </div>
 
       {/* Detailed Description */}
-      <div>
-        <label className="block text-sm font-medium mb-2">ვრცელი აღწერა</label>
+      <div className="mb-12">
+        <Label className="block text-lg font-medium mb-2">ვრცელი აღწერა</Label>
         <textarea
           {...register("description")}
           placeholder="აღწერეთ თქვენი სერვისი დეტალურად"
@@ -221,62 +240,53 @@ export default function IndividualServiceForm() {
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
         />
         {errors.description && (
-          <p className="text-sm text-red-600 mt-1">
+          <p className="text-xs text-red-500 font-bold mt-2">
             {errors.description.message}
           </p>
         )}
       </div>
 
       {/* Main Image */}
-      <div>
-        <label className="block text-sm font-medium mb-2">
-          სერვისის მთავარი სურათი
-        </label>
+      <div className="mb-12">
+        <Label className="block text-lg font-medium mb-2">
+          ბიზნესის მთავარი სურათი
+        </Label>
         <Controller
           name="images.businessPhoto"
           control={control}
-          render={({ field: { onChange, value, ...field } }) => (
-            <Input
-              type="file"
-              accept="image/*"
-              {...field}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                onChange(file);
-              }}
+          render={({ field }) => (
+            <FileUpload
+              value={field.value}
+              onChange={field.onChange}
+              maxFiles={1}
             />
           )}
         />
         {errors.images?.businessPhoto && (
-          <p className="text-sm text-red-600 mt-1">
+          <p className="text-xs text-red-500 font-bold mt-2">
             {errors.images.businessPhoto.message}
           </p>
         )}
       </div>
 
       {/* Gallery Images */}
-      <div>
-        <label className="block text-sm font-medium mb-2">
+      <div className="mb-14">
+        <Label className="block text-lg font-medium mb-2 mt-4">
           გალერეის სურათები
-        </label>
+        </Label>
         <Controller
           name="images.galleryPhoto"
           control={control}
-          render={({ field: { onChange, value, ...field } }) => (
-            <Input
-              type="file"
-              accept="image/*"
-              multiple
-              {...field}
-              onChange={(e) => {
-                const files = e.target.files ? Array.from(e.target.files) : [];
-                onChange(files);
-              }}
+          render={({ field }) => (
+            <FileUpload
+              value={field.value}
+              onChange={field.onChange}
+              maxFiles={4}
             />
           )}
         />
         {errors.images?.galleryPhoto && (
-          <p className="text-sm text-red-600 mt-1">
+          <p className="text-xs text-red-500 font-bold mt-2">
             {errors.images.galleryPhoto.message}
           </p>
         )}
@@ -286,11 +296,11 @@ export default function IndividualServiceForm() {
       </div>
 
       {/* Category Selection */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mb-12">
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <Label className="block text-lg font-medium mb-2">
             აირჩიე კატეგორია
-          </label>
+          </Label>
           <Controller
             name="mainCategory"
             control={control}
@@ -322,16 +332,16 @@ export default function IndividualServiceForm() {
             )}
           />
           {errors.mainCategory && (
-            <p className="text-sm text-red-600 mt-1">
+            <p className="text-xs text-red-500 font-bold mt-2">
               {errors.mainCategory.message}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <Label className="block text-lg font-medium mb-2">
             აირჩიე ქვეკატეგორია
-          </label>
+          </Label>
           <Controller
             name="subCategory"
             control={control}
@@ -364,7 +374,7 @@ export default function IndividualServiceForm() {
             )}
           />
           {errors.subCategory && (
-            <p className="text-sm text-red-600 mt-1">
+            <p className="text-xs text-red-500 font-bold mt-2">
               {errors.subCategory.message}
             </p>
           )}
@@ -372,10 +382,10 @@ export default function IndividualServiceForm() {
       </div>
 
       {/* Working Schedule */}
-      <div>
-        <label className="block text-sm font-medium mb-2">
+      <div className="mb-16">
+        <Label className="block text-lg font-medium mb-2">
           სამუშაო გრაფიკი
-        </label>
+        </Label>
         <Controller
           name="workTimes"
           control={control}
@@ -414,11 +424,7 @@ export default function IndividualServiceForm() {
               } else {
                 field.onChange([
                   ...currentTimes,
-                  {
-                    weekDay: dayKey,
-                    startTime: 540,
-                    endTime: 1080,
-                  },
+                  { weekDay: dayKey, startTime: 540, endTime: 1080 },
                 ]);
               }
             };
@@ -440,47 +446,70 @@ export default function IndividualServiceForm() {
             return (
               <div className="space-y-3">
                 {days.map((day) => {
-                  const daySchedule = (field.value || []).find(
+                  const dayIndex = (field.value || []).findIndex(
                     (t) => t.weekDay === day.value,
                   );
+                  const daySchedule =
+                    dayIndex >= 0 ? field.value[dayIndex] : null;
                   const isEnabled = !!daySchedule;
 
-                  return (
-                    <div
-                      key={day.value}
-                      className="flex items-center gap-4 p-3 border rounded-md"
-                    >
-                      <Button
-                        type="button"
-                        variant={isEnabled ? "default" : "outline"}
-                        onClick={() => toggleDay(day.value)}
-                        className="w-32"
-                      >
-                        {day.label}
-                      </Button>
+                  // Достаем ошибку конкретного дня из массива ошибок RHF
+                  const dayErrors =
+                    Array.isArray(errors.workTimes) && dayIndex >= 0
+                      ? (errors.workTimes[dayIndex] as any)
+                      : null;
 
-                      {isEnabled && daySchedule && (
-                        <div className="flex items-center gap-2 flex-1">
-                          <Input
-                            type="time"
-                            value={minutesToTime(daySchedule.startTime)}
-                            onChange={(e) =>
-                              updateTime(day.value, "startTime", e.target.value)
-                            }
-                            step="300"
-                            className="w-32"
-                          />
-                          <span>-</span>
-                          <Input
-                            type="time"
-                            value={minutesToTime(daySchedule.endTime)}
-                            onChange={(e) =>
-                              updateTime(day.value, "endTime", e.target.value)
-                            }
-                            step="300"
-                            className="w-32"
-                          />
-                        </div>
+                  return (
+                    <div key={day.value} className="flex flex-col gap-1">
+                      <div className="flex items-center gap-4 p-3 border rounded-md">
+                        <Button
+                          type="button"
+                          variant={isEnabled ? "default" : "outline"}
+                          onClick={() => toggleDay(day.value)}
+                          className="w-32"
+                        >
+                          {day.label}
+                        </Button>
+
+                        {isEnabled && daySchedule && (
+                          <div className="flex items-center gap-2 flex-1">
+                            <Input
+                              type="time"
+                              value={minutesToTime(daySchedule.startTime)}
+                              onChange={(e) =>
+                                updateTime(
+                                  day.value,
+                                  "startTime",
+                                  e.target.value,
+                                )
+                              }
+                              step="300"
+                              className={`w-32 ${dayErrors?.startTime ? "border-red-500" : ""}`}
+                            />
+                            <span>-</span>
+                            <Input
+                              type="time"
+                              value={minutesToTime(daySchedule.endTime)}
+                              onChange={(e) =>
+                                updateTime(day.value, "endTime", e.target.value)
+                              }
+                              step="300"
+                              className={`w-32 ${dayErrors?.endTime ? "border-red-500" : ""}`}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Ошибки для конкретного дня */}
+                      {dayErrors?.startTime && (
+                        <p className="text-xs text-red-600 pl-4">
+                          {dayErrors.startTime.message}
+                        </p>
+                      )}
+                      {dayErrors?.endTime && (
+                        <p className="text-xs text-red-600 pl-4">
+                          {dayErrors.endTime.message}
+                        </p>
                       )}
                     </div>
                   );
@@ -489,9 +518,10 @@ export default function IndividualServiceForm() {
             );
           }}
         />
-        {errors.workTimes && (
-          <p className="text-sm text-red-600 mt-1">
-            {errors.workTimes.message}
+        {/*  Global error if day isnt choosen */}
+        {errors.workTimes && !Array.isArray(errors.workTimes) && (
+          <p className="text-xs text-red-500 font-bold mt-2">
+            {errors.workTimes.message as string}
           </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
@@ -500,16 +530,16 @@ export default function IndividualServiceForm() {
       </div>
 
       {/* Services */}
-      <div>
-        <label className="block text-sm font-medium mb-2">სერვისები</label>
+      <div className="mb-16">
+        <Label className="block text-lg font-medium mb-2">სერვისები</Label>
 
         {/* Add Service Form */}
-        <div className="border rounded-md p-4 mb-4 space-y-3">
+        <div className="border rounded-md p-4 mb-4 space-y-3 bg-muted/20">
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium mb-1">
+              <Label className="block text-xs font-medium mb-1">
                 სერვისის დასახელება
-              </label>
+              </Label>
               <Input
                 value={newService.name}
                 onChange={(e) =>
@@ -519,7 +549,7 @@ export default function IndividualServiceForm() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1">ფასი (₾)</label>
+              <Label className="block text-xs font-medium mb-1">ფასი (₾)</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -534,9 +564,9 @@ export default function IndividualServiceForm() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1">
+              <Label className="block text-xs font-medium mb-1">
                 ხანგრძლივობა (წუთი)
-              </label>
+              </Label>
               <Input
                 type="number"
                 step="5"
@@ -553,9 +583,9 @@ export default function IndividualServiceForm() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1">
+            <Label className="block text-xs font-medium mb-1">
               აღწერა (არასავალდებულო)
-            </label>
+            </Label>
             <Input
               value={newService.description}
               onChange={(e) =>
@@ -572,6 +602,13 @@ export default function IndividualServiceForm() {
           >
             დაამატე სერვისი
           </Button>
+
+          {/* Локальная ошибка добавления сервиса */}
+          {serviceError && (
+            <p className="text-sm text-red-600 mt-2 text-center">
+              {serviceError}
+            </p>
+          )}
         </div>
 
         {/* Services List */}
@@ -607,8 +644,11 @@ export default function IndividualServiceForm() {
           </div>
         )}
 
-        {errors.services && (
-          <p className="text-sm text-red-600 mt-1">{errors.services.message}</p>
+        {/* Глобальная ошибка (например, если нет ни одного сервиса) */}
+        {errors.services && !Array.isArray(errors.services) && (
+          <p className="text-xs text-red-500 font-bold mt-2">
+            {errors.services.message as string}
+          </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
           დაამატეთ სერვისები, რომლებსაც სთავაზობთ (ხანგრძლივობა უნდა იყოს 5-ის
@@ -616,47 +656,46 @@ export default function IndividualServiceForm() {
         </p>
       </div>
 
-      {/* Website URL */}
+      {/* Contact Info */}
       <div>
-        <label className="block text-sm font-medium mb-2">ნომერი</label>
+        <Label className="block text-sm font-medium mb-2">ნომერი</Label>
         <Input
           type="text"
           {...register("info.phoneNumber")}
           placeholder="+995511111111"
         />
         {errors.info?.phoneNumber && (
-          <p className="text-sm text-red-600 mt-1">
+          <p className="text-xs text-red-500 font-bold mt-2">
             {errors.info.phoneNumber.message}
           </p>
         )}
       </div>
 
-      {/* Social Media URLs */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Facebook URL</label>
+          <Label className="block text-sm font-medium mb-2">Facebook URL</Label>
           <Input
             type="text"
             {...register("info.facebookUrl")}
             placeholder="https://facebook.com/yourpage"
           />
           {errors.info?.facebookUrl && (
-            <p className="text-sm text-red-600 mt-1">
+            <p className="text-xs text-red-500 font-bold mt-2">
               {errors.info.facebookUrl.message}
             </p>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <Label className="block text-sm font-medium mb-2">
             Instagram URL
-          </label>
+          </Label>
           <Input
             type="text"
             {...register("info.instagramUrl")}
             placeholder="https://instagram.com/youraccount"
           />
           {errors.info?.instagramUrl && (
-            <p className="text-sm text-red-600 mt-1">
+            <p className="text-xs text-red-500 font-bold mt-2">
               {errors.info.instagramUrl.message}
             </p>
           )}

@@ -17,8 +17,8 @@ type UploadPhotosVariable = {
 const uploadPhotos = async ({ businessId, data }: UploadPhotosVariable) => {
   const formData = new FormData();
 
-  if (data.images.businessPhoto) {
-    formData.append("businessPhoto", data.images.businessPhoto);
+  if (data.images.businessPhoto && data.images.businessPhoto.length > 0) {
+    formData.append("businessPhoto", data.images.businessPhoto[0]);
   }
 
   if (data.images.galleryPhoto && data.images.galleryPhoto.length > 0) {
@@ -27,9 +27,15 @@ const uploadPhotos = async ({ businessId, data }: UploadPhotosVariable) => {
     });
   }
 
+  // 3. Отправляем запрос
   const response = await privateInstance.post(
     `/businesses/${businessId}/images`,
     formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
   );
 
   return response.data;
