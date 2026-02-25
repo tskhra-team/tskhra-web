@@ -21,11 +21,11 @@ export default function BlurVerifiedUser({
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center space-y-4 bg-background/80 backdrop-blur-sm p-8 rounded-lg">
           <div className="flex justify-center">
-            <div className="p-4 bg-linear-to-br from-green-500 to-green-600 rounded-full shadow-lg">
+            <div className="p-4 bg-linear-to-br from-green-700 to-green-800 rounded-full shadow-lg">
               <Check className="w-12 h-12 text-white" />
             </div>
           </div>
-          <p className="text-3xl font-semibold text-green-500">
+          <p className="text-3xl font-semibold text-green-700">
             {t("form.alreadyVerified.title")}
           </p>
           <p className="text-muted-foreground">

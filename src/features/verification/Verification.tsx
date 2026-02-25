@@ -8,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useVerify from "@/features/profile/useVerify";
+import queryClient from "@/query/queryClient";
 import {
   ArrowLeft,
   Camera,
@@ -19,8 +21,11 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Verification() {
+  const { mutate: verifyUser } = useVerify();
+
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
   const { t } = useTranslation("verification");
@@ -329,7 +334,30 @@ export default function Verification() {
                 {t("buttons.nextStep")}
               </Button>
             ) : (
-              <Button className="px-8 h-12 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+              <Button
+                className="px-8 h-12 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                onClick={() => {
+                  verifyUser(undefined, {
+                    onSuccess: () => {
+                      toast.success("TEST: VERIFICATION SUCCESSFULLY", {
+                        position: "top-center",
+                      });
+                      navigate("/profile");
+                      queryClient.invalidateQueries({
+                        queryKey: ["getUser"],
+                      });
+                      queryClient.invalidateQueries({
+                        queryKey: ["getProfile"],
+                      });
+                    },
+                    onError: () => {
+                      toast.error("დაფიქსირდა შეცდომა, გთხოვთ სცადოთ თავიდან", {
+                        position: "top-center",
+                      });
+                    },
+                  });
+                }}
+              >
                 {t("buttons.submit")}
               </Button>
             )}
