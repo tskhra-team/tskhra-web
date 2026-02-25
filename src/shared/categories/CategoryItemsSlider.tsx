@@ -75,6 +75,9 @@ export default function CategoryItemsSlider({ items, categoryName }: CategoryIte
                         <img
                           src={item.imageUrl}
                           alt={item.name}
+                          loading={index === 0 ? "eager" : "lazy"}
+                          width={128}
+                          height={128}
                           className="h-32 w-32 object-contain drop-shadow-2xl"
                         />
                       </div>

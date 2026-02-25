@@ -9,8 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AlertCircle, ShieldCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 type VerifyDialogProps = {
   open: boolean;
@@ -69,7 +69,7 @@ export default function VerifyDialog({
             </DialogClose>
             <Button
               onClick={() => {
-                navigate("/profile?section=settings");
+                navigate("/verification");
                 onOpenChange(false);
               }}
               className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300"

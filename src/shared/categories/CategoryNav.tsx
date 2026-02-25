@@ -29,7 +29,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
               <button
                 onMouseEnter={() => onSelect(index)}
                 onClick={() => onSelect(isActive ? null : index, category.name)}
-                className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors flex items-center justify-between"
+                className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between"
                 style={
                   isActive
                     ? {
@@ -46,14 +46,14 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                 <span className="flex items-center gap-3 cursor-pointer">
                   {category.icon && (
                     <category.icon
-                      className="w-5 h-5"
+                      className="w-5 h-5 transition-colors duration-200"
                       style={{ color: isActive ? colors.active.icon : colors.inactive.icon }}
                     />
                   )}
                   {displayName}
                 </span>
                 <svg
-                  className={`lg:hidden w-5 h-5 transition-transform ${isActive ? 'rotate-180' : ''}`}
+                  className={`lg:hidden w-5 h-5 transition-transform duration-200 ease-in-out ${isActive ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -62,7 +62,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                 </svg>
               </button>
               {isActive && category.childItems && (
-                <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg">
+                <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                   <h3 className="mb-4 text-sm font-semibold">{categoryDisplayName}</h3>
                   <SubcategoryView subcategories={category.childItems} platform={platform} />
                 </div>

@@ -10,7 +10,7 @@ export default function BookingNavigation() {
   ];
 
   return (
-    <div className="w-full h-12 sm:h-14 bg-white/60 backdrop-blur-lg border-b border-slate-200/40 sticky top-16 z-40">
+    <div className="w-full  h-12 sm:h-14 bg-white/60 backdrop-blur-lg border-b border-slate-200/40 sticky top-16 z-40">
       <div className="flex h-full justify-center items-center gap-0.5 sm:gap-1">
         {navItems.map((item) => (
           <div

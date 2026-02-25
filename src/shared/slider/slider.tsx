@@ -41,11 +41,12 @@ function BannerSlider() {
   return (
     <div className="w-full mx-auto lg:w-150 lg:mt-20 xl:mt-0 xl:w-full">
       <Slider {...settings}>
-        {banners.map((banner) => (
+        {banners.map((banner, index) => (
           <div key={banner.id} className="relative w-full overflow-hidden rounded-2xl">
             <img
               src={banner.image}
-            //   alt={banner.title}
+              alt={`Banner ${index + 1}`}
+              loading={index === 0 ? "eager" : "lazy"}
               className="w-full h-auto rounded-2xl"
             />
             {/* <div className="absolute top-1/2 left-8 md:left-16 -translate-y-1/2 max-w-lg">

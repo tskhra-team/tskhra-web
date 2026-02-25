@@ -14,10 +14,16 @@
     "verified": "Verified",
     "notVerified": "Not Verified",
     "active": "Active",
-    "becomeProvider": {
-      "title": "Become a Service Provider",
-      "description": "Publish your service and provide it to customers. Start earning today!",
+    "goToVerification": "Become a verified user!",
+    "becomeBookingProvider": {
+      "title": "Create Booking Service!",
+      "description": "Publish your service and provide it to customers. Manage your time, shcheldure and chat with customer. Start earning today!",
       "button": "Create Service"
+    },
+    "becomeProductProvider": {
+      "title": "Sell Products Online!",
+      "description": "Sell Products Online Start your e-commerce journey. Create and manage your online store, list products, and reach customers",
+      "button": "Open your Store"
     }
   },
   "profileHeader": {
@@ -34,6 +40,7 @@
       "male": "Male",
       "other": "Other"
     },
+    "changePrfPic": "Change profile picture",
     "birthDate": {
       "label": "Birth Date",
       "placeholder": "Select Date"
@@ -57,6 +64,10 @@
       "allFieldsRequired": "All fields must be filled!",
       "unverifySuccess": "Unverified successfully",
       "unverifyError": "An error occurred, please try again"
+    },
+    "alreadyVerified": {
+      "title": "You are a verified user!",
+      "description": "*a verified user can't change his data :("
     }
   },
   "verifyDialog": {

@@ -1,8 +1,9 @@
 import { scrollToElement } from "@/utils";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import Logo from "../shared/Logo";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import Logo from "../shared/Logo";
 
 const contactInfo = [
   { Icon: Mail, text: "makingscience@tskhra.com" },
@@ -10,8 +11,9 @@ const contactInfo = [
   { Icon: MapPin, text: "13 Mikheil Tamarashvili St, Tbilisi 0162" },
 ];
 
-export default function Footer() {
+function Footer() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation("home");
 
   const footerLinks = {
@@ -20,13 +22,22 @@ export default function Footer() {
       { name: t("footer.links.book"), func: () => navigate("/booking") },
       { name: t("footer.links.swap"), func: () => navigate("/swapping") },
     ],
-    [t("footer.links.company")]: [{ name: t("footer.links.aboutUs"), func: () => scrollToElement("about-us") }],
+    [t("footer.links.company")]: [
+      {
+        name: t("footer.links.aboutUs"),
+        func: () => scrollToElement("about-us"),
+      },
+    ],
     [t("footer.links.legal")]: [
       { name: t("footer.links.privacy"), func: () => console.log() },
       { name: t("footer.links.terms"), func: () => console.log() },
       { name: t("footer.links.cookies"), func: () => console.log() },
     ],
   };
+
+  if (location.pathname.includes("/my-services")) {
+    return null;
+  }
 
   return (
     <footer className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-300 relative overflow-hidden">
@@ -73,7 +84,9 @@ export default function Footer() {
                 <div className="w-9 h-9 sm:w-10 sm:h-10 bg-slate-800 rounded-lg flex items-center justify-center shrink-0">
                   <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 </div>
-                <span className="text-slate-300 text-sm sm:text-base wrap-break-word">{text}</span>
+                <span className="text-slate-300 text-sm sm:text-base wrap-break-word">
+                  {text}
+                </span>
               </div>
             ))}
           </div>
@@ -105,9 +118,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-slate-400 text-sm">
-            {t("footer.copyright")}
-          </p>
+          <p className="text-slate-400 text-sm">{t("footer.copyright")}</p>
           <div className="flex gap-6 text-sm">
             <a className="text-slate-400 hover:text-white transition-colors">
               {t("footer.links.privacyShort")}
@@ -124,3 +135,6 @@ export default function Footer() {
     </footer>
   );
 }
+
+// Memoize Footer to prevent unnecessary re-renders
+export default memo(Footer);

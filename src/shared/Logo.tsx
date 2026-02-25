@@ -1,7 +1,8 @@
+import { scrollToTop } from "@/utils";
+import { memo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
 
-export default function Logo({ color = "black" }: { color?: string }) {
+function Logo({ color = "black" }: { color?: string }) {
   const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
 
@@ -21,13 +22,15 @@ export default function Logo({ color = "black" }: { color?: string }) {
 
   const activeService = getActiveService();
   const otherServices = allServices.filter(
-    (s) => s.name !== activeService.name && s.name !== "TSKHRA"
+    (s) => s.name !== activeService.name && s.name !== "TSKHRA",
   );
   const tskhra = allServices[0];
 
   const services = [
     activeService,
-    ...(activeService.name === "TSKHRA" ? otherServices : [...otherServices, tskhra]),
+    ...(activeService.name === "TSKHRA"
+      ? otherServices
+      : [...otherServices, tskhra]),
   ];
 
   return (
@@ -35,6 +38,7 @@ export default function Logo({ color = "black" }: { color?: string }) {
       className="font-bold text-2xl relative overflow-hidden inline-block"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => scrollToTop()}
     >
       <div className="flex gap-6">
         {services.map((service, index) => (
@@ -45,8 +49,8 @@ export default function Logo({ color = "black" }: { color?: string }) {
               isHovered
                 ? "opacity-100 translate-x-0"
                 : index === 0
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-full"
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-full"
             }`}
             style={{
               color: service.color,
@@ -60,3 +64,5 @@ export default function Logo({ color = "black" }: { color?: string }) {
     </div>
   );
 }
+
+export default memo(Logo);
