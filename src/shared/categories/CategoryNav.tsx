@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { categoryNameToKey } from "./categoryTranslations";
 import { getPlatformColors } from "./platformColors";
 import SubcategoryView from "./SubcategoryView";
@@ -24,11 +25,22 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
           const displayName = translationKey ? t(translationKey) : category.name;
           const isActive = index === activeIndex;
 
+          const categorySlug = category.name.toLowerCase().replace(/\s+/g, '-');
+          const categoryUrl = platform ? `/${platform}/category/${categorySlug}` : '#';
+
           return (
             <li key={category.name} className="lg:block ">
-              <button
+              {/* Desktop: Hover to show dropdown, Click to navigate */}
+              <Link
+                to={categoryUrl}
                 onMouseEnter={() => onSelect(index)}
-                onClick={() => onSelect(isActive ? null : index, category.name)}
+                onClick={(e) => {
+                  // On mobile (lg:hidden), prevent navigation and toggle accordion
+                  if (window.innerWidth < 1024) {
+                    e.preventDefault();
+                    onSelect(isActive ? null : index, category.name);
+                  }
+                }}
                 className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between"
                 style={
                   isActive
@@ -60,7 +72,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </Link>
               {isActive && category.childItems && (
                 <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                   <h3 className="mb-4 text-sm font-semibold">{categoryDisplayName}</h3>
