@@ -22,10 +22,11 @@ import {
   Facebook,
   Instagram,
   MapPin,
-  Phone,
+  Phone
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Mock available days (next 14 days)
 const getAvailableDays = () => {
@@ -62,6 +63,7 @@ const getAvailableTimeSlots = (selectedDate: string | null) => {
 export default function BusinessDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation('booking');
   const [showWorkingHours, setShowWorkingHours] = useState(false);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<MockService | null>(null);
@@ -76,7 +78,7 @@ export default function BusinessDetails() {
   const availableTimeSlots = getAvailableTimeSlots(selectedDate);
 
   const scrollToServices = () => {
-    servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   const handleServiceClick = (service: any) => {
@@ -110,7 +112,7 @@ export default function BusinessDetails() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.loading')}</h1>
         </div>
       </div>
     );
@@ -121,12 +123,12 @@ export default function BusinessDetails() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Error loading business</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.errorLoading')}</h1>
           <p className="text-muted-foreground mb-4">
-            {error instanceof Error ? error.message : "Something went wrong"}
+            {error instanceof Error ? error.message : t('businessDetails.status.somethingWrong')}
           </p>
           <Button onClick={() => navigate("/services")}>
-            Back to Businesses
+            {t('businessDetails.buttons.backToBusinesses')}
           </Button>
         </div>
       </div>
@@ -138,9 +140,9 @@ export default function BusinessDetails() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Business not found</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.notFound')}</h1>
           <Button onClick={() => navigate("/services")}>
-            Back to Businesses
+            {t('businessDetails.buttons.backToBusinesses')}
           </Button>
         </div>
       </div>
@@ -151,11 +153,11 @@ export default function BusinessDetails() {
   const getCallTypeBadge = () => {
     switch (business.callType) {
       case "outcall":
-        return <Badge variant="secondary">Outcall Only</Badge>;
+        return <Badge variant="secondary">{t('businessDetails.callType.outcall')}</Badge>;
       case "onsite":
-        return <Badge variant="default">Onsite Only</Badge>;
+        return <Badge variant="default">{t('businessDetails.callType.onsite')}</Badge>;
       case "both":
-        return <Badge variant="outline">Outcall & Onsite</Badge>;
+        return <Badge variant="outline">{t('businessDetails.callType.both')}</Badge>;
       default:
         return null;
     }
@@ -170,14 +172,14 @@ export default function BusinessDetails() {
             onClick={() => navigate("/")}
             className="hover:text-primary transition-colors font-medium"
           >
-            Home
+            {t('businessDetails.breadcrumb.home')}
           </button>
           <span className="text-muted-foreground/50">•</span>
           <button
             onClick={() => navigate("/services")}
             className="hover:text-primary transition-colors font-medium"
           >
-            Services
+            {t('businessDetails.breadcrumb.services')}
           </button>
           <span className="text-muted-foreground/50">•</span>
           <span className="text-[#100b2e] font-semibold">{business.businessName}</span>
@@ -232,11 +234,11 @@ export default function BusinessDetails() {
             )}
 
             {/* Description */}
-            <Card className="shadow-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <div className="h-1 w-1 rounded-full bg-primary text-[#100b2e]"></div>
-                  About
+                  {t('businessDetails.sections.about')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -247,11 +249,11 @@ export default function BusinessDetails() {
             </Card>
 
             {/* Services Offered */}
-            <Card ref={servicesRef} className="shadow-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card ref={servicesRef} className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <div className="h-1 w-1 rounded-full bg-primary"></div>
-                  Services Offered
+                  {t('businessDetails.sections.servicesOffered')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -269,8 +271,8 @@ export default function BusinessDetails() {
                           <p className="text-sm text-muted-foreground flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
                             {service.time >= 60
-                              ? `${Math.floor(service.time / 60)}h ${service.time % 60 > 0 ? `${service.time % 60}m` : ""}`
-                              : `${service.time}m`}
+                              ? `${Math.floor(service.time / 60)}${t('businessDetails.time.hours')} ${service.time % 60 > 0 ? `${service.time % 60}${t('businessDetails.time.minutes')}` : ""}`
+                              : `${service.time}${t('businessDetails.time.minutes')}`}
                           </p>
                         </div>
                       </div>
@@ -289,28 +291,28 @@ export default function BusinessDetails() {
           {/* Sidebar */}
           <div className="space-y-6 lg:sticky lg:top-8 h-fit">
             {/* Action Buttons */}
-            <Card className="shadow-xl rounded-2xl border-primary/20 bg-linear-to-br from-primary/5 to-card overflow-hidden">
+            <Card className="rounded-2xl border-primary/20 from-primary/5 to-card overflow-hidden">
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl">{business.businessName}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
-                  className="w-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 text-base font-semibold rounded-xl h-12 bg-[#ff6439] hover:bg-[#100b2e]"
+                  className="w-full cursor-pointer  hover:shadow-xl transition-all duration-300 text-base font-semibold rounded-xl h-12 bg-[#ff6439] hover:bg-[#100b2e]"
                   size="lg"
                   onClick={scrollToServices}
                 >
-                  Book Now
+                  {t('businessDetails.buttons.bookNow')}
                 </Button>
               </CardContent>
             </Card>
 
             {/* Contact Information */}
             {(business.info.phoneNumber || business.info.facebookUrl || business.info.instagramUrl) && (
-              <Card className="shadow-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
+              <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <div className="h-1 w-1 rounded-full bg-primary"></div>
-                    Contact Information
+                    {t('businessDetails.sections.contactInformation')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -336,7 +338,7 @@ export default function BusinessDetails() {
                       <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
                         <Facebook className="w-4 h-4 text-blue-600" />
                       </div>
-                      <span className="text-sm font-medium">Facebook</span>
+                      <span className="text-sm font-medium">{t('businessDetails.social.facebook')}</span>
                     </a>
                   )}
 
@@ -350,7 +352,7 @@ export default function BusinessDetails() {
                       <div className="p-2 rounded-lg bg-pink-500/10 group-hover:bg-pink-500/20 transition-colors">
                         <Instagram className="w-4 h-4 text-pink-600" />
                       </div>
-                      <span className="text-sm font-medium">Instagram</span>
+                      <span className="text-sm font-medium">{t('businessDetails.social.instagram')}</span>
                     </a>
                   )}
                 </CardContent>
@@ -358,7 +360,7 @@ export default function BusinessDetails() {
             )}
 
             {/* Working Hours */}
-            <Card className="shadow-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardContent className="pt-6">
                 <div
                   className="flex items-center justify-between cursor-pointer group"
@@ -369,9 +371,9 @@ export default function BusinessDetails() {
                       <Clock className="w-4 h-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Working Hours</p>
+                      <p className="text-xs text-muted-foreground">{t('businessDetails.sections.workingHours')}</p>
                       <span className="font-semibold text-sm">
-                        Open until {minutesToTime(business.workTimes[new Date().getDay()]?.endTime || business.workTimes[0].endTime)}
+                        {t('businessDetails.status.openUntil')} {minutesToTime(business.workTimes[new Date().getDay()]?.endTime || business.workTimes[0].endTime)}
                       </span>
                     </div>
                   </div>
@@ -402,11 +404,11 @@ export default function BusinessDetails() {
               </CardContent>
             </Card>
                         {/* Location */}
-            <Card className="shadow-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <div className="h-1 w-1 rounded-full bg-primary"></div>
-                  Location
+                  {t('businessDetails.sections.location')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -428,9 +430,9 @@ export default function BusinessDetails() {
         <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-2xl">Book {selectedService?.name}</DialogTitle>
+              <DialogTitle className="text-2xl">{t('businessDetails.booking.dialogTitle', { serviceName: selectedService?.name })}</DialogTitle>
               <DialogDescription className="text-base">
-                Select a date and time for your appointment
+                {t('businessDetails.booking.dialogDescription')}
               </DialogDescription>
             </DialogHeader>
 
@@ -449,8 +451,8 @@ export default function BusinessDetails() {
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
                       {selectedService?.time && selectedService.time >= 60
-                        ? `${Math.floor(selectedService.time / 60)}h ${selectedService.time % 60 > 0 ? `${selectedService.time % 60}m` : ""}`
-                        : `${selectedService?.time || 0}m`}
+                        ? `${Math.floor(selectedService.time / 60)}${t('businessDetails.time.hours')} ${selectedService.time % 60 > 0 ? `${selectedService.time % 60}${t('businessDetails.time.minutes')}` : ""}`
+                        : `${selectedService?.time || 0}${t('businessDetails.time.minutes')}`}
                     </p>
                   </div>
                 </div>
@@ -460,7 +462,7 @@ export default function BusinessDetails() {
               <div>
                 <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" />
-                  Select a Date
+                  {t('businessDetails.booking.selectDate')}
                 </h3>
                 <div className="grid grid-cols-7 gap-2">
                   {availableDays.map((day) => (
@@ -486,7 +488,7 @@ export default function BusinessDetails() {
                 <div className="animate-in fade-in-50 duration-300">
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-primary" />
-                    Select a Time
+                    {t('businessDetails.booking.selectTime')}
                   </h3>
                   <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                     {availableTimeSlots.map((time) => (
@@ -511,10 +513,10 @@ export default function BusinessDetails() {
                 <div className="animate-in fade-in-50 duration-300 pt-4 border-t">
                   <Button
                     onClick={handleBookingConfirm}
-                    className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e]"
+                    className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer"
                     size="lg"
                   >
-                    Confirm Booking for {selectedDate} at {selectedTime}
+                    {t('businessDetails.booking.confirmBooking', { date: selectedDate, time: selectedTime })}
                   </Button>
                 </div>
               )}

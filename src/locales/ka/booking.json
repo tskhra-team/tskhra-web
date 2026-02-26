@@ -3,5 +3,49 @@
     "services": "სერვისები",
     "myBookings": "ჩემი ჯავშნები",
     "schedule": "განრიგი"
+  },
+  "businessDetails": {
+    "breadcrumb": {
+      "home": "მთავარი",
+      "services": "სერვისები"
+    },
+    "callType": {
+      "outcall": "მხოლოდ გასვლით",
+      "onsite": "მხოლოდ ადგილზე",
+      "both": "გასვლით და ადგილზე"
+    },
+    "sections": {
+      "about": "ჩვენ შესახებ",
+      "servicesOffered": "შეთავაზებული სერვისები",
+      "contactInformation": "საკონტაქტო ინფორმაცია",
+      "location": "მდებარეობა",
+      "workingHours": "სამუშაო საათები"
+    },
+    "time": {
+      "hours": "სთ",
+      "minutes": "წთ"
+    },
+    "buttons": {
+      "bookNow": "დაჯავშნა",
+      "backToBusinesses": "უკან სერვისებზე"
+    },
+    "status": {
+      "loading": "იტვირთება...",
+      "errorLoading": "შეცდომა ბიზნესის ჩატვირთვისას",
+      "somethingWrong": "რაღაც არასწორად მოხდა",
+      "notFound": "ბიზნესი ვერ მოიძებნა",
+      "openUntil": "ღიაა"
+    },
+    "social": {
+      "facebook": "ფეისბუქი",
+      "instagram": "ინსტაგრამი"
+    },
+    "booking": {
+      "dialogTitle": "დაჯავშნა {serviceName}",
+      "dialogDescription": "აირჩიეთ თარიღი და დრო თქვენი ვიზიტისთვის",
+      "selectDate": "აირჩიეთ თარიღი",
+      "selectTime": "აირჩიეთ დრო",
+      "confirmBooking": "დაადასტურეთ ჯავშანი {date}-ზე {time}-ზე"
+    }
   }
 }
