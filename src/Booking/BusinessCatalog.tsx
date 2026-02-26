@@ -5,12 +5,12 @@ import { scrollToTop } from "@/utils";
 import { Clock, DollarSign, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function ServicesCatalog() {
+export default function BusinessCatalog() {
   const navigate = useNavigate();
 
   const handkleClick = (id: string) => {
     scrollToTop();
-    navigate(`/services/${id}`);
+    navigate(`/business/${id}`);
   };
 
   return (
