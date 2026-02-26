@@ -158,7 +158,7 @@ export default function InfoTab({
             setIsDialogOpen(true);
           } else {
             scrollToTop();
-            navigate("/create-booking-business");
+            navigate("/create-business");
           }
         }}
       >

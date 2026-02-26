@@ -1,5 +1,5 @@
 import { privateInstance } from "@/api";
-import type { IndividualBusinessFormData } from "@/Booking/IndividualBusinessSchema";
+import type { IndividualBusinessFormData } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import type { ErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";

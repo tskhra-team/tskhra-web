@@ -1,7 +1,3 @@
-import {
-  IndividualBusiessSchema,
-  type IndividualBusinessFormData,
-} from "@/Booking/IndividualBusinessSchema";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  createIndividualBusinessSchema,
+  type IndividualBusinessFormData,
+} from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
 import { useCategories } from "@/shared/categories/useCategories";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -24,20 +24,18 @@ import useCreaetIndividualBusiness from "./useCreateIndividualBusiness";
 import useUploadPhotos from "./useUploadPhotos";
 import WorkingSchedule from "./WorkingSchedule";
 
-export default function IndividualServiceForm() {
-  const { t } = useTranslation("categories");
+export default function IndividualBusinessForm() {
+  const { t } = useTranslation(["categories", "booking"]);
   const { data: categories, isLoading } = useCategories("booking");
   const createBusiness = useCreaetIndividualBusiness();
   const uploadPhotos = useUploadPhotos();
 
-  // Локальный стейт для создания нового сервиса
   const [newService, setNewService] = useState({
     name: "",
     price: 0,
     duration: 0,
     description: "",
   });
-  // Локальный стейт для ошибок при добавлении сервиса
   const [serviceError, setServiceError] = useState("");
 
   const {
@@ -48,7 +46,7 @@ export default function IndividualServiceForm() {
     setValue,
     formState: { errors },
   } = useForm<IndividualBusinessFormData>({
-    resolver: yupResolver(IndividualBusiessSchema) as any,
+    resolver: yupResolver(createIndividualBusinessSchema(t)) as any,
     defaultValues: {
       businessName: "",
       callType: undefined,
@@ -78,19 +76,18 @@ export default function IndividualServiceForm() {
   const selectedCategory = categories?.find((cat) => cat.name === mainCategory);
 
   const addService = () => {
-    // Сбрасываем ошибку перед новой проверкой
     setServiceError("");
 
     if (!newService.name || newService.name.length < 2) {
-      setServiceError("სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს");
+      setServiceError(t("booking:validation.serviceNameMin"));
       return;
     }
     if (newService.price <= 0) {
-      setServiceError("ფასი უნდა იყოს 0-ზე მეტი");
+      setServiceError(t("booking:validation.servicePricePositive"));
       return;
     }
     if (newService.duration < 5 || newService.duration % 5 !== 0) {
-      setServiceError("ხანგრძლივობა უნდა იყოს 5-ის ჯერადი (მინიმუმ 5)");
+      setServiceError(t("booking:validation.serviceDurationMultiple"));
       return;
     }
 
@@ -125,10 +122,10 @@ export default function IndividualServiceForm() {
       //     data,
       //   });
       // }
-      alert("სერვისი წარმატებით გამოქვეყნდა!");
+      alert(t("booking:messages.successPublished"));
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.");
+      alert(t("booking:messages.error"));
     }
   };
 
@@ -149,7 +146,7 @@ export default function IndividualServiceForm() {
       {/* Business Name */}
       <div className="my-12">
         <Label className="block text-lg font-medium mb-2">
-          თქვენი პირადი ბიზნესის სახელი
+          {t("booking:form.businessName")}
         </Label>
         <Input {...register("businessName")} placeholder="" />
         {errors.businessName && (
@@ -162,7 +159,7 @@ export default function IndividualServiceForm() {
       {/* Call Type */}
       <div className="mb-12">
         <Label className="block text-lg font-medium mb-2">
-          როგორ აპირებთ მომხმარებლის მომსახურებას?
+          {t("booking:form.callTypeLabel")}
         </Label>
         <Controller
           name="callType"
@@ -175,7 +172,7 @@ export default function IndividualServiceForm() {
                 onClick={() => field.onChange("outcall")}
                 className="flex-1"
               >
-                გამოძახებით
+                {t("booking:form.callType.outcall")}
               </Button>
               <Button
                 type="button"
@@ -183,7 +180,7 @@ export default function IndividualServiceForm() {
                 onClick={() => field.onChange("onsite")}
                 className="flex-1"
               >
-                ადგილზე
+                {t("booking:form.callType.onsite")}
               </Button>
               <Button
                 type="button"
@@ -191,7 +188,7 @@ export default function IndividualServiceForm() {
                 onClick={() => field.onChange("both")}
                 className="flex-1"
               >
-                ორივე
+                {t("booking:form.callType.both")}
               </Button>
             </div>
           )}
@@ -206,8 +203,8 @@ export default function IndividualServiceForm() {
       {/* City and Address */}
       <div className="grid grid-cols-2 gap-4 mb-12">
         <div>
-          <Label className="block text-lg font-medium mb-2">ქალაქი</Label>
-          <Input {...register("city")} placeholder="ქალაქი" />
+          <Label className="block text-lg font-medium mb-2">{t("booking:form.city")}</Label>
+          <Input {...register("city")} placeholder={t("booking:form.city")} />
           {errors.city && (
             <p className="text-xs text-red-500 font-bold mt-2">
               {errors.city.message}
@@ -215,11 +212,11 @@ export default function IndividualServiceForm() {
           )}
         </div>
         <div>
-          <Label className="block text-lg font-medium mb-2">მისამართი</Label>
+          <Label className="block text-lg font-medium mb-2">{t("booking:form.address")}</Label>
           <Input
             {...register("address")}
             disabled={callType === "outcall"}
-            placeholder="შეიყვანეთ მისამართი"
+            placeholder={t("booking:form.addressPlaceholder")}
           />
 
           {errors.address && callType !== "outcall" && (
@@ -232,10 +229,10 @@ export default function IndividualServiceForm() {
 
       {/* Detailed Description */}
       <div className="mb-12">
-        <Label className="block text-lg font-medium mb-2">ვრცელი აღწერა</Label>
+        <Label className="block text-lg font-medium mb-2">{t("booking:form.description")}</Label>
         <textarea
           {...register("description")}
-          placeholder="აღწერეთ თქვენი სერვისი დეტალურად"
+          placeholder={t("booking:form.descriptionPlaceholder")}
           rows={6}
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
         />
@@ -249,7 +246,7 @@ export default function IndividualServiceForm() {
       {/* Main Image */}
       <div className="mb-12">
         <Label className="block text-lg font-medium mb-2">
-          ბიზნესის მთავარი სურათი
+          {t("booking:form.mainImage")}
         </Label>
         <Controller
           name="images.businessPhoto"
@@ -272,7 +269,7 @@ export default function IndividualServiceForm() {
       {/* Gallery Images */}
       <div className="mb-14">
         <Label className="block text-lg font-medium mb-2 mt-4">
-          გალერეის სურათები
+          {t("booking:form.galleryImages")}
         </Label>
         <Controller
           name="images.galleryPhoto"
@@ -291,7 +288,7 @@ export default function IndividualServiceForm() {
           </p>
         )}
         <p className="text-xs text-gray-500 mt-1">
-          შეგიძლიათ აირჩიოთ რამდენიმე სურათი (მაქსიმუმ 4)
+          {t("booking:form.galleryHelp")}
         </p>
       </div>
 
@@ -299,7 +296,7 @@ export default function IndividualServiceForm() {
       <div className="grid grid-cols-2 gap-4 mb-12">
         <div>
           <Label className="block text-lg font-medium mb-2">
-            აირჩიე კატეგორია
+            {t("booking:form.category")}
           </Label>
           <Controller
             name="mainCategory"
@@ -313,13 +310,13 @@ export default function IndividualServiceForm() {
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="აირჩიე კატეგორია" />
+                  <SelectValue placeholder={t("booking:form.category")} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories?.map((category) => {
                     const translationKey = categoryNameToKey[category.name];
                     const displayName = translationKey
-                      ? t(translationKey)
+                      ? t(`categories:${translationKey}`)
                       : category.name;
                     return (
                       <SelectItem key={category.name} value={category.name}>
@@ -340,7 +337,7 @@ export default function IndividualServiceForm() {
 
         <div>
           <Label className="block text-lg font-medium mb-2">
-            აირჩიე ქვეკატეგორია
+            {t("booking:form.subcategory")}
           </Label>
           <Controller
             name="subCategory"
@@ -352,13 +349,13 @@ export default function IndividualServiceForm() {
                 disabled={!mainCategory}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="აირჩიე ქვეკატეგორია" />
+                  <SelectValue placeholder={t("booking:form.subcategory")} />
                 </SelectTrigger>
                 <SelectContent>
                   {selectedCategory?.childItems?.map((subcategory) => {
                     const translationKey = categoryNameToKey[subcategory.name];
                     const displayName = translationKey
-                      ? t(translationKey)
+                      ? t(`categories:${translationKey}`)
                       : subcategory.name;
                     return (
                       <SelectItem
@@ -384,7 +381,7 @@ export default function IndividualServiceForm() {
       {/* Working Schedule */}
       <div className="mb-16">
         <Label className="block text-lg font-medium mb-4">
-          სამუშაო გრაფიკი
+          {t("booking:form.workingSchedule")}
         </Label>
         <Controller
           name="workTimes"
@@ -406,38 +403,37 @@ export default function IndividualServiceForm() {
             />
           )}
         />
-        {/*  Global error if day isn't chosen */}
         {errors.workTimes && !Array.isArray(errors.workTimes) && (
           <p className="text-xs text-red-500 font-bold mt-2">
             {errors.workTimes.message as string}
           </p>
         )}
         <p className="text-xs text-gray-500 mt-2">
-          აირჩიეთ სამუშაო დღეები და საათები. დასვენების დრო არასავალდებულოა.
+          {t("booking:form.scheduleHelp")}
         </p>
       </div>
 
       {/* Services */}
       <div className="mb-16">
-        <Label className="block text-lg font-medium mb-2">სერვისები</Label>
+        <Label className="block text-lg font-medium mb-2">{t("booking:form.services")}</Label>
 
         {/* Add Service Form */}
         <div className="border rounded-md p-4 mb-4 space-y-3 bg-muted/20">
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label className="block text-xs font-medium mb-1">
-                სერვისის დასახელება
+                {t("booking:form.serviceName")}
               </Label>
               <Input
                 value={newService.name}
                 onChange={(e) =>
                   setNewService({ ...newService, name: e.target.value })
                 }
-                placeholder="მაგ: თმის შეჭრა"
+                placeholder={t("booking:form.serviceNamePlaceholder")}
               />
             </div>
             <div>
-              <Label className="block text-xs font-medium mb-1">ფასი (₾)</Label>
+              <Label className="block text-xs font-medium mb-1">{t("booking:form.price")}</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -448,12 +444,12 @@ export default function IndividualServiceForm() {
                     price: Number(e.target.value),
                   })
                 }
-                placeholder="0.00"
+                placeholder={t("booking:form.pricePlaceholder")}
               />
             </div>
             <div>
               <Label className="block text-xs font-medium mb-1">
-                ხანგრძლივობა (წუთი)
+                {t("booking:form.duration")}
               </Label>
               <Input
                 type="number"
@@ -466,20 +462,20 @@ export default function IndividualServiceForm() {
                     duration: Number(e.target.value),
                   })
                 }
-                placeholder="30"
+                placeholder={t("booking:form.durationPlaceholder")}
               />
             </div>
           </div>
           <div>
             <Label className="block text-xs font-medium mb-1">
-              აღწერა (არასავალდებულო)
+              {t("booking:form.serviceDescription")}
             </Label>
             <Input
               value={newService.description}
               onChange={(e) =>
                 setNewService({ ...newService, description: e.target.value })
               }
-              placeholder="სერვისის აღწერა"
+              placeholder={t("booking:form.serviceDescriptionPlaceholder")}
             />
           </div>
           <Button
@@ -488,10 +484,9 @@ export default function IndividualServiceForm() {
             className="w-full"
             variant="outline"
           >
-            დაამატე სერვისი
+            {t("booking:form.addService")}
           </Button>
 
-          {/* local error adding service */}
           {serviceError && (
             <p className="text-sm text-red-500 mt-2 text-center">
               {serviceError}
@@ -510,7 +505,7 @@ export default function IndividualServiceForm() {
                 <div className="flex-1">
                   <p className="font-medium">{service.name}</p>
                   <p className="text-sm text-gray-600">
-                    {service.price} ₾ • {service.duration} წუთი
+                    {service.price} ₾ • {service.duration} {t("booking:form.minutes")}
                   </p>
                   {service.description && (
                     <p className="text-sm text-gray-500 mt-1">
@@ -525,14 +520,13 @@ export default function IndividualServiceForm() {
                   onClick={() => removeService(index)}
                   className="text-red-500 hover:text-red-700"
                 >
-                  წაშლა
+                  {t("booking:form.delete")}
                 </Button>
               </div>
             ))}
           </div>
         )}
 
-        {/*  global error(if we dont have any services)  */}
         {errors.services &&
           !Array.isArray(errors.services) &&
           services.length === 0 && (
@@ -541,14 +535,13 @@ export default function IndividualServiceForm() {
             </p>
           )}
         <p className="text-xs text-gray-500 mt-1">
-          დაამატეთ სერვისები, რომლებსაც სთავაზობთ (ხანგრძლივობა უნდა იყოს 5-ის
-          ჯერადი)
+          {t("booking:form.servicesHelp")}
         </p>
       </div>
 
       {/* Contact Info */}
       <div>
-        <Label className="block text-sm font-medium mb-2">ნომერი</Label>
+        <Label className="block text-sm font-medium mb-2">{t("booking:form.phoneNumber")}</Label>
         <Input
           type="text"
           {...register("info.phoneNumber")}
@@ -600,8 +593,8 @@ export default function IndividualServiceForm() {
           className="p-8 cursor-pointer"
         >
           {createBusiness.isPending || uploadPhotos.isPending
-            ? "მიმდინარეობს..."
-            : "ბიზნესის დამატება"}
+            ? t("booking:form.processing")
+            : t("booking:form.addBusiness")}
         </Button>
       </div>
     </form>

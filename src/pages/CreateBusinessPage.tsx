@@ -1,9 +1,9 @@
-import CreateBookingService from "@/Booking/CreateBookingService";
+import CreateBusiness from "@/features/business-creation/CreateBusiness";
 import useGetUser from "@/features/user/useGetUser";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function CreateBookingServicePage() {
+export default function CreateBusinessPage() {
   const { data: user, isLoading } = useGetUser();
   const navigate = useNavigate();
 
@@ -13,11 +13,9 @@ export default function CreateBookingServicePage() {
     }
   }, [user, isLoading, navigate]);
 
-  console.log(user?.isVerified);
-
   if (isLoading || !user?.isVerified) {
     return null;
   }
 
-  return <CreateBookingService />;
+  return <CreateBusiness />;
 }

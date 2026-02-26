@@ -3,5 +3,134 @@
     "services": "Services",
     "myBookings": "My Bookings",
     "schedule": "Schedule"
+  },
+  "businessCreation": {
+    "backToSelection": "← Back to selection",
+    "title": "Create Your Booking Business",
+    "subtitle": "Choose the type of booking business you want to offer",
+    "getStarted": "Get Started",
+    "comingSoon": "Coming Soon",
+    "individual": {
+      "title": "Individual Business",
+      "description": "Perfect for freelancers and solo professionals offering personal services like tutoring, consulting, or personal training.",
+      "feature1": "Simple setup and management",
+      "feature2": "Direct client communication",
+      "feature3": "Flexible scheduling options"
+    },
+    "commercial": {
+      "title": "Commercial Business",
+      "description": "Ideal for companies and organizations offering professional services with multiple team members and locations.",
+      "feature1": "Multi-location support",
+      "feature2": "Team management tools",
+      "feature3": "Advanced analytics & reporting"
+    }
+  },
+  "form": {
+    "businessName": "Your personal business name",
+    "callTypeLabel": "How do you plan to serve customers?",
+    "callType": {
+      "outcall": "Outcall",
+      "onsite": "On-site",
+      "both": "Both"
+    },
+    "city": "City",
+    "address": "Address",
+    "addressPlaceholder": "Enter address",
+    "description": "Detailed description",
+    "descriptionPlaceholder": "Describe your service in detail",
+    "mainImage": "Main business image",
+    "galleryImages": "Gallery images",
+    "galleryHelp": "You can choose multiple images (max 4)",
+    "category": "Choose category",
+    "subcategory": "Choose subcategory",
+    "workingSchedule": "Working schedule",
+    "scheduleHelp": "Choose working days and hours. Rest time is optional.",
+    "services": "Services",
+    "serviceName": "Service name",
+    "serviceNamePlaceholder": "e.g.: Hair cut",
+    "price": "Price (₾)",
+    "pricePlaceholder": "0.00",
+    "duration": "Duration (minutes)",
+    "durationPlaceholder": "30",
+    "serviceDescription": "Description (optional)",
+    "serviceDescriptionPlaceholder": "Service description",
+    "addService": "Add service",
+    "delete": "Delete",
+    "minutes": "minutes",
+    "servicesHelp": "Add services you offer (duration must be a multiple of 5)",
+    "phoneNumber": "Phone number",
+    "processing": "Processing...",
+    "addBusiness": "Add business"
+  },
+  "validation": {
+    "serviceNameMin": "Name must contain at least 2 characters",
+    "servicePricePositive": "Price must be greater than 0",
+    "serviceDurationMultiple": "Duration must be a multiple of 5 (minimum 5)",
+    "businessNameRequired": "Business name is required",
+    "businessNameMin": "Business Name should contain at least 2 characters",
+    "businessNameMax": "Business Name can't contain more than 40 symbols",
+    "callTypeRequired": "Call type is required",
+    "cityRequired": "City is required",
+    "addressRequired": "Address is required when not an outcall",
+    "descriptionRequired": "Description is required",
+    "descriptionMin": "Description should contain at least 10 characters",
+    "descriptionMax": "Description can't contain more than 250 characters",
+    "photosRequired": "Photos are required",
+    "businessPhotoRequired": "Business photo is required",
+    "businessPhotoMax": "You can upload only 1 business photo",
+    "galleryPhotoMin": "At least one gallery photo is required",
+    "galleryPhotoMax": "You can upload up to 4 photos only",
+    "fileSizeTooLarge": "File size is too large (max 4MB)",
+    "mainCategoryRequired": "Main category is required",
+    "subCategoryRequired": "Sub category is required",
+    "workTimesMin": "You need to add at least one working day",
+    "servicesMin": "You need to add at least one service",
+    "serviceNameRequired": "Service name is required",
+    "serviceNameMinChars": "Service Name should contain at least 2 characters",
+    "serviceNameMax": "Service Name can't contain more than 20 characters",
+    "servicePriceRequired": "Price is required",
+    "servicePricePositiveError": "Price should be more than 0",
+    "serviceDurationRequired": "Duration is required",
+    "weekDayRequired": "Week day is required",
+    "startTimeRequired": "Start time is required",
+    "startTimeInvalid": "Start time must be a valid number",
+    "startTimeNegative": "Start time cannot be negative",
+    "startTimeMax": "Start time cannot exceed 24 hours",
+    "startTimeInterval": "Start time must be in 5-minute intervals",
+    "endTimeRequired": "End time is required",
+    "endTimeInvalid": "End time must be a valid number",
+    "endTimeNegative": "End time cannot be negative",
+    "endTimeMax": "End time cannot exceed 24 hours",
+    "endTimeInterval": "End time must be in 5-minute intervals"
+  },
+  "messages": {
+    "successPublished": "Service successfully published!",
+    "error": "An error occurred. Please try again."
+  },
+  "schedule": {
+    "days": {
+      "MON": "Monday",
+      "TUE": "Tuesday",
+      "WED": "Wednesday",
+      "THU": "Thursday",
+      "FRI": "Friday",
+      "SAT": "Saturday",
+      "SUN": "Sunday"
+    },
+    "labels": {
+      "start": "Start",
+      "end": "End",
+      "restTime": "Rest time",
+      "restStart": "Start",
+      "restEnd": "End"
+    },
+    "buttons": {
+      "addRest": "+ Add rest",
+      "removeRest": "− Remove rest"
+    },
+    "errors": {
+      "restWithinWork": "Rest time must be within working hours",
+      "restStartBeforeEnd": "Rest start must be before end"
+    }
   }
 }

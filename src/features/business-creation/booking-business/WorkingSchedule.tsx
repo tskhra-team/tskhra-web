@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { type WorkTimeType } from "./IndividualBusinessSchema";
 
 interface WorkingScheduleProps {
@@ -13,15 +14,7 @@ interface WorkingScheduleProps {
   restTimesErrors?: any;
 }
 
-const DAYS = [
-  { value: "MON", label: "ორშაბათი" },
-  { value: "TUE", label: "სამშაბათი" },
-  { value: "WED", label: "ოთხშაბათი" },
-  { value: "THU", label: "ხუთშაბათი" },
-  { value: "FRI", label: "პარასკევი" },
-  { value: "SAT", label: "შაბათი" },
-  { value: "SUN", label: "კვირა" },
-];
+const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 export default function WorkingSchedule({
   workTimes,
@@ -31,7 +24,7 @@ export default function WorkingSchedule({
   workTimesErrors,
   restTimesErrors,
 }: WorkingScheduleProps) {
-  // Track which days have their rest time section expanded
+  const { t } = useTranslation("booking");
   const [expandedRestDays, setExpandedRestDays] = useState<Set<string>>(
     new Set(),
   );
@@ -172,11 +165,11 @@ export default function WorkingSchedule({
       restDay.startTime < workDay.startTime ||
       restDay.endTime > workDay.endTime
     ) {
-      return "დასვენების დრო უნდა იყოს სამუშაო საათებში";
+      return t("schedule.errors.restWithinWork");
     }
 
     if (restDay.startTime >= restDay.endTime) {
-      return "დასვენების დაწყება უნდა იყოს დასრულებამდე ადრე";
+      return t("schedule.errors.restStartBeforeEnd");
     }
 
     return null;
@@ -184,30 +177,30 @@ export default function WorkingSchedule({
 
   return (
     <div className="space-y-3">
-      {DAYS.map((day) => {
+      {DAYS.map((dayCode) => {
         const dayIndex = (workTimes || []).findIndex(
-          (t) => t.weekDay === day.value,
+          (t) => t.weekDay === dayCode,
         );
         const daySchedule = dayIndex >= 0 ? workTimes[dayIndex] : null;
         const isEnabled = !!daySchedule;
 
         const restDaySchedule = (restTimes || []).find(
-          (t) => t.weekDay === day.value,
+          (t) => t.weekDay === dayCode,
         );
         const hasRestTime = !!restDaySchedule;
-        const isRestExpanded = expandedRestDays.has(day.value);
+        const isRestExpanded = expandedRestDays.has(dayCode);
 
         const dayErrors =
           Array.isArray(workTimesErrors) && dayIndex >= 0
             ? workTimesErrors[dayIndex]
             : null;
 
-        const restErrors = getRestTimeError(day.value, dayIndex);
-        const validationError = validateRestTime(day.value);
+        const restErrors = getRestTimeError(dayCode, dayIndex);
+        const validationError = validateRestTime(dayCode);
 
         return (
           <div
-            key={day.value}
+            key={dayCode}
             className="border rounded-lg overflow-hidden bg-card"
           >
             {/* Work Time Row */}
@@ -216,23 +209,23 @@ export default function WorkingSchedule({
                 <Button
                   type="button"
                   variant={isEnabled ? "default" : "outline"}
-                  onClick={() => toggleDay(day.value)}
+                  onClick={() => toggleDay(dayCode)}
                   className="w-36 font-medium"
                 >
-                  {day.label}
+                  {t(`schedule.days.${dayCode}`)}
                 </Button>
 
                 {isEnabled && daySchedule && (
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex items-center gap-2">
                       <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        დასაწყისი
+                        {t("schedule.labels.start")}
                       </Label>
                       <Input
                         type="time"
                         value={minutesToTime(daySchedule.startTime)}
                         onChange={(e) =>
-                          updateWorkTime(day.value, "startTime", e.target.value)
+                          updateWorkTime(dayCode, "startTime", e.target.value)
                         }
                         step="300"
                         className={`w-32 ${dayErrors?.startTime ? "border-red-500" : ""}`}
@@ -243,13 +236,13 @@ export default function WorkingSchedule({
 
                     <div className="flex items-center gap-2">
                       <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        დასრულება
+                        {t("schedule.labels.end")}
                       </Label>
                       <Input
                         type="time"
                         value={minutesToTime(daySchedule.endTime)}
                         onChange={(e) =>
-                          updateWorkTime(day.value, "endTime", e.target.value)
+                          updateWorkTime(dayCode, "endTime", e.target.value)
                         }
                         step="300"
                         className={`w-32 ${dayErrors?.endTime ? "border-red-500" : ""}`}
@@ -261,10 +254,12 @@ export default function WorkingSchedule({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => toggleRestTime(day.value)}
+                      onClick={() => toggleRestTime(dayCode)}
                       className="ml-auto text-xs"
                     >
-                      {hasRestTime ? "− უქმე დასვენება" : "+ დაამატე დასვენება"}
+                      {hasRestTime
+                        ? t("schedule.buttons.removeRest")
+                        : t("schedule.buttons.addRest")}
                     </Button>
                   </div>
                 )}
@@ -288,18 +283,18 @@ export default function WorkingSchedule({
               <div className="px-4 pb-4 pt-0">
                 <div className="bg-muted/50 rounded-md p-3 space-y-2">
                   <Label className="text-xs font-semibold text-muted-foreground">
-                    დასვენების დრო
+                    {t("schedule.labels.restTime")}
                   </Label>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 flex-1">
                       <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        დაწყება
+                        {t("schedule.labels.restStart")}
                       </Label>
                       <Input
                         type="time"
                         value={minutesToTime(restDaySchedule.startTime)}
                         onChange={(e) =>
-                          updateRestTime(day.value, "startTime", e.target.value)
+                          updateRestTime(dayCode, "startTime", e.target.value)
                         }
                         step="300"
                         className={`w-32 ${restErrors?.startTime || validationError ? "border-red-500" : ""}`}
@@ -310,13 +305,13 @@ export default function WorkingSchedule({
 
                     <div className="flex items-center gap-2 flex-1">
                       <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        დასრულება
+                        {t("schedule.labels.restEnd")}
                       </Label>
                       <Input
                         type="time"
                         value={minutesToTime(restDaySchedule.endTime)}
                         onChange={(e) =>
-                          updateRestTime(day.value, "endTime", e.target.value)
+                          updateRestTime(dayCode, "endTime", e.target.value)
                         }
                         step="300"
                         className={`w-32 ${restErrors?.endTime || validationError ? "border-red-500" : ""}`}
