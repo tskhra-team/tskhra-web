@@ -41,11 +41,11 @@
       "instagram": "Instagram"
     },
     "booking": {
-      "dialogTitle": "Book {serviceName}",
+      "dialogTitle": "Book {{serviceName}}",
       "dialogDescription": "Select a date and time for your appointment",
       "selectDate": "Select a Date",
       "selectTime": "Select a Time",
-      "confirmBooking": "Confirm Booking for {date} at {time}"
+      "confirmBooking": "Confirm Booking for {{date}} at {{time}}"
     }
   }
 }

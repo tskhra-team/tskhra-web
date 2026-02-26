@@ -41,11 +41,11 @@
       "instagram": "ინსტაგრამი"
     },
     "booking": {
-      "dialogTitle": "დაჯავშნა {serviceName}",
+      "dialogTitle": "დაჯავშნა {{serviceName}}",
       "dialogDescription": "აირჩიეთ თარიღი და დრო თქვენი ვიზიტისთვის",
       "selectDate": "აირჩიეთ თარიღი",
       "selectTime": "აირჩიეთ დრო",
-      "confirmBooking": "დაადასტურეთ ჯავშანი {date}-ზე {time}-ზე"
+      "confirmBooking": "დაადასტურეთ ჯავშანი {{date}}-ზე {{time}}-ზე"
     }
   }
 }

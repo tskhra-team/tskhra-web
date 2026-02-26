@@ -25,8 +25,8 @@ import {
   Phone
 } from "lucide-react";
 import { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Mock available days (next 14 days)
 const getAvailableDays = () => {
@@ -164,7 +164,7 @@ export default function BusinessDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
+    <div className="min-h-screen bg-linear-to-b from-background to-muted/20 bg-[#d8e0f0]">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
@@ -237,7 +237,7 @@ export default function BusinessDetails() {
             <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="h-1 w-1 rounded-full bg-primary text-[#100b2e]"></div>
+                  <div className="rounded-full bg-primary text-[#100b2e]"></div>
                   {t('businessDetails.sections.about')}
                 </CardTitle>
               </CardHeader>
@@ -252,7 +252,7 @@ export default function BusinessDetails() {
             <Card ref={servicesRef} className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="h-1 w-1 rounded-full bg-primary"></div>
+                  <div className="rounded-full bg-primary"></div>
                   {t('businessDetails.sections.servicesOffered')}
                 </CardTitle>
               </CardHeader>
@@ -311,7 +311,7 @@ export default function BusinessDetails() {
               <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    <div className="rounded-full bg-primary"></div>
                     {t('businessDetails.sections.contactInformation')}
                   </CardTitle>
                 </CardHeader>
@@ -407,7 +407,7 @@ export default function BusinessDetails() {
             <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="h-1 w-1 rounded-full bg-primary"></div>
+                  <div className="rounded-full bg-primary"></div>
                   {t('businessDetails.sections.location')}
                 </CardTitle>
               </CardHeader>
