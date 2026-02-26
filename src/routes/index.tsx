@@ -20,6 +20,8 @@ const MyServicesPage = lazy(() => import("@/pages/MyServicesPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
+const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
+const SubcategoryPage = lazy(() => import("@/pages/SubcategoryPage"));
 
 export const routes = [
   // Main Layout - Public pages with main Header + Footer
@@ -71,6 +73,22 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <BusinessDetailsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/:platform/category/:categorySlug",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <CategoryPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/:platform/category/:categorySlug/:subcategorySlug",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SubcategoryPage />
           </Suspense>
         ),
       },
