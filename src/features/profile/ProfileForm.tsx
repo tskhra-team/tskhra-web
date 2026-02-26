@@ -33,15 +33,16 @@ import { toast } from "sonner";
 const MemoizedAvatar = memo(Avatar);
 
 import BlurVerifiedUser from "@/features/profile/BlurVerifiedUser";
+import useVerify from "@/features/profile/useVerify";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
-  const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(false);
   const [timeZone, setTimeZone] = useState<string>();
   const { t } = useTranslation("profile");
+  const { mutate: verifyUser } = useVerify();
 
   const fullName = useMemo(() => {
     if (profile?.firstName && profile?.lastName) {
@@ -439,6 +440,30 @@ function ProfileForm() {
         }}
       >
         TEST ONLY UNVERIFY
+      </Button>
+
+      <Button
+        type="button"
+        onClick={() => {
+          verifyUser(undefined, {
+            onSuccess: () => {
+              toast.success("TEST: VERIFY SUCCESSFULLY", {
+                position: "top-center",
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["getUser"],
+              });
+              refetch();
+            },
+            onError: () => {
+              toast.error(t("form.messages.unverifyError"), {
+                position: "top-center",
+              });
+            },
+          });
+        }}
+      >
+        TEST ONLY VERIFY
       </Button>
     </>
   );
