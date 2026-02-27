@@ -35,7 +35,7 @@ function Footer() {
     ],
   };
 
-  if (location.pathname.includes("/my-services")) {
+  if (location.pathname.includes("/my-businesses")) {
     return null;
   }
 

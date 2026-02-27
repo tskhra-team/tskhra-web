@@ -1,10 +1,3 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -17,17 +10,35 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { BusinessSwitcher } from "@/features/my-businesses/BusinessSwitcher";
+import { NavUser } from "@/features/my-businesses/NavUser";
 import {
+  AudioWaveform,
   BarChart3,
   Bell,
   Calendar,
-  ChevronDown,
-  LogOut,
-  Plus,
-  Scissors,
+  Command,
+  GalleryVerticalEnd,
   Settings,
-  User,
 } from "lucide-react";
+
+const teams = [
+  {
+    name: "Acme Inc",
+    logo: GalleryVerticalEnd,
+    plan: "Enterprise",
+  },
+  {
+    name: "Acme Corp.",
+    logo: AudioWaveform,
+    plan: "Startup",
+  },
+  {
+    name: "Evil Corp.",
+    logo: Command,
+    plan: "Free",
+  },
+];
 
 const menuItems = [
   {
@@ -59,21 +70,11 @@ export function MyBusinessesSidebar() {
     type: "Barber Shop",
   };
 
-  // Mock user data
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-  };
-
-  const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log("Logout clicked");
-  };
-
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
-        <div className="flex items-center justify-between">
+        <BusinessSwitcher />
+        {/* <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Scissors className="h-5 w-5" />
@@ -89,7 +90,7 @@ export function MyBusinessesSidebar() {
         <Button variant="outline" size="sm" className="mt-3 w-full">
           <Plus className="mr-2 h-4 w-4" />
           Add More
-        </Button>
+        </Button> */}
       </SidebarHeader>
 
       <SidebarContent>
@@ -113,34 +114,7 @@ export function MyBusinessesSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t p-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <User className="h-4 w-4" />
-                </div>
-                <div className="flex flex-col items-start text-left">
-                  <span className="text-sm font-medium">{user.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {user.email}
-                  </span>
-                </div>
-              </div>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

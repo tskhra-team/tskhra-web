@@ -119,7 +119,8 @@ function ProfileForm() {
           <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="relative">
               <MemoizedAvatar
-                name={fullName}
+                // name={fullName}
+                src={profile?.avatar}
                 size="60"
                 round
                 className="md:w-20! md:h-20!"

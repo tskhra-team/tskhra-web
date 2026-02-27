@@ -12,7 +12,7 @@ export default function BusinessCatalog() {
   const { t } = useTranslation("booking");
   const { data: businesses, isLoading, isFetching, isError } = useBusinesses();
 
-  console.log("Businesses data:", businesses);
+  // console.log("Businesses data:", businesses);
 
   const handkleClick = (id: string) => {
     scrollToTop();
@@ -28,7 +28,9 @@ export default function BusinessCatalog() {
     return (
       <div className="container mx-auto px-2 py-8">
         <div className="flex flex-col items-center justify-center min-h-100 gap-4">
-          <p className="text-destructive text-lg">{t("catalog.errorLoading")}</p>
+          <p className="text-destructive text-lg">
+            {t("catalog.errorLoading")}
+          </p>
           <Button onClick={() => window.location.reload()} variant="outline">
             {t("catalog.retry")}
           </Button>
@@ -41,14 +43,12 @@ export default function BusinessCatalog() {
     <div className="container mx-auto px-2 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t("catalog.title")}</h1>
-        <p className="text-muted-foreground">
-          {t("catalog.subtitle")}
-        </p>
+        <p className="text-muted-foreground">{t("catalog.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {businesses?.map((business) => {
-          console.log("Individual business:", business);
+          // console.log("Individual business:", business);
 
           return (
             <Card

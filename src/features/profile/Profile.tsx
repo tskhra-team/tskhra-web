@@ -54,6 +54,7 @@ export default function Profile() {
         >
           <MemoizedAvatar
             name={fullName}
+            src={profile?.avatar}
             size="60"
             round
             className="md:w-20! md:h-20!"

@@ -14,4 +14,5 @@ export type ProfileType = {
   phoneNumber: string | undefined;
   gender: string | undefined;
   birthDate: string | undefined;
+  avatar: string | undefined;
 };

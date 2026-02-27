@@ -135,6 +135,8 @@
     "errors": {
       "restWithinWork": "Rest time must be within working hours",
       "restStartBeforeEnd": "Rest start must be before end"
+    }
+  },
   "catalog": {
     "title": "Catalog",
     "subtitle": "Browse our collection of professional services",

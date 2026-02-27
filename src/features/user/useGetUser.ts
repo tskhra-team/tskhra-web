@@ -9,6 +9,7 @@ export type UserType = {
   lastName: string | undefined;
   userEmail: string;
   isVerified: boolean;
+  avatar: string | undefined;
 };
 
 const getUser = async () => {
