@@ -1,27 +1,23 @@
 import { useBusinesses } from "@/api/hooks/useBusinesses";
+import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { scrollToTop } from "@/utils";
-import { Clock, DollarSign, Loader2 } from "lucide-react";
+import { Clock, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function BusinessCatalog() {
   const navigate = useNavigate();
-  const { data: businesses, isLoading, isError } = useBusinesses();
+  const { data: businesses, isLoading, isFetching, isError } = useBusinesses();
 
   const handkleClick = (id: string) => {
     scrollToTop();
     navigate(`/business/${id}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-2 py-8">
-        <div className="flex items-center justify-center min-h-100">
-          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-        </div>
-      </div>
-    );
+  // Show skeleton on initial load or when refetching without data
+  if (isLoading || (isFetching && !businesses)) {
+    return <BusinessCatalogSkeleton />;
   }
 
   if (isError) {
