@@ -4,6 +4,7 @@ import {
   minutesToTime,
   type MockService,
 } from "@/Booking/mockBusinesses";
+import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,7 +73,7 @@ export default function BusinessDetails() {
   const servicesRef = useRef<HTMLDivElement>(null);
 
   // Fetch business data from API
-  const { data: business, isLoading, isError, error } = useBusiness(id || "");
+  const { data: business, isLoading, isFetching, isError, error } = useBusiness(id || "");
 
   const availableDays = getAvailableDays();
   const availableTimeSlots = getAvailableTimeSlots(selectedDate);
@@ -107,15 +108,9 @@ export default function BusinessDetails() {
     setBookingDialogOpen(false);
   };
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.loading')}</h1>
-        </div>
-      </div>
-    );
+  // Loading state - show skeleton on initial load or when refetching without data
+  if (isLoading || (isFetching && !business)) {
+    return <BusinessDetailsSkeleton />;
   }
 
   // Error state

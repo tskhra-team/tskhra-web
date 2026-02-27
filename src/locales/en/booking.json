@@ -4,6 +4,16 @@
     "myBookings": "My Bookings",
     "schedule": "Schedule"
   },
+  "catalog": {
+    "title": "Catalog",
+    "subtitle": "Browse our collection of professional services",
+    "viewDetails": "View Details",
+    "noDescription": "No description available",
+    "min": "min",
+    "notAvailable": "N/A",
+    "errorLoading": "Failed to load businesses",
+    "retry": "Retry"
+  },
   "businessDetails": {
     "breadcrumb": {
       "home": "Home",

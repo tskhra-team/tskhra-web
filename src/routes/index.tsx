@@ -23,6 +23,9 @@ const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
 const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
 const SubcategoryPage = lazy(() => import("@/pages/SubcategoryPage"));
 
+import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
+import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
+
 export const routes = [
   // Main Layout - Public pages with main Header + Footer
   {
@@ -63,7 +66,7 @@ export const routes = [
       {
         path: "/services",
         element: (
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={<BusinessCatalogSkeleton/>}>
             <ServicesCatalogPage />
           </Suspense>
         ),
@@ -71,7 +74,7 @@ export const routes = [
       {
         path: "/business/:id",
         element: (
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={<BusinessDetailsSkeleton />}>
             <BusinessDetailsPage />
           </Suspense>
         ),

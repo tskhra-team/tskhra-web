@@ -4,6 +4,16 @@
     "myBookings": "ჩემი ჯავშნები",
     "schedule": "განრიგი"
   },
+  "catalog": {
+    "title": "კატალოგი",
+    "subtitle": "დაათვალიერეთ პროფესიონალური სერვისების კოლექცია",
+    "viewDetails": "დეტალების ნახვა",
+    "noDescription": "აღწერა არ არის ხელმისაწვდომი",
+    "min": "წთ",
+    "notAvailable": "არ არის",
+    "errorLoading": "ბიზნესების ჩატვირთვა ვერ მოხერხდა",
+    "retry": "თავიდან ცდა"
+  },
   "businessDetails": {
     "breadcrumb": {
       "home": "მთავარი",
