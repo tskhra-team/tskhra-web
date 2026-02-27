@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import {
   createIndividualBusinessSchema,
+  createServiceSchema,
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
@@ -75,34 +76,33 @@ export default function IndividualBusinessForm() {
   const services = watch("services");
   const selectedCategory = categories?.find((cat) => cat.name === mainCategory);
 
-  const addService = () => {
+  const addService = async () => {
     setServiceError("");
 
-    if (!newService.name || newService.name.length < 2) {
-      setServiceError(t("booking:validation.serviceNameMin"));
-      return;
-    }
-    if (newService.price <= 0) {
-      setServiceError(t("booking:validation.servicePricePositive"));
-      return;
-    }
-    if (newService.duration < 5 || newService.duration % 5 !== 0) {
-      setServiceError(t("booking:validation.serviceDurationMultiple"));
-      return;
-    }
+    try {
+      // Validate using the service schema
+      await createServiceSchema(t).validate(newService, { abortEarly: false });
 
-    const currentServices = services || [];
-    setValue("services", [
-      ...currentServices,
-      {
-        name: newService.name,
-        price: newService.price,
-        duration: newService.duration,
-        description: newService.description,
-      },
-    ]);
+      const currentServices = services || [];
+      setValue("services", [
+        ...currentServices,
+        {
+          name: newService.name,
+          price: newService.price,
+          duration: newService.duration,
+          description: newService.description,
+        },
+      ]);
 
-    setNewService({ name: "", price: 0, duration: 0, description: "" });
+      setNewService({ name: "", price: 0, duration: 0, description: "" });
+    } catch (error: any) {
+      // Display the first validation error
+      if (error.errors && error.errors.length > 0) {
+        setServiceError(error.errors[0]);
+      } else {
+        setServiceError(error.message);
+      }
+    }
   };
 
   const removeService = (index: number) => {

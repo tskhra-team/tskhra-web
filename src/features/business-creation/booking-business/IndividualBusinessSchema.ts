@@ -1,7 +1,43 @@
-import * as yup from "yup";
 import type { TFunction } from "i18next";
+import * as yup from "yup";
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
+
+// Export service schema creator for reuse in forms
+export const createServiceSchema = (t: TFunction) => {
+  return yup.object().shape({
+    name: yup
+      .string()
+      .required(t("booking:validation.serviceNameRequired"))
+      .min(2, t("booking:validation.serviceNameMinChars"))
+      .max(40, t("booking:validation.serviceNameMax")),
+    price: yup
+      .number()
+      .typeError(t("booking:validation.servicePriceInvalid"))
+      .required(t("booking:validation.servicePriceRequired"))
+      .positive(t("booking:validation.servicePricePositiveError"))
+      .max(1000000, t("booking:validation.servicePriceMax")),
+    duration: yup
+      .number()
+      .typeError(t("booking:validation.serviceDurationInvalid"))
+      .required(t("booking:validation.serviceDurationRequired"))
+      .positive(t("booking:validation.serviceDurationPositive"))
+      .max(1440, t("booking:validation.serviceDurationMax"))
+      .test(
+        "is-multiple-of-5",
+        t("booking:validation.serviceDurationInterval"),
+        (value) => {
+          if (value === undefined || value === null || isNaN(value))
+            return false;
+          return value % 5 === 0;
+        },
+      ),
+    description: yup
+      .string()
+      .max(70, t("booking:validation.serviceDescriptionMax"))
+      .optional(),
+  });
+};
 
 export const createIndividualBusinessSchema = (t: TFunction) => {
   const fileValidation = yup
@@ -34,35 +70,33 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .required(t("booking:validation.startTimeRequired"))
       .min(0, t("booking:validation.startTimeNegative"))
       .max(1440, t("booking:validation.startTimeMax"))
-      .test("is-multiple-of-5", t("booking:validation.startTimeInterval"), (value) => {
-        if (value === undefined || value === null || isNaN(value)) return false;
-        return value % 5 === 0;
-      }),
+      .test(
+        "is-multiple-of-5",
+        t("booking:validation.startTimeInterval"),
+        (value) => {
+          if (value === undefined || value === null || isNaN(value))
+            return false;
+          return value % 5 === 0;
+        },
+      ),
     endTime: yup
       .number()
       .typeError(t("booking:validation.endTimeInvalid"))
       .required(t("booking:validation.endTimeRequired"))
       .min(0, t("booking:validation.endTimeNegative"))
       .max(1440, t("booking:validation.endTimeMax"))
-      .test("is-multiple-of-5", t("booking:validation.endTimeInterval"), (value) => {
-        if (value === undefined || value === null || isNaN(value)) return false;
-        return value % 5 === 0;
-      }),
+      .test(
+        "is-multiple-of-5",
+        t("booking:validation.endTimeInterval"),
+        (value) => {
+          if (value === undefined || value === null || isNaN(value))
+            return false;
+          return value % 5 === 0;
+        },
+      ),
   });
 
-  const serviceSchema = yup.object().shape({
-    name: yup
-      .string()
-      .required(t("booking:validation.serviceNameRequired"))
-      .min(2, t("booking:validation.serviceNameMinChars"))
-      .max(20, t("booking:validation.serviceNameMax")),
-    price: yup
-      .number()
-      .required(t("booking:validation.servicePriceRequired"))
-      .positive(t("booking:validation.servicePricePositiveError")),
-    duration: yup.number().required(t("booking:validation.serviceDurationRequired")).positive(),
-    description: yup.string().optional(),
-  });
+  const serviceSchema = createServiceSchema(t);
 
   const infoSchema = yup.object({
     phoneNumber: yup.string().optional(),
@@ -93,8 +127,12 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .min(10, t("booking:validation.descriptionMin"))
       .max(250, t("booking:validation.descriptionMax")),
     images: imagesSchema.required(t("booking:validation.photosRequired")),
-    mainCategory: yup.string().required(t("booking:validation.mainCategoryRequired")),
-    subCategory: yup.string().required(t("booking:validation.subCategoryRequired")),
+    mainCategory: yup
+      .string()
+      .required(t("booking:validation.mainCategoryRequired")),
+    subCategory: yup
+      .string()
+      .required(t("booking:validation.subCategoryRequired")),
     workTimes: yup
       .array()
       .of(workTimesSchema)
@@ -133,18 +171,21 @@ const IndividualBusiessSchema = yup.object().shape({
     .required("Description is required")
     .min(10, "Description should contain at least 10 characters")
     .max(250, "Description can't contain more than 250 characters"),
-  images: yup.object().shape({
-    businessPhoto: yup
-      .array()
-      .min(1, "Business photo is required")
-      .max(1, "You can upload only 1 business photo")
-      .required("Business photo is required"),
-    galleryPhoto: yup
-      .array()
-      .min(1, "At least one gallery photo is required")
-      .max(4, "You can upload up to 4 photos only")
-      .required("At least one gallery photo is required"),
-  }).required("Photos are required"),
+  images: yup
+    .object()
+    .shape({
+      businessPhoto: yup
+        .array()
+        .min(1, "Business photo is required")
+        .max(1, "You can upload only 1 business photo")
+        .required("Business photo is required"),
+      galleryPhoto: yup
+        .array()
+        .min(1, "At least one gallery photo is required")
+        .max(4, "You can upload up to 4 photos only")
+        .required("At least one gallery photo is required"),
+    })
+    .required("Photos are required"),
   mainCategory: yup.string().required("Main category is required"),
   subCategory: yup.string().required("Sub category is required"),
   workTimes: yup
@@ -156,11 +197,13 @@ const IndividualBusiessSchema = yup.object().shape({
     .array()
     .min(1, "You need to add at least one service")
     .required(),
-  info: yup.object({
-    phoneNumber: yup.string().optional(),
-    instagramUrl: yup.string().optional(),
-    facebookUrl: yup.string().optional(),
-  }).required(),
+  info: yup
+    .object({
+      phoneNumber: yup.string().optional(),
+      instagramUrl: yup.string().optional(),
+      facebookUrl: yup.string().optional(),
+    })
+    .required(),
 });
 
 type IndividualBusinessFormData = yup.InferType<typeof IndividualBusiessSchema>;

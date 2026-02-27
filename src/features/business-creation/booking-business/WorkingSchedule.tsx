@@ -223,6 +223,7 @@ export default function WorkingSchedule({
                       </Label>
                       <Input
                         type="time"
+                        lang="en-GB"
                         value={minutesToTime(daySchedule.startTime)}
                         onChange={(e) =>
                           updateWorkTime(dayCode, "startTime", e.target.value)
@@ -240,6 +241,7 @@ export default function WorkingSchedule({
                       </Label>
                       <Input
                         type="time"
+                        lang="en-GB"
                         value={minutesToTime(daySchedule.endTime)}
                         onChange={(e) =>
                           updateWorkTime(dayCode, "endTime", e.target.value)
@@ -292,6 +294,7 @@ export default function WorkingSchedule({
                       </Label>
                       <Input
                         type="time"
+                        lang="en-GB"
                         value={minutesToTime(restDaySchedule.startTime)}
                         onChange={(e) =>
                           updateRestTime(dayCode, "startTime", e.target.value)
@@ -309,6 +312,7 @@ export default function WorkingSchedule({
                       </Label>
                       <Input
                         type="time"
+                        lang="en-GB"
                         value={minutesToTime(restDaySchedule.endTime)}
                         onChange={(e) =>
                           updateRestTime(dayCode, "endTime", e.target.value)
