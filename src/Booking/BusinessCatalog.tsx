@@ -1,17 +1,41 @@
-import { mockServices } from "@/Booking/mockSerrvices";
+import { useBusinesses } from "@/api/hooks/useBusinesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { scrollToTop } from "@/utils";
-import { Clock, DollarSign, MapPin } from "lucide-react";
+import { Clock, DollarSign, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function BusinessCatalog() {
   const navigate = useNavigate();
+  const { data: businesses, isLoading, isError } = useBusinesses();
 
   const handkleClick = (id: string) => {
     scrollToTop();
     navigate(`/business/${id}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-2 py-8">
+        <div className="flex items-center justify-center min-h-100">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto px-2 py-8">
+        <div className="flex flex-col items-center justify-center min-h-100 gap-4">
+          <p className="text-destructive text-lg">Failed to load businesses</p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-2 py-8">
@@ -23,60 +47,62 @@ export default function BusinessCatalog() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockServices.map((service) => (
-          <Card
-            key={service.id}
-            className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => handkleClick(service.id)}
-          >
-            <div className="aspect-video w-full overflow-hidden">
-              <img
-                src={service.mainImageUrl}
-                alt={service.title}
-                loading="lazy"
-                width={800}
-                height={450}
-                className="w-full h-full object-cover hover:scale-105 transition-transform"
-              />
-            </div>
+        {businesses?.map((business) => {
+          // Get the first service for price and duration display
+          const firstService = business.services[0];
+          const displayPrice = firstService?.price || 0;
+          const displayDuration = firstService?.time
+            ? `${firstService.time} min`
+            : "N/A";
 
-            <CardHeader>
-              <div className="flex items-start justify-between gap-2">
-                <CardTitle className="text-xl line-clamp-2">
-                  {service.title}
-                </CardTitle>
+          return (
+            <Card
+              key={business.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => handkleClick(business.id)}
+            >
+              <div className="aspect-video w-full overflow-hidden">
+                <img
+                  src={business.mainImageUrl}
+                  alt={business.businessName}
+                  loading="lazy"
+                  width={800}
+                  height={450}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform"
+                />
               </div>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
-                <MapPin className="w-4 h-4" />
-                <span>
-                  {service.city}
-                  {service.district && `, ${service.district}`}
-                </span>
-              </div>
-            </CardHeader>
 
-            <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {service.description}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1 text-sm">
-                  <Clock className="w-4 h-4" />
-                  <span>{service.estimatedTime || "N/A"}</span>
+              <CardHeader>
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-xl line-clamp-2 break-all min-w-0">
+                    {business.businessName}
+                  </CardTitle>
                 </div>
-                <div className="flex items-center gap-1 font-semibold text-lg">
-                  <DollarSign className="w-5 h-5" />
-                  <span>{service.price}</span>
-                </div>
-              </div>
+              </CardHeader>
 
-              <Button className="w-full" variant="outline">
-                View Details
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {business.description || "No description available"}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-sm">
+                    <Clock className="w-4 h-4" />
+                    <span>{displayDuration}</span>
+                  </div>
+                  <div className="flex items-center gap-1 font-semibold text-lg">
+                    <DollarSign className="w-5 h-5" />
+                    <span>{displayPrice}</span>
+                  </div>
+                </div>
+
+                <Button className="w-full" variant="outline">
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

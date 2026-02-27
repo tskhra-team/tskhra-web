@@ -291,9 +291,9 @@ export default function BusinessDetails() {
           {/* Sidebar */}
           <div className="space-y-6 lg:sticky lg:top-8 h-fit">
             {/* Action Buttons */}
-            <Card className="rounded-2xl border-primary/20 from-primary/5 to-card overflow-hidden">
+            <Card className="rounded-2xl border-primary/20 from-primary/5 to-card">
               <CardHeader className="pb-4">
-                <CardTitle className="text-xl">{business.businessName}</CardTitle>
+                <CardTitle className="text-xl break-all leading-tight whitespace-normal">{business.businessName}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
