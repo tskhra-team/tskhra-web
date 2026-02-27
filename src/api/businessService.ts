@@ -13,13 +13,11 @@ export const getBusinessById = async (businessId: string): Promise<ApiBusinessRe
 };
 
 /**
- * Fetch all businesses (if endpoint exists)
+ * Fetch all businesses
  * @returns Promise<ApiBusinessResponse[]>
  */
 export const getAllBusinesses = async (): Promise<ApiBusinessResponse[]> => {
-  // Assuming there's a /business or /businesses endpoint
-  // Update the endpoint path based on your actual API
-  const response = await apiClient.get<ApiBusinessResponse[]>('/business');
+  const response = await apiClient.get<ApiBusinessResponse[]>('/business/all');
   return response.data;
 };
 
