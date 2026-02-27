@@ -156,6 +156,20 @@ export default function Verification() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
+  // Handle modal close
+  const handleCloseModal = () => {
+    setModalState({
+      isOpen: false,
+      isLoading: false,
+      isError: false,
+      isSuccess: false,
+      loadingText: "",
+      errorText: "",
+      successText: "",
+    });
+    // navigate("/profile");
+  };
+
   // Form submission
   const onSubmit = (data: VerificationFormData) => {
     if (!data.idCardFront || !data.facePhoto) return;
@@ -315,6 +329,7 @@ export default function Verification() {
         loadingText={modalState.loadingText}
         errorText={modalState.errorText}
         successText={modalState.successText}
+        onClose={handleCloseModal}
       />
       <div className="h-auto bg-linear-to-br py-12 px-4">
         <Button

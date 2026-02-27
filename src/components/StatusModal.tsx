@@ -1,4 +1,4 @@
-import { CheckCircle2, Loader2, X, XCircle } from "lucide-react";
+import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
 type StatusModalProps = {
   isOpen: boolean;
