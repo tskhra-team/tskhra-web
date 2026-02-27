@@ -135,6 +135,58 @@
     "errors": {
       "restWithinWork": "Rest time must be within working hours",
       "restStartBeforeEnd": "Rest start must be before end"
+  "catalog": {
+    "title": "Catalog",
+    "subtitle": "Browse our collection of professional services",
+    "viewDetails": "View Details",
+    "noDescription": "No description available",
+    "min": "min",
+    "notAvailable": "N/A",
+    "errorLoading": "Failed to load businesses",
+    "retry": "Retry"
+  },
+  "businessDetails": {
+    "breadcrumb": {
+      "home": "Home",
+      "services": "Services"
+    },
+    "callType": {
+      "outcall": "Outcall Only",
+      "onsite": "Onsite Only",
+      "both": "Outcall & Onsite"
+    },
+    "sections": {
+      "about": "About",
+      "servicesOffered": "Services Offered",
+      "contactInformation": "Contact Information",
+      "location": "Location",
+      "workingHours": "Working Hours"
+    },
+    "time": {
+      "hours": "h",
+      "minutes": "m"
+    },
+    "buttons": {
+      "bookNow": "Book Now",
+      "backToBusinesses": "Back to Businesses"
+    },
+    "status": {
+      "loading": "Loading...",
+      "errorLoading": "Error loading business",
+      "somethingWrong": "Something went wrong",
+      "notFound": "Business not found",
+      "openUntil": "Open until"
+    },
+    "social": {
+      "facebook": "Facebook",
+      "instagram": "Instagram"
+    },
+    "booking": {
+      "dialogTitle": "Book {{serviceName}}",
+      "dialogDescription": "Select a date and time for your appointment",
+      "selectDate": "Select a Date",
+      "selectTime": "Select a Time",
+      "confirmBooking": "Confirm Booking for {{date}} at {{time}}"
     }
   }
 }

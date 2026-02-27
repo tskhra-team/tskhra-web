@@ -1,4 +1,4 @@
-import ServicesCatalog from "@/Services/ServicesCatalog";
+import ServicesCatalog from "@/Booking/BusinessCatalog";
 import CategoriesLayout from "@/shared/categories/Categories";
 import Slider from "./../shared/slider/slider";
 

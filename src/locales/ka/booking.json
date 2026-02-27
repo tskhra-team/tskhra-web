@@ -135,6 +135,58 @@
     "errors": {
       "restWithinWork": "დასვენების დრო უნდა იყოს სამუშაო საათებში",
       "restStartBeforeEnd": "დასვენების დაწყება უნდა იყოს დასრულებამდე ადრე"
+  "catalog": {
+    "title": "კატალოგი",
+    "subtitle": "დაათვალიერეთ პროფესიონალური სერვისების კოლექცია",
+    "viewDetails": "დეტალების ნახვა",
+    "noDescription": "აღწერა არ არის ხელმისაწვდომი",
+    "min": "წთ",
+    "notAvailable": "არ არის",
+    "errorLoading": "ბიზნესების ჩატვირთვა ვერ მოხერხდა",
+    "retry": "თავიდან ცდა"
+  },
+  "businessDetails": {
+    "breadcrumb": {
+      "home": "მთავარი",
+      "services": "სერვისები"
+    },
+    "callType": {
+      "outcall": "მხოლოდ გასვლით",
+      "onsite": "მხოლოდ ადგილზე",
+      "both": "გასვლით და ადგილზე"
+    },
+    "sections": {
+      "about": "ჩვენ შესახებ",
+      "servicesOffered": "შეთავაზებული სერვისები",
+      "contactInformation": "საკონტაქტო ინფორმაცია",
+      "location": "მდებარეობა",
+      "workingHours": "სამუშაო საათები"
+    },
+    "time": {
+      "hours": "სთ",
+      "minutes": "წთ"
+    },
+    "buttons": {
+      "bookNow": "დაჯავშნა",
+      "backToBusinesses": "უკან სერვისებზე"
+    },
+    "status": {
+      "loading": "იტვირთება...",
+      "errorLoading": "შეცდომა ბიზნესის ჩატვირთვისას",
+      "somethingWrong": "რაღაც არასწორად მოხდა",
+      "notFound": "ბიზნესი ვერ მოიძებნა",
+      "openUntil": "ღიაა"
+    },
+    "social": {
+      "facebook": "ფეისბუქი",
+      "instagram": "ინსტაგრამი"
+    },
+    "booking": {
+      "dialogTitle": "დაჯავშნა {{serviceName}}",
+      "dialogDescription": "აირჩიეთ თარიღი და დრო თქვენი ვიზიტისთვის",
+      "selectDate": "აირჩიეთ თარიღი",
+      "selectTime": "აირჩიეთ დრო",
+      "confirmBooking": "დაადასტურეთ ჯავშანი {{date}}-ზე {{time}}-ზე"
     }
   }
 }
