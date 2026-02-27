@@ -1,14 +1,18 @@
 import { useBusinesses } from "@/api/hooks/useBusinesses";
 import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { scrollToTop } from "@/utils";
-import { Clock, DollarSign } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function BusinessCatalog() {
   const navigate = useNavigate();
+  const { t } = useTranslation("booking");
   const { data: businesses, isLoading, isFetching, isError } = useBusinesses();
+
+  console.log("Businesses data:", businesses);
 
   const handkleClick = (id: string) => {
     scrollToTop();
@@ -24,9 +28,9 @@ export default function BusinessCatalog() {
     return (
       <div className="container mx-auto px-2 py-8">
         <div className="flex flex-col items-center justify-center min-h-100 gap-4">
-          <p className="text-destructive text-lg">Failed to load businesses</p>
+          <p className="text-destructive text-lg">{t("catalog.errorLoading")}</p>
           <Button onClick={() => window.location.reload()} variant="outline">
-            Retry
+            {t("catalog.retry")}
           </Button>
         </div>
       </div>
@@ -36,66 +40,70 @@ export default function BusinessCatalog() {
   return (
     <div className="container mx-auto px-2 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">კატალოგი</h1>
+        <h1 className="text-3xl font-bold mb-2">{t("catalog.title")}</h1>
         <p className="text-muted-foreground">
-          Browse our collection of professional services
+          {t("catalog.subtitle")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {businesses?.map((business) => {
-          // Get the first service for price and duration display
-          const firstService = business.services[0];
-          const displayPrice = firstService?.price || 0;
-          const displayDuration = firstService?.time
-            ? `${firstService.time} min`
-            : "N/A";
+          console.log("Individual business:", business);
 
           return (
             <Card
               key={business.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer flex flex-col"
               onClick={() => handkleClick(business.id)}
             >
-              <div className="aspect-video w-full overflow-hidden">
+              {/* Image Section */}
+              <div className="w-full h-48 overflow-hidden relative">
                 <img
                   src={business.mainImageUrl}
                   alt={business.businessName}
                   loading="lazy"
-                  width={800}
-                  height={450}
                   className="w-full h-full object-cover hover:scale-105 transition-transform"
                 />
+
+                {/* Call Type Tag Overlay */}
+                <div className="absolute top-3 left-3">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm text-slate-800 shadow-sm">
+                    {t(`businessDetails.callType.${business.callType}`)}
+                  </span>
+                </div>
               </div>
 
-              <CardHeader>
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-xl line-clamp-2 break-all min-w-0">
-                    {business.businessName}
-                  </CardTitle>
-                </div>
-              </CardHeader>
+              {/* Content Section */}
+              <div className="flex-1 flex flex-col p-5">
+                <CardTitle className="text-lg font-semibold mb-2 line-clamp-1 overflow-hidden text-ellipsis">
+                  {business.businessName}
+                </CardTitle>
 
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {business.description || "No description available"}
-                </p>
+                {business.description && (
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3 grow">
+                    {business.description}
+                  </p>
+                )}
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-sm">
-                    <Clock className="w-4 h-4" />
-                    <span>{displayDuration}</span>
-                  </div>
-                  <div className="flex items-center gap-1 font-semibold text-lg">
-                    <DollarSign className="w-5 h-5" />
-                    <span>{displayPrice}</span>
-                  </div>
+                {/* City */}
+                <div className="flex items-center gap-1 mb-4 text-sm text-gray-600">
+                  <MapPin className="w-4 h-4" />
+                  <span>{business.city}</span>
                 </div>
 
-                <Button className="w-full" variant="outline">
-                  View Details
-                </Button>
-              </CardContent>
+                {/* Button Section */}
+                <div className="flex justify-end mt-auto pt-3 border-t">
+                  <Button
+                    className="bg-slate-800 hover:bg-slate-900 text-white px-6 rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handkleClick(business.id);
+                    }}
+                  >
+                    {t("catalog.viewDetails")}
+                  </Button>
+                </div>
+              </div>
             </Card>
           );
         })}

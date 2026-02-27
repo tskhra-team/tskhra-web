@@ -57,7 +57,7 @@ export const mapApiBusinessToMock = (
     callType: 'both', // Default value - API doesn't provide this
     city: 'თბილისი', // Default value - API doesn't provide this
     address: undefined, // API doesn't provide this
-    description: apiBusiness.description || 'No description available',
+    description: apiBusiness.description,
     category: 'Other', // Default value - API doesn't provide this
     workTimes: apiBusiness.schedules.map(mapScheduleToWorkTime),
     restTimes: undefined, // API doesn't provide this
