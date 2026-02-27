@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { scrollToTop } from "@/utils";
 import { Briefcase, User } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import IndividualServiceForm from "./IndividualServiceForm";
+import { useTranslation } from "react-i18next";
+import IndividualServiceForm from "./IndividualBusinessForm";
 
-export default function CreateBookingService() {
+export default function CreateBookingBusiness() {
+  const { t } = useTranslation("booking");
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedType = searchParams.get("type");
 
@@ -13,21 +15,25 @@ export default function CreateBookingService() {
       <div className="container mx-auto py-8 px-4">
         <Button
           variant="link"
-          onClick={() => setSearchParams({})}
+          onClick={() => {
+            setSearchParams((prevParams) => {
+              prevParams.delete("type");
+              return prevParams;
+            });
+          }}
           className="mb-4"
         >
-          ← Back to selection
+          {t("businessCreation.backToSelection")}
         </Button>
 
         {selectedType === "individual" ? (
           <>
-            <h1 className="text-3xl font-bold mb-6">Individual Business</h1>
-            <IndividualServiceForm />{" "}
-            {/*here should be IndividualServiceForm */}
+            <h1 className="text-3xl font-bold mb-6">{t("businessCreation.individual.title")}</h1>
+            <IndividualServiceForm />
           </>
         ) : (
           <>
-            <h1 className="text-3xl font-bold mb-6">Commercial Business</h1>
+            <h1 className="text-3xl font-bold mb-6">{t("businessCreation.commercial.title")}</h1>
             <IndividualServiceForm /> {/*here should be BusinessServiceForm */}
           </>
         )}
@@ -36,19 +42,29 @@ export default function CreateBookingService() {
   }
 
   const handleClick = (type: string) => {
-    setSearchParams({ type: type });
+    setSearchParams((prevParams) => {
+      prevParams.set("type", type);
+      return prevParams;
+    });
     scrollToTop();
   };
 
   return (
     <div className="container mx-auto py-12 px-4">
+      <Button
+        variant="link"
+        onClick={() => setSearchParams({})}
+        className="mb-4"
+      >
+        {t("businessCreation.backToSelection")}
+      </Button>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Create Your Booking Service
+            {t("businessCreation.title")}
           </h1>
           <p className="text-lg text-gray-600">
-            Choose the type of service you want to offer
+            {t("businessCreation.subtitle")}
           </p>
         </div>
 
@@ -57,34 +73,33 @@ export default function CreateBookingService() {
           <div className="relative bg-white rounded-xl border border-slate-300 shadow-sm">
             <div className="p-10">
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center">
-                  <User className="w-8 h-8 text-slate-700" />
+                <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <User className="w-8 h-8 text-white" />
                 </div>
               </div>
               <h2 className="text-2xl font-semibold text-slate-900 text-center mb-3">
-                Individual Business
+                {t("businessCreation.individual.title")}
               </h2>
               <p className="text-slate-600 text-center mb-8 leading-relaxed text-sm">
-                Perfect for freelancers and solo professionals offering personal
-                services like tutoring, consulting, or personal training.
+                {t("businessCreation.individual.description")}
               </p>
               <ul className="space-y-3 mb-10">
                 <li className="flex items-start">
                   <span className="text-slate-500 mr-3 text-base">✓</span>
                   <span className="text-slate-700 text-sm">
-                    Simple setup and management
+                    {t("businessCreation.individual.feature1")}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-slate-500 mr-3 text-base">✓</span>
                   <span className="text-slate-700 text-sm">
-                    Direct client communication
+                    {t("businessCreation.individual.feature2")}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-slate-500 mr-3 text-base">✓</span>
                   <span className="text-slate-700 text-sm">
-                    Flexible scheduling options
+                    {t("businessCreation.individual.feature3")}
                   </span>
                 </li>
               </ul>
@@ -92,7 +107,7 @@ export default function CreateBookingService() {
                 onClick={() => handleClick("individual")}
                 className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11 cursor-pointer"
               >
-                Get Started
+                {t("businessCreation.getStarted")}
               </Button>
             </div>
           </div>
@@ -100,7 +115,7 @@ export default function CreateBookingService() {
           {/* Business Service Card */}
           <div className="relative bg-gray-100 rounded-xl border border-gray-300 shadow-sm opacity-60">
             <div className="absolute top-4 right-4 bg-slate-500 text-white px-4 py-1.5 rounded-full text-sm font-medium">
-              Coming Soon
+              {t("businessCreation.comingSoon")}
             </div>
             <div className="p-10">
               <div className="flex justify-center mb-6">
@@ -109,29 +124,28 @@ export default function CreateBookingService() {
                 </div>
               </div>
               <h2 className="text-2xl font-semibold text-gray-600 text-center mb-3">
-                Commercial Business
+                {t("businessCreation.commercial.title")}
               </h2>
               <p className="text-gray-500 text-center mb-8 leading-relaxed text-sm">
-                Ideal for companies and organizations offering professional
-                services with multiple team members and locations.
+                {t("businessCreation.commercial.description")}
               </p>
               <ul className="space-y-3 mb-10">
                 <li className="flex items-start">
                   <span className="text-gray-400 mr-3 text-base">✓</span>
                   <span className="text-gray-500 text-sm">
-                    Multi-location support
+                    {t("businessCreation.commercial.feature1")}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-gray-400 mr-3 text-base">✓</span>
                   <span className="text-gray-500 text-sm">
-                    Team management tools
+                    {t("businessCreation.commercial.feature2")}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-gray-400 mr-3 text-base">✓</span>
                   <span className="text-gray-500 text-sm">
-                    Advanced analytics & reporting
+                    {t("businessCreation.commercial.feature3")}
                   </span>
                 </li>
               </ul>
@@ -139,7 +153,7 @@ export default function CreateBookingService() {
                 disabled
                 className="w-full bg-gray-400 text-white font-medium h-11 cursor-not-allowed"
               >
-                Get Started
+                {t("businessCreation.getStarted")}
               </Button>
             </div>
           </div>

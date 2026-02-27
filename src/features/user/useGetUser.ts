@@ -8,6 +8,7 @@ export type UserType = {
   firstName: string | undefined;
   lastName: string | undefined;
   userEmail: string;
+  isVerified: boolean;
 };
 
 const getUser = async () => {

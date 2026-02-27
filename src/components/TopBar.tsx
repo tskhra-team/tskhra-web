@@ -66,11 +66,11 @@ export default function TopBar() {
                   <span>{t("auth.profile")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => navigate("/my-services")}
+                  onClick={() => navigate("/my-businesses")}
                   className="cursor-pointer"
                 >
                   <Cog className="mr-2 h-4 w-4" />
-                  <span>My Services</span>
+                  <span>My Businesses</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}

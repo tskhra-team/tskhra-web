@@ -41,5 +41,26 @@
     "passwordSpecial": "Password must include at least 1 special character",
     "repeatPasswordRequired": "Repeat password is required",
     "passwordsMatch": "Passwords must match"
+  },
+  "businessTypeSelection": {
+    "title": "Create Your Business",
+    "subtitle": "Choose the type of business you want to create",
+    "getStarted": "Get Started",
+    "comingSoon": "Coming Soon",
+    "booking": {
+      "title": "Booking Business",
+      "description": "Ideal for service-based businesses. Manage appointments, schedules, and client bookings with ease.",
+      "feature1": "Calendar & scheduling",
+      "feature2": "Appointment management",
+      "feature3": "Client communication tools"
+    },
+    "ecommerce": {
+      "title": "Ecommerce Business",
+      "description": "Perfect for selling products online. Set up your online store, manage inventory, and start selling to customers.",
+      "feature1": "Product catalog management",
+      "feature2": "Inventory tracking",
+      "feature3": "Order management system",
+      "comingSoonMessage": "Ecommerce business creation form coming soon..."
+    }
   }
 }

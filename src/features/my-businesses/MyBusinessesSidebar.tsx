@@ -52,10 +52,10 @@ const menuItems = [
   },
 ];
 
-export function MyServicesSidebar() {
-  // Mock service data
-  const service = {
-    name: "Premium Barber Service",
+export function MyBusinessesSidebar() {
+  // Mock business data
+  const business = {
+    name: "Premium Barber",
     type: "Barber Shop",
   };
 
@@ -79,9 +79,9 @@ export function MyServicesSidebar() {
               <Scissors className="h-5 w-5" />
             </div>
             <div className="flex flex-col">
-              <span className="font-semibold text-sm">{service.name}</span>
+              <span className="font-semibold text-sm">{business.name}</span>
               <span className="text-xs text-muted-foreground">
-                {service.type}
+                {business.type}
               </span>
             </div>
           </div>

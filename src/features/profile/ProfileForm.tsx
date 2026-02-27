@@ -22,7 +22,7 @@ import useUnVerify from "@/features/profile/useUnVerify";
 import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar as CalendarIcon, Pencil, ShieldCheck } from "lucide-react";
+import { Calendar as CalendarIcon, Check, Pencil } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
 import Avatar from "react-avatar";
 import { Controller, useForm } from "react-hook-form";
@@ -33,16 +33,16 @@ import { toast } from "sonner";
 const MemoizedAvatar = memo(Avatar);
 
 import BlurVerifiedUser from "@/features/profile/BlurVerifiedUser";
-import VerifyUser from "./VerifyUser";
+import useVerify from "@/features/profile/useVerify";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending } = useUpdateProfile();
-  const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(false);
   const [timeZone, setTimeZone] = useState<string>();
   const { t } = useTranslation("profile");
+  const { mutate: verifyUser } = useVerify();
 
   const fullName = useMemo(() => {
     if (profile?.firstName && profile?.lastName) {
@@ -109,14 +109,6 @@ function ProfileForm() {
     });
   };
 
-  const isUserhasAllData = Boolean(
-    profile?.firstName &&
-    profile?.lastName &&
-    profile?.gender &&
-    profile?.birthDate &&
-    profile?.phoneNumber,
-  );
-
   return (
     <>
       <form
@@ -162,10 +154,43 @@ function ProfileForm() {
             </div>
           </div>
 
-          {profile?.status && (
+          {profile?.status ? (
             <Button type="button" variant="link" className="cursor-pointer">
               {t("form.changePrfPic")}
             </Button>
+          ) : !isEditMode ? (
+            <Button
+              type="button"
+              variant="link"
+              onClick={() => setIsEditMode((value) => !value)}
+              className="cursor-pointer"
+            >
+              <Pencil className="h-4 w-4" />
+              {t("form.editInfo")}
+            </Button>
+          ) : (
+            <div className="flex flex-col justify-end sm:flex-row gap-2 md:gap-3 w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <Button
+                type="button"
+                variant="link"
+                className="cursor-pointer text-red-700"
+                onClick={() => {
+                  setIsEditMode(false);
+                  reset();
+                }}
+              >
+                {t("form.cancel")}
+              </Button>
+              <Button
+                type="submit"
+                disabled={isPending}
+                variant="link"
+                className="cursor-pointer text-green-700"
+              >
+                <Check />
+                {isPending ? t("form.saving") : t("form.save")}
+              </Button>
+            </div>
           )}
         </div>
         <BlurVerifiedUser isVerified={profile?.status}>
@@ -390,75 +415,6 @@ function ProfileForm() {
               className="bg-gray-100 cursor-not-allowed"
             />
           </div>
-
-          {/* <div className="pt-2">
-          <Button
-            type="button"
-            onClick={() => setIsPasswordModalOpen(true)}
-            variant="outline"
-            className="px-4 md:px-6 py-2 text-sm md:text-base border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 w-full sm:w-auto"
-          >
-            პაროლის შეცვლა
-          </Button>
-        </div> */}
-
-          {!profile?.status && (
-            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 pt-4">
-              {!isEditMode ? (
-                <>
-                  <Button
-                    type="button"
-                    className="px-6 py-3 text-sm md:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-200 w-full sm:w-auto border-0 flex items-center gap-2"
-                    onClick={() => setIsEditMode((value) => !value)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                    {t("form.editInfo")}
-                  </Button>
-
-                  {!profile?.status && (
-                    <Button
-                      type="button"
-                      className="w-full sm:w-auto bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => {
-                        if (!isUserhasAllData) {
-                          toast.info(t("form.messages.allFieldsRequired"), {
-                            position: "top-center",
-                          });
-                          setIsEditMode((edit) => !edit);
-                        } else {
-                          setIsVerifyUserOpen(true);
-                        }
-                      }}
-                    >
-                      <ShieldCheck className="w-4 h-4" />
-                      {t("form.goToVerification")}
-                    </Button>
-                  )}
-                </>
-              ) : (
-                <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="px-4 md:px-6 py-2 text-sm md:text-base border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 w-full sm:w-auto"
-                    onClick={() => {
-                      setIsEditMode(false);
-                      reset();
-                    }}
-                  >
-                    {t("form.cancel")}
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="px-4 md:px-6 py-2 text-sm md:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isPending ? t("form.saving") : t("form.save")}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
         </BlurVerifiedUser>
       </form>
 
@@ -467,7 +423,7 @@ function ProfileForm() {
         onClick={() => {
           unVerifyUser(undefined, {
             onSuccess: () => {
-              toast.success(t("form.messages.unverifySuccess"), {
+              toast.success("TEST: UNVERIFY SUCCESSFULLY", {
                 position: "top-center",
               });
               queryClient.invalidateQueries({
@@ -486,7 +442,29 @@ function ProfileForm() {
         TEST ONLY UNVERIFY
       </Button>
 
-      <VerifyUser open={isVerifyUserOpen} onOpenChange={setIsVerifyUserOpen} />
+      <Button
+        type="button"
+        onClick={() => {
+          verifyUser(undefined, {
+            onSuccess: () => {
+              toast.success("TEST: VERIFY SUCCESSFULLY", {
+                position: "top-center",
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["getUser"],
+              });
+              refetch();
+            },
+            onError: () => {
+              toast.error(t("form.messages.unverifyError"), {
+                position: "top-center",
+              });
+            },
+          });
+        }}
+      >
+        TEST ONLY VERIFY
+      </Button>
     </>
   );
 }
