@@ -63,7 +63,6 @@ const profileSchema = yup.object().shape({
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
 
-      // Если день рождения в этом году еще не наступил, вычитаем год
       if (
         monthDiff < 0 ||
         (monthDiff === 0 && today.getDate() < birthDate.getDate())
@@ -73,7 +72,7 @@ const profileSchema = yup.object().shape({
 
       return age >= 12;
     })
-    .default(new Date(new Date().getFullYear() - 8, 11)),
+    .default(new Date(new Date().getFullYear() - 16, 11)),
   phoneCountryCode: yup
     .string()
     .required("Country code is required")

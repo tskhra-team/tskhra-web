@@ -11,15 +11,18 @@ const HomePage = lazy(() => import("@/pages/HomePage"));
 const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
 const SwitchingPage = lazy(() => import("@/pages/SwappingPage"));
-const CreateBookingServicePage = lazy(
-  () => import("@/pages/CreateBookingServicePage"),
-);
-const ServicesCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
-const ServiceDetailsPage = lazy(() => import("@/pages/ServiceDetailsPage"));
-const MyServicesPage = lazy(() => import("@/pages/MyServicesPage"));
+const CreateBusinessPage = lazy(() => import("@/pages/CreateBusinessPage"));
+const BusinessCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
+const MyBusinessesPage = lazy(() => import("@/pages/MyBusinessesPage"));
+const BusinessDetailsPage = lazy(() => import("@/pages/BusinessDetailsPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
+const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
+const SubcategoryPage = lazy(() => import("@/pages/SubcategoryPage"));
+
+import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
+import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
 
 export const routes = [
   // Main Layout - Public pages with main Header + Footer
@@ -61,16 +64,32 @@ export const routes = [
       {
         path: "/services",
         element: (
-          <Suspense fallback={<Loader />}>
-            <ServicesCatalogPage />
+          <Suspense fallback={<BusinessCatalogSkeleton />}>
+            <BusinessCatalogPage />
           </Suspense>
         ),
       },
       {
-        path: "/services/:id",
+        path: "/business/:id",
+        element: (
+          <Suspense fallback={<BusinessDetailsSkeleton />}>
+            <BusinessDetailsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/:platform/category/:categorySlug",
         element: (
           <Suspense fallback={<Loader />}>
-            <ServiceDetailsPage />
+            <CategoryPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/:platform/category/:categorySlug/:subcategorySlug",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SubcategoryPage />
           </Suspense>
         ),
       },
@@ -102,18 +121,18 @@ export const routes = [
         ),
       },
       {
-        path: "/create-booking-service",
+        path: "/create-business",
         element: (
           <Suspense fallback={<Loader />}>
-            <CreateBookingServicePage />
+            <CreateBusinessPage />
           </Suspense>
         ),
       },
       {
-        path: "/my-services",
+        path: "/my-businesses",
         element: (
           <Suspense fallback={<Loader />}>
-            <MyServicesPage />
+            <MyBusinessesPage />
           </Suspense>
         ),
       },

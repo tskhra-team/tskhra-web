@@ -1,42 +1,46 @@
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { categoryNameToKey } from "./categoryTranslations";
 import { getPlatformColors } from "./platformColors";
 import type { CategoryItem, Platform } from "./types";
 
-interface SubcategoryViewProps {
-  subcategories?: CategoryItem[];
-  platform?: Platform;
+interface SubcategoryGridProps {
+  subcategories: CategoryItem[];
+  platform: Platform;
+  categorySlug: string;
 }
 
-export default function SubcategoryView({ subcategories, platform }: SubcategoryViewProps) {
+export default function SubcategoryGrid({
+  subcategories,
+  platform,
+  categorySlug,
+}: SubcategoryGridProps) {
   const { t } = useTranslation("categories");
-  const { categorySlug } = useParams<{ categorySlug: string }>();
   const colors = getPlatformColors(platform);
 
   if (!subcategories || subcategories.length === 0) {
-    return <div className="text-sm text-gray-500">No subcategories available.</div>;
+    return (
+      <div className="text-sm text-gray-500">
+        {t('noSubcategories', { defaultValue: 'No subcategories available.' })}
+      </div>
+    );
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
       {subcategories.map((subcategory, index) => {
         const translationKey = categoryNameToKey[subcategory.name];
         const displayName = translationKey ? t(translationKey) : subcategory.name;
         const subcategorySlug = subcategory.name.toLowerCase().replace(/\s+/g, '-');
-        const subcategoryUrl = platform && categorySlug
-          ? `/${platform}/category/${categorySlug}/${subcategorySlug}`
-          : '#';
 
         return (
           <Link
             key={subcategory.name}
-            to={subcategoryUrl}
-            className="group rounded-xl bg-white p-3 sm:p-4 transition-all duration-200 ease-in-out flex flex-col text-left cursor-pointer hover:shadow-lg animate-in fade-in slide-in-from-bottom-2 border"
+            to={`/${platform}/category/${categorySlug}/${subcategorySlug}`}
+            className="group rounded-xl bg-white p-4 transition-all duration-200 ease-in-out flex flex-col text-left cursor-pointer hover:shadow-lg border border-gray-200 animate-in fade-in slide-in-from-bottom-2"
             style={{
-              borderColor: '#E5E7EB',
               animationDelay: `${index * 30}ms`,
-              animationFillMode: 'backwards'
+              animationFillMode: 'backwards',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = colors.active.background;
@@ -56,7 +60,7 @@ export default function SubcategoryView({ subcategories, platform }: Subcategory
             }}
           >
             {subcategory.imageUrl && (
-              <div className="mb-2 sm:mb-3 flex-1 overflow-hidden rounded-lg bg-gray-100">
+              <div className="mb-3 flex-1 overflow-hidden rounded-lg bg-gray-100">
                 <img
                   src={subcategory.imageUrl}
                   alt={displayName}
@@ -68,19 +72,19 @@ export default function SubcategoryView({ subcategories, platform }: Subcategory
               </div>
             )}
             {subcategory.iconUrl && !subcategory.imageUrl && (
-              <div className="mb-2 sm:mb-3 flex-1 flex items-center justify-center rounded-lg bg-gray-100 transition-transform duration-300 ease-in-out group-hover:scale-105">
+              <div className="mb-3 flex-1 flex items-center justify-center rounded-lg bg-gray-100 transition-transform duration-300 ease-in-out group-hover:scale-105 h-32">
                 <img
                   src={subcategory.iconUrl}
                   alt=""
                   loading="lazy"
                   width={64}
                   height={64}
-                  className="h-12 w-12 sm:h-16 sm:w-16"
+                  className="h-16 w-16"
                 />
               </div>
             )}
             <h4
-              className="text-xs sm:text-sm font-medium transition-colors duration-200"
+              className="text-sm font-medium transition-colors duration-200 text-center"
               style={{ color: colors.inactive.text }}
             >
               {displayName}

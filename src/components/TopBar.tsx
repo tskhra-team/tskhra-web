@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
-import { Cog, LogOut, User } from "lucide-react";
+import { Building2, LogOut, User } from "lucide-react";
 import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -52,7 +52,7 @@ export default function TopBar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                  <Avatar name={fullName} size="40" round />
+                  <Avatar name={fullName} src={user?.avatar} size="40" round />
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -66,11 +66,11 @@ export default function TopBar() {
                   <span>{t("auth.profile")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => navigate("/my-services")}
+                  onClick={() => navigate("/my-businesses")}
                   className="cursor-pointer"
                 >
-                  <Cog className="mr-2 h-4 w-4" />
-                  <span>My Services</span>
+                  <Building2 className="mr-2 h-4 w-4" />
+                  <span>My Businesses</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}

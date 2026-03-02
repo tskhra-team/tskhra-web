@@ -1,14 +1,14 @@
-import { MyServicesSidebar } from "./MyServicesSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { MyBusinessesSidebar } from "@/features/my-businesses/MyBusinessesSidebar";
 
-export default function MyServices({
+export default function BusinessSidebarProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <SidebarProvider>
-      <MyServicesSidebar />
+      <MyBusinessesSidebar />
       <main className="flex-1 p-6">
         <SidebarTrigger />
         {children}

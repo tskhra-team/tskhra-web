@@ -26,7 +26,7 @@ export type MockBusiness = {
   callType: "outcall" | "onsite" | "both";
   city: string;
   address?: string;
-  description: string;
+  description?: string | null;
   category: string;
   workTimes: MockWorkTime[];
   restTimes?: MockWorkTime[];

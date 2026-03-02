@@ -1,5 +1,5 @@
-import ServicesCatalog from "@/Services/ServicesCatalog";
+import BusinessCatalog from "@/Booking/BusinessCatalog";
 
-export default function ServicesCatalogPage() {
-  return <ServicesCatalog />;
+export default function BusinessCatalogPage() {
+  return <BusinessCatalog />;
 }
