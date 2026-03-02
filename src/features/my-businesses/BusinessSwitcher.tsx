@@ -53,7 +53,7 @@ const businesses: Business[] = [
 export function BusinessSwitcher() {
   const { isMobile } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState<Business | string>(
-    "Select Business"
+    "Select Business",
   );
   const navigate = useNavigate();
 
