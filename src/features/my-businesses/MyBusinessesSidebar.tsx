@@ -12,33 +12,25 @@ import {
 } from "@/components/ui/sidebar";
 import { BusinessSwitcher } from "@/features/my-businesses/BusinessSwitcher";
 import { NavUser } from "@/features/my-businesses/NavUser";
-import {
-  AudioWaveform,
-  BarChart3,
-  Bell,
-  Calendar,
-  Command,
-  GalleryVerticalEnd,
-  Settings,
-} from "lucide-react";
+import { BarChart3, Bell, Calendar, Settings } from "lucide-react";
 
-const teams = [
-  {
-    name: "Acme Inc",
-    logo: GalleryVerticalEnd,
-    plan: "Enterprise",
-  },
-  {
-    name: "Acme Corp.",
-    logo: AudioWaveform,
-    plan: "Startup",
-  },
-  {
-    name: "Evil Corp.",
-    logo: Command,
-    plan: "Free",
-  },
-];
+// const teams = [
+//   {
+//     name: "Acme Inc",
+//     logo: GalleryVerticalEnd,
+//     plan: "Enterprise",
+//   },
+//   {
+//     name: "Acme Corp.",
+//     logo: AudioWaveform,
+//     plan: "Startup",
+//   },
+//   {
+//     name: "Evil Corp.",
+//     logo: Command,
+//     plan: "Free",
+//   },
+// ];
 
 const menuItems = [
   {
@@ -65,10 +57,10 @@ const menuItems = [
 
 export function MyBusinessesSidebar() {
   // Mock business data
-  const business = {
-    name: "Premium Barber",
-    type: "Barber Shop",
-  };
+  // const business = {
+  //   name: "Premium Barber",
+  //   type: "Barber Shop",
+  // };
 
   return (
     <Sidebar>
