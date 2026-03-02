@@ -95,6 +95,7 @@
     "serviceDurationMax": "Service duration cannot exceed 24 hours",
     "serviceDurationInterval": "Service duration must be in 5-minutes intervals",
     "serviceDurationPositive": "Service duration should be positive number",
+    "serviceDescriptionMax": "Service description can't be more than 70 letters",
     "weekDayRequired": "Week day is required",
     "startTimeRequired": "Start time is required",
     "startTimeInvalid": "Start time must be a valid number",

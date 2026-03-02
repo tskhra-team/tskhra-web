@@ -95,6 +95,7 @@
     "serviceDurationMax": "სერვისის ხანგრძლივობა არ უნდა აღემატებოდეს 24 საათს",
     "serviceDurationInterval": "სერვისის ხანგრძლივობა უნდა იყოს 5 წუთიანი ინტერვალებით",
     "serviceDurationPositive": "სერვისის ხანგრძლივობა უნდა იყოს დადებითი რიცხვი",
+    "serviceDescriptionMax": "სერვისის აღწერა არ უნდა აღემატებოდეს 70 სიმბოლოს",
     "weekDayRequired": "კვირის დღე აუცილებელია",
     "startTimeRequired": "დაწყების დრო აუცილებელია",
     "startTimeInvalid": "დაწყების დრო უნდა იყოს ვალიდური რიცხვი",
