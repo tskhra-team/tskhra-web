@@ -2,7 +2,7 @@ import Keycloak from "keycloak-js";
 import { useEffect, useState } from "react";
 
 export const keycloakClient = new Keycloak({
-  url: "http://10.3.12.234:8080",
+  url: "http://10.227.164.247:8080",
   realm: "tskhra",
   clientId: "react-client",
 });
