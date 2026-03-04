@@ -1,15 +1,14 @@
 import tailwindcss from "@tailwindcss/vite";
-import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
-import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    basicSsl(),
+    // basicSsl(),
     tailwindcss(),
     ViteImageOptimizer({
       png: {
@@ -29,9 +28,9 @@ export default defineConfig({
       },
     }),
   ],
-  server:{
-    host: true
-  },
+  // server: {
+  //   host: true,
+  // },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

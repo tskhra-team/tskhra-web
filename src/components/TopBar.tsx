@@ -1,6 +1,7 @@
 import WithAxiosUser from "@/api/withAxiosUser";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import SearchBar from "@/components/SeacrhBar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +14,6 @@ import {
 import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
 import { Building2, LogOut, User } from "lucide-react";
-import Avatar from "react-avatar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
@@ -52,7 +52,12 @@ export default function TopBar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="cursor-pointer hover:opacity-80 transition-opacity">
-                  <Avatar name={fullName} src={user?.avatar} size="40" round />
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user?.avatar} />
+                    <AvatarFallback>
+                      {fullName?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
