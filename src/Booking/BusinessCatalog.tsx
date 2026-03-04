@@ -1,5 +1,5 @@
-import { useBusinesses } from "@/api/hooks/useBusinesses";
 import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
+import useGetBookingBusinesses from "@/Booking/useGetBookingBusinesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { scrollToTop } from "@/utils";
@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 export default function BusinessCatalog() {
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
-  const { data: businesses, isLoading, isFetching, isError } = useBusinesses();
+  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses();
 
   // console.log("Businesses data:", businesses);
 
