@@ -14,8 +14,10 @@ import {
   createIndividualBusinessSchema,
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
+import useGetCitites from "@/features/business-creation/booking-business/useGetCities";
 import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
 import { useCategories } from "@/shared/categories/useCategories";
+import { scrollToTop } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -34,6 +36,7 @@ export default function IndividualBusinessForm() {
     useCreateIndividualBusiness();
   const { mutate: uploadPhotos, isPending: isUploading } =
     useUploadBusinessPhotos();
+  const { data: cities } = useGetCitites();
 
   const { showModal, closeModal } = useModal();
 
@@ -107,7 +110,7 @@ export default function IndividualBusinessForm() {
           onSuccess: (result) => {
             // Step 3: Save businessId to localStorage and navigate to step 2
             closeModal();
-            localStorage.setItem("businessId", result.businessId);
+            localStorage.setItem("businessId", result.id);
             showModal(
               "success",
               "Congratulations!",
@@ -117,6 +120,7 @@ export default function IndividualBusinessForm() {
                 navigate(
                   "/create-business?business=booking&type=individual&step=2",
                 );
+                scrollToTop();
               },
             );
           },
@@ -220,7 +224,24 @@ export default function IndividualBusinessForm() {
           <Label className="block text-lg font-medium mb-2">
             {t("booking:form.city")}
           </Label>
-          <Input {...register("city")} placeholder={t("booking:form.city")} />
+          <Controller
+            name="city"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full" style={{ height: "44px" }}>
+                  <SelectValue placeholder={t("booking:form.city")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities?.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.city && (
             <p className="text-xs text-red-500 font-bold mt-2">
               {errors.city.message}

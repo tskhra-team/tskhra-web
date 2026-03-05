@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useModal } from "@/context/ModalContext";
 import {
   createServiceSchema,
   createServicesFormSchema,
@@ -16,7 +17,9 @@ import useCreateBusinessService from "./useCreateBusinessService";
 export default function ServiceForm() {
   const { t } = useTranslation("booking");
   const navigate = useNavigate();
-  const createBusinessService = useCreateBusinessService();
+  const { mutate: createBusinessService, isPending } =
+    useCreateBusinessService();
+  const { showModal, closeModal } = useModal();
 
   const [newService, setNewService] = useState({
     name: "",
@@ -75,28 +78,45 @@ export default function ServiceForm() {
     );
   };
 
-  const onSubmit = async (data: { services: ServiceType[] }) => {
-    try {
-      const businessId = localStorage.getItem("businessId");
+  const onSubmit = (data: { services: ServiceType[] }) => {
+    const businessId = localStorage.getItem("businessId");
 
-      if (!businessId) {
-        alert(t("booking:messages.businessIdNotFound"));
-        navigate("/create-business?business=booking&type=individual&step=1");
-        return;
-      }
-
-      await createBusinessService.mutateAsync({
-        businessId,
-        services: data.services,
-      });
-
-      localStorage.removeItem("businessId");
-      alert(t("booking:messages.successPublished"));
-      navigate("/");
-    } catch (error) {
-      console.error("Error submitting services:", error);
-      alert(t("booking:messages.error"));
+    if (!businessId) {
+      showModal(
+        "error",
+        "Can't find your business",
+        "You don't register your business yet",
+        "Go Back",
+        () => {
+          navigate("/create-business?business=booking&type=individual&step=1");
+        },
+      );
+      return;
     }
+
+    showModal("pending", "Adding services...", "Please wait");
+
+    createBusinessService(
+      { businessId, services: data.services },
+      {
+        onSuccess: () => {
+          localStorage.removeItem("businessId");
+          showModal(
+            "success",
+            "Success!",
+            "All services has been added to your business!",
+            "Go to Home",
+            () => {
+              navigate("/");
+            },
+          );
+        },
+        onError: () => {
+          closeModal();
+          showModal("error", "Error", t("booking:messages.error"));
+        },
+      },
+    );
   };
 
   return (
@@ -239,10 +259,10 @@ export default function ServiceForm() {
       <div className="flex justify-end gap-4 pt-4">
         <Button
           type="submit"
-          disabled={createBusinessService.isPending}
+          disabled={isPending}
           className="p-8 cursor-pointer"
         >
-          {createBusinessService.isPending
+          {isPending
             ? t("booking:form.processing")
             : t("booking:form.addBusiness")}
         </Button>

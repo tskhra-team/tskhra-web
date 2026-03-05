@@ -33,6 +33,8 @@
       "onsite": "On-site",
       "both": "Both"
     },
+    "step": "Step",
+    "nextStep": "Continue",
     "city": "City",
     "address": "Address",
     "addressPlaceholder": "Enter address",
