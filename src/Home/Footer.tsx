@@ -63,12 +63,12 @@ function Footer() {
               <ul className="space-y-2">
                 {links.map((link, index) => (
                   <li key={index}>
-                    <Link
+                    <button
                       onClick={link.func}
                       className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                     >
                       {link.name}
-                    </Link>
+                    </button>
                   </li>
                 ))}
               </ul>

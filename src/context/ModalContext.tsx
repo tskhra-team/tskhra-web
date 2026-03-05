@@ -1,0 +1,162 @@
+import { Button } from "@/components/ui/button";
+import { Check, TriangleAlert } from "lucide-react";
+import React, {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+// 1. Описываем возможные статусы модалки
+export type ModalStatus = "pending" | "success" | "error" | "idle";
+
+// 2. Описываем данные, которые хранит модалка
+interface ModalData {
+  status: ModalStatus;
+  title: string;
+  text: string;
+  buttonText?: string;
+  onButtonClick?: () => void;
+}
+
+// 3. Описываем всё, что будет доступно через контекст
+interface ModalContextProps extends ModalData {
+  isOpen: boolean;
+  showModal: (
+    status: ModalStatus,
+    title: string,
+    text: string,
+    buttonText?: string,
+    onButtonClick?: () => void,
+  ) => void;
+  closeModal: () => void;
+}
+
+// Создаем контекст, по умолчанию он null
+const ModalContext = createContext<ModalContextProps | null>(null);
+
+// Пропсы для Провайдера
+interface ModalProviderProps {
+  children: ReactNode;
+}
+
+// 4. Провайдер
+export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<ModalData>({
+    status: "idle",
+    title: "",
+    text: "",
+    buttonText: undefined,
+    onButtonClick: undefined,
+  });
+
+  const showModal = (
+    status: ModalStatus,
+    title: string,
+    text: string,
+    buttonText?: string,
+    onButtonClick?: () => void,
+  ) => {
+    setModalData({ status, title, text, buttonText, onButtonClick });
+    setIsOpen(true);
+  };
+
+  const closeModal = () => setIsOpen(false);
+
+  return (
+    <ModalContext.Provider
+      value={{ isOpen, ...modalData, showModal, closeModal }}
+    >
+      {children}
+      <GlobalModal />
+    </ModalContext.Provider>
+  );
+};
+
+// 5. Компонент модального окна
+const GlobalModal: React.FC = () => {
+  const context = useModal();
+  const { isOpen, status, title, text, buttonText, onButtonClick, closeModal } =
+    context;
+
+  // Block scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  // Типизированный объект стилей для статусов
+  const statusStyles: Record<ModalStatus, string> = {
+    idle: "text-gray-800 border-gray-800",
+    pending: "text-gray-500 border-gray-500",
+    success: "text-green-800 border-green-800",
+    error: "text-red-900 border-red-500",
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 w-[420px] max-w-[90vw] flex flex-col items-center animate-in zoom-in-95 duration-200 border border-gray-100">
+        {status === "pending" && (
+          <div className="w-14 h-14 border-4 border-gray-200 border-t-gray-500 rounded-full animate-spin mb-5" />
+        )}
+
+        {status === "error" && (
+          <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-5">
+            <TriangleAlert className="w-8 h-8 text-red-700" />
+          </div>
+        )}
+
+        {status === "success" && (
+          <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5">
+            <Check className="w-8 h-8 text-green-700" />
+          </div>
+        )}
+
+        {/* Извлекаем нужный цвет текста из объекта statusStyles */}
+        <h2
+          className={`text-2xl font-bold mb-3 ${statusStyles[status].split(" ")[0]}`}
+        >
+          {title}
+        </h2>
+
+        <p className="text-gray-600 text-base text-center mb-8 leading-relaxed max-w-sm">
+          {text}
+        </p>
+
+        {status !== "pending" && (
+          <Button
+            onClick={() => {
+              if (onButtonClick) {
+                onButtonClick();
+              }
+              closeModal();
+            }}
+            className="px-8 py-2.5 bg-gray-900 text-white rounded-lg cursor-pointer transition-all duration-200 font-medium shadow-sm hover:shadow-md active:scale-95"
+          >
+            {buttonText || "Close"}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// 6. Кастомный хук с проверкой на null
+export const useModal = (): ModalContextProps => {
+  const context = useContext(ModalContext);
+  if (!context) {
+    throw new Error("useModal должен использоваться внутри ModalProvider");
+  }
+  return context;
+};
