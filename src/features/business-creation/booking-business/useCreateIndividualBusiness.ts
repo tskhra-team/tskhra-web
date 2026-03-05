@@ -11,12 +11,12 @@ type IndividualBusinessResponseData = {
 
 type CreateBusinessRequest = {
   businessName: string;
-  callType: "outcall" | "onsite" | "both";
+  callType: "OUTCALL" | "ONSITE" | "BOTH";
   city: string;
   address: string;
   description: string;
   mainCategory: string;
-  category: string;
+  subCategory: string;
   workTimes: Array<{
     weekDay: string;
     startTime: number;
@@ -37,7 +37,8 @@ type CreateBusinessRequest = {
 };
 
 const createIndividualBusiness = async (data: CreateBusinessRequest) => {
-  const response = await privateInstance.post("/business/individual", data);
+  const { mainCategory, ...rest } = data;
+  const response = await privateInstance.post("/business/individual", rest);
   return response.data;
 };
 

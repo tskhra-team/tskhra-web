@@ -40,7 +40,12 @@ export const createServiceSchema = (t: TFunction) => {
 
 // Schema for Step 1 - Business Information
 export const createIndividualBusinessSchema = (t: TFunction) => {
-  const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+  const ALLOWED_FILE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
 
   const fileValidation = yup
     .mixed<File>()
@@ -100,12 +105,12 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .min(2, t("booking:validation.businessNameMin"))
       .max(40, t("booking:validation.businessNameMax")),
     callType: yup
-      .mixed<"outcall" | "onsite" | "both">()
-      .oneOf(["outcall", "onsite", "both"])
+      .mixed<"OUTCALL" | "ONSITE" | "BOTH">()
+      .oneOf(["OUTCALL", "ONSITE", "BOTH"])
       .required(t("booking:validation.callTypeRequired")),
     city: yup.string().required(t("booking:validation.cityRequired")),
     addressDetails: yup.string().when("callType", {
-      is: (val: string) => val !== "outcall",
+      is: (val: string) => val !== "OUTCALL",
       then: (schema) =>
         schema.required(t("booking:validation.addressRequired")),
       otherwise: (schema) => schema.optional(),
@@ -183,7 +188,7 @@ export type ImagesType = {
 
 export type IndividualBusinessFormData = {
   businessName: string;
-  callType: "outcall" | "onsite" | "both";
+  callType: "OUTCALL" | "ONSITE" | "BOTH";
   city: string;
   addressDetails: string;
   description: string;

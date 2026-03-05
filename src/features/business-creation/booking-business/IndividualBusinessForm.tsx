@@ -95,7 +95,7 @@ export default function IndividualBusinessForm() {
           addressDetails: data.addressDetails,
           description: data.description,
           mainCategory: data.mainCategory,
-          category: data.subCategory,
+          subCategory: data.subCategory,
           workTimes: data.workTimes,
           restTimes: data.restTimes,
           info: data.info,
@@ -182,24 +182,24 @@ export default function IndividualBusinessForm() {
             <div className="flex gap-2">
               <Button
                 type="button"
-                variant={field.value === "outcall" ? "default" : "outline"}
-                onClick={() => field.onChange("outcall")}
+                variant={field.value === "OUTCALL" ? "default" : "outline"}
+                onClick={() => field.onChange("OUTCALL")}
                 className="flex-1"
               >
                 {t("booking:form.callType.outcall")}
               </Button>
               <Button
                 type="button"
-                variant={field.value === "onsite" ? "default" : "outline"}
-                onClick={() => field.onChange("onsite")}
+                variant={field.value === "ONSITE" ? "default" : "outline"}
+                onClick={() => field.onChange("ONSITE")}
                 className="flex-1"
               >
                 {t("booking:form.callType.onsite")}
               </Button>
               <Button
                 type="button"
-                variant={field.value === "both" ? "default" : "outline"}
-                onClick={() => field.onChange("both")}
+                variant={field.value === "BOTH" ? "default" : "outline"}
+                onClick={() => field.onChange("BOTH")}
                 className="flex-1"
               >
                 {t("booking:form.callType.both")}
@@ -233,11 +233,11 @@ export default function IndividualBusinessForm() {
           </Label>
           <Input
             {...register("addressDetails")}
-            disabled={callType === "outcall"}
+            disabled={callType === "OUTCALL"}
             placeholder={t("booking:form.addressPlaceholder")}
           />
 
-          {errors.addressDetails && callType !== "outcall" && (
+          {errors.addressDetails && callType !== "OUTCALL" && (
             <p className="text-xs text-red-500 font-bold mt-2">
               {errors.addressDetails.message}
             </p>
