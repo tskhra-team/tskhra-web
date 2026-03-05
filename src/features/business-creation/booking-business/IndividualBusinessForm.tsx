@@ -203,7 +203,9 @@ export default function IndividualBusinessForm() {
       {/* City and Address */}
       <div className="grid grid-cols-2 gap-4 mb-12">
         <div>
-          <Label className="block text-lg font-medium mb-2">{t("booking:form.city")}</Label>
+          <Label className="block text-lg font-medium mb-2">
+            {t("booking:form.city")}
+          </Label>
           <Input {...register("city")} placeholder={t("booking:form.city")} />
           {errors.city && (
             <p className="text-xs text-red-500 font-bold mt-2">
@@ -212,7 +214,9 @@ export default function IndividualBusinessForm() {
           )}
         </div>
         <div>
-          <Label className="block text-lg font-medium mb-2">{t("booking:form.address")}</Label>
+          <Label className="block text-lg font-medium mb-2">
+            {t("booking:form.address")}
+          </Label>
           <Input
             {...register("address")}
             disabled={callType === "outcall"}
@@ -229,7 +233,9 @@ export default function IndividualBusinessForm() {
 
       {/* Detailed Description */}
       <div className="mb-12">
-        <Label className="block text-lg font-medium mb-2">{t("booking:form.description")}</Label>
+        <Label className="block text-lg font-medium mb-2">
+          {t("booking:form.description")}
+        </Label>
         <textarea
           {...register("description")}
           placeholder={t("booking:form.descriptionPlaceholder")}
@@ -415,7 +421,9 @@ export default function IndividualBusinessForm() {
 
       {/* Services */}
       <div className="mb-16">
-        <Label className="block text-lg font-medium mb-2">{t("booking:form.services")}</Label>
+        <Label className="block text-lg font-medium mb-2">
+          {t("booking:form.services")}
+        </Label>
 
         {/* Add Service Form */}
         <div className="border rounded-md p-4 mb-4 space-y-3 bg-muted/20">
@@ -433,7 +441,9 @@ export default function IndividualBusinessForm() {
               />
             </div>
             <div>
-              <Label className="block text-xs font-medium mb-1">{t("booking:form.price")}</Label>
+              <Label className="block text-xs font-medium mb-1">
+                {t("booking:form.price")}
+              </Label>
               <Input
                 type="number"
                 step="0.01"
@@ -505,7 +515,8 @@ export default function IndividualBusinessForm() {
                 <div className="flex-1">
                   <p className="font-medium">{service.name}</p>
                   <p className="text-sm text-gray-600">
-                    {service.price} ₾ • {service.duration} {t("booking:form.minutes")}
+                    {service.price} ₾ • {service.duration}{" "}
+                    {t("booking:form.minutes")}
                   </p>
                   {service.description && (
                     <p className="text-sm text-gray-500 mt-1">
@@ -541,7 +552,9 @@ export default function IndividualBusinessForm() {
 
       {/* Contact Info */}
       <div>
-        <Label className="block text-sm font-medium mb-2">{t("booking:form.phoneNumber")}</Label>
+        <Label className="block text-sm font-medium mb-2">
+          {t("booking:form.phoneNumber")}
+        </Label>
         <Input
           type="text"
           {...register("info.phoneNumber")}

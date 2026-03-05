@@ -34,6 +34,7 @@ import AvatarCropperModal from "@/features/profile/AvatarCropperModal";
 import BlurVerifiedUser from "@/features/profile/BlurVerifiedUser";
 import useUploadAvatar from "@/features/profile/useUploadAvatar";
 import useVerify from "@/features/profile/useVerify";
+import imageCompression from "browser-image-compression";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -141,27 +142,44 @@ function ProfileForm() {
   };
 
   const handleCropSuccess = async (croppedFile: File) => {
-    setPreviewAvatar(URL.createObjectURL(croppedFile));
+    try {
+      // 1. Настройки сжатия (максимум 100 КБ, размер не больше 400x400)
+      const options = {
+        maxSizeMB: 0.1,
+        maxWidthOrHeight: 400,
+        useWebWorker: true,
+      };
 
-    if (!isEditMode || profile?.status) {
-      uploadAvatar(
-        { avatar: croppedFile },
-        {
-          onSuccess: () => {
-            toast.success("Avatar successfully updated!", {
-              position: "top-center",
-            });
-            refetch();
-            queryClient.invalidateQueries({ queryKey: ["getUser"] });
+      // 2. Сжимаем файл, который пришел из кроппера
+      const compressedFile = await imageCompression(croppedFile, options);
+
+      // Показываем превью уже сжатой картинки
+      setPreviewAvatar(URL.createObjectURL(compressedFile));
+
+      // 3. Отправляем сжатый файл на сервер или сохраняем в форму
+      if (!isEditMode || profile?.status) {
+        uploadAvatar(
+          { avatar: compressedFile }, // Отправляем compressedFile вместо croppedFile
+          {
+            onSuccess: () => {
+              toast.success("Avatar successfully updated!", {
+                position: "top-center",
+              });
+              refetch();
+              queryClient.invalidateQueries({ queryKey: ["getUser"] });
+            },
+            onError: () => {
+              toast.error("Avatar didn't update");
+              setPreviewAvatar(null);
+            },
           },
-          onError: () => {
-            toast.error("Avatar didn't update");
-            setPreviewAvatar(null);
-          },
-        },
-      );
-    } else {
-      setValue("avatarFile", croppedFile, { shouldValidate: true });
+        );
+      } else {
+        setValue("avatarFile", compressedFile, { shouldValidate: true }); // Сохраняем compressedFile
+      }
+    } catch (error) {
+      console.error("Ошибка при сжатии картинки:", error);
+      toast.error("Error compressing image", { position: "top-center" });
     }
   };
 
@@ -224,7 +242,10 @@ function ProfileForm() {
           <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="relative">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={previewAvatar || profile?.avatar} />
+                <AvatarImage
+                  src={previewAvatar || profile?.avatar}
+                  alt={fullName}
+                />
                 <AvatarFallback className="text-4xl">
                   {fullName?.charAt(0).toUpperCase()}
                 </AvatarFallback>

@@ -44,6 +44,7 @@ export default function CreateBookingBusiness() {
   const handleClick = (type: string) => {
     setSearchParams((prevParams) => {
       prevParams.set("type", type);
+      prevParams.set("step", "1");
       return prevParams;
     });
     scrollToTop();

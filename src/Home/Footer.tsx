@@ -2,7 +2,7 @@ import { scrollToElement } from "@/utils";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 
 const contactInfo = [
@@ -63,12 +63,12 @@ function Footer() {
               <ul className="space-y-2">
                 {links.map((link, index) => (
                   <li key={index}>
-                    <a
+                    <Link
                       onClick={link.func}
                       className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                     >
                       {link.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -120,15 +120,24 @@ function Footer() {
         <div className="border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 text-sm">{t("footer.copyright")}</p>
           <div className="flex gap-6 text-sm">
-            <a className="text-slate-400 hover:text-white transition-colors">
+            <Link
+              to="/"
+              className="text-slate-400 hover:text-white transition-colors"
+            >
               {t("footer.links.privacyShort")}
-            </a>
-            <a className="text-slate-400 hover:text-white transition-colors">
+            </Link>
+            <Link
+              to="/"
+              className="text-slate-400 hover:text-white transition-colors"
+            >
               {t("footer.links.termsShort")}
-            </a>
-            <a className="text-slate-400 hover:text-white transition-colors">
+            </Link>
+            <Link
+              to="/"
+              className="text-slate-400 hover:text-white transition-colors"
+            >
               {t("footer.links.cookiesShort")}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

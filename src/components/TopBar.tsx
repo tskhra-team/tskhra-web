@@ -51,14 +51,14 @@ export default function TopBar() {
           <WithAxiosUser>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                <button className="outline-none rounded-full cursor-pointer hover:opacity-80 transition-opacity">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user?.avatar} />
+                    <AvatarImage src={user?.avatar} alt={fullName} />
                     <AvatarFallback>
                       {fullName?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                </div>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>{t("auth.myProfile")}</DropdownMenuLabel>

@@ -52,7 +52,7 @@ export default function Profile() {
           }`}
         >
           <Avatar className="h-20 w-20">
-            <AvatarImage src={profile?.avatar} />
+            <AvatarImage src={profile?.avatar} alt={fullName} />
             <AvatarFallback className="text-4xl">
               {fullName?.charAt(0).toUpperCase()}
             </AvatarFallback>
