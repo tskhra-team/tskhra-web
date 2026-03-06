@@ -1,35 +1,53 @@
+import { publicInstance } from "@/api";
+import type { ErrorResponse } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 
-import { publicInstance } from '@/api';
-import type { ErrorResponse } from '@/types';
-import { useQuery } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
-
-
-type BookingBusinessesType = {
-  businessName: string;
-  businessPhoto: string;
-  description: string | null;
+type BusinessType = {
   id: string;
+  businessName: string;
+  category: string;
+  subCategory: string;
   mainImageUrl: string;
-  callType: string;
+  galleryImages: string[];
   city: string;
-
-}
-
-
-const getBookingBusinesses = async () => {
-  const response = await publicInstance.get("/business/all");
-  console.log('lalall')
-  return response.data
+  addressDetail: string;
+  description?: string;
+  callType: "ONSITE" | "OUTCALL";
 };
 
-const useGetBookingBusinesses = () =>{
-  return useQuery<BookingBusinessesType[], AxiosError<ErrorResponse>> ({
-    queryFn: getBookingBusinesses,
-    queryKey: ["business-all"],
-    staleTime: 5 * 60 * 1000
-  })
-}
+type PaginatedBusinessesResponse = {
+  content: BusinessType[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
+};
 
+const getBookingBusinesses = async (
+  page: number,
+  size: number
+): Promise<PaginatedBusinessesResponse> => {
+  const response = await publicInstance.get("/business", {
+    params: {
+      page,
+      size,
+    },
+  });
+
+  return response.data;
+};
+
+const useGetBookingBusinesses = (page: number, size = 10) => {
+  return useQuery<PaginatedBusinessesResponse, AxiosError<ErrorResponse>>({
+    queryKey: ["businesses", page, size],
+    queryFn: () => getBookingBusinesses(page, size),
+    staleTime: 5 * 60 * 1000,
+  });
+};
 
 export default useGetBookingBusinesses;

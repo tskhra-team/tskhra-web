@@ -2,15 +2,19 @@ import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import useGetBookingBusinesses from "@/Booking/useGetBookingBusinesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { MapPin } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function BusinessCatalog() {
+  const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
-  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses();
+  const size = 12;
+  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses(page, size);
 
   // console.log("Businesses data:", businesses);
 
@@ -47,7 +51,7 @@ export default function BusinessCatalog() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {businesses?.map((business) => {
+        {businesses?.content.map((business) => {
           // console.log("Individual business:", business);
 
           return (
@@ -108,6 +112,20 @@ export default function BusinessCatalog() {
           );
         })}
       </div>
+
+      {/* Pagination */}
+      {businesses && businesses.totalPages > 1 && (
+        <div className="mt-8">
+          <PaginationControls
+            currentPage={page}
+            totalPages={businesses.totalPages}
+            onPageChange={(newPage) => {
+              setPage(newPage);
+              scrollToTop();
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
