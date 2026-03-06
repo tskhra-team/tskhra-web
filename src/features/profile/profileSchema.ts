@@ -1,61 +1,56 @@
 import * as yup from "yup";
 
-const profileSchema = yup.object().shape({
-  firstName: yup
-    .string()
-    .test(
-      "letters-only",
-      "First name must contain only letters",
-      (value) =>
-        !value ||
-        /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
-    )
-    .test(
-      "min-length",
-      "First name must be at least 2 characters",
-      (value) => !value || value.length >= 2,
-    )
-    .test(
-      "max-length",
-      "First name must be at most 50 characters",
-      (value) => !value || value.length <= 50,
-    )
-    .default(""),
-  lastName: yup
-    .string()
-    .test(
-      "letters-only",
-      "Last name must contain only letters",
-      (value) =>
-        !value ||
-        /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
-    )
-    .test(
-      "min-length",
-      "Last name must be at least 2 characters",
-      (value) => !value || value.length >= 2,
-    )
-    .test(
-      "max-length",
-      "Last name must be at most 50 characters",
-      (value) => !value || value.length <= 50,
-    )
-    .default(""),
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const SUPPORTED_FORMATS = [
+  "image/jpg",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+
+const nameValidation = yup
+  .string()
+  .test(
+    "letters-only",
+    "Must contain only letters",
+    (value) =>
+      !value ||
+      /^[a-zA-Z\u00C0-\u024F\u0400-\u04FF\u10A0-\u10FF]*$/.test(value),
+  )
+  .min(2, "Must be at least 2 characters")
+  .max(50, "Must be at most 50 characters")
+  .default("");
+
+const avatarFileValidation = yup
+  .mixed<File>()
+  .default(undefined)
+  .nullable()
+  .optional()
+  .test("fileSize", "File size can't be more than 5MB", (value) => {
+    if (!value) return true;
+    return value.size <= MAX_FILE_SIZE;
+  })
+  .test("fileFormat", "Unsupported file format", (value) => {
+    if (!value) return true;
+    return SUPPORTED_FORMATS.includes(value.type);
+  });
+
+const AvatarType = yup.object().shape({
+  avatarFile: avatarFileValidation,
+});
+
+const profileSchema = yup.object({
+  firstName: nameValidation,
+  lastName: nameValidation,
+
   gender: yup
     .string()
-    .test(
-      "valid-gender",
-      "Please select a valid gender",
-      (value) => !value || ["MALE", "FEMALE", "OTHER"].includes(value),
-    )
+    .oneOf(["MALE", "FEMALE", "OTHER", ""], "Please select a valid gender")
     .default(""),
+
   birthDate: yup
     .date()
-    .test(
-      "max-date",
-      "Birth date cannot be in the future",
-      (value) => !value || value <= new Date(),
-    )
+    .max(new Date(), "Birth date cannot be in the future")
     .test("min-age", "You must be at least 16 years old", (value) => {
       if (!value) return true;
       const today = new Date();
@@ -70,27 +65,45 @@ const profileSchema = yup.object().shape({
         age--;
       }
 
-      return age >= 12;
+      return age >= 16;
     })
-    .default(new Date(new Date().getFullYear() - 16, 11)),
+    .default(() => new Date(new Date().getFullYear() - 16, 11)),
+
   phoneCountryCode: yup
     .string()
     .required("Country code is required")
     .default(""),
+
   phoneNumber: yup
     .string()
-    .test(
-      "numbers-only",
-      "Phone number must contain only numbers",
-      (value) => !value || /^[0-9]*$/.test(value),
-    )
-    .test(
-      "phone-length",
-      "Phone number must be exactly 9 digits",
-      (value) => !value || value.length === 9,
-    )
+    .matches(/^[0-9]*$/, "Phone number must contain only numbers")
+    .length(9, "Phone number must be exactly 9 digits")
     .default(""),
+
+  avatarFile: avatarFileValidation,
 });
 
-type ProfileFormData = yup.InferType<typeof profileSchema>;
-export { profileSchema, type ProfileFormData };
+// Manually define the type because yup.InferType doesn't support optional properties (?)
+// This matches the runtime behavior of the schema
+type ProfileFormData = {
+  firstName: string;
+  lastName: string;
+  gender: "" | "MALE" | "FEMALE" | "OTHER";
+  birthDate: Date;
+  phoneCountryCode: string;
+  phoneNumber: string;
+  avatarFile?: File | null | undefined; // Optional property for form
+};
+
+// For API calls, omit avatarFile since it's uploaded separately
+type ProfileUpdateData = Omit<ProfileFormData, "avatarFile">;
+
+type AvatarTypeData = yup.InferType<typeof AvatarType>;
+
+export {
+  AvatarType,
+  profileSchema,
+  type AvatarTypeData,
+  type ProfileFormData,
+  type ProfileUpdateData,
+};

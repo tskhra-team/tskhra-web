@@ -1,10 +1,10 @@
 import { privateInstance } from "@/api";
-import type { ProfileFormData } from "@/features/profile/profileSchema";
+import type { ProfileUpdateData } from "@/features/profile/profileSchema";
 import type { ErrorResponse, ProfileType } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-const updateProfile = async (data: ProfileFormData) => {
+const updateProfile = async (data: ProfileUpdateData) => {
   const { birthDate, ...rest } = data;
   const updateData = {
     birthDate: data.birthDate
@@ -18,7 +18,7 @@ const updateProfile = async (data: ProfileFormData) => {
 };
 
 const useUpdateProfile = () => {
-  return useMutation<ProfileType, AxiosError<ErrorResponse>, ProfileFormData>({
+  return useMutation<ProfileType, AxiosError<ErrorResponse>, ProfileUpdateData>({
     mutationFn: updateProfile,
   });
 };

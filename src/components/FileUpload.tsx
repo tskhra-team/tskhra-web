@@ -9,6 +9,9 @@ interface FileUploadProps {
   maxFiles?: number;
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 export default function FileUpload({
   value = [],
   onChange,
@@ -31,10 +34,36 @@ export default function FileUpload({
       return;
     }
 
-    const updatedFiles = [...value, ...incomingFiles];
+    // Validate each file
+    const validFiles: File[] = [];
+    for (const file of incomingFiles) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`File "${file.name}" is too large. Maximum size is 5MB`, {
+          position: "top-center",
+        });
+        continue;
+      }
+
+      // Check file type
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        toast.error(`File "${file.name}" has invalid type. Only JPEG, PNG and WebP images are allowed`, {
+          position: "top-center",
+        });
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) {
+      return;
+    }
+
+    const updatedFiles = [...value, ...validFiles];
     onChange(updatedFiles);
 
-    incomingFiles.forEach((file) => {
+    validFiles.forEach((file) => {
       let progress = 0;
       const interval = setInterval(() => {
         progress += Math.random() * 30;

@@ -365,7 +365,7 @@ interface WorkingScheduleProps {
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 export default function WorkingSchedule({
-  workTimes = [], // Добавили дефолтное значение
+  workTimes = [],
   restTimes = [],
   onWorkTimesChange,
   onRestTimesChange,

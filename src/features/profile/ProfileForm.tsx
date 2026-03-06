@@ -23,26 +23,35 @@ import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar as CalendarIcon, Check, Pencil } from "lucide-react";
-import { memo, useEffect, useMemo, useState } from "react";
-import Avatar from "react-avatar";
+import { useEffect, useMemo, useRef, useState } from "react";
+
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-// Memoize Avatar to prevent unnecessary re-renders
-const MemoizedAvatar = memo(Avatar);
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AvatarCropperModal from "@/features/profile/AvatarCropperModal";
 import BlurVerifiedUser from "@/features/profile/BlurVerifiedUser";
+import useUploadAvatar from "@/features/profile/useUploadAvatar";
 import useVerify from "@/features/profile/useVerify";
+import imageCompression from "browser-image-compression";
 
 function ProfileForm() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { data: profile, refetch } = useGetProfile();
-  const { mutate: updateProfile, isPending } = useUpdateProfile();
+  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const [timeZone, setTimeZone] = useState<string>();
   const { t } = useTranslation("profile");
   const { mutate: verifyUser } = useVerify();
+  const { mutate: uploadAvatar, isPending: isUploading } = useUploadAvatar();
+
+  const isPending = isUpdating || isUploading;
+
+  // STATES FOR CROPPING PHOTO
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
 
   const fullName = useMemo(() => {
     if (profile?.firstName && profile?.lastName) {
@@ -58,59 +67,164 @@ function ProfileForm() {
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
   }, []);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<ProfileFormData>({
+  const form = useForm({
     resolver: yupResolver(profileSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
-      gender: "",
+      gender: undefined,
       phoneNumber: "",
       birthDate: new Date(),
+      avatarFile: undefined,
     },
   });
+
+  const { register, handleSubmit, control, reset, setValue, formState: { errors } } = form;
 
   // Update form when profile data loads
   useEffect(() => {
     if (profile) {
       reset({
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        gender: profile.gender,
+        firstName: profile.firstName ?? "",
+        lastName: profile.lastName ?? "",
+        gender: profile.gender as "MALE" | "FEMALE" | "OTHER" | undefined,
         birthDate: profile.birthDate
           ? new Date(profile.birthDate)
-          : new Date(new Date().getFullYear() - 8, 11),
+          : new Date(new Date().getFullYear() - 16, 11),
         phoneCountryCode: "+995",
-        phoneNumber: profile.phoneNumber?.slice(4),
+        phoneNumber: profile.phoneNumber?.slice(4) ?? "",
       });
+      setPreviewAvatar(null);
     }
   }, [profile, reset]);
 
-  const onSubmit = (data: ProfileFormData) => {
-    updateProfile(data, {
-      onSuccess: () => {
-        setIsEditMode(false);
-        refetch();
-        queryClient.invalidateQueries({
-          queryKey: ["getUser"],
-        });
-        toast.success(t("form.messages.updateSuccess"), {
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      // Validate file size (4MB max)
+      const MAX_FILE_SIZE = 5 * 1024 * 1024;
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error("File size can't be more than 5MB", {
           position: "top-center",
         });
+        e.target.value = "";
+        return;
+      }
+
+      // Validate file format
+      const SUPPORTED_FORMATS = [
+        "image/jpg",
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!SUPPORTED_FORMATS.includes(file.type)) {
+        toast.error("Unsupported file format. Please use JPG, PNG, or WEBP", {
+          position: "top-center",
+        });
+        e.target.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setImageSrc(reader.result?.toString() || null);
+      });
+      reader.readAsDataURL(file);
+      e.target.value = "";
+    }
+  };
+
+  const handleCropSuccess = async (croppedFile: File) => {
+    try {
+      const options = {
+        maxSizeMB: 0.1,
+        maxWidthOrHeight: 400,
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(croppedFile, options);
+
+      setPreviewAvatar(URL.createObjectURL(compressedFile));
+
+      if (!isEditMode || profile?.status) {
+        uploadAvatar(
+          { avatar: compressedFile },
+          {
+            onSuccess: () => {
+              toast.success("Avatar successfully updated!", {
+                position: "top-center",
+              });
+              refetch();
+              queryClient.invalidateQueries({ queryKey: ["getUser"] });
+            },
+            onError: () => {
+              toast.error("Avatar didn't update");
+              setPreviewAvatar(null);
+            },
+          },
+        );
+      } else {
+        setValue("avatarFile", compressedFile, { shouldValidate: true }); // Сохраняем compressedFile
+      }
+    } catch (error) {
+      console.error("Ошибка при сжатии картинки:", error);
+      toast.error("Error compressing image", { position: "top-center" });
+    }
+  };
+
+  const handleSuccessFinish = () => {
+    setIsEditMode(false);
+    refetch();
+    queryClient.invalidateQueries({ queryKey: ["getUser"] });
+    toast.success(t("form.messages.updateSuccess"), { position: "top-center" });
+  };
+
+  const onSubmit = (data: ProfileFormData) => {
+    const { avatarFile, ...profileData } = data;
+
+    updateProfile(profileData, {
+      onSuccess: () => {
+        if (avatarFile) {
+          uploadAvatar(
+            { avatar: avatarFile },
+            {
+              onSuccess: () => {
+                handleSuccessFinish();
+              },
+              onError: () => {
+                toast.error("Profile is updated, but avatar didn't update");
+                handleSuccessFinish();
+              },
+            },
+          );
+        } else {
+          handleSuccessFinish();
+        }
       },
       onError: () => {
         toast.error(t("form.messages.updateError"));
       },
     });
   };
-
   return (
     <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={onFileChange}
+        accept="image/png, image/jpeg, image/webp"
+        className="hidden"
+      />
+
+      {/* НОВОЕ: МОДАЛКА КРОППЕРА */}
+      <AvatarCropperModal
+        imageSrc={imageSrc}
+        onClose={() => setImageSrc(null)}
+        onSave={handleCropSuccess}
+      />
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4 md:space-y-6 bg-linear-to-br from-gray-50 to-blue-50/30 px-4 md:px-6 py-8 rounded-2xl"
@@ -118,32 +232,22 @@ function ProfileForm() {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="relative">
-              <MemoizedAvatar
-                // name={fullName}
-                src={profile?.avatar}
-                size="60"
-                round
-                className="md:w-20! md:h-20!"
-              />
+              <Avatar className="h-20 w-20">
+                <AvatarImage
+                  src={previewAvatar || profile?.avatar}
+                  alt={fullName}
+                />
+                <AvatarFallback className="text-4xl">
+                  {fullName?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               {isEditMode && (
                 <button
                   type="button"
+                  onClick={() => fileInputRef.current?.click()}
                   className="absolute bottom-0 right-0 bg-gray-200 rounded-full p-1.5 md:p-2 hover:bg-gray-300"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="md:w-4 md:h-4"
-                  >
-                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                  </svg>
+                  <Pencil className="md:w-4 md:h-4 w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -152,11 +256,22 @@ function ProfileForm() {
                 {t("form.hello")},
               </p>
               <p className="text-lg md:text-2xl font-semibold">{fullName}</p>
+              {errors.avatarFile && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.avatarFile.message}
+                </p>
+              )}
             </div>
           </div>
 
           {profile?.status ? (
-            <Button type="button" variant="link" className="cursor-pointer">
+            <Button
+              type="button"
+              variant="link"
+              className="cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Pencil className="h-4 w-4" />
               {t("form.changePrfPic")}
             </Button>
           ) : !isEditMode ? (
@@ -178,6 +293,7 @@ function ProfileForm() {
                 onClick={() => {
                   setIsEditMode(false);
                   reset();
+                  setPreviewAvatar(null);
                 }}
               >
                 {t("form.cancel")}

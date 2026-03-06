@@ -1,4 +1,4 @@
-import ServicesCatalog from "@/Booking/BusinessCatalog";
+import BusinessCatalog from "@/Booking/BusinessCatalog";
 import CategoriesLayout from "@/shared/categories/Categories";
 import Slider from "./../shared/slider/slider";
 
@@ -13,7 +13,7 @@ export default function Booking() {
           <Slider />
         </div>
       </div>
-      <ServicesCatalog/>
+      <BusinessCatalog />
     </div>
   );
 }

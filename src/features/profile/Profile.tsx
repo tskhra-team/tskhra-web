@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   HistoryTabSkeleton,
@@ -6,8 +7,8 @@ import {
 } from "@/features/profile/LoadingSkeletons";
 import useGetProfile from "@/features/profile/useGetProfile";
 import { History, Settings, UserCircle } from "lucide-react";
-import { lazy, memo, Suspense } from "react";
-import Avatar from "react-avatar";
+import { lazy, Suspense } from "react";
+
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
@@ -17,8 +18,6 @@ const HistoryTab = lazy(() => import("@/features/profile/HistoryTab"));
 const ProfileForm = lazy(() => import("@/features/profile/ProfileForm"));
 
 // Memoize Avatar to prevent unnecessary re-renders
-const MemoizedAvatar = memo(Avatar);
-
 export default function Profile() {
   const { data: profile } = useGetProfile();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,13 +51,12 @@ export default function Profile() {
               : "opacity-0 -translate-y-4 pointer-events-none absolute"
           }`}
         >
-          <MemoizedAvatar
-            name={fullName}
-            src={profile?.avatar}
-            size="60"
-            round
-            className="md:w-20! md:h-20!"
-          />
+          <Avatar className="h-20 w-20">
+            <AvatarImage src={profile?.avatar} alt={fullName} />
+            <AvatarFallback className="text-4xl">
+              {fullName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex flex-col flex-1">
             <p className="text-xl md:text-2xl font-semibold">{fullName}</p>
             <p className="text-sm md:text-base text-gray-600">

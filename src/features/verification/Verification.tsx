@@ -36,7 +36,7 @@ type VerificationFormData = {
   lastName: string;
   birthDate: string;
   personalID: string;
-  gender: string;
+  gender: "MALE" | "FEMALE";
   idCardFront: File | null;
   facePhoto: File | null;
 };
@@ -47,7 +47,10 @@ const validationSchema = yup.object({
   lastName: yup.string().required("Last name is required"),
   birthDate: yup.string().required("Birth date is required"),
   personalID: yup.string().required("Personal ID is required"),
-  gender: yup.string().required("Gender is required"),
+  gender: yup
+    .string()
+    .oneOf(["MALE", "FEMALE"], "Gender must be either MALE or FEMALE")
+    .required("Gender is required"),
   idCardFront: yup
     .mixed()
     .test(
@@ -98,7 +101,7 @@ export default function Verification() {
       lastName: "",
       birthDate: "",
       personalID: "",
-      gender: "",
+      gender: "MALE",
       idCardFront: null,
       facePhoto: null,
     },

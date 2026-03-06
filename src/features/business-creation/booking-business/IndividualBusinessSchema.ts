@@ -1,9 +1,8 @@
 import type { TFunction } from "i18next";
 import * as yup from "yup";
 
-const MAX_FILE_SIZE = 4 * 1024 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-// Export service schema creator for reuse in forms
 export const createServiceSchema = (t: TFunction) => {
   return yup.object().shape({
     name: yup
@@ -39,28 +38,25 @@ export const createServiceSchema = (t: TFunction) => {
   });
 };
 
+// Schema for Step 1 - Business Information
 export const createIndividualBusinessSchema = (t: TFunction) => {
+  const ALLOWED_FILE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
+
   const fileValidation = yup
     .mixed<File>()
     .test("fileSize", t("booking:validation.fileSizeTooLarge"), (value) => {
       if (!value) return true;
       return value.size <= MAX_FILE_SIZE;
+    })
+    .test("fileType", t("booking:validation.fileTypeInvalid"), (value) => {
+      if (!value) return true;
+      return ALLOWED_FILE_TYPES.includes(value.type);
     });
-
-  const imagesSchema = yup.object().shape({
-    businessPhoto: yup
-      .array()
-      .of(fileValidation.required())
-      .min(1, t("booking:validation.businessPhotoRequired"))
-      .max(1, t("booking:validation.businessPhotoMax"))
-      .required(t("booking:validation.businessPhotoRequired")),
-    galleryPhoto: yup
-      .array()
-      .of(fileValidation.required())
-      .min(1, t("booking:validation.galleryPhotoMin"))
-      .max(4, t("booking:validation.galleryPhotoMax"))
-      .required(t("booking:validation.galleryPhotoMin")),
-  });
 
   const workTimesSchema = yup.object().shape({
     weekDay: yup.string().required(t("booking:validation.weekDayRequired")),
@@ -96,8 +92,6 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       ),
   });
 
-  const serviceSchema = createServiceSchema(t);
-
   const infoSchema = yup.object({
     phoneNumber: yup.string().optional(),
     instagramUrl: yup.string().optional(),
@@ -111,12 +105,12 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .min(2, t("booking:validation.businessNameMin"))
       .max(40, t("booking:validation.businessNameMax")),
     callType: yup
-      .mixed<"outcall" | "onsite" | "both">()
-      .oneOf(["outcall", "onsite", "both"])
+      .mixed<"OUTCALL" | "ONSITE" | "BOTH">()
+      .oneOf(["OUTCALL", "ONSITE", "BOTH"])
       .required(t("booking:validation.callTypeRequired")),
     city: yup.string().required(t("booking:validation.cityRequired")),
-    address: yup.string().when("callType", {
-      is: (val: string) => val !== "outcall",
+    addressDetails: yup.string().when("callType", {
+      is: (val: string) => val !== "OUTCALL",
       then: (schema) =>
         schema.required(t("booking:validation.addressRequired")),
       otherwise: (schema) => schema.optional(),
@@ -126,7 +120,6 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .required(t("booking:validation.descriptionRequired"))
       .min(10, t("booking:validation.descriptionMin"))
       .max(250, t("booking:validation.descriptionMax")),
-    images: imagesSchema.required(t("booking:validation.photosRequired")),
     mainCategory: yup
       .string()
       .required(t("booking:validation.mainCategoryRequired")),
@@ -139,100 +132,74 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .min(1, t("booking:validation.workTimesMin"))
       .required(),
     restTimes: yup.array().of(workTimesSchema).optional(),
-    services: yup
-      .array()
-      .of(serviceSchema)
-      .min(1, t("booking:validation.servicesMin"))
-      .required(),
     info: infoSchema.required(),
+    images: yup.object().shape({
+      businessPhoto: yup
+        .array()
+        .of(fileValidation.required())
+        .min(1, t("booking:validation.businessPhotoRequired"))
+        .max(1, t("booking:validation.businessPhotoMax"))
+        .required(t("booking:validation.businessPhotoRequired")),
+      galleryPhoto: yup
+        .array()
+        .of(fileValidation.required())
+        .min(1, t("booking:validation.galleryPhotoMin"))
+        .max(4, t("booking:validation.galleryPhotoMax"))
+        .required(t("booking:validation.galleryPhotoMin")),
+    }),
   });
 };
 
-// Legacy export for backward compatibility (will use default English messages)
-const IndividualBusiessSchema = yup.object().shape({
-  businessName: yup
-    .string()
-    .required("Business name is required")
-    .min(2, "Business Name should contain at least 2 characters")
-    .max(40, "Business Name can't contain more than 40 symbols"),
-  callType: yup
-    .mixed<"outcall" | "onsite" | "both">()
-    .oneOf(["outcall", "onsite", "both"])
-    .required("Call type is required"),
-  city: yup.string().required("City is required"),
-  address: yup.string().when("callType", {
-    is: (val: string) => val !== "outcall",
-    then: (schema) =>
-      schema.required("Address is required when not an outcall"),
-    otherwise: (schema) => schema.optional(),
-  }),
-  description: yup
-    .string()
-    .required("Description is required")
-    .min(10, "Description should contain at least 10 characters")
-    .max(250, "Description can't contain more than 250 characters"),
-  images: yup
-    .object()
-    .shape({
-      businessPhoto: yup
-        .array()
-        .min(1, "Business photo is required")
-        .max(1, "You can upload only 1 business photo")
-        .required("Business photo is required"),
-      galleryPhoto: yup
-        .array()
-        .min(1, "At least one gallery photo is required")
-        .max(4, "You can upload up to 4 photos only")
-        .required("At least one gallery photo is required"),
-    })
-    .required("Photos are required"),
-  mainCategory: yup.string().required("Main category is required"),
-  subCategory: yup.string().required("Sub category is required"),
-  workTimes: yup
-    .array()
-    .min(1, "You need to add at least one working day")
-    .required(),
-  restTimes: yup.array().optional(),
-  services: yup
-    .array()
-    .min(1, "You need to add at least one service")
-    .required(),
-  info: yup
-    .object({
-      phoneNumber: yup.string().optional(),
-      instagramUrl: yup.string().optional(),
-      facebookUrl: yup.string().optional(),
-    })
-    .required(),
-});
+// Schema for Step 2 - Services
+export const createServicesFormSchema = (t: TFunction) => {
+  return yup.object().shape({
+    services: yup
+      .array()
+      .of(createServiceSchema(t))
+      .min(1, t("booking:validation.servicesMin"))
+      .required(),
+  });
+};
 
-type IndividualBusinessFormData = yup.InferType<typeof IndividualBusiessSchema>;
-type InfoType = {
+// Types
+export type InfoType = {
   phoneNumber?: string;
   instagramUrl?: string;
   facebookUrl?: string;
 };
-type ServiceType = {
+
+export type ServiceType = {
   name: string;
   price: number;
   duration: number;
   description?: string;
 };
-type WorkTimeType = {
+
+export type WorkTimeType = {
   weekDay: string;
   startTime: number;
   endTime: number;
 };
-type ImagesType = {
+
+export type ImagesType = {
   businessPhoto: File[];
   galleryPhoto: File[];
 };
 
-export {
-  IndividualBusiessSchema,
-  type ImagesType,
-  type IndividualBusinessFormData,
-  type InfoType,
-  type ServiceType,
-  type WorkTimeType,
+export type IndividualBusinessFormData = {
+  businessName: string;
+  callType: "OUTCALL" | "ONSITE" | "BOTH";
+  city: string;
+  addressDetails: string;
+  description: string;
+  mainCategory: string;
+  subCategory: string;
+  workTimes: WorkTimeType[];
+  restTimes?: WorkTimeType[];
+  info: InfoType;
+  images: ImagesType;
+};
+
+export type ServicesFormData = {
+  services: ServiceType[];
 };

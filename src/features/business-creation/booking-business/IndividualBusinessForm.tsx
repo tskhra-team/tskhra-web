@@ -9,35 +9,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useModal } from "@/context/ModalContext";
 import {
   createIndividualBusinessSchema,
-  createServiceSchema,
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
-import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
-import { useCategories } from "@/shared/categories/useCategories";
+import useGetCitites from "@/shared/api/useGetCities";
+import useGetMainBookingCategories from "@/shared/api/useGetMainBookingCategories";
+import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import { scrollToTop } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import ServiceFormSkeleton from "./ServiceFormSkeleton";
-import useCreaetIndividualBusiness from "./useCreateIndividualBusiness";
-import useUploadPhotos from "./useUploadPhotos";
+import useCreateIndividualBusiness from "./useCreateIndividualBusiness";
+import useUploadBusinessPhotos from "./useUploadBusinessPhotos";
 import WorkingSchedule from "./WorkingSchedule";
 
 export default function IndividualBusinessForm() {
-  const { t } = useTranslation(["categories", "booking"]);
-  const { data: categories, isLoading } = useCategories("booking");
-  const createBusiness = useCreaetIndividualBusiness();
-  const uploadPhotos = useUploadPhotos();
+  const { t } = useTranslation(["booking"]);
+  const navigate = useNavigate();
 
-  const [newService, setNewService] = useState({
-    name: "",
-    price: 0,
-    duration: 0,
-    description: "",
-  });
-  const [serviceError, setServiceError] = useState("");
+  const { mutate: createBusiness, isPending: isCreating } =
+    useCreateIndividualBusiness();
+  const { mutate: uploadPhotos, isPending: isUploading } =
+    useUploadBusinessPhotos();
+  const { data: cities, isLoading: isLoadingCities } = useGetCitites();
+  const { data: categories, isLoading: isLoadingCategories } =
+    useGetMainBookingCategories();
+  const { data: subCategories, isLoading: isLoadingSubCategories } =
+    useGetSubBookingCategories();
+
+  const { showModal, closeModal } = useModal();
 
   const {
     register,
@@ -52,7 +56,7 @@ export default function IndividualBusinessForm() {
       businessName: "",
       callType: undefined,
       city: "",
-      address: "",
+      addressDetails: "",
       description: "",
       images: {
         businessPhoto: [],
@@ -62,7 +66,6 @@ export default function IndividualBusinessForm() {
       subCategory: "",
       workTimes: [],
       restTimes: [],
-      services: [],
       info: {
         phoneNumber: "",
         facebookUrl: "",
@@ -73,61 +76,77 @@ export default function IndividualBusinessForm() {
 
   const callType = watch("callType");
   const mainCategory = watch("mainCategory");
-  const services = watch("services");
-  const selectedCategory = categories?.find((cat) => cat.name === mainCategory);
 
-  const addService = async () => {
-    setServiceError("");
+  const onSubmit = (data: IndividualBusinessFormData) => {
+    // Show loading modal
+    showModal("pending", "Uploading photos...", "Please wait");
 
-    try {
-      // Validate using the service schema
-      await createServiceSchema(t).validate(newService, { abortEarly: false });
+    // Step 1: Upload photos
+    const allPhotos = [
+      ...data.images.businessPhoto,
+      ...data.images.galleryPhoto,
+    ];
 
-      const currentServices = services || [];
-      setValue("services", [
-        ...currentServices,
-        {
-          name: newService.name,
-          price: newService.price,
-          duration: newService.duration,
-          description: newService.description,
-        },
-      ]);
+    uploadPhotos(allPhotos, {
+      onSuccess: (photoResult) => {
+        // Update modal for creating business
+        showModal("pending", "Creating business...", "Almost done");
 
-      setNewService({ name: "", price: 0, duration: 0, description: "" });
-    } catch (error: any) {
-      // Display the first validation error
-      if (error.errors && error.errors.length > 0) {
-        setServiceError(error.errors[0]);
-      } else {
-        setServiceError(error.message);
-      }
-    }
-  };
+        // Step 2: Create business with photo IDs
+        const businessData = {
+          businessName: data.businessName,
+          callType: data.callType,
+          city: data.city,
+          addressDetails: data.addressDetails,
+          description: data.description,
+          mainCategory: data.mainCategory,
+          subCategory: data.subCategory,
+          workTimes: data.workTimes,
+          restTimes: data.restTimes,
+          info: data.info,
+          mainPhotoId: photoResult.mainPhotoId,
+          galleryPhotoIds: photoResult.galleryPhotoIds,
+        };
 
-  const removeService = (index: number) => {
-    const currentServices = services || [];
-    setValue(
-      "services",
-      currentServices.filter((_, i) => i !== index),
-    );
-  };
-
-  const onSubmit = async (data: IndividualBusinessFormData) => {
-    try {
-      const result = await createBusiness.mutateAsync(data);
-      // if (result.businessId && data.images) {
-      //   await uploadPhotos.mutateAsync({
-      //     businessId: result.businessId,
-      //     data,
-      //   });
-      // }
-      console.log(result);
-      alert(t("booking:messages.successPublished"));
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(t("booking:messages.error"));
-    }
+        createBusiness(businessData as any, {
+          onSuccess: (result) => {
+            // Step 3: Save businessId to localStorage and navigate to step 2
+            closeModal();
+            localStorage.setItem("businessId", result.businessId);
+            showModal(
+              "success",
+              "Congratulations!",
+              "Your business was successfully created, go and add your services!",
+              "Add services",
+              () => {
+                navigate(
+                  "/create-business?business=booking&type=individual&step=2",
+                );
+                scrollToTop();
+              },
+            );
+          },
+          onError: () => {
+            closeModal();
+            showModal(
+              "error",
+              "Something went worng",
+              t("booking:messages.error"),
+              "Try again",
+            );
+          },
+        });
+      },
+      onError: () => {
+        closeModal();
+        showModal(
+          "error",
+          "Something went wrong",
+          t("booking:messages.error"),
+          "Try again",
+        );
+      },
+    });
   };
 
   const handleCategoryChange = (value: string) => {
@@ -135,7 +154,7 @@ export default function IndividualBusinessForm() {
     setValue("subCategory", "");
   };
 
-  if (isLoading) {
+  if (isLoadingCategories || isLoadingSubCategories || isLoadingCities) {
     return <ServiceFormSkeleton />;
   }
 
@@ -169,24 +188,24 @@ export default function IndividualBusinessForm() {
             <div className="flex gap-2">
               <Button
                 type="button"
-                variant={field.value === "outcall" ? "default" : "outline"}
-                onClick={() => field.onChange("outcall")}
+                variant={field.value === "OUTCALL" ? "default" : "outline"}
+                onClick={() => field.onChange("OUTCALL")}
                 className="flex-1"
               >
                 {t("booking:form.callType.outcall")}
               </Button>
               <Button
                 type="button"
-                variant={field.value === "onsite" ? "default" : "outline"}
-                onClick={() => field.onChange("onsite")}
+                variant={field.value === "ONSITE" ? "default" : "outline"}
+                onClick={() => field.onChange("ONSITE")}
                 className="flex-1"
               >
                 {t("booking:form.callType.onsite")}
               </Button>
               <Button
                 type="button"
-                variant={field.value === "both" ? "default" : "outline"}
-                onClick={() => field.onChange("both")}
+                variant={field.value === "BOTH" ? "default" : "outline"}
+                onClick={() => field.onChange("BOTH")}
                 className="flex-1"
               >
                 {t("booking:form.callType.both")}
@@ -207,7 +226,24 @@ export default function IndividualBusinessForm() {
           <Label className="block text-lg font-medium mb-2">
             {t("booking:form.city")}
           </Label>
-          <Input {...register("city")} placeholder={t("booking:form.city")} />
+          <Controller
+            name="city"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full" style={{ height: "44px" }}>
+                  <SelectValue placeholder={t("booking:form.city")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities?.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.city && (
             <p className="text-xs text-red-500 font-bold mt-2">
               {errors.city.message}
@@ -219,14 +255,14 @@ export default function IndividualBusinessForm() {
             {t("booking:form.address")}
           </Label>
           <Input
-            {...register("address")}
-            disabled={callType === "outcall"}
+            {...register("addressDetails")}
+            disabled={callType === "OUTCALL"}
             placeholder={t("booking:form.addressPlaceholder")}
           />
 
-          {errors.address && callType !== "outcall" && (
+          {errors.addressDetails && callType !== "OUTCALL" && (
             <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.address.message}
+              {errors.addressDetails.message}
             </p>
           )}
         </div>
@@ -250,55 +286,6 @@ export default function IndividualBusinessForm() {
         )}
       </div>
 
-      {/* Main Image */}
-      <div className="mb-12">
-        <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.mainImage")}
-        </Label>
-        <Controller
-          name="images.businessPhoto"
-          control={control}
-          render={({ field }) => (
-            <FileUpload
-              value={field.value}
-              onChange={field.onChange}
-              maxFiles={1}
-            />
-          )}
-        />
-        {errors.images?.businessPhoto && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.images.businessPhoto.message}
-          </p>
-        )}
-      </div>
-
-      {/* Gallery Images */}
-      <div className="mb-14">
-        <Label className="block text-lg font-medium mb-2 mt-4">
-          {t("booking:form.galleryImages")}
-        </Label>
-        <Controller
-          name="images.galleryPhoto"
-          control={control}
-          render={({ field }) => (
-            <FileUpload
-              value={field.value}
-              onChange={field.onChange}
-              maxFiles={4}
-            />
-          )}
-        />
-        {errors.images?.galleryPhoto && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.images.galleryPhoto.message}
-          </p>
-        )}
-        <p className="text-xs text-gray-500 mt-1">
-          {t("booking:form.galleryHelp")}
-        </p>
-      </div>
-
       {/* Category Selection */}
       <div className="grid grid-cols-2 gap-4 mb-12">
         <div>
@@ -320,17 +307,11 @@ export default function IndividualBusinessForm() {
                   <SelectValue placeholder={t("booking:form.category")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories?.map((category) => {
-                    const translationKey = categoryNameToKey[category.name];
-                    const displayName = translationKey
-                      ? t(`categories:${translationKey}`)
-                      : category.name;
-                    return (
-                      <SelectItem key={category.name} value={category.name}>
-                        {displayName}
-                      </SelectItem>
-                    );
-                  })}
+                  {categories?.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -359,20 +340,12 @@ export default function IndividualBusinessForm() {
                   <SelectValue placeholder={t("booking:form.subcategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {selectedCategory?.childItems?.map((subcategory) => {
-                    const translationKey = categoryNameToKey[subcategory.name];
-                    const displayName = translationKey
-                      ? t(`categories:${translationKey}`)
-                      : subcategory.name;
-                    return (
-                      <SelectItem
-                        key={subcategory.name}
-                        value={subcategory.name}
-                      >
-                        {displayName}
+                  {mainCategory &&
+                    subCategories?.[mainCategory]?.map((subcategory) => (
+                      <SelectItem key={subcategory} value={subcategory}>
+                        {subcategory}
                       </SelectItem>
-                    );
-                  })}
+                    ))}
                 </SelectContent>
               </Select>
             )}
@@ -420,155 +393,76 @@ export default function IndividualBusinessForm() {
         </p>
       </div>
 
-      {/* Services */}
-      <div className="mb-16">
+      {/* Main Image */}
+      <div className="mb-12">
         <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.services")}
+          {t("booking:form.mainImage")}
         </Label>
-
-        {/* Add Service Form */}
-        <div className="border rounded-md p-4 mb-4 space-y-3 bg-muted/20">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <Label className="block text-xs font-medium mb-1">
-                {t("booking:form.serviceName")}
-              </Label>
-              <Input
-                value={newService.name}
-                onChange={(e) =>
-                  setNewService({ ...newService, name: e.target.value })
-                }
-                placeholder={t("booking:form.serviceNamePlaceholder")}
-              />
-            </div>
-            <div>
-              <Label className="block text-xs font-medium mb-1">
-                {t("booking:form.price")}
-              </Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={newService.price || ""}
-                onChange={(e) =>
-                  setNewService({
-                    ...newService,
-                    price: Number(e.target.value),
-                  })
-                }
-                placeholder={t("booking:form.pricePlaceholder")}
-              />
-            </div>
-            <div>
-              <Label className="block text-xs font-medium mb-1">
-                {t("booking:form.duration")}
-              </Label>
-              <Input
-                type="number"
-                step="5"
-                min="5"
-                value={newService.duration || ""}
-                onChange={(e) =>
-                  setNewService({
-                    ...newService,
-                    duration: Number(e.target.value),
-                  })
-                }
-                placeholder={t("booking:form.durationPlaceholder")}
-              />
-            </div>
-          </div>
-          <div>
-            <Label className="block text-xs font-medium mb-1">
-              {t("booking:form.serviceDescription")}
-            </Label>
-            <Input
-              value={newService.description}
-              onChange={(e) =>
-                setNewService({ ...newService, description: e.target.value })
-              }
-              placeholder={t("booking:form.serviceDescriptionPlaceholder")}
+        <Controller
+          name="images.businessPhoto"
+          control={control}
+          render={({ field }) => (
+            <FileUpload
+              value={field.value}
+              onChange={field.onChange}
+              maxFiles={1}
             />
-          </div>
-          <Button
-            type="button"
-            onClick={addService}
-            className="w-full"
-            variant="outline"
-          >
-            {t("booking:form.addService")}
-          </Button>
-
-          {serviceError && (
-            <p className="text-sm text-red-500 mt-2 text-center">
-              {serviceError}
-            </p>
           )}
-        </div>
-
-        {/* Services List */}
-        {services && services.length > 0 && (
-          <div className="space-y-2">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 border rounded-md"
-              >
-                <div className="flex-1">
-                  <p className="font-medium">{service.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {service.price} ₾ • {service.duration}{" "}
-                    {t("booking:form.minutes")}
-                  </p>
-                  {service.description && (
-                    <p className="text-sm text-gray-500 mt-1">
-                      {service.description}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeService(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  {t("booking:form.delete")}
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {errors.services &&
-          !Array.isArray(errors.services) &&
-          services.length === 0 && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.services.message as string}
-            </p>
-          )}
-        <p className="text-xs text-gray-500 mt-1">
-          {t("booking:form.servicesHelp")}
-        </p>
-      </div>
-
-      {/* Contact Info */}
-      <div>
-        <Label className="block text-sm font-medium mb-2">
-          {t("booking:form.phoneNumber")}
-        </Label>
-        <Input
-          type="text"
-          {...register("info.phoneNumber")}
-          placeholder="+995511111111"
         />
-        {errors.info?.phoneNumber && (
+        {errors.images?.businessPhoto && (
           <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.info.phoneNumber.message}
+            {Array.isArray(errors.images.businessPhoto)
+              ? errors.images.businessPhoto.find((err) => err?.message)?.message
+              : errors.images.businessPhoto.message}
           </p>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Gallery Images */}
+      <div className="mb-14">
+        <Label className="block text-lg font-medium mb-2 mt-4">
+          {t("booking:form.galleryImages")}
+        </Label>
+        <Controller
+          name="images.galleryPhoto"
+          control={control}
+          render={({ field }) => (
+            <FileUpload
+              value={field.value}
+              onChange={field.onChange}
+              maxFiles={4}
+            />
+          )}
+        />
+        {errors.images?.galleryPhoto && (
+          <p className="text-xs text-red-500 font-bold mt-2">
+            {Array.isArray(errors.images.galleryPhoto)
+              ? errors.images.galleryPhoto.find((err) => err?.message)?.message
+              : errors.images.galleryPhoto.message}
+          </p>
+        )}
+        <p className="text-xs text-gray-500 mt-1">
+          {t("booking:form.galleryHelp")}
+        </p>
+      </div>
+
+      {/* Contact Info */}
+      <div className="grid grid-cols-3 gap-4 mb-12">
+        <div>
+          <Label className="block text-sm font-medium mb-2">
+            {t("booking:form.phoneNumber")}
+          </Label>
+          <Input
+            type="text"
+            {...register("info.phoneNumber")}
+            placeholder="+995511111111"
+          />
+          {errors.info?.phoneNumber && (
+            <p className="text-xs text-red-500 font-bold mt-2">
+              {errors.info.phoneNumber.message}
+            </p>
+          )}
+        </div>
         <div>
           <Label className="block text-sm font-medium mb-2">Facebook URL</Label>
           <Input
@@ -603,12 +497,12 @@ export default function IndividualBusinessForm() {
       <div className="flex justify-end gap-4 pt-4">
         <Button
           type="submit"
-          disabled={createBusiness.isPending || uploadPhotos.isPending}
+          disabled={isCreating || isUploading}
           className="p-8 cursor-pointer"
         >
-          {createBusiness.isPending || uploadPhotos.isPending
+          {isCreating || isUploading
             ? t("booking:form.processing")
-            : t("booking:form.addBusiness")}
+            : t("booking:form.nextStep")}
         </Button>
       </div>
     </form>

@@ -1,10 +1,8 @@
-import { useBusiness } from "@/api/hooks/useBusinesses";
-import {
-  getDayName,
-  minutesToTime,
-  type MockService,
-} from "@/Booking/mockBusinesses";
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
+import {
+  type MockService
+} from "@/Booking/mockBusinesses";
+import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,13 +65,13 @@ export default function BusinessDetails() {
   const { t } = useTranslation('booking');
   const [showWorkingHours, setShowWorkingHours] = useState(false);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState<MockService | null>(null);
+  const [selectedService, _setSelectedService] = useState<MockService | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
 
   // Fetch business data from API
-  const { data: business, isLoading, isFetching, isError, error } = useBusiness(id || "");
+  const { data: business, isLoading, isFetching, isError, error } = useGetBookingSingleBusiness(id || "");
 
   const availableDays = getAvailableDays();
   const availableTimeSlots = getAvailableTimeSlots(selectedDate);
@@ -82,12 +80,12 @@ export default function BusinessDetails() {
     servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const handleServiceClick = (service: any) => {
-    setSelectedService(service);
-    setSelectedDate(null);
-    setSelectedTime(null);
-    setBookingDialogOpen(true);
-  };
+  // const handleServiceClick = (service: any) => {
+  //   setSelectedService(service);
+  //   setSelectedDate(null);
+  //   setSelectedTime(null);
+  //   setBookingDialogOpen(true);
+  // };
 
   const handleDateSelect = (dateString: string) => {
     setSelectedDate(dateString);
@@ -208,7 +206,7 @@ export default function BusinessDetails() {
             </div>
 
             {/* Gallery */}
-            {business.galleryImageUrls && business.galleryImageUrls.length > 0 && (
+            {/* {business.galleryImageUrls && business.galleryImageUrls.length > 0 && (
               <div className="grid grid-cols-3 gap-3">
                 {business.galleryImageUrls.map((url: string, index: number) => (
                   <div
@@ -226,7 +224,7 @@ export default function BusinessDetails() {
                   </div>
                 ))}
               </div>
-            )}
+            )} */}
 
             {/* Description */}
             <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
@@ -252,7 +250,7 @@ export default function BusinessDetails() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                   {business.services.map((service, index) => (
                     <div
                       key={index}
@@ -278,7 +276,7 @@ export default function BusinessDetails() {
                       )}
                     </div>
                   ))}
-                </div>
+                </div> */}
               </CardContent>
             </Card>
           </div>
@@ -367,9 +365,9 @@ export default function BusinessDetails() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">{t('businessDetails.sections.workingHours')}</p>
-                      <span className="font-semibold text-sm">
+                      {/* <span className="font-semibold text-sm">
                         {t('businessDetails.status.openUntil')} {minutesToTime(business.workTimes[new Date().getDay()]?.endTime || business.workTimes[0].endTime)}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                   <ChevronDown
@@ -378,7 +376,7 @@ export default function BusinessDetails() {
                 </div>
 
                 {/* Days list */}
-                {showWorkingHours && (
+                {/* {showWorkingHours && (
                   <div className="space-y-2 mt-4 pt-4 border-t">
                     {business.workTimes.map((workTime, index) => (
                       <div
@@ -395,7 +393,7 @@ export default function BusinessDetails() {
                       </div>
                     ))}
                   </div>
-                )}
+                )} */}
               </CardContent>
             </Card>
                         {/* Location */}
@@ -410,8 +408,8 @@ export default function BusinessDetails() {
                 <div className="flex items-start gap-3 p-4 bg-primary/5 rounded-xl border border-primary/10">
                   <MapPin className="w-5 h-5 text-primary mt-0.5" />
                   <div>
-                    {business.address && (
-                      <p className="font-semibold text-base">{business.address}</p>
+                    {business.addressDetails && (
+                      <p className="font-semibold text-base">{business.addressDetails}</p>
                     )}
                     <p className="text-muted-foreground">{business.city}</p>
                   </div>

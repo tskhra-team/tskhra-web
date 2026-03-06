@@ -33,6 +33,8 @@
       "onsite": "On-site",
       "both": "Both"
     },
+    "step": "Step",
+    "nextStep": "Continue",
     "city": "City",
     "address": "Address",
     "addressPlaceholder": "Enter address",
@@ -60,7 +62,7 @@
     "servicesHelp": "Add services you offer (duration must be a multiple of 5)",
     "phoneNumber": "Phone number",
     "processing": "Processing...",
-    "addBusiness": "Add business"
+    "submit": "Submit"
   },
   "validation": {
     "serviceNameMin": "Name must contain at least 2 characters",
@@ -95,6 +97,7 @@
     "serviceDurationMax": "Service duration cannot exceed 24 hours",
     "serviceDurationInterval": "Service duration must be in 5-minutes intervals",
     "serviceDurationPositive": "Service duration should be positive number",
+    "serviceDescriptionMax": "Service description can't be more than 70 letters",
     "weekDayRequired": "Week day is required",
     "startTimeRequired": "Start time is required",
     "startTimeInvalid": "Start time must be a valid number",
