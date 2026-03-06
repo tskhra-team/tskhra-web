@@ -15,8 +15,8 @@ import {
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import useGetCitites from "@/shared/api/useGetCities";
-import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
-import { useCategories } from "@/shared/categories/useCategories";
+import useGetMainBookingCategories from "@/shared/api/useGetMainBookingCategories";
+import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import { scrollToTop } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
@@ -28,15 +28,18 @@ import useUploadBusinessPhotos from "./useUploadBusinessPhotos";
 import WorkingSchedule from "./WorkingSchedule";
 
 export default function IndividualBusinessForm() {
-  const { t } = useTranslation(["categories", "booking"]);
-  const { data: categories, isLoading } = useCategories("booking");
+  const { t } = useTranslation(["booking"]);
   const navigate = useNavigate();
 
   const { mutate: createBusiness, isPending: isCreating } =
     useCreateIndividualBusiness();
   const { mutate: uploadPhotos, isPending: isUploading } =
     useUploadBusinessPhotos();
-  const { data: cities } = useGetCitites();
+  const { data: cities, isLoading: isLoadingCities } = useGetCitites();
+  const { data: categories, isLoading: isLoadingCategories } =
+    useGetMainBookingCategories();
+  const { data: subCategories, isLoading: isLoadingSubCategories } =
+    useGetSubBookingCategories();
 
   const { showModal, closeModal } = useModal();
 
@@ -73,7 +76,6 @@ export default function IndividualBusinessForm() {
 
   const callType = watch("callType");
   const mainCategory = watch("mainCategory");
-  const selectedCategory = categories?.find((cat) => cat.name === mainCategory);
 
   const onSubmit = (data: IndividualBusinessFormData) => {
     // Show loading modal
@@ -110,7 +112,7 @@ export default function IndividualBusinessForm() {
           onSuccess: (result) => {
             // Step 3: Save businessId to localStorage and navigate to step 2
             closeModal();
-            localStorage.setItem("businessId", result.id);
+            localStorage.setItem("businessId", result.businessId);
             showModal(
               "success",
               "Congratulations!",
@@ -152,7 +154,7 @@ export default function IndividualBusinessForm() {
     setValue("subCategory", "");
   };
 
-  if (isLoading) {
+  if (isLoadingCategories || isLoadingSubCategories || isLoadingCities) {
     return <ServiceFormSkeleton />;
   }
 
@@ -305,17 +307,11 @@ export default function IndividualBusinessForm() {
                   <SelectValue placeholder={t("booking:form.category")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories?.map((category) => {
-                    const translationKey = categoryNameToKey[category.name];
-                    const displayName = translationKey
-                      ? t(`categories:${translationKey}`)
-                      : category.name;
-                    return (
-                      <SelectItem key={category.name} value={category.name}>
-                        {displayName}
-                      </SelectItem>
-                    );
-                  })}
+                  {categories?.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -344,20 +340,12 @@ export default function IndividualBusinessForm() {
                   <SelectValue placeholder={t("booking:form.subcategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {selectedCategory?.childItems?.map((subcategory) => {
-                    const translationKey = categoryNameToKey[subcategory.name];
-                    const displayName = translationKey
-                      ? t(`categories:${translationKey}`)
-                      : subcategory.name;
-                    return (
-                      <SelectItem
-                        key={subcategory.name}
-                        value={subcategory.name}
-                      >
-                        {displayName}
+                  {mainCategory &&
+                    subCategories?.[mainCategory]?.map((subcategory) => (
+                      <SelectItem key={subcategory} value={subcategory}>
+                        {subcategory}
                       </SelectItem>
-                    );
-                  })}
+                    ))}
                 </SelectContent>
               </Select>
             )}

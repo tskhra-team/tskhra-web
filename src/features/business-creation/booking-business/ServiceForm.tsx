@@ -262,9 +262,7 @@ export default function ServiceForm() {
           disabled={isPending}
           className="p-8 cursor-pointer"
         >
-          {isPending
-            ? t("booking:form.processing")
-            : t("booking:form.addBusiness")}
+          {isPending ? t("booking:form.processing") : t("booking:form.submit")}
         </Button>
       </div>
     </form>

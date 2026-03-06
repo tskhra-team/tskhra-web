@@ -18,12 +18,18 @@ const createBusinessService = async ({
   businessId,
   services,
 }: ServiceRequest) => {
-  const response = await privateInstance.post(
-    `/business/${businessId}/services`,
-    { services },
+  // Отправляем каждый сервис отдельно
+  const servicePromises = services.map((service) =>
+    privateInstance.post(`/business/${businessId}/services`, service),
   );
 
-  return response.data;
+  // Ждем выполнения всех запросов
+  await Promise.all(servicePromises);
+
+  return {
+    status: "success",
+    message: "All services created successfully",
+  };
 };
 
 const useCreateBusinessService = () => {

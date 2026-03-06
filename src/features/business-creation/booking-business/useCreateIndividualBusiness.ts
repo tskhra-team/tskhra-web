@@ -6,7 +6,7 @@ import type { AxiosError } from "axios";
 type IndividualBusinessResponseData = {
   status: number;
   message: string;
-  id: string;
+  businessId: string;
 };
 
 type CreateBusinessRequest = {

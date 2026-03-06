@@ -62,7 +62,7 @@
     "servicesHelp": "Add services you offer (duration must be a multiple of 5)",
     "phoneNumber": "Phone number",
     "processing": "Processing...",
-    "addBusiness": "Add business"
+    "submit": "Submit"
   },
   "validation": {
     "serviceNameMin": "Name must contain at least 2 characters",
