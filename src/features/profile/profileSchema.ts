@@ -23,8 +23,9 @@ const nameValidation = yup
 
 const avatarFileValidation = yup
   .mixed<File>()
-  .nullable()
   .default(undefined)
+  .nullable()
+  .optional()
   .test("fileSize", "File size can't be more than 5MB", (value) => {
     if (!value) return true;
     return value.size <= MAX_FILE_SIZE;
@@ -82,7 +83,27 @@ const profileSchema = yup.object({
   avatarFile: avatarFileValidation,
 });
 
-type ProfileFormData = yup.InferType<typeof profileSchema>;
+// Manually define the type because yup.InferType doesn't support optional properties (?)
+// This matches the runtime behavior of the schema
+type ProfileFormData = {
+  firstName: string;
+  lastName: string;
+  gender: "" | "MALE" | "FEMALE" | "OTHER";
+  birthDate: Date;
+  phoneCountryCode: string;
+  phoneNumber: string;
+  avatarFile?: File | null | undefined; // Optional property for form
+};
+
+// For API calls, omit avatarFile since it's uploaded separately
+type ProfileUpdateData = Omit<ProfileFormData, "avatarFile">;
+
 type AvatarTypeData = yup.InferType<typeof AvatarType>;
 
-export { AvatarType, profileSchema, type AvatarTypeData, type ProfileFormData };
+export {
+  AvatarType,
+  profileSchema,
+  type AvatarTypeData,
+  type ProfileFormData,
+  type ProfileUpdateData,
+};

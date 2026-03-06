@@ -67,14 +67,7 @@ function ProfileForm() {
     setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
   }, []);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<ProfileFormData>({
+  const form = useForm({
     resolver: yupResolver(profileSchema),
     defaultValues: {
       firstName: "",
@@ -85,6 +78,8 @@ function ProfileForm() {
       avatarFile: undefined,
     },
   });
+
+  const { register, handleSubmit, control, reset, setValue, formState: { errors } } = form;
 
   // Update form when profile data loads
   useEffect(() => {
@@ -143,23 +138,19 @@ function ProfileForm() {
 
   const handleCropSuccess = async (croppedFile: File) => {
     try {
-      // 1. Настройки сжатия (максимум 100 КБ, размер не больше 400x400)
       const options = {
         maxSizeMB: 0.1,
         maxWidthOrHeight: 400,
         useWebWorker: true,
       };
 
-      // 2. Сжимаем файл, который пришел из кроппера
       const compressedFile = await imageCompression(croppedFile, options);
 
-      // Показываем превью уже сжатой картинки
       setPreviewAvatar(URL.createObjectURL(compressedFile));
 
-      // 3. Отправляем сжатый файл на сервер или сохраняем в форму
       if (!isEditMode || profile?.status) {
         uploadAvatar(
-          { avatar: compressedFile }, // Отправляем compressedFile вместо croppedFile
+          { avatar: compressedFile },
           {
             onSuccess: () => {
               toast.success("Avatar successfully updated!", {

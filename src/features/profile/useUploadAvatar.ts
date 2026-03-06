@@ -16,7 +16,6 @@ const uploadAvatar = async ({ avatar }: AvatarType) => {
   const formData = new FormData();
 
   if (avatar) {
-    // Убедись, что бэкенд ждет именно ключ "avatar", а не "file" или что-то еще
     formData.append("file", avatar);
   }
 
@@ -24,7 +23,6 @@ const uploadAvatar = async ({ avatar }: AvatarType) => {
     "/user-profile/me/avatar",
     formData,
     {
-      // НОВОЕ: Явно указываем тип контента для загрузки файлов
       headers: {
         "Content-Type": "multipart/form-data",
       },
