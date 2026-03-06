@@ -14,7 +14,7 @@ import {
   createIndividualBusinessSchema,
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
-import useGetCitites from "@/features/business-creation/booking-business/useGetCities";
+import useGetCitites from "@/shared/api/useGetCities";
 import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
 import { useCategories } from "@/shared/categories/useCategories";
 import { scrollToTop } from "@/utils";

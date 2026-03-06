@@ -1,7 +1,7 @@
 import { publicInstance } from "@/api";
+import type { ErrorResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import type { ErrorResponse } from "react-router-dom";
 
 const getCities = async () => {
   const response = await publicInstance.get("/cities");
