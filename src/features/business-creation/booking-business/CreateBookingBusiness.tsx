@@ -3,12 +3,14 @@ import { scrollToTop } from "@/utils";
 import { Briefcase, User } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import IndividualServiceForm from "./IndividualBusinessForm";
+import IndividualBusinessForm from "./IndividualBusinessForm";
+import ServiceForm from "./ServiceForm";
 
 export default function CreateBookingBusiness() {
   const { t } = useTranslation("booking");
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedType = searchParams.get("type");
+  const currentStep = searchParams.get("step");
 
   if (selectedType === "individual" || selectedType === "business") {
     return (
@@ -18,6 +20,7 @@ export default function CreateBookingBusiness() {
           onClick={() => {
             setSearchParams((prevParams) => {
               prevParams.delete("type");
+              prevParams.delete("step");
               return prevParams;
             });
           }}
@@ -28,13 +31,16 @@ export default function CreateBookingBusiness() {
 
         {selectedType === "individual" ? (
           <>
-            <h1 className="text-3xl font-bold mb-6">{t("businessCreation.individual.title")}</h1>
-            <IndividualServiceForm />
+            <h1 className="text-3xl font-bold mb-6">
+              {t("businessCreation.individual.title")}
+              {currentStep && ` - ${t("booking:form.step")} ${currentStep}`}
+            </h1>
+            {currentStep === "2" ? <ServiceForm /> : <IndividualBusinessForm />}
           </>
         ) : (
           <>
             <h1 className="text-3xl font-bold mb-6">{t("businessCreation.commercial.title")}</h1>
-            <IndividualServiceForm /> {/*here should be BusinessServiceForm */}
+            <IndividualBusinessForm /> {/*here should be BusinessServiceForm */}
           </>
         )}
       </div>
@@ -44,6 +50,7 @@ export default function CreateBookingBusiness() {
   const handleClick = (type: string) => {
     setSearchParams((prevParams) => {
       prevParams.set("type", type);
+      prevParams.set("step", "1");
       return prevParams;
     });
     scrollToTop();
