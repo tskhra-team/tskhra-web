@@ -13,7 +13,13 @@ type BookingSingleBusinessType = {
   mainImageUrl: string;
   callType: string;
   city: string;
-
+  category: string;
+  info: {
+    phoneNumber: string;
+    instagramUrl: string;
+    facebookUrl: string;
+  }
+  addressDetails: string;
 }
 
 
