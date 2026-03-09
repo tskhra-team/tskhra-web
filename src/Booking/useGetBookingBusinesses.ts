@@ -4,11 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
 type BusinessType = {
-  id: string;
+  businessId: string;
   businessName: string;
   category: string;
   subCategory: string;
-  mainImageUrl: string;
+  mainImage: string;
   galleryImages: string[];
   city: string;
   addressDetail: string;

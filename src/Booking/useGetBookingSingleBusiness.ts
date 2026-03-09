@@ -1,16 +1,15 @@
-
-import { publicInstance } from '@/api';
-import type { ErrorResponse } from '@/types';
-import { useQuery } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
+import { publicInstance } from "@/api";
+import type { ErrorResponse } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 
 
 type BookingSingleBusinessType = {
+  businessId: string;
   businessName: string;
   businessPhoto: string;
   description: string | null;
-  id: string;
-  mainImageUrl: string;
+  mainImage: string;
   callType: string;
   city: string;
   category: string;
@@ -18,24 +17,36 @@ type BookingSingleBusinessType = {
     phoneNumber: string;
     instagramUrl: string;
     facebookUrl: string;
-  }
-  addressDetails: string;
-}
-
-
+  };
+  addressDetail: string;
+  workTimes: [{
+    weekDay: string;
+    startTime: number;
+    endTime: number;
+  }];
+  restTimes: [{
+    weekDay: string;
+    startTime: number;
+    endTime: number;
+  }]
+  galleryImages: []
+};
 
 const getBookingSingleBusiness = async (businessId: string) => {
   const response = await publicInstance.get(`/business/${businessId}`);
-  return response.data
+  return response.data;
 };
 
-const useGetBookingSingleBusiness = (businessId: string) =>{
-  return useQuery<BookingSingleBusinessType, AxiosError<ErrorResponse>> ({
+const useGetBookingSingleBusiness = (
+  businessId: string,
+  enabled: boolean = true,
+) => {
+  return useQuery<BookingSingleBusinessType, AxiosError<ErrorResponse>>({
     queryFn: () => getBookingSingleBusiness(businessId),
-    queryKey: ['business', businessId],
-    staleTime: 5 * 60 * 1000
-  })
-}
-
+    queryKey: ["business", businessId],
+    staleTime: 5 * 60 * 1000,
+    enabled: enabled && !!businessId,
+  });
+};
 
 export default useGetBookingSingleBusiness;
