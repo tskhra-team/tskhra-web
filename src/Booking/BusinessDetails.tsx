@@ -5,6 +5,7 @@ import {
   type MockService
 } from "@/Booking/mockBusinesses";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
+import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,6 +76,9 @@ export default function BusinessDetails() {
 
   // Fetch business data from API (only if id exists)
   const { data: business, isLoading, isFetching, isError, error } = useGetBookingSingleBusiness(id || "", !!id);
+
+  // Fetch services for this business
+  const { data: services, isLoading: servicesLoading } = useGetBookingBusinessServices(id || "", !!id);
 
   const availableDays = getAvailableDays();
   const availableTimeSlots = getAvailableTimeSlots(selectedDate);
@@ -280,33 +284,42 @@ export default function BusinessDetails() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {/* <div className="space-y-3">
-                  {business.services.map((service, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleServiceClick(service)}
-                      className="p-5 border border-border/50 rounded-xl hover:bg-primary/5 hover:border-primary/30 hover:shadow-md transition-all duration-300 group cursor-pointer"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">{service.name}</h3>
-                        <div className="text-right">
-                          <p className="text-xl font-bold text-primary">₾{service.price}</p>
-                          <p className="text-sm text-muted-foreground flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" />
-                            {service.time >= 60
-                              ? `${Math.floor(service.time / 60)}${t('businessDetails.time.hours')} ${service.time % 60 > 0 ? `${service.time % 60}${t('businessDetails.time.minutes')}` : ""}`
-                              : `${service.time}${t('businessDetails.time.minutes')}`}
-                          </p>
+                {servicesLoading ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    {t('businessDetails.status.loading')}
+                  </div>
+                ) : services && services.length > 0 ? (
+                  <div className="space-y-3">
+                    {services.map((service) => (
+                      <div
+                        key={service.id}
+                        className="p-5 border border-border/50 rounded-xl hover:bg-primary/5 hover:border-primary/30 hover:shadow-md transition-all duration-300 group cursor-pointer"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">{service.name}</h3>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-primary">₾{service.price}</p>
+                            <p className="text-sm text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5" />
+                              {service.duration >= 60
+                                ? `${Math.floor(service.duration / 60)}${t('businessDetails.time.hours')} ${service.duration % 60 > 0 ? `${service.duration % 60}${t('businessDetails.time.minutes')}` : ""}`
+                                : `${service.duration}${t('businessDetails.time.minutes')}`}
+                            </p>
+                          </div>
                         </div>
+                        {service.description && (
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {service.description}
+                          </p>
+                        )}
                       </div>
-                      {service.description && (
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {service.description}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div> */}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center py-8 text-muted-foreground">
+                    {t('businessDetails.status.noServices')}
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
