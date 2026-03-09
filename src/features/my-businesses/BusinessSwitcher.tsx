@@ -115,7 +115,7 @@ function BusinessSwitcherComponent() {
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Businesses
             </DropdownMenuLabel>
-            {businesses?.map((business, index) => (
+            {businesses?.map((business, _index) => (
               <DropdownMenuItem
                 key={business.businessId}
                 onClick={() => handleBusinessSelect(business)}

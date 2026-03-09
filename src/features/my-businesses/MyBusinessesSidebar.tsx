@@ -12,7 +12,13 @@ import {
 } from "@/components/ui/sidebar";
 import { BusinessSwitcher } from "@/features/my-businesses/BusinessSwitcher";
 import { NavUser } from "@/features/my-businesses/NavUser";
-import { BarChart3, Bell, Calendar, Settings } from "lucide-react";
+import {
+  BarChart3,
+  Bell,
+  BriefcaseBusiness,
+  Calendar,
+  Settings,
+} from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 // const teams = [
@@ -48,6 +54,12 @@ const menuItems = [
     title: "Manage",
     icon: Settings,
     section: "manage",
+  },
+
+  {
+    title: "Services",
+    icon: BriefcaseBusiness,
+    section: "services",
   },
   {
     title: "Notification",

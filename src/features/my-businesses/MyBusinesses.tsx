@@ -91,6 +91,16 @@ export default function MyBusinesses() {
             {/* Notification content will go here */}
           </div>
         );
+      case "services":
+        return (
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold">Services</h1>
+            <p className="text-muted-foreground">
+              View and manage your services.
+            </p>
+            {/* Notification content will go here */}
+          </div>
+        );
       default:
         return (
           <div className="space-y-4">
