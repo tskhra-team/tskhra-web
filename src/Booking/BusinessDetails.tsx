@@ -1,8 +1,7 @@
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
 import {
   getDayName,
-  minutesToTime,
-  type MockService
+  minutesToTime
 } from "@/Booking/mockBusinesses";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
@@ -48,18 +47,96 @@ const getAvailableDays = () => {
   return days;
 };
 
-// Mock available time slots
-const getAvailableTimeSlots = (selectedDate: string | null) => {
-  if (!selectedDate) return [];
+// Helper function to convert time string (HH:MM) to minutes
+const timeToMinutes = (timeString: string): number => {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  return hours * 60 + minutes;
+};
 
-  // Mock time slots - in reality, this would come from the backend
+// Helper function to convert day name to day number (0 = Sunday, 1 = Monday, etc.)
+const dayNameToDayNumber = (dayName: string | number): number => {
+  if (typeof dayName === 'number') return dayName;
+
+  const dayMap: Record<string, number> = {
+    // Full names
+    'sunday': 0,
+    'monday': 1,
+    'tuesday': 2,
+    'wednesday': 3,
+    'thursday': 4,
+    'friday': 5,
+    'saturday': 6,
+    // Abbreviated names (uppercase)
+    'SUN': 0,
+    'MON': 1,
+    'TUE': 2,
+    'WED': 3,
+    'THU': 4,
+    'FRI': 5,
+    'SAT': 6,
+  };
+
+  return dayMap[dayName] ?? dayMap[dayName.toLowerCase()] ?? -1;
+};
+
+// Mock available time slots filtered by working hours
+const getAvailableTimeSlots = (
+  selectedDate: string | null,
+  workTimes?: Array<{ weekDay: string | number; startTime: number; endTime: number }>,
+  restTimes?: Array<{ weekDay: string | number; startTime: number; endTime: number }>
+) => {
+  if (!selectedDate || !workTimes) return [];
+
+  // Get the day of week for the selected date (0 = Sunday, 1 = Monday, etc.)
+  const date = new Date(selectedDate);
+  const dayOfWeek = date.getDay();
+
+  console.log('Selected date:', selectedDate, 'Day of week:', dayOfWeek);
+  console.log('Work times:', workTimes);
+
+  // Find working hours for this day
+  const workTime = workTimes.find(wt => {
+    const wtDay = dayNameToDayNumber(wt.weekDay);
+    console.log('Checking workTime:', wt.weekDay, 'converted to:', wtDay, 'against:', dayOfWeek);
+    return wtDay === dayOfWeek;
+  });
+
+  console.log('Found work time:', workTime);
+  if (!workTime) return []; // Business is closed this day
+
+  // Find rest times for this day
+  const restTime = restTimes?.find(rt => {
+    const rtDay = dayNameToDayNumber(rt.weekDay);
+    return rtDay === dayOfWeek;
+  });
+
+  console.log('Found rest time:', restTime);
+
+  // Generate all possible time slots (every 30 minutes)
   const slots = [
     "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
     "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
     "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+    "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
   ];
 
-  return slots;
+  // Filter slots based on working hours and rest times
+  const availableSlots = slots.filter(slot => {
+    const slotMinutes = timeToMinutes(slot);
+
+    // Check if slot is within working hours
+    const isWithinWorkingHours = slotMinutes >= workTime.startTime && slotMinutes < workTime.endTime;
+
+    // Check if slot is during rest time
+    const isDuringRestTime = restTime
+      ? slotMinutes >= restTime.startTime && slotMinutes < restTime.endTime
+      : false;
+
+    return isWithinWorkingHours && !isDuringRestTime;
+  });
+
+  console.log('Available slots:', availableSlots);
+  return availableSlots;
 };
 
 export default function BusinessDetails() {
@@ -68,7 +145,13 @@ export default function BusinessDetails() {
   const { t } = useTranslation('booking');
   const [showWorkingHours, setShowWorkingHours] = useState(false);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
-  const [selectedService, _setSelectedService] = useState<MockService | null>(null);
+  const [selectedService, setSelectedService] = useState<{
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    duration: number;
+  } | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -81,18 +164,28 @@ export default function BusinessDetails() {
   const { data: services, isLoading: servicesLoading } = useGetBookingBusinessServices(id || "", !!id);
 
   const availableDays = getAvailableDays();
-  const availableTimeSlots = getAvailableTimeSlots(selectedDate);
+  const availableTimeSlots = getAvailableTimeSlots(
+    selectedDate,
+    business?.workTimes,
+    business?.restTimes
+  );
 
   const scrollToServices = () => {
     servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  // const handleServiceClick = (service: any) => {
-  //   setSelectedService(service);
-  //   setSelectedDate(null);
-  //   setSelectedTime(null);
-  //   setBookingDialogOpen(true);
-  // };
+  const handleServiceClick = (service: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    duration: number;
+  }) => {
+    setSelectedService(service);
+    setSelectedDate(null);
+    setSelectedTime(null);
+    setBookingDialogOpen(true);
+  };
 
   const handleDateSelect = (dateString: string) => {
     setSelectedDate(dateString);
@@ -293,6 +386,7 @@ export default function BusinessDetails() {
                     {services.map((service) => (
                       <div
                         key={service.id}
+                        onClick={() => handleServiceClick(service)}
                         className="p-5 border border-border/50 rounded-xl hover:bg-primary/5 hover:border-primary/30 hover:shadow-md transition-all duration-300 group cursor-pointer"
                       >
                         <div className="flex justify-between items-start mb-2">
@@ -515,9 +609,9 @@ export default function BusinessDetails() {
                     <p className="text-xl font-bold text-primary">₾{selectedService?.price}</p>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      {selectedService?.time && selectedService.time >= 60
-                        ? `${Math.floor(selectedService.time / 60)}${t('businessDetails.time.hours')} ${selectedService.time % 60 > 0 ? `${selectedService.time % 60}${t('businessDetails.time.minutes')}` : ""}`
-                        : `${selectedService?.time || 0}${t('businessDetails.time.minutes')}`}
+                      {selectedService?.duration && selectedService.duration >= 60
+                        ? `${Math.floor(selectedService.duration / 60)}${t('businessDetails.time.hours')} ${selectedService.duration % 60 > 0 ? `${selectedService.duration % 60}${t('businessDetails.time.minutes')}` : ""}`
+                        : `${selectedService?.duration || 0}${t('businessDetails.time.minutes')}`}
                     </p>
                   </div>
                 </div>
