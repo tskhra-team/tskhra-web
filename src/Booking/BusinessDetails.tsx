@@ -1,8 +1,5 @@
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
-import {
-  getDayName,
-  minutesToTime
-} from "@/Booking/mockBusinesses";
+import { getDayName, minutesToTime } from "@/Booking/mockBusinesses";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +20,7 @@ import {
   Facebook,
   Instagram,
   MapPin,
-  Phone
+  Phone,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -38,10 +35,10 @@ const getAvailableDays = () => {
     date.setDate(today.getDate() + i);
     days.push({
       date: date,
-      dateString: date.toISOString().split('T')[0],
-      dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
+      dateString: date.toISOString().split("T")[0],
+      dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
       dayNumber: date.getDate(),
-      monthName: date.toLocaleDateString('en-US', { month: 'short' }),
+      monthName: date.toLocaleDateString("en-US", { month: "short" }),
     });
   }
   return days;
@@ -49,31 +46,31 @@ const getAvailableDays = () => {
 
 // Helper function to convert time string (HH:MM) to minutes
 const timeToMinutes = (timeString: string): number => {
-  const [hours, minutes] = timeString.split(':').map(Number);
+  const [hours, minutes] = timeString.split(":").map(Number);
   return hours * 60 + minutes;
 };
 
 // Helper function to convert day name to day number (0 = Sunday, 1 = Monday, etc.)
 const dayNameToDayNumber = (dayName: string | number): number => {
-  if (typeof dayName === 'number') return dayName;
+  if (typeof dayName === "number") return dayName;
 
   const dayMap: Record<string, number> = {
     // Full names
-    'sunday': 0,
-    'monday': 1,
-    'tuesday': 2,
-    'wednesday': 3,
-    'thursday': 4,
-    'friday': 5,
-    'saturday': 6,
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
     // Abbreviated names (uppercase)
-    'SUN': 0,
-    'MON': 1,
-    'TUE': 2,
-    'WED': 3,
-    'THU': 4,
-    'FRI': 5,
-    'SAT': 6,
+    SUN: 0,
+    MON: 1,
+    TUE: 2,
+    WED: 3,
+    THU: 4,
+    FRI: 5,
+    SAT: 6,
   };
 
   return dayMap[dayName] ?? dayMap[dayName.toLowerCase()] ?? -1;
@@ -82,8 +79,16 @@ const dayNameToDayNumber = (dayName: string | number): number => {
 // Mock available time slots filtered by working hours
 const getAvailableTimeSlots = (
   selectedDate: string | null,
-  workTimes?: Array<{ weekDay: string | number; startTime: number; endTime: number }>,
-  restTimes?: Array<{ weekDay: string | number; startTime: number; endTime: number }>
+  workTimes?: Array<{
+    weekDay: string | number;
+    startTime: number;
+    endTime: number;
+  }>,
+  restTimes?: Array<{
+    weekDay: string | number;
+    startTime: number;
+    endTime: number;
+  }>,
 ) => {
   if (!selectedDate || !workTimes) return [];
 
@@ -91,41 +96,69 @@ const getAvailableTimeSlots = (
   const date = new Date(selectedDate);
   const dayOfWeek = date.getDay();
 
-  console.log('Selected date:', selectedDate, 'Day of week:', dayOfWeek);
-  console.log('Work times:', workTimes);
+  console.log("Selected date:", selectedDate, "Day of week:", dayOfWeek);
+  console.log("Work times:", workTimes);
 
   // Find working hours for this day
-  const workTime = workTimes.find(wt => {
+  const workTime = workTimes.find((wt) => {
     const wtDay = dayNameToDayNumber(wt.weekDay);
-    console.log('Checking workTime:', wt.weekDay, 'converted to:', wtDay, 'against:', dayOfWeek);
+    console.log(
+      "Checking workTime:",
+      wt.weekDay,
+      "converted to:",
+      wtDay,
+      "against:",
+      dayOfWeek,
+    );
     return wtDay === dayOfWeek;
   });
 
-  console.log('Found work time:', workTime);
+  console.log("Found work time:", workTime);
   if (!workTime) return []; // Business is closed this day
 
   // Find rest times for this day
-  const restTime = restTimes?.find(rt => {
+  const restTime = restTimes?.find((rt) => {
     const rtDay = dayNameToDayNumber(rt.weekDay);
     return rtDay === dayOfWeek;
   });
 
-  console.log('Found rest time:', restTime);
+  console.log("Found rest time:", restTime);
 
   // Generate all possible time slots (every 30 minutes)
   const slots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
-    "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00",
+    "18:30",
+    "19:00",
+    "19:30",
+    "20:00",
+    "20:30",
   ];
 
   // Filter slots based on working hours and rest times
-  const availableSlots = slots.filter(slot => {
+  const availableSlots = slots.filter((slot) => {
     const slotMinutes = timeToMinutes(slot);
 
     // Check if slot is within working hours
-    const isWithinWorkingHours = slotMinutes >= workTime.startTime && slotMinutes < workTime.endTime;
+    const isWithinWorkingHours =
+      slotMinutes >= workTime.startTime && slotMinutes < workTime.endTime;
 
     // Check if slot is during rest time
     const isDuringRestTime = restTime
@@ -135,15 +168,16 @@ const getAvailableTimeSlots = (
     return isWithinWorkingHours && !isDuringRestTime;
   });
 
-  console.log('Available slots:', availableSlots);
+  console.log("Available slots:", availableSlots);
   return availableSlots;
 };
 
 export default function BusinessDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation('booking');
+  const { t } = useTranslation("booking");
   const [showWorkingHours, setShowWorkingHours] = useState(false);
+  const [showContactInfo, setShowContactInfo] = useState(false);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<{
     id: string;
@@ -158,20 +192,30 @@ export default function BusinessDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch business data from API (only if id exists)
-  const { data: business, isLoading, isFetching, isError, error } = useGetBookingSingleBusiness(id || "", !!id);
+  const {
+    data: business,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  } = useGetBookingSingleBusiness(id || "", !!id);
 
   // Fetch services for this business
-  const { data: services, isLoading: servicesLoading } = useGetBookingBusinessServices(id || "", !!id);
+  const { data: services, isLoading: servicesLoading } =
+    useGetBookingBusinessServices(id || "", !!id);
 
   const availableDays = getAvailableDays();
   const availableTimeSlots = getAvailableTimeSlots(
     selectedDate,
     business?.workTimes,
-    business?.restTimes
+    business?.restTimes,
   );
 
   const scrollToServices = () => {
-    servicesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    servicesRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
   };
 
   const handleServiceClick = (service: {
@@ -198,7 +242,7 @@ export default function BusinessDetails() {
 
   const handleBookingConfirm = () => {
     // TODO: Send booking to backend
-    console.log('Booking confirmed:', {
+    console.log("Booking confirmed:", {
       service: selectedService,
       date: selectedDate,
       time: selectedTime,
@@ -207,7 +251,9 @@ export default function BusinessDetails() {
   };
 
   // Gallery functions
-  const allImages = business ? [business.mainImage, ...(business.galleryImages || [])] : [];
+  const allImages = business
+    ? [business.mainImage, ...(business.galleryImages || [])]
+    : [];
 
   const handleImageClick = (index: number) => {
     setCurrentImageIndex(index);
@@ -218,10 +264,12 @@ export default function BusinessDetails() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.notFound')}</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            {t("businessDetails.status.notFound")}
+          </h1>
           <p className="text-muted-foreground mb-4">No business ID provided</p>
           <Button onClick={() => navigate("/services")}>
-            {t('businessDetails.buttons.backToBusinesses')}
+            {t("businessDetails.buttons.backToBusinesses")}
           </Button>
         </div>
       </div>
@@ -238,12 +286,16 @@ export default function BusinessDetails() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.errorLoading')}</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            {t("businessDetails.status.errorLoading")}
+          </h1>
           <p className="text-muted-foreground mb-4">
-            {error instanceof Error ? error.message : t('businessDetails.status.somethingWrong')}
+            {error instanceof Error
+              ? error.message
+              : t("businessDetails.status.somethingWrong")}
           </p>
           <Button onClick={() => navigate("/services")}>
-            {t('businessDetails.buttons.backToBusinesses')}
+            {t("businessDetails.buttons.backToBusinesses")}
           </Button>
         </div>
       </div>
@@ -255,9 +307,11 @@ export default function BusinessDetails() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t('businessDetails.status.notFound')}</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            {t("businessDetails.status.notFound")}
+          </h1>
           <Button onClick={() => navigate("/services")}>
-            {t('businessDetails.buttons.backToBusinesses')}
+            {t("businessDetails.buttons.backToBusinesses")}
           </Button>
         </div>
       </div>
@@ -268,11 +322,21 @@ export default function BusinessDetails() {
   const getCallTypeBadge = () => {
     switch (business.callType) {
       case "outcall":
-        return <Badge variant="secondary">{t('businessDetails.callType.outcall')}</Badge>;
+        return (
+          <Badge variant="secondary">
+            {t("businessDetails.callType.outcall")}
+          </Badge>
+        );
       case "onsite":
-        return <Badge variant="default">{t('businessDetails.callType.onsite')}</Badge>;
+        return (
+          <Badge variant="default">
+            {t("businessDetails.callType.onsite")}
+          </Badge>
+        );
       case "both":
-        return <Badge variant="outline">{t('businessDetails.callType.both')}</Badge>;
+        return (
+          <Badge variant="outline">{t("businessDetails.callType.both")}</Badge>
+        );
       default:
         return null;
     }
@@ -287,23 +351,27 @@ export default function BusinessDetails() {
             onClick={() => navigate("/")}
             className="hover:text-primary transition-colors font-medium"
           >
-            {t('businessDetails.breadcrumb.home')}
+            {t("businessDetails.breadcrumb.home")}
           </button>
           <span className="text-muted-foreground/50">•</span>
           <button
             onClick={() => navigate("/services")}
             className="hover:text-primary transition-colors font-medium"
           >
-            {t('businessDetails.breadcrumb.services')}
+            {t("businessDetails.breadcrumb.services")}
           </button>
           <span className="text-muted-foreground/50">•</span>
-          <span className="text-[#100b2e] font-semibold">{business.businessName}</span>
+          <span className="text-[#100b2e] font-semibold">
+            {business.businessName}
+          </span>
         </div>
 
         {/* Business Header */}
         <div className="mb-8">
           <div className="flex items-start justify-between gap-4 mb-3">
-            <h1 className="text-4xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text">{business.businessName}</h1>
+            <h1 className="text-4xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text">
+              {business.businessName}
+            </h1>
             {getCallTypeBadge()}
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
@@ -336,8 +404,8 @@ export default function BusinessDetails() {
                     onClick={() => handleImageClick(index)}
                     className={`aspect-video overflow-hidden rounded-xl shadow-md transition-all duration-300 cursor-pointer group ${
                       currentImageIndex === index
-                        ? 'ring-2 ring-primary ring-offset-2'
-                        : 'ring-1 ring-border/50 hover:ring-primary/50'
+                        ? "ring-2 ring-primary ring-offset-2"
+                        : "ring-1 ring-border/50 hover:ring-primary/50"
                     }`}
                   >
                     <img
@@ -358,7 +426,7 @@ export default function BusinessDetails() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <div className="rounded-full bg-primary text-[#100b2e]"></div>
-                  {t('businessDetails.sections.about')}
+                  {t("businessDetails.sections.about")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -369,17 +437,20 @@ export default function BusinessDetails() {
             </Card>
 
             {/* Services Offered */}
-            <Card ref={servicesRef} className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card
+              ref={servicesRef}
+              className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm"
+            >
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <div className="rounded-full bg-primary"></div>
-                  {t('businessDetails.sections.servicesOffered')}
+                  {t("businessDetails.sections.servicesOffered")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {servicesLoading ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    {t('businessDetails.status.loading')}
+                    {t("businessDetails.status.loading")}
                   </div>
                 ) : services && services.length > 0 ? (
                   <div className="space-y-3">
@@ -390,14 +461,18 @@ export default function BusinessDetails() {
                         className="p-5 border border-border/50 rounded-xl hover:bg-primary/5 hover:border-primary/30 hover:shadow-md transition-all duration-300 group cursor-pointer"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">{service.name}</h3>
+                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                            {service.name}
+                          </h3>
                           <div className="text-right">
-                            <p className="text-xl font-bold text-primary">₾{service.price}</p>
+                            <p className="text-xl font-bold text-primary">
+                              ₾{service.price}
+                            </p>
                             <p className="text-sm text-muted-foreground flex items-center gap-1">
                               <Clock className="w-3.5 h-3.5" />
                               {service.duration >= 60
-                                ? `${Math.floor(service.duration / 60)}${t('businessDetails.time.hours')} ${service.duration % 60 > 0 ? `${service.duration % 60}${t('businessDetails.time.minutes')}` : ""}`
-                                : `${service.duration}${t('businessDetails.time.minutes')}`}
+                                ? `${Math.floor(service.duration / 60)}${t("businessDetails.time.hours")} ${service.duration % 60 > 0 ? `${service.duration % 60}${t("businessDetails.time.minutes")}` : ""}`
+                                : `${service.duration}${t("businessDetails.time.minutes")}`}
                             </p>
                           </div>
                         </div>
@@ -411,7 +486,7 @@ export default function BusinessDetails() {
                   </div>
                 ) : (
                   <p className="text-center py-8 text-muted-foreground">
-                    {t('businessDetails.status.noServices')}
+                    {t("businessDetails.status.noServices")}
                   </p>
                 )}
               </CardContent>
@@ -423,7 +498,9 @@ export default function BusinessDetails() {
             {/* Action Buttons */}
             <Card className="rounded-2xl border-primary/20 from-primary/5 to-card">
               <CardHeader className="pb-4">
-                <CardTitle className="text-xl break-all leading-tight whitespace-normal">{business.businessName}</CardTitle>
+                <CardTitle className="text-xl break-all leading-tight whitespace-normal">
+                  {business.businessName}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
@@ -431,59 +508,88 @@ export default function BusinessDetails() {
                   size="lg"
                   onClick={scrollToServices}
                 >
-                  {t('businessDetails.buttons.bookNow')}
+                  {t("businessDetails.buttons.bookNow")}
                 </Button>
               </CardContent>
             </Card>
 
             {/* Contact Information */}
-            {(business.info.phoneNumber || business.info.facebookUrl || business.info.instagramUrl) && (
+            {(business.info.phoneNumber ||
+              business.info.facebookUrl ||
+              business.info.instagramUrl) && (
               <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="rounded-full bg-primary"></div>
-                    {t('businessDetails.sections.contactInformation')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {business.info.phoneNumber && (
-                    <a
-                      href={`tel:${business.info.phoneNumber}`}
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 group"
-                    >
-                      <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                <CardContent className="pt-6">
+                  <div
+                    className="flex items-center justify-between cursor-pointer group"
+                    onClick={() => setShowContactInfo(!showContactInfo)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/10">
                         <Phone className="w-4 h-4 text-primary" />
                       </div>
-                      <span className="text-sm font-medium">{business.info.phoneNumber}</span>
-                    </a>
-                  )}
-
-                  {business.info.facebookUrl && (
-                    <a
-                      href={business.info.facebookUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/5 hover:text-blue-600 transition-all duration-300 group"
-                    >
-                      <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
-                        <Facebook className="w-4 h-4 text-blue-600" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          {t("businessDetails.sections.contactInformation")}
+                        </p>
+                        <span className="font-semibold text-sm">
+                          {business.info.phoneNumber || t("businessDetails.social.facebook") || t("businessDetails.social.instagram")}
+                        </span>
                       </div>
-                      <span className="text-sm font-medium">{t('businessDetails.social.facebook')}</span>
-                    </a>
-                  )}
+                    </div>
+                    <ChevronDown
+                      className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${showContactInfo ? "rotate-180" : ""}`}
+                    />
+                  </div>
 
-                  {business.info.instagramUrl && (
-                    <a
-                      href={business.info.instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-pink-500/5 hover:text-pink-600 transition-all duration-300 group"
-                    >
-                      <div className="p-2 rounded-lg bg-pink-500/10 group-hover:bg-pink-500/20 transition-colors">
-                        <Instagram className="w-4 h-4 text-pink-600" />
-                      </div>
-                      <span className="text-sm font-medium">{t('businessDetails.social.instagram')}</span>
-                    </a>
+                  {/* Contact Details */}
+                  {showContactInfo && (
+                    <div className="space-y-2 mt-4 pt-4 border-t">
+                      {business.info.phoneNumber && (
+                        <a
+                          href={`tel:${business.info.phoneNumber}`}
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 group"
+                        >
+                          <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                            <Phone className="w-4 h-4 text-primary" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {business.info.phoneNumber}
+                          </span>
+                        </a>
+                      )}
+
+                      {business.info.facebookUrl && (
+                        <a
+                          href={business.info.facebookUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/5 hover:text-blue-600 transition-all duration-300 group"
+                        >
+                          <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+                            <Facebook className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {t("businessDetails.social.facebook")}
+                          </span>
+                        </a>
+                      )}
+
+                      {business.info.instagramUrl && (
+                        <a
+                          href={business.info.instagramUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-pink-500/5 hover:text-pink-600 transition-all duration-300 group"
+                        >
+                          <div className="p-2 rounded-lg bg-pink-500/10 group-hover:bg-pink-500/20 transition-colors">
+                            <Instagram className="w-4 h-4 text-pink-600" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {t("businessDetails.social.instagram")}
+                          </span>
+                        </a>
+                      )}
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -501,14 +607,20 @@ export default function BusinessDetails() {
                       <Clock className="w-4 h-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">{t('businessDetails.sections.workingHours')}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {t("businessDetails.sections.workingHours")}
+                      </p>
                       <span className="font-semibold text-sm">
-                        {t('businessDetails.status.openUntil')} {minutesToTime(business.workTimes[new Date().getDay()]?.endTime || business.workTimes[0].endTime)}
+                        {t("businessDetails.status.openUntil")}{" "}
+                        {minutesToTime(
+                          business.workTimes[new Date().getDay()]?.endTime ||
+                            business.workTimes[0].endTime,
+                        )}
                       </span>
                     </div>
                   </div>
                   <ChevronDown
-                    className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${showWorkingHours ? 'rotate-180' : ''}`}
+                    className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${showWorkingHours ? "rotate-180" : ""}`}
                   />
                 </div>
 
@@ -518,7 +630,7 @@ export default function BusinessDetails() {
                     {/* Working Hours */}
                     <div className="space-y-2">
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        {t('businessDetails.sections.workingHours')}
+                        {t("businessDetails.sections.workingHours")}
                       </p>
                       {business.workTimes.map((workTime, index) => (
                         <div
@@ -527,10 +639,13 @@ export default function BusinessDetails() {
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full bg-green-500 shadow-sm shadow-green-500/50" />
-                            <span className="text-sm font-medium">{getDayName(workTime.weekDay)}</span>
+                            <span className="text-sm font-medium">
+                              {getDayName(workTime.weekDay)}
+                            </span>
                           </div>
                           <span className="text-sm text-muted-foreground font-mono">
-                            {minutesToTime(workTime.startTime)} - {minutesToTime(workTime.endTime)}
+                            {minutesToTime(workTime.startTime)} -{" "}
+                            {minutesToTime(workTime.endTime)}
                           </span>
                         </div>
                       ))}
@@ -540,7 +655,7 @@ export default function BusinessDetails() {
                     {business.restTimes && business.restTimes.length > 0 && (
                       <div className="space-y-2 pt-4 border-t">
                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                          {t('businessDetails.sections.restTimes')}
+                          {t("businessDetails.sections.restTimes")}
                         </p>
                         {business.restTimes.map((restTime, index) => (
                           <div
@@ -549,10 +664,13 @@ export default function BusinessDetails() {
                           >
                             <div className="flex items-center gap-3">
                               <div className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50" />
-                              <span className="text-sm font-medium">{getDayName(restTime.weekDay)}</span>
+                              <span className="text-sm font-medium">
+                                {getDayName(restTime.weekDay)}
+                              </span>
                             </div>
                             <span className="text-sm text-muted-foreground font-mono">
-                              {minutesToTime(restTime.startTime)} - {minutesToTime(restTime.endTime)}
+                              {minutesToTime(restTime.startTime)} -{" "}
+                              {minutesToTime(restTime.endTime)}
                             </span>
                           </div>
                         ))}
@@ -562,12 +680,12 @@ export default function BusinessDetails() {
                 )}
               </CardContent>
             </Card>
-                        {/* Location */}
+            {/* Location */}
             <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <div className="rounded-full bg-primary"></div>
-                  {t('businessDetails.sections.location')}
+                  {t("businessDetails.sections.location")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -575,7 +693,9 @@ export default function BusinessDetails() {
                   <MapPin className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     {business.addressDetail && (
-                      <p className="font-semibold text-base">{business.addressDetail}</p>
+                      <p className="font-semibold text-base">
+                        {business.addressDetail}
+                      </p>
                     )}
                     <p className="text-muted-foreground">{business.city}</p>
                   </div>
@@ -589,9 +709,13 @@ export default function BusinessDetails() {
         <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-2xl">{t('businessDetails.booking.dialogTitle', { serviceName: selectedService?.name })}</DialogTitle>
+              <DialogTitle className="text-2xl">
+                {t("businessDetails.booking.dialogTitle", {
+                  serviceName: selectedService?.name,
+                })}
+              </DialogTitle>
               <DialogDescription className="text-base">
-                {t('businessDetails.booking.dialogDescription')}
+                {t("businessDetails.booking.dialogDescription")}
               </DialogDescription>
             </DialogHeader>
 
@@ -600,18 +724,25 @@ export default function BusinessDetails() {
               <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-semibold text-lg">{selectedService?.name}</h4>
+                    <h4 className="font-semibold text-lg">
+                      {selectedService?.name}
+                    </h4>
                     {selectedService?.description && (
-                      <p className="text-sm text-muted-foreground mt-1">{selectedService.description}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {selectedService.description}
+                      </p>
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-primary">₾{selectedService?.price}</p>
+                    <p className="text-xl font-bold text-primary">
+                      ₾{selectedService?.price}
+                    </p>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      {selectedService?.duration && selectedService.duration >= 60
-                        ? `${Math.floor(selectedService.duration / 60)}${t('businessDetails.time.hours')} ${selectedService.duration % 60 > 0 ? `${selectedService.duration % 60}${t('businessDetails.time.minutes')}` : ""}`
-                        : `${selectedService?.duration || 0}${t('businessDetails.time.minutes')}`}
+                      {selectedService?.duration &&
+                      selectedService.duration >= 60
+                        ? `${Math.floor(selectedService.duration / 60)}${t("businessDetails.time.hours")} ${selectedService.duration % 60 > 0 ? `${selectedService.duration % 60}${t("businessDetails.time.minutes")}` : ""}`
+                        : `${selectedService?.duration || 0}${t("businessDetails.time.minutes")}`}
                     </p>
                   </div>
                 </div>
@@ -621,7 +752,7 @@ export default function BusinessDetails() {
               <div>
                 <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" />
-                  {t('businessDetails.booking.selectDate')}
+                  {t("businessDetails.booking.selectDate")}
                 </h3>
                 <div className="grid grid-cols-7 gap-2">
                   {availableDays.map((day) => (
@@ -630,13 +761,17 @@ export default function BusinessDetails() {
                       onClick={() => handleDateSelect(day.dateString)}
                       className={`p-3 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-1 ${
                         selectedDate === day.dateString
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-border hover:border-primary/50 hover:bg-primary/5'
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary/50 hover:bg-primary/5"
                       }`}
                     >
-                      <span className="text-xs text-muted-foreground">{day.dayName}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {day.dayName}
+                      </span>
                       <span className="text-lg font-bold">{day.dayNumber}</span>
-                      <span className="text-xs text-muted-foreground">{day.monthName}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {day.monthName}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -647,7 +782,7 @@ export default function BusinessDetails() {
                 <div className="animate-in fade-in-50 duration-300">
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-primary" />
-                    {t('businessDetails.booking.selectTime')}
+                    {t("businessDetails.booking.selectTime")}
                   </h3>
                   <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                     {availableTimeSlots.map((time) => (
@@ -656,8 +791,8 @@ export default function BusinessDetails() {
                         onClick={() => handleTimeSelect(time)}
                         className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
                           selectedTime === time
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-border hover:border-primary/50 hover:bg-primary/5'
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border hover:border-primary/50 hover:bg-primary/5"
                         }`}
                       >
                         {time}
@@ -675,7 +810,10 @@ export default function BusinessDetails() {
                     className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer"
                     size="lg"
                   >
-                    {t('businessDetails.booking.confirmBooking', { date: selectedDate, time: selectedTime })}
+                    {t("businessDetails.booking.confirmBooking", {
+                      date: selectedDate,
+                      time: selectedTime,
+                    })}
                   </Button>
                 </div>
               )}
