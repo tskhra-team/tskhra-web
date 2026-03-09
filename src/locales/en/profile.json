@@ -40,7 +40,8 @@
       "male": "Male",
       "other": "Other"
     },
-    "changePrfPic": "Change profile picture",
+    "changePrfPic": "Change avatar",
+    "deleteAvatar": "Delete avatar",
     "birthDate": {
       "label": "Birth Date",
       "placeholder": "Select Date"

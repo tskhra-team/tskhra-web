@@ -165,7 +165,8 @@
       "servicesOffered": "Services Offered",
       "contactInformation": "Contact Information",
       "location": "Location",
-      "workingHours": "Working Hours"
+      "workingHours": "Working Hours",
+      "restTimes": "Rest Times"
     },
     "time": {
       "hours": "h",

@@ -12,7 +12,13 @@ import {
 } from "@/components/ui/sidebar";
 import { BusinessSwitcher } from "@/features/my-businesses/BusinessSwitcher";
 import { NavUser } from "@/features/my-businesses/NavUser";
-import { BarChart3, Bell, Calendar, Settings } from "lucide-react";
+import {
+  BarChart3,
+  Bell,
+  BriefcaseBusiness,
+  Calendar,
+  Settings,
+} from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 // const teams = [
@@ -49,6 +55,12 @@ const menuItems = [
     icon: Settings,
     section: "manage",
   },
+
+  {
+    title: "Services",
+    icon: BriefcaseBusiness,
+    section: "services",
+  },
   {
     title: "Notification",
     icon: Bell,
@@ -58,9 +70,14 @@ const menuItems = [
 
 export function MyBusinessesSidebar() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const isBusinessChoosed = searchParams.get("businessId");
+
+  // console.log(isBusinessChoosed);
 
   const handleSectionClick = (section: string) => {
-    setSearchParams({ section });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("section", section);
+    setSearchParams(newParams);
   };
 
   return (
@@ -74,17 +91,18 @@ export function MyBusinessesSidebar() {
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    onClick={() => handleSectionClick(item.section)}
-                    isActive={searchParams.get("section") === item.section}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {isBusinessChoosed &&
+                menuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      onClick={() => handleSectionClick(item.section)}
+                      isActive={searchParams.get("section") === item.section}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

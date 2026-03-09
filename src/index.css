@@ -122,26 +122,33 @@
   }
 }
 
-/* Пример в твоем файле стилей */
 .fc .fc-button-primary {
-  @apply bg-blue-600 border-none rounded-md px-4 py-2 font-medium capitalize;
+  @apply bg-blue-400 border-none rounded-md px-4 py-2 font-medium capitalize;
 }
 .fc .fc-button-primary:not(:disabled):active,
 .fc .fc-button-primary:not(:disabled).fc-button-active {
-  @apply bg-blue-800;
+  @apply bg-blue-500;
 }
 
-/* FullCalendar: Изменение цвета сегодняшнего дня с желтого на голубой */
+/* FullCalendar: current day column color */
 .fc .fc-day-today {
-  background-color: #dbeafe !important; /* blue-100 - светло-голубой */
+  background-color: #dbeafe !important;
 }
 
 .fc .fc-day-today .fc-daygrid-day-number {
-  color: #1e40bf; /* blue-800 - темно-синий текст для номера дня */
+  color: #1e40bf; /* blue-800 - current day */
   font-weight: 600;
 }
-/* FullCalendar: Затемнение нерабочего времени */
+/* FullCalendar: black out of non working days */
 .fc .fc-non-business {
-  background-color: #f1f5f9 !important; /* slate-100 - чуть темнее белого */
+  background-color: #f1f5f9 !important;
   opacity: 0.8;
+}
+
+.fc-header-toolbar {
+  @apply flex-col sm:flex-row;
+}
+
+#fc-dom-2 {
+  @apply text-lg sm:text-2xl;
 }

@@ -18,11 +18,12 @@ const getUser = async () => {
   return response.data;
 };
 
-const useGetUser = () => {
+const useGetUser = (isAuthenticated?: boolean) => {
   return useQuery<UserType, AxiosError<ErrorResponse>>({
     queryFn: getUser,
     queryKey: ["getUser"],
     staleTime: 5 * 60 * 1000,
+    enabled: isAuthenticated,
   });
 };
 

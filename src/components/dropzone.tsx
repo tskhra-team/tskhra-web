@@ -35,7 +35,7 @@ export function FileDropzone({
         <span className="text-primary hover:text-primary/90 font-medium">
           click to browse
         </span>{" "}
-        (4MB max)
+        (5MB max)
       </p>
       <input
         type="file"

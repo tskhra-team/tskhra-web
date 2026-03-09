@@ -7,6 +7,7 @@ import {
   createServicesFormSchema,
   type ServiceType,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
+import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -107,7 +108,10 @@ export default function ServiceForm() {
             "All services has been added to your business!",
             "Go to Home",
             () => {
-              navigate("/");
+              queryClient.invalidateQueries({
+                queryKey: ["getMyBusinesses"],
+              });
+              navigate("/my-businesses");
             },
           );
         },

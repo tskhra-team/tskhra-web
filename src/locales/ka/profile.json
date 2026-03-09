@@ -40,7 +40,8 @@
       "male": "მამრობითი",
       "other": "სხვა"
     },
-    "changePrfPic": "შეცვალე პროფილის სურათი",
+    "changePrfPic": "შეცვალე სურათი",
+    "deleteAvatar": "სურათის წაშლა",
     "birthDate": {
       "label": "დაბადების თარიღი",
       "placeholder": "აირჩიეთ თარიღი"

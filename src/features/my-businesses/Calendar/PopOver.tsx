@@ -1,4 +1,4 @@
-import type { Booking } from "./MyCalendar";
+import type { Booking } from "./types/calendar.types";
 
 interface PopOverProps {
   popoverPos: { top: number; left: number };

@@ -18,6 +18,8 @@ interface ModalData {
   text: string;
   buttonText?: string;
   onButtonClick?: () => void;
+  secondButtonText?: string;
+  onSecondButtonClick?: () => void;
 }
 
 // 3. Описываем всё, что будет доступно через контекст
@@ -29,6 +31,8 @@ interface ModalContextProps extends ModalData {
     text: string,
     buttonText?: string,
     onButtonClick?: () => void,
+    secondButtonText?: string,
+    onSecondButtonClick?: () => void,
   ) => void;
   closeModal: () => void;
 }
@@ -50,6 +54,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     text: "",
     buttonText: undefined,
     onButtonClick: undefined,
+    secondButtonText: undefined,
+    onSecondButtonClick: undefined,
   });
 
   const showModal = (
@@ -58,8 +64,18 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     text: string,
     buttonText?: string,
     onButtonClick?: () => void,
+    secondButtonText?: string,
+    onSecondButtonClick?: () => void,
   ) => {
-    setModalData({ status, title, text, buttonText, onButtonClick });
+    setModalData({
+      status,
+      title,
+      text,
+      buttonText,
+      onButtonClick,
+      secondButtonText,
+      onSecondButtonClick,
+    });
     setIsOpen(true);
   };
 
@@ -78,8 +94,17 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 // 5. Компонент модального окна
 const GlobalModal: React.FC = () => {
   const context = useModal();
-  const { isOpen, status, title, text, buttonText, onButtonClick, closeModal } =
-    context;
+  const {
+    isOpen,
+    status,
+    title,
+    text,
+    buttonText,
+    onButtonClick,
+    secondButtonText,
+    onSecondButtonClick,
+    closeModal,
+  } = context;
 
   // Block scroll when modal is open
   useEffect(() => {
@@ -135,24 +160,39 @@ const GlobalModal: React.FC = () => {
         </p>
 
         {status !== "pending" && (
-          <Button
-            onClick={() => {
-              if (onButtonClick) {
-                onButtonClick();
-              }
-              closeModal();
-            }}
-            className="px-8 py-2.5 bg-gray-900 text-white rounded-lg cursor-pointer transition-all duration-200 font-medium shadow-sm hover:shadow-md active:scale-95"
-          >
-            {buttonText || "Close"}
-          </Button>
+          <div className="flex gap-3">
+            {secondButtonText && (
+              <Button
+                onClick={() => {
+                  if (onSecondButtonClick) {
+                    onSecondButtonClick();
+                  }
+                  closeModal();
+                }}
+                variant="outline"
+                className="px-8 py-2.5 rounded-lg cursor-pointer transition-all duration-200 font-medium shadow-sm hover:shadow-md active:scale-95"
+              >
+                {secondButtonText}
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                if (onButtonClick) {
+                  onButtonClick();
+                }
+                closeModal();
+              }}
+              className="px-8 py-2.5 bg-gray-900 text-white rounded-lg cursor-pointer transition-all duration-200 font-medium shadow-sm hover:shadow-md active:scale-95"
+            >
+              {buttonText || "Close"}
+            </Button>
+          </div>
         )}
       </div>
     </div>
   );
 };
 
-// 6. Кастомный хук с проверкой на null
 export const useModal = (): ModalContextProps => {
   const context = useContext(ModalContext);
   if (!context) {

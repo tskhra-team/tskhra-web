@@ -22,7 +22,7 @@ import useUnVerify from "@/features/profile/useUnVerify";
 import useUpdateProfile from "@/features/profile/useUpdateProfile";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar as CalendarIcon, Check, Pencil } from "lucide-react";
+import { Calendar as CalendarIcon, Check, Pencil, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Controller, useForm } from "react-hook-form";
@@ -30,8 +30,10 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useModal } from "@/context/ModalContext";
 import AvatarCropperModal from "@/features/profile/AvatarCropperModal";
 import BlurVerifiedUser from "@/features/profile/BlurVerifiedUser";
+import useDeleteAvatar from "@/features/profile/useDeleteAvatar";
 import useUploadAvatar from "@/features/profile/useUploadAvatar";
 import useVerify from "@/features/profile/useVerify";
 import imageCompression from "browser-image-compression";
@@ -45,6 +47,9 @@ function ProfileForm() {
   const { t } = useTranslation("profile");
   const { mutate: verifyUser } = useVerify();
   const { mutate: uploadAvatar, isPending: isUploading } = useUploadAvatar();
+  const { mutate: deleteAvatar } = useDeleteAvatar();
+
+  const { showModal } = useModal();
 
   const isPending = isUpdating || isUploading;
 
@@ -79,7 +84,14 @@ function ProfileForm() {
     },
   });
 
-  const { register, handleSubmit, control, reset, setValue, formState: { errors } } = form;
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    setValue,
+    formState: { errors },
+  } = form;
 
   // Update form when profile data loads
   useEffect(() => {
@@ -166,7 +178,7 @@ function ProfileForm() {
           },
         );
       } else {
-        setValue("avatarFile", compressedFile, { shouldValidate: true }); // Сохраняем compressedFile
+        setValue("avatarFile", compressedFile, { shouldValidate: true });
       }
     } catch (error) {
       console.error("Ошибка при сжатии картинки:", error);
@@ -265,15 +277,53 @@ function ProfileForm() {
           </div>
 
           {profile?.status ? (
-            <Button
-              type="button"
-              variant="link"
-              className="cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Pencil className="h-4 w-4" />
-              {t("form.changePrfPic")}
-            </Button>
+            <div>
+              <Button
+                type="button"
+                variant="link"
+                className="cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Pencil className="h-4 w-4" />
+                {t("form.changePrfPic")}
+              </Button>
+
+              {profile.avatar && (
+                <Button
+                  type="button"
+                  variant="link"
+                  className="cursor-pointer text-red-700"
+                  onClick={() =>
+                    showModal(
+                      "idle",
+                      "Delete avatar",
+                      "Are you sure you wnat to delete your avatar?",
+                      "Yes, delete",
+                      () => {
+                        deleteAvatar(undefined, {
+                          onSuccess: () => {
+                            toast.success("Avatar deleted successfully", {
+                              position: "top-center",
+                            });
+                            queryClient.invalidateQueries({
+                              queryKey: ["getUser"],
+                            });
+                            refetch();
+                          },
+                          onError: () => {
+                            toast.error("Failed to delete avatar");
+                          },
+                        });
+                      },
+                      "Cancel",
+                    )
+                  }
+                >
+                  <X className="h-6 w-6" />
+                  {t("form.deleteAvatar")}
+                </Button>
+              )}
+            </div>
           ) : !isEditMode ? (
             <Button
               type="button"

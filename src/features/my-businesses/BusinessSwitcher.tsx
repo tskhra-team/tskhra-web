@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  AudioWaveform,
-  ChevronsUpDown,
-  Command,
-  GalleryVerticalEnd,
-  Plus,
-} from "lucide-react";
+import { ChevronsUpDown, Plus } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -15,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -24,40 +17,56 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useNavigate } from "react-router-dom";
+import useGetMyBusinesses, {
+  type MyBusinessResponse,
+} from "@/features/my-businesses/useGetMyBusinesses";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-type Business = {
-  name: string;
-  logo: React.ElementType;
-  plan: string;
-};
-
-const businesses: Business[] = [
-  {
-    name: "Acme Inc",
-    logo: GalleryVerticalEnd,
-    plan: "Enterprise",
-  },
-  {
-    name: "Acme Corp.",
-    logo: AudioWaveform,
-    plan: "Startup",
-  },
-  {
-    name: "Evil Corp.",
-    logo: Command,
-    plan: "Free",
-  },
-];
-
-export function BusinessSwitcher() {
+function BusinessSwitcherComponent() {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState<Business | string>(
-    "Select Business",
-  );
+  const [activeBusiness, setActiveBusiness] = React.useState<
+    MyBusinessResponse | string
+  >("Select Business");
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { data: businesses } = useGetMyBusinesses();
+  const businessId = searchParams.get("businessId");
 
-  if (!activeTeam) {
+  const handleBusinessSelect = React.useCallback(
+    (business: MyBusinessResponse) => {
+      setActiveBusiness(business);
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("businessId", business.businessId);
+      setSearchParams(newParams);
+    },
+    [searchParams, setSearchParams],
+  );
+
+  const businessIds = React.useMemo(
+    () => businesses?.map((b) => b.businessId) ?? [],
+    [businesses],
+  );
+
+  React.useEffect(() => {
+    if (businessId && businesses && businesses.length > 0) {
+      const isMineBusiness = businessIds.includes(businessId);
+
+      if (!isMineBusiness) {
+        const lastBusiness = businesses[businesses.length - 1];
+        setActiveBusiness(lastBusiness);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("businessId", lastBusiness.businessId);
+        setSearchParams(newParams);
+      } else {
+        const filtered = businesses.find((b) => b.businessId === businessId);
+        if (filtered) {
+          setActiveBusiness(filtered);
+        }
+      }
+    }
+  }, [businessId, businesses, businessIds, searchParams, setSearchParams]);
+
+  if (!activeBusiness) {
     return null;
   }
 
@@ -70,20 +79,26 @@ export function BusinessSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              {typeof activeTeam !== "object" ? (
+              {typeof activeBusiness !== "object" ? (
                 <div className="grid flex-1 text-left text-lg leading-tight">
-                  <span className="truncate font-medium">{activeTeam}</span>
+                  <span className="truncate font-medium">{activeBusiness}</span>
                 </div>
               ) : (
                 <>
-                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                    <activeTeam.logo className="size-4" />
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg overflow-hidden">
+                    <img
+                      src={activeBusiness.mainImage}
+                      alt={activeBusiness.businessName}
+                      className="size-full object-cover"
+                    />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">
-                      {activeTeam.name}
+                      {activeBusiness.businessName}
                     </span>
-                    <span className="truncate text-xs">{activeTeam.plan}</span>
+                    <span className="truncate text-xs">
+                      {activeBusiness.callType.toLowerCase()}
+                    </span>
                   </div>
                 </>
               )}
@@ -100,17 +115,20 @@ export function BusinessSwitcher() {
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Businesses
             </DropdownMenuLabel>
-            {businesses.map((team, index) => (
+            {businesses?.map((business, _index) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
+                key={business.businessId}
+                onClick={() => handleBusinessSelect(business)}
                 className="gap-2 p-2"
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <team.logo className="size-3.5 shrink-0" />
+                <div className="flex size-6 items-center justify-center rounded-md border overflow-hidden">
+                  <img
+                    src={business.mainImage}
+                    alt={business.businessName}
+                    className="size-full object-cover"
+                  />
                 </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                {business.businessName}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
@@ -131,3 +149,5 @@ export function BusinessSwitcher() {
     </SidebarMenu>
   );
 }
+
+export const BusinessSwitcher = React.memo(BusinessSwitcherComponent);
