@@ -2,17 +2,19 @@ import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import useGetBookingBusinesses from "@/Booking/useGetBookingBusinesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { MapPin } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function BusinessCatalog() {
+  const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
-  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses();
-
-  // console.log("Businesses data:", businesses);
+  const size = 12;
+  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses(page, size);
 
   const handkleClick = (id: string) => {
     scrollToTop();
@@ -47,19 +49,17 @@ export default function BusinessCatalog() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {businesses?.map((business) => {
-          // console.log("Individual business:", business);
-
+        {businesses?.content.map((business) => {
           return (
             <Card
-              key={business.id}
+              key={business.businessId}
               className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer flex flex-col"
-              onClick={() => handkleClick(business.id)}
+              onClick={() => handkleClick(business.businessId)}
             >
               {/* Image Section */}
               <div className="w-full h-48 overflow-hidden relative">
                 <img
-                  src={business.mainImageUrl}
+                  src={business.mainImage}
                   alt={business.businessName}
                   loading="lazy"
                   className="w-full h-full object-cover hover:scale-105 transition-transform"
@@ -68,7 +68,7 @@ export default function BusinessCatalog() {
                 {/* Call Type Tag Overlay */}
                 <div className="absolute top-3 left-3">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm text-slate-800 shadow-sm">
-                    {t(`businessDetails.callType.${business.callType}`)}
+                    {t(`${business.callType}`)}
                   </span>
                 </div>
               </div>
@@ -79,25 +79,25 @@ export default function BusinessCatalog() {
                   {business.businessName}
                 </CardTitle>
 
-                {business.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-3 grow">
-                    {business.description}
-                  </p>
-                )}
+                {/* Description - Fixed size for consistent UI */}
+                <p className="text-sm text-gray-600 line-clamp-2 mb-3 h-10">
+                  {business.description || '\u00A0'}
+                </p>
 
                 {/* City */}
                 <div className="flex items-center gap-1 mb-4 text-sm text-gray-600">
                   <MapPin className="w-4 h-4" />
                   <span>{business.city}</span>
+                  <span>{business.addressDetail}</span>
                 </div>
 
                 {/* Button Section */}
                 <div className="flex justify-end mt-auto pt-3 border-t">
                   <Button
-                    className="bg-slate-800 hover:bg-slate-900 text-white px-6 rounded-full"
+                    className="bg-slate-800 hover:bg-slate-900 text-white px-6 rounded-full cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handkleClick(business.id);
+                      handkleClick(business.businessId);
                     }}
                   >
                     {t("catalog.viewDetails")}
@@ -108,6 +108,20 @@ export default function BusinessCatalog() {
           );
         })}
       </div>
+
+      {/* Pagination */}
+      {businesses && businesses.totalPages > 1 && (
+        <div className="mt-8">
+          <PaginationControls
+            currentPage={page}
+            totalPages={businesses.totalPages}
+            onPageChange={(newPage) => {
+              setPage(newPage);
+              scrollToTop();
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
