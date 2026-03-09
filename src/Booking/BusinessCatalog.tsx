@@ -94,7 +94,7 @@ export default function BusinessCatalog() {
                 {/* Button Section */}
                 <div className="flex justify-end mt-auto pt-3 border-t">
                   <Button
-                    className="bg-slate-800 hover:bg-slate-900 text-white px-6 rounded-full"
+                    className="bg-slate-800 hover:bg-slate-900 text-white px-6 rounded-full cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       handkleClick(business.businessId);

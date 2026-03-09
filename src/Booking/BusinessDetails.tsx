@@ -1,195 +1,28 @@
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
-import { getDayName, minutesToTime } from "@/Booking/mockBusinesses";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
-import { Badge } from "@/components/ui/badge";
+import { getAvailableDays, getAvailableTimeSlots } from "@/Booking/utils/businessDetailsUtils";
+import { useBookingDialog } from "@/Booking/hooks/useBookingDialog";
+import { useImageGallery } from "@/Booking/hooks/useImageGallery";
+import BusinessHeader from "@/Booking/components/BusinessHeader";
+import BusinessGallery from "@/Booking/components/BusinessGallery";
+import BusinessDescription from "@/Booking/components/BusinessDescription";
+import ServicesList from "@/Booking/components/ServicesList";
+import BookNowCard from "@/Booking/components/BookNowCard";
+import ContactInformationCard from "@/Booking/components/ContactInformationCard";
+import WorkingHoursCard from "@/Booking/components/WorkingHoursCard";
+import LocationCard from "@/Booking/components/LocationCard";
+import BookingDialog from "@/Booking/components/BookingDialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Briefcase,
-  Calendar,
-  ChevronDown,
-  Clock,
-  Facebook,
-  Instagram,
-  MapPin,
-  Phone,
-} from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-
-// Mock available days (next 14 days)
-const getAvailableDays = () => {
-  const days = [];
-  const today = new Date();
-  for (let i = 0; i < 14; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    days.push({
-      date: date,
-      dateString: date.toISOString().split("T")[0],
-      dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
-      dayNumber: date.getDate(),
-      monthName: date.toLocaleDateString("en-US", { month: "short" }),
-    });
-  }
-  return days;
-};
-
-// Helper function to convert time string (HH:MM) to minutes
-const timeToMinutes = (timeString: string): number => {
-  const [hours, minutes] = timeString.split(":").map(Number);
-  return hours * 60 + minutes;
-};
-
-// Helper function to convert day name to day number (0 = Sunday, 1 = Monday, etc.)
-const dayNameToDayNumber = (dayName: string | number): number => {
-  if (typeof dayName === "number") return dayName;
-
-  const dayMap: Record<string, number> = {
-    // Full names
-    sunday: 0,
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6,
-    // Abbreviated names (uppercase)
-    SUN: 0,
-    MON: 1,
-    TUE: 2,
-    WED: 3,
-    THU: 4,
-    FRI: 5,
-    SAT: 6,
-  };
-
-  return dayMap[dayName] ?? dayMap[dayName.toLowerCase()] ?? -1;
-};
-
-// Mock available time slots filtered by working hours
-const getAvailableTimeSlots = (
-  selectedDate: string | null,
-  workTimes?: Array<{
-    weekDay: string | number;
-    startTime: number;
-    endTime: number;
-  }>,
-  restTimes?: Array<{
-    weekDay: string | number;
-    startTime: number;
-    endTime: number;
-  }>,
-) => {
-  if (!selectedDate || !workTimes) return [];
-
-  // Get the day of week for the selected date (0 = Sunday, 1 = Monday, etc.)
-  const date = new Date(selectedDate);
-  const dayOfWeek = date.getDay();
-
-  console.log("Selected date:", selectedDate, "Day of week:", dayOfWeek);
-  console.log("Work times:", workTimes);
-
-  // Find working hours for this day
-  const workTime = workTimes.find((wt) => {
-    const wtDay = dayNameToDayNumber(wt.weekDay);
-    console.log(
-      "Checking workTime:",
-      wt.weekDay,
-      "converted to:",
-      wtDay,
-      "against:",
-      dayOfWeek,
-    );
-    return wtDay === dayOfWeek;
-  });
-
-  console.log("Found work time:", workTime);
-  if (!workTime) return []; // Business is closed this day
-
-  // Find rest times for this day
-  const restTime = restTimes?.find((rt) => {
-    const rtDay = dayNameToDayNumber(rt.weekDay);
-    return rtDay === dayOfWeek;
-  });
-
-  console.log("Found rest time:", restTime);
-
-  // Generate all possible time slots (every 30 minutes)
-  const slots = [
-    "09:00",
-    "09:30",
-    "10:00",
-    "10:30",
-    "11:00",
-    "11:30",
-    "12:00",
-    "12:30",
-    "13:00",
-    "13:30",
-    "14:00",
-    "14:30",
-    "15:00",
-    "15:30",
-    "16:00",
-    "16:30",
-    "17:00",
-    "17:30",
-    "18:00",
-    "18:30",
-    "19:00",
-    "19:30",
-    "20:00",
-    "20:30",
-  ];
-
-  // Filter slots based on working hours and rest times
-  const availableSlots = slots.filter((slot) => {
-    const slotMinutes = timeToMinutes(slot);
-
-    // Check if slot is within working hours
-    const isWithinWorkingHours =
-      slotMinutes >= workTime.startTime && slotMinutes < workTime.endTime;
-
-    // Check if slot is during rest time
-    const isDuringRestTime = restTime
-      ? slotMinutes >= restTime.startTime && slotMinutes < restTime.endTime
-      : false;
-
-    return isWithinWorkingHours && !isDuringRestTime;
-  });
-
-  console.log("Available slots:", availableSlots);
-  return availableSlots;
-};
 
 export default function BusinessDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
-  const [showWorkingHours, setShowWorkingHours] = useState(false);
-  const [showContactInfo, setShowContactInfo] = useState(false);
-  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState<{
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    duration: number;
-  } | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch business data from API (only if id exists)
   const {
@@ -204,6 +37,25 @@ export default function BusinessDetails() {
   const { data: services, isLoading: servicesLoading } =
     useGetBookingBusinessServices(id || "", !!id);
 
+  // Custom hooks for state management
+  const {
+    bookingDialogOpen,
+    selectedService,
+    selectedDate,
+    selectedTime,
+    handleServiceClick,
+    handleDateSelect,
+    handleTimeSelect,
+    handleBookingConfirm,
+    setBookingDialogOpen,
+  } = useBookingDialog();
+
+  const allImages = business
+    ? [business.mainImage, ...(business.galleryImages || [])]
+    : [];
+
+  const { currentImageIndex, handleImageClick } = useImageGallery(allImages);
+
   const availableDays = getAvailableDays();
   const availableTimeSlots = getAvailableTimeSlots(
     selectedDate,
@@ -216,47 +68,6 @@ export default function BusinessDetails() {
       behavior: "smooth",
       block: "center",
     });
-  };
-
-  const handleServiceClick = (service: {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    duration: number;
-  }) => {
-    setSelectedService(service);
-    setSelectedDate(null);
-    setSelectedTime(null);
-    setBookingDialogOpen(true);
-  };
-
-  const handleDateSelect = (dateString: string) => {
-    setSelectedDate(dateString);
-    setSelectedTime(null);
-  };
-
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-  };
-
-  const handleBookingConfirm = () => {
-    // TODO: Send booking to backend
-    console.log("Booking confirmed:", {
-      service: selectedService,
-      date: selectedDate,
-      time: selectedTime,
-    });
-    setBookingDialogOpen(false);
-  };
-
-  // Gallery functions
-  const allImages = business
-    ? [business.mainImage, ...(business.galleryImages || [])]
-    : [];
-
-  const handleImageClick = (index: number) => {
-    setCurrentImageIndex(index);
   };
 
   // No ID provided
@@ -318,508 +129,68 @@ export default function BusinessDetails() {
     );
   }
 
-  // Get call type badge color
-  const getCallTypeBadge = () => {
-    switch (business.callType) {
-      case "outcall":
-        return (
-          <Badge variant="secondary">
-            {t("businessDetails.callType.outcall")}
-          </Badge>
-        );
-      case "onsite":
-        return (
-          <Badge variant="default">
-            {t("businessDetails.callType.onsite")}
-          </Badge>
-        );
-      case "both":
-        return (
-          <Badge variant="outline">{t("businessDetails.callType.both")}</Badge>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-linear-to-b from-background to-muted/20 bg-[#d8e0f0]">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <button
-            onClick={() => navigate("/")}
-            className="hover:text-primary transition-colors font-medium"
-          >
-            {t("businessDetails.breadcrumb.home")}
-          </button>
-          <span className="text-muted-foreground/50">•</span>
-          <button
-            onClick={() => navigate("/services")}
-            className="hover:text-primary transition-colors font-medium"
-          >
-            {t("businessDetails.breadcrumb.services")}
-          </button>
-          <span className="text-muted-foreground/50">•</span>
-          <span className="text-[#100b2e] font-semibold">
-            {business.businessName}
-          </span>
-        </div>
-
-        {/* Business Header */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between gap-4 mb-3">
-            <h1 className="text-4xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text">
-              {business.businessName}
-            </h1>
-            {getCallTypeBadge()}
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Briefcase className="w-5 h-5 text-primary/70" />
-            <span className="text-base">{business.category}</span>
-          </div>
-        </div>
+        <BusinessHeader
+          businessName={business.businessName}
+          category={business.category}
+          callType={business.callType}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Main Image Display */}
-            <div className="aspect-video w-full overflow-hidden rounded-2xl shadow-xl ring-1 ring-border/50">
-              <img
-                src={allImages[currentImageIndex]}
-                alt={business.businessName}
-                loading="eager"
-                width={1200}
-                height={675}
-                className="w-full h-full object-cover transition-all duration-300"
-              />
-            </div>
+            <BusinessGallery
+              allImages={allImages}
+              currentImageIndex={currentImageIndex}
+              businessName={business.businessName}
+              onImageClick={handleImageClick}
+            />
 
-            {/* Gallery Thumbnails */}
-            {allImages.length > 1 && (
-              <div className="grid grid-cols-5 gap-3">
-                {allImages.map((url: string, index: number) => (
-                  <div
-                    key={index}
-                    onClick={() => handleImageClick(index)}
-                    className={`aspect-video overflow-hidden rounded-xl shadow-md transition-all duration-300 cursor-pointer group ${
-                      currentImageIndex === index
-                        ? "ring-2 ring-primary ring-offset-2"
-                        : "ring-1 ring-border/50 hover:ring-primary/50"
-                    }`}
-                  >
-                    <img
-                      src={url}
-                      alt={`Gallery ${index + 1}`}
-                      loading="lazy"
-                      width={400}
-                      height={225}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            <BusinessDescription description={business.description} />
 
-            {/* Description */}
-            <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="rounded-full bg-primary text-[#100b2e]"></div>
-                  {t("businessDetails.sections.about")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed text-base">
-                  {business.description}
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Services Offered */}
-            <Card
+            <ServicesList
               ref={servicesRef}
-              className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm"
-            >
-              <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="rounded-full bg-primary"></div>
-                  {t("businessDetails.sections.servicesOffered")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {servicesLoading ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    {t("businessDetails.status.loading")}
-                  </div>
-                ) : services && services.length > 0 ? (
-                  <div className="space-y-3">
-                    {services.map((service) => (
-                      <div
-                        key={service.id}
-                        onClick={() => handleServiceClick(service)}
-                        className="p-5 border border-border/50 rounded-xl hover:bg-primary/5 hover:border-primary/30 hover:shadow-md transition-all duration-300 group cursor-pointer"
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                            {service.name}
-                          </h3>
-                          <div className="text-right">
-                            <p className="text-xl font-bold text-primary">
-                              ₾{service.price}
-                            </p>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5" />
-                              {service.duration >= 60
-                                ? `${Math.floor(service.duration / 60)}${t("businessDetails.time.hours")} ${service.duration % 60 > 0 ? `${service.duration % 60}${t("businessDetails.time.minutes")}` : ""}`
-                                : `${service.duration}${t("businessDetails.time.minutes")}`}
-                            </p>
-                          </div>
-                        </div>
-                        {service.description && (
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            {service.description}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center py-8 text-muted-foreground">
-                    {t("businessDetails.status.noServices")}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+              services={services}
+              servicesLoading={servicesLoading}
+              onServiceClick={handleServiceClick}
+            />
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6 lg:sticky lg:top-8 h-fit">
-            {/* Action Buttons */}
-            <Card className="rounded-2xl border-primary/20 from-primary/5 to-card">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-xl break-all leading-tight whitespace-normal">
-                  {business.businessName}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  className="w-full cursor-pointer  hover:shadow-xl transition-all duration-300 text-base font-semibold rounded-xl h-12 bg-[#ff6439] hover:bg-[#100b2e]"
-                  size="lg"
-                  onClick={scrollToServices}
-                >
-                  {t("businessDetails.buttons.bookNow")}
-                </Button>
-              </CardContent>
-            </Card>
+            <BookNowCard
+              businessName={business.businessName}
+              onBookNowClick={scrollToServices}
+            />
 
-            {/* Contact Information */}
-            {(business.info.phoneNumber ||
-              business.info.facebookUrl ||
-              business.info.instagramUrl) && (
-              <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <div
-                    className="flex items-center justify-between cursor-pointer group"
-                    onClick={() => setShowContactInfo(!showContactInfo)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Phone className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">
-                          {t("businessDetails.sections.contactInformation")}
-                        </p>
-                        <span className="font-semibold text-sm">
-                          {business.info.phoneNumber || t("businessDetails.social.facebook") || t("businessDetails.social.instagram")}
-                        </span>
-                      </div>
-                    </div>
-                    <ChevronDown
-                      className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${showContactInfo ? "rotate-180" : ""}`}
-                    />
-                  </div>
+            <ContactInformationCard info={business.info} />
 
-                  {/* Contact Details */}
-                  {showContactInfo && (
-                    <div className="space-y-2 mt-4 pt-4 border-t">
-                      {business.info.phoneNumber && (
-                        <a
-                          href={`tel:${business.info.phoneNumber}`}
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 group"
-                        >
-                          <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                            <Phone className="w-4 h-4 text-primary" />
-                          </div>
-                          <span className="text-sm font-medium">
-                            {business.info.phoneNumber}
-                          </span>
-                        </a>
-                      )}
+            <WorkingHoursCard
+              workTimes={business.workTimes}
+              restTimes={business.restTimes}
+            />
 
-                      {business.info.facebookUrl && (
-                        <a
-                          href={business.info.facebookUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/5 hover:text-blue-600 transition-all duration-300 group"
-                        >
-                          <div className="p-2 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
-                            <Facebook className="w-4 h-4 text-blue-600" />
-                          </div>
-                          <span className="text-sm font-medium">
-                            {t("businessDetails.social.facebook")}
-                          </span>
-                        </a>
-                      )}
-
-                      {business.info.instagramUrl && (
-                        <a
-                          href={business.info.instagramUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-pink-500/5 hover:text-pink-600 transition-all duration-300 group"
-                        >
-                          <div className="p-2 rounded-lg bg-pink-500/10 group-hover:bg-pink-500/20 transition-colors">
-                            <Instagram className="w-4 h-4 text-pink-600" />
-                          </div>
-                          <span className="text-sm font-medium">
-                            {t("businessDetails.social.instagram")}
-                          </span>
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Working Hours */}
-            <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="pt-6">
-                <div
-                  className="flex items-center justify-between cursor-pointer group"
-                  onClick={() => setShowWorkingHours(!showWorkingHours)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-green-500/10">
-                      <Clock className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("businessDetails.sections.workingHours")}
-                      </p>
-                      <span className="font-semibold text-sm">
-                        {t("businessDetails.status.openUntil")}{" "}
-                        {minutesToTime(
-                          business.workTimes[new Date().getDay()]?.endTime ||
-                            business.workTimes[0].endTime,
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                  <ChevronDown
-                    className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${showWorkingHours ? "rotate-180" : ""}`}
-                  />
-                </div>
-
-                {/* Days list */}
-                {showWorkingHours && (
-                  <div className="space-y-4 mt-4 pt-4 border-t">
-                    {/* Working Hours */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        {t("businessDetails.sections.workingHours")}
-                      </p>
-                      {business.workTimes.map((workTime, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-green-500 shadow-sm shadow-green-500/50" />
-                            <span className="text-sm font-medium">
-                              {getDayName(workTime.weekDay)}
-                            </span>
-                          </div>
-                          <span className="text-sm text-muted-foreground font-mono">
-                            {minutesToTime(workTime.startTime)} -{" "}
-                            {minutesToTime(workTime.endTime)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Rest Times */}
-                    {business.restTimes && business.restTimes.length > 0 && (
-                      <div className="space-y-2 pt-4 border-t">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                          {t("businessDetails.sections.restTimes")}
-                        </p>
-                        {business.restTimes.map((restTime, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-2 h-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50" />
-                              <span className="text-sm font-medium">
-                                {getDayName(restTime.weekDay)}
-                              </span>
-                            </div>
-                            <span className="text-sm text-muted-foreground font-mono">
-                              {minutesToTime(restTime.startTime)} -{" "}
-                              {minutesToTime(restTime.endTime)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-            {/* Location */}
-            <Card className=" rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="rounded-full bg-primary"></div>
-                  {t("businessDetails.sections.location")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-start gap-3 p-4 bg-primary/5 rounded-xl border border-primary/10">
-                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
-                  <div>
-                    {business.addressDetail && (
-                      <p className="font-semibold text-base">
-                        {business.addressDetail}
-                      </p>
-                    )}
-                    <p className="text-muted-foreground">{business.city}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <LocationCard
+              addressDetail={business.addressDetail}
+              city={business.city}
+            />
           </div>
         </div>
 
-        {/* Booking Dialog */}
-        <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl">
-                {t("businessDetails.booking.dialogTitle", {
-                  serviceName: selectedService?.name,
-                })}
-              </DialogTitle>
-              <DialogDescription className="text-base">
-                {t("businessDetails.booking.dialogDescription")}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-6 mt-4">
-              {/* Service Summary */}
-              <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-semibold text-lg">
-                      {selectedService?.name}
-                    </h4>
-                    {selectedService?.description && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {selectedService.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xl font-bold text-primary">
-                      ₾{selectedService?.price}
-                    </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
-                      {selectedService?.duration &&
-                      selectedService.duration >= 60
-                        ? `${Math.floor(selectedService.duration / 60)}${t("businessDetails.time.hours")} ${selectedService.duration % 60 > 0 ? `${selectedService.duration % 60}${t("businessDetails.time.minutes")}` : ""}`
-                        : `${selectedService?.duration || 0}${t("businessDetails.time.minutes")}`}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Date Selection */}
-              <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" />
-                  {t("businessDetails.booking.selectDate")}
-                </h3>
-                <div className="grid grid-cols-7 gap-2">
-                  {availableDays.map((day) => (
-                    <button
-                      key={day.dateString}
-                      onClick={() => handleDateSelect(day.dateString)}
-                      className={`p-3 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-1 ${
-                        selectedDate === day.dateString
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/50 hover:bg-primary/5"
-                      }`}
-                    >
-                      <span className="text-xs text-muted-foreground">
-                        {day.dayName}
-                      </span>
-                      <span className="text-lg font-bold">{day.dayNumber}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {day.monthName}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Time Selection */}
-              {selectedDate && (
-                <div className="animate-in fade-in-50 duration-300">
-                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-primary" />
-                    {t("businessDetails.booking.selectTime")}
-                  </h3>
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                    {availableTimeSlots.map((time) => (
-                      <button
-                        key={time}
-                        onClick={() => handleTimeSelect(time)}
-                        className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
-                          selectedTime === time
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border hover:border-primary/50 hover:bg-primary/5"
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Confirm Button */}
-              {selectedDate && selectedTime && (
-                <div className="animate-in fade-in-50 duration-300 pt-4 border-t">
-                  <Button
-                    onClick={handleBookingConfirm}
-                    className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer"
-                    size="lg"
-                  >
-                    {t("businessDetails.booking.confirmBooking", {
-                      date: selectedDate,
-                      time: selectedTime,
-                    })}
-                  </Button>
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+        <BookingDialog
+          open={bookingDialogOpen}
+          onOpenChange={setBookingDialogOpen}
+          selectedService={selectedService}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          availableDays={availableDays}
+          availableTimeSlots={availableTimeSlots}
+          onDateSelect={handleDateSelect}
+          onTimeSelect={handleTimeSelect}
+          onConfirm={handleBookingConfirm}
+        />
       </div>
     </div>
   );

@@ -46,7 +46,7 @@ export function minutesToTime(minutes: number): string {
 }
 
 // Helper to get day name in Georgian
-export function getDayName(day: string): string {
+export function getDayName(day: string | number): string {
   const dayNames: Record<string, string> = {
     monday: "ორშაბათი",
     tuesday: "სამშაბათი",
@@ -56,6 +56,22 @@ export function getDayName(day: string): string {
     saturday: "შაბათი",
     sunday: "კვირა",
   };
+
+  // If it's a number, convert to day name first
+  if (typeof day === "number") {
+    const numberToDayName: Record<number, string> = {
+      0: "sunday",
+      1: "monday",
+      2: "tuesday",
+      3: "wednesday",
+      4: "thursday",
+      5: "friday",
+      6: "saturday",
+    };
+    const dayString = numberToDayName[day];
+    return dayString ? dayNames[dayString] : String(day);
+  }
+
   return dayNames[day.toLowerCase()] || day;
 }
 
