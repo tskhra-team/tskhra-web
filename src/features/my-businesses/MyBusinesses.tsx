@@ -1,6 +1,7 @@
 import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarProvider";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
+import MyServices from "@/features/my-businesses/Services/MyServices";
 import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
 import useGetMyBusinesses from "@/features/my-businesses/useGetMyBusinesses";
 import { useMemo } from "react";
@@ -92,15 +93,7 @@ export default function MyBusinesses() {
           </div>
         );
       case "services":
-        return (
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Services</h1>
-            <p className="text-muted-foreground">
-              View and manage your services.
-            </p>
-            {/* Notification content will go here */}
-          </div>
-        );
+        return <MyServices businessId={businessId} />;
       default:
         return (
           <div className="space-y-4">

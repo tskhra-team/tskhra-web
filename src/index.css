@@ -146,7 +146,7 @@
 }
 
 .fc-header-toolbar {
-  @apply flex-col sm:flex-row;
+  @apply flex-col lg:flex-row;
 }
 
 #fc-dom-2 {
