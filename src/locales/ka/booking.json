@@ -165,7 +165,8 @@
       "servicesOffered": "შეთავაზებული სერვისები",
       "contactInformation": "საკონტაქტო ინფორმაცია",
       "location": "მდებარეობა",
-      "workingHours": "სამუშაო საათები"
+      "workingHours": "სამუშაო საათები",
+      "restTimes": "დასვენების დრო"
     },
     "time": {
       "hours": "სთ",
