@@ -1,10 +1,57 @@
 import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarProvider";
-import MyCalendar from "@/features/my-businesses/MyCalendar";
+import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
+import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
+import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
+import useGetMyBusinesses from "@/features/my-businesses/useGetMyBusinesses";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+
+// Функция для объединения workTimes и restTimes в формат WorkSchedule[]
+const combineSchedule = (
+  business: MyBusinessResponse | undefined,
+): WorkSchedule[] => {
+  if (!business) return [];
+
+  const scheduleMap = new Map<string, WorkSchedule>();
+
+  // Добавляем workTimes
+  business.workTimes.forEach((workTime) => {
+    scheduleMap.set(workTime.weekDay, {
+      weekDay: workTime.weekDay as WorkSchedule["weekDay"],
+      startTime: workTime.startTime,
+      endTime: workTime.endTime,
+    });
+  });
+
+  // Добавляем restTimes к соответствующим дням
+  business.restTimes.forEach((restTime) => {
+    const existing = scheduleMap.get(restTime.weekDay);
+    if (existing) {
+      existing.restStart = restTime.startTime;
+      existing.restEnd = restTime.endTime;
+    }
+  });
+
+  return Array.from(scheduleMap.values());
+};
 
 export default function MyBusinesses() {
   const [searchParams] = useSearchParams();
   const section = searchParams.get("section");
+  const businessId = searchParams.get("businessId");
+
+  const { data: businesses } = useGetMyBusinesses();
+
+  // Получаем текущий бизнес по businessId
+  const currentBusiness = useMemo(() => {
+    if (!businessId || !businesses) return undefined;
+    return businesses.find((business) => business.businessId === businessId);
+  }, [businessId, businesses]);
+
+  // Объединяем workTimes и restTimes в нужный формат
+  const schedule = useMemo(() => {
+    return combineSchedule(currentBusiness);
+  }, [currentBusiness]);
 
   const renderContent = () => {
     switch (section) {
@@ -19,7 +66,11 @@ export default function MyBusinesses() {
           </div>
         );
       case "calendar":
-        return <MyCalendar />;
+        return (
+          <>
+            <ReadOnlyCalendar schedule={schedule} />
+          </>
+        );
       case "manage":
         return (
           <div className="space-y-4">

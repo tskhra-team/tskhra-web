@@ -22,7 +22,7 @@ export default function TopBar() {
   const navigate = useNavigate();
   const { t } = useTranslation("common");
   const { isAuthenticated, logout, login, register } = useAuth();
-  const { data: user } = useGetUser();
+  const { data: user } = useGetUser(isAuthenticated);
   let fullName = user?.userName;
   if (user?.firstName && user?.lastName) {
     fullName = user?.firstName + " " + user?.lastName;

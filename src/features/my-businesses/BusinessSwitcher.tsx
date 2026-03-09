@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -53,14 +52,12 @@ function BusinessSwitcherComponent() {
       const isMineBusiness = businessIds.includes(businessId);
 
       if (!isMineBusiness) {
-        // Бизнес не принадлежит пользователю - устанавливаем последний валидный
         const lastBusiness = businesses[businesses.length - 1];
         setActiveBusiness(lastBusiness);
         const newParams = new URLSearchParams(searchParams);
         newParams.set("businessId", lastBusiness.businessId);
         setSearchParams(newParams);
       } else {
-        // Бизнес принадлежит пользователю - устанавливаем его
         const filtered = businesses.find((b) => b.businessId === businessId);
         if (filtered) {
           setActiveBusiness(filtered);
@@ -132,7 +129,6 @@ function BusinessSwitcherComponent() {
                   />
                 </div>
                 {business.businessName}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
