@@ -9,6 +9,7 @@ export type ServiceResponse = {
   description: string;
   price: number;
   duration: number;
+  status: string;
 };
 
 const getMyServices = async (businessId: string) => {

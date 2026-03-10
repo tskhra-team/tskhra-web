@@ -130,7 +130,7 @@ export default function IndividualBusinessForm() {
             closeModal();
             showModal(
               "error",
-              "Something went worng",
+              "Something went wrong",
               t("booking:messages.error"),
               "Try again",
             );

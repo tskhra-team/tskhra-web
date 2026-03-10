@@ -1,6 +1,7 @@
 import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarProvider";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
+import Notifications from "@/features/my-businesses/Notifications/Notifications";
 import MyServices from "@/features/my-businesses/Services/MyServices";
 import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
 import useGetMyBusinesses from "@/features/my-businesses/useGetMyBusinesses";
@@ -83,15 +84,7 @@ export default function MyBusinesses() {
           </div>
         );
       case "notification":
-        return (
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Notifications</h1>
-            <p className="text-muted-foreground">
-              View and manage your notifications.
-            </p>
-            {/* Notification content will go here */}
-          </div>
-        );
+        return <Notifications businessId={businessId} />;
       case "services":
         return <MyServices businessId={businessId} />;
       default:

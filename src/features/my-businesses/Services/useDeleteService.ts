@@ -3,21 +3,33 @@ import type { ErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-type ServiceResponse = {
+export type ServiceResponse = {
   status: string;
   message: string;
 };
 
-const deleteService = async (serviceId: string) => {
+type DeleteServiceParams = {
+  serviceId: string;
+  businessId: string;
+};
+
+const deleteService = async ({
+  serviceId,
+  businessId,
+}: DeleteServiceParams) => {
   const response = await privateInstance.delete<ServiceResponse>(
-    `/service/${serviceId}/delete`,
+    `/business/${businessId}/services/${serviceId}`,
   );
 
   return response.data;
 };
 
 const useDeleteService = () => {
-  return useMutation<ServiceResponse, AxiosError<ErrorResponse>, string>({
+  return useMutation<
+    ServiceResponse,
+    AxiosError<ErrorResponse>,
+    DeleteServiceParams
+  >({
     mutationFn: deleteService,
   });
 };
