@@ -7,11 +7,13 @@ import type { CategoryItem, Platform } from "./types";
 interface SubcategoryViewProps {
   subcategories?: CategoryItem[];
   platform?: Platform;
+  categorySlug?: string;
 }
 
-export default function SubcategoryView({ subcategories, platform }: SubcategoryViewProps) {
+export default function SubcategoryView({ subcategories, platform, categorySlug: categorySlugProp }: SubcategoryViewProps) {
   const { t } = useTranslation("categories");
-  const { categorySlug } = useParams<{ categorySlug: string }>();
+  const params = useParams<{ categorySlug: string }>();
+  const categorySlug = categorySlugProp || params.categorySlug;
   const colors = getPlatformColors(platform);
 
   if (!subcategories || subcategories.length === 0) {
@@ -25,7 +27,7 @@ export default function SubcategoryView({ subcategories, platform }: Subcategory
         const displayName = translationKey ? t(translationKey) : subcategory.name;
         const subcategorySlug = subcategory.name.toLowerCase().replace(/\s+/g, '-');
         const subcategoryUrl = platform && categorySlug
-          ? `/${platform}/category/${categorySlug}/${subcategorySlug}`
+          ? `/${platform}/category/${categorySlug}?tab=${subcategorySlug}`
           : '#';
 
         return (

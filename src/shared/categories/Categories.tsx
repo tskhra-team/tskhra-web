@@ -87,6 +87,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
           <SubcategoryView
             subcategories={activeCategory?.childItems}
             platform={platform}
+            categorySlug={activeCategory?.name.toLowerCase().replace(/\s+/g, '-')}
           />
         </div>
       )}
