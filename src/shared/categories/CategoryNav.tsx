@@ -11,9 +11,10 @@ interface CategoryNavProps {
   onSelect: (index: number | null) => void;
   categoryDisplayName?: string;
   platform?: Platform;
+  onCategoryClick?: () => void;
 }
 
-export default function CategoryNav({ categories, activeIndex, onSelect, categoryDisplayName, platform }: CategoryNavProps) {
+export default function CategoryNav({ categories, activeIndex, onSelect, categoryDisplayName, platform, onCategoryClick }: CategoryNavProps) {
   const { t } = useTranslation("categories");
   const colors = getPlatformColors(platform);
   const [, setSearchParams] = useSearchParams();
@@ -44,6 +45,10 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                   } else {
                     // On desktop, filter by category in the catalog
                     setSearchParams({ category: categorySlug });
+                    // Close the subcategory panel
+                    if (onCategoryClick) {
+                      onCategoryClick();
+                    }
                   }
                 }}
                 className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between"

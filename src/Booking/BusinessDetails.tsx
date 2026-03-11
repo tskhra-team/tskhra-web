@@ -50,7 +50,7 @@ export default function BusinessDetails() {
     handleBookingConfirm,
     setBookingDialogOpen,
     isBooking,
-  } = useBookingDialog();
+  } = useBookingDialog(id || "");
 
   const allImages = business
     ? [business.mainImage, ...(business.galleryImages || [])]
