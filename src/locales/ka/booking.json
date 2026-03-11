@@ -148,7 +148,8 @@
     "min": "წთ",
     "notAvailable": "არ არის",
     "errorLoading": "ბიზნესების ჩატვირთვა ვერ მოხერხდა",
-    "retry": "თავიდან ცდა"
+    "retry": "თავიდან ცდა",
+    "noBusinessesFound": "არჩეული ფილტრებისთვის ბიზნესები არ მოიძებნა."
   },
   "businessDetails": {
     "breadcrumb": {
@@ -182,7 +183,8 @@
       "errorLoading": "შეცდომა ბიზნესის ჩატვირთვისას",
       "somethingWrong": "რაღაც არასწორად მოხდა",
       "notFound": "ბიზნესი ვერ მოიძებნა",
-      "openUntil": "ღიაა"
+      "openUntil": "ღიაა",
+      "noServices": "სერვისები არ არის ხელმისაწვდომი"
     },
     "social": {
       "facebook": "ფეისბუქი",

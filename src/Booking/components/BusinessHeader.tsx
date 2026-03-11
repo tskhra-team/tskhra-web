@@ -18,7 +18,7 @@ export default function BusinessHeader({
   const navigate = useNavigate();
 
   const getCallTypeBadge = () => {
-    switch (callType) {
+    switch (callType.toLowerCase()) {
       case "outcall":
         return (
           <Badge variant="secondary">

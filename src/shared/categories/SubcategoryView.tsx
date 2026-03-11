@@ -8,9 +8,10 @@ interface SubcategoryViewProps {
   subcategories?: CategoryItem[];
   platform?: Platform;
   categorySlug?: string;
+  onSubcategorySelect?: () => void;
 }
 
-export default function SubcategoryView({ subcategories, platform, categorySlug }: SubcategoryViewProps) {
+export default function SubcategoryView({ subcategories, platform, categorySlug, onSubcategorySelect }: SubcategoryViewProps) {
   const { t } = useTranslation("categories");
   const [searchParams, setSearchParams] = useSearchParams();
   const colors = getPlatformColors(platform);
@@ -25,6 +26,11 @@ export default function SubcategoryView({ subcategories, platform, categorySlug 
       category: categorySlug || '',
       subcategory: subcategorySlug
     });
+
+    // Close the panel on desktop after selection
+    if (onSubcategorySelect) {
+      onSubcategorySelect();
+    }
   };
 
   return (

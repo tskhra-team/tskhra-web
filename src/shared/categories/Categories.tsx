@@ -51,11 +51,14 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
     index: number | null,
     categoryName?: string,
   ) => {
-    setActiveIndex(index);
-    if (index !== null && categoryName) {
-      setSearchParams({ category: categoryName.toLowerCase() });
+    const isMobile = window.innerWidth < 1024;
+
+    if (isMobile) {
+      // On mobile, just toggle accordion - don't set search params yet
+      setActiveIndex(index);
     } else {
-      setSearchParams({});
+      // On desktop, set activeIndex for hover effect
+      setActiveIndex(index);
     }
   };
 
@@ -88,6 +91,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
             subcategories={activeCategory?.childItems}
             platform={platform}
             categorySlug={activeCategory?.name.toLowerCase().replace(/\s+/g, '-')}
+            onSubcategorySelect={() => setActiveIndex(null)}
           />
         </div>
       )}

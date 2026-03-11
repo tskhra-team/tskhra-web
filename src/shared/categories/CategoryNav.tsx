@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { categoryNameToKey } from "./categoryTranslations";
 import { getPlatformColors } from "./platformColors";
 import SubcategoryView from "./SubcategoryView";
@@ -16,6 +16,7 @@ interface CategoryNavProps {
 export default function CategoryNav({ categories, activeIndex, onSelect, categoryDisplayName, platform }: CategoryNavProps) {
   const { t } = useTranslation("categories");
   const colors = getPlatformColors(platform);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   return (
     <nav className="w-full lg:w-64 rounded-2xl border p-4">
@@ -35,10 +36,14 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                 to={categoryUrl}
                 onMouseEnter={() => onSelect(index)}
                 onClick={(e) => {
-                  // On mobile (lg:hidden), prevent navigation and toggle accordion
+                  e.preventDefault();
+
                   if (window.innerWidth < 1024) {
-                    e.preventDefault();
+                    // On mobile, toggle accordion
                     onSelect(isActive ? null : index, category.name);
+                  } else {
+                    // On desktop, filter by category in the catalog
+                    setSearchParams({ category: categorySlug });
                   }
                 }}
                 className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between"
@@ -76,7 +81,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
               {isActive && category.childItems && (
                 <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                   <h3 className="mb-4 text-sm font-semibold">{categoryDisplayName}</h3>
-                  <SubcategoryView subcategories={category.childItems} platform={platform} />
+                  <SubcategoryView subcategories={category.childItems} platform={platform} categorySlug={categorySlug} />
                 </div>
               )}
             </li>
