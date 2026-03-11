@@ -80,24 +80,12 @@ export const getAvailableTimeSlots = (
   const date = new Date(selectedDate);
   const dayOfWeek = date.getDay();
 
-  console.log("Selected date:", selectedDate, "Day of week:", dayOfWeek);
-  console.log("Work times:", workTimes);
-
   // Find working hours for this day
   const workTime = workTimes.find((wt) => {
     const wtDay = dayNameToDayNumber(wt.weekDay);
-    console.log(
-      "Checking workTime:",
-      wt.weekDay,
-      "converted to:",
-      wtDay,
-      "against:",
-      dayOfWeek,
-    );
     return wtDay === dayOfWeek;
   });
 
-  console.log("Found work time:", workTime);
   if (!workTime) return []; // Business is closed this day
 
   // Find rest times for this day
@@ -105,8 +93,6 @@ export const getAvailableTimeSlots = (
     const rtDay = dayNameToDayNumber(rt.weekDay);
     return rtDay === dayOfWeek;
   });
-
-  console.log("Found rest time:", restTime);
 
   // Generate all possible time slots (every 30 minutes)
   const slots = [
@@ -152,6 +138,5 @@ export const getAvailableTimeSlots = (
     return isWithinWorkingHours && !isDuringRestTime;
   });
 
-  console.log("Available slots:", availableSlots);
   return availableSlots;
 };

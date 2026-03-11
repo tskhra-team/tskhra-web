@@ -16,6 +16,7 @@ const useGetScheduledBookings = (businessId: string) => {
   return useQuery<ScheduledResponse[], AxiosError<ErrorResponse>>({
     queryFn: () => getScheduledBookings(businessId),
     queryKey: ["getScheduledBookings", businessId],
+    enabled: !!businessId,
   });
 };
 

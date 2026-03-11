@@ -100,8 +100,6 @@ export default function MyServices({ businessId }: MyServicesProps) {
   const handleUpdateStatus = (serviceId: string, serviceStatus: string) => {
     const finalStatus = serviceStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
 
-    console.log(finalStatus);
-
     showModal(
       "warning",
       `Make this service ${serviceStatus === "ACTIVE" ? "inactive" : "active"}?`,
@@ -116,6 +114,10 @@ export default function MyServices({ businessId }: MyServicesProps) {
             onSuccess: () => {
               queryClient.invalidateQueries({
                 queryKey: ["getMyServices"],
+              });
+
+              queryClient.invalidateQueries({
+                queryKey: ["getScheduledBookings"],
               });
 
               showModal(
