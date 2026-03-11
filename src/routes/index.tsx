@@ -18,8 +18,6 @@ const BusinessDetailsPage = lazy(() => import("@/pages/BusinessDetailsPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
-const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
-const SubcategoryPage = lazy(() => import("@/pages/SubcategoryPage"));
 
 import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
@@ -74,22 +72,6 @@ export const routes = [
         element: (
           <Suspense fallback={<BusinessDetailsSkeleton />}>
             <BusinessDetailsPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/:platform/category/:categorySlug",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <CategoryPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/:platform/category/:categorySlug/:subcategorySlug",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <SubcategoryPage />
           </Suspense>
         ),
       },

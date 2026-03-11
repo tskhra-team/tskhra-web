@@ -148,12 +148,14 @@
     "min": "min",
     "notAvailable": "N/A",
     "errorLoading": "Failed to load businesses",
-    "retry": "Retry"
+    "retry": "Retry",
+    "noBusinessesFound": "No businesses found for the selected filters."
   },
   "businessDetails": {
     "breadcrumb": {
       "home": "Home",
-      "services": "Services"
+      "services": "Services",
+      "booking": "Booking"
     },
     "callType": {
       "outcall": "Outcall Only",
@@ -181,7 +183,8 @@
       "errorLoading": "Error loading business",
       "somethingWrong": "Something went wrong",
       "notFound": "Business not found",
-      "openUntil": "Open until"
+      "openUntil": "Open until",
+      "noServices": "No services available"
     },
     "social": {
       "facebook": "Facebook",

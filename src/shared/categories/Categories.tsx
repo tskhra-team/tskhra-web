@@ -12,7 +12,7 @@ import { useCategories } from "./useCategories";
 export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const { data, isLoading, error } = useCategories(platform);
   const { t } = useTranslation("categories");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const colors = getPlatformColors(platform);
 
@@ -49,13 +49,15 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   const handleSelectCategory = (
     index: number | null,
-    categoryName?: string,
   ) => {
-    setActiveIndex(index);
-    if (index !== null && categoryName) {
-      setSearchParams({ category: categoryName.toLowerCase() });
+    const isMobile = window.innerWidth < 1024;
+
+    if (isMobile) {
+      // On mobile, just toggle accordion - don't set search params yet
+      setActiveIndex(index);
     } else {
-      setSearchParams({});
+      // On desktop, set activeIndex for hover effect
+      setActiveIndex(index);
     }
   };
 
@@ -87,6 +89,8 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
           <SubcategoryView
             subcategories={activeCategory?.childItems}
             platform={platform}
+            categorySlug={activeCategory?.name.toLowerCase().replace(/\s+/g, '-')}
+            onSubcategorySelect={() => setActiveIndex(null)}
           />
         </div>
       )}
