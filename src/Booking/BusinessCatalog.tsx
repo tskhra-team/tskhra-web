@@ -127,7 +127,7 @@ export default function BusinessCatalog() {
                 {/* Call Type Tag Overlay */}
                 <div className="absolute top-3 left-3">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm text-slate-800 shadow-sm">
-                    {t(`${business.callType}`)}
+                    {t(`businessDetails.callType.${business.callType.toLowerCase()}`)}
                   </span>
                 </div>
               </div>
