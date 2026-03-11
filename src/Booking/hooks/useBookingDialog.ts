@@ -3,6 +3,7 @@ import useCreateBooking from "@/Booking/useCreateBooking";
 import { useModal } from "@/context/ModalContext";
 import { useAuth } from "@/context/useAuth";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Convert time string (HH:MM) to minutes since midnight
 const timeToMinutes = (time: string): number => {
@@ -10,10 +11,11 @@ const timeToMinutes = (time: string): number => {
   return hours * 60 + minutes;
 };
 
-export const useBookingDialog = () => {
+export const useBookingDialog = (businessId: string) => {
   const { isAuthenticated, login } = useAuth();
   const { showModal } = useModal();
   const { mutate: createBooking, isPending } = useCreateBooking();
+  const queryClient = useQueryClient();
 
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -129,8 +131,14 @@ export const useBookingDialog = () => {
             "OK",
           );
           setBookingDialogOpen(false);
+
+          // Invalidate timeslots query to refresh available time slots
+          queryClient.invalidateQueries({
+            queryKey: ["business", businessId, "timeslots", selectedDate, String(selectedService?.id)],
+          });
         },
         onError: (error) => {
+          setBookingDialogOpen(false);
           showModal(
             "error",
             "Booking Failed",

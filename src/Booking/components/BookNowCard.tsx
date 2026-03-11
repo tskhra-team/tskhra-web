@@ -22,11 +22,30 @@ export default function BookNowCard({
       </CardHeader>
       <CardContent className="space-y-3">
         <Button
-          className="w-full cursor-pointer  hover:shadow-xl transition-all duration-300 text-base font-semibold rounded-xl h-12 bg-[#ff6439] hover:bg-[#100b2e]"
+          className="w-full cursor-pointer text-base font-semibold rounded-xl h-12 bg-[#ff6439] hover:bg-[#100b2e] relative overflow-hidden"
           size="lg"
           onClick={onBookNowClick}
+          style={{
+            transition: 'all 0.5s ease-out',
+            boxShadow: '0 4px 14px -2px rgba(255, 100, 57, 0.3)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05) translateY(-4px) rotate(0.5deg)';
+            e.currentTarget.style.boxShadow = '0 20px 50px -10px rgba(255, 100, 57, 0.6)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1) translateY(0) rotate(0deg)';
+            e.currentTarget.style.boxShadow = '0 4px 14px -2px rgba(255, 100, 57, 0.3)';
+          }}
         >
-          {t("businessDetails.buttons.bookNow")}
+          {/* Decorative shine effect */}
+          <div
+            className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            style={{
+              background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
+            }}
+          />
+          <span className="relative z-10">{t("businessDetails.buttons.bookNow")}</span>
         </Button>
       </CardContent>
     </Card>
