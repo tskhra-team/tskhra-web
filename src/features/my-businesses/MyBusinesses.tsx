@@ -1,6 +1,9 @@
 import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarProvider";
+import useGetAllBookings from "@/features/my-businesses/Calendar/hooks/useGetAllBookings";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
+import Notifications from "@/features/my-businesses/Notifications/Notifications";
+import MyServices from "@/features/my-businesses/Services/MyServices";
 import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
 import useGetMyBusinesses from "@/features/my-businesses/useGetMyBusinesses";
 import { useMemo } from "react";
@@ -40,6 +43,8 @@ export default function MyBusinesses() {
   const section = searchParams.get("section");
   const businessId = searchParams.get("businessId");
 
+  const { fullBookings } = useGetAllBookings(businessId);
+
   const { data: businesses } = useGetMyBusinesses();
 
   // Получаем текущий бизнес по businessId
@@ -68,7 +73,10 @@ export default function MyBusinesses() {
       case "calendar":
         return (
           <>
-            <ReadOnlyCalendar schedule={schedule} />
+            <ReadOnlyCalendar
+              schedule={schedule}
+              bookings={fullBookings || []}
+            />
           </>
         );
       case "manage":
@@ -82,25 +90,9 @@ export default function MyBusinesses() {
           </div>
         );
       case "notification":
-        return (
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Notifications</h1>
-            <p className="text-muted-foreground">
-              View and manage your notifications.
-            </p>
-            {/* Notification content will go here */}
-          </div>
-        );
+        return <Notifications businessId={businessId} />;
       case "services":
-        return (
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Services</h1>
-            <p className="text-muted-foreground">
-              View and manage your services.
-            </p>
-            {/* Notification content will go here */}
-          </div>
-        );
+        return <MyServices businessId={businessId} />;
       default:
         return (
           <div className="space-y-4">

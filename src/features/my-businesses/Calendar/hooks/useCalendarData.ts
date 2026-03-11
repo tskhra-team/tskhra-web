@@ -68,13 +68,15 @@ export const useCalendarData = ({
 
     // Add bookings as regular events
     bookings.forEach((booking, index) => {
-      const dateStr = booking.date.toISOString().split("T")[0];
+      const dateStr = booking.date instanceof Date
+        ? booking.date.toISOString().split("T")[0]
+        : new Date(booking.date).toISOString().split("T")[0];
       allEvents.push({
         id: `booking-${index}`,
-        title: `${booking.service}: ${booking.userName}`,
+        title: `${booking.serviceName}: ${booking.userName}`,
         start: `${dateStr}T${minutesToTime(booking.startTime)}:00`,
         end: `${dateStr}T${minutesToTime(booking.startTime + booking.duration)}:00`,
-        backgroundColor: booking.status === "done" ? "#10b981" : "#fbbf24",
+        backgroundColor: booking.status === "SCHEDULED" ? "#10b981" : "#fbbf24",
         borderColor: "transparent",
         extendedProps: {
           price: booking.price,

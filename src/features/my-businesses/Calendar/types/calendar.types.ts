@@ -1,7 +1,7 @@
 // Calendar-related type definitions
 
 export type WeekDay = "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN";
-export type BookingStatus = "done" | "scheduled";
+export type BookingStatus = "SCHEDULED" | "AWAITING";
 
 export interface WorkSchedule {
   weekDay: WeekDay;
@@ -12,12 +12,13 @@ export interface WorkSchedule {
 }
 
 export interface Booking {
-  date: Date;
+  id: string;
+  serviceName: string;
+  userName: string;
   startTime: number;
   duration: number;
   status: BookingStatus;
-  service: string;
-  userName: string;
+  date: Date | string;
   price: number;
 }
 

@@ -10,7 +10,13 @@ interface FileUploadProps {
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+];
 
 export default function FileUpload({
   value = [],
@@ -47,9 +53,12 @@ export default function FileUpload({
 
       // Check file type
       if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-        toast.error(`File "${file.name}" has invalid type. Only JPEG, PNG and WebP images are allowed`, {
-          position: "top-center",
-        });
+        toast.error(
+          `File "${file.name}" has invalid type. Only JPEG, PNG and WebP images are allowed`,
+          {
+            position: "top-center",
+          },
+        );
         continue;
       }
 

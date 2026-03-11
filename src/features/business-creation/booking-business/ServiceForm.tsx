@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useModal } from "@/context/ModalContext";
@@ -126,19 +127,22 @@ export default function ServiceForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-4xl mx-auto space-y-6"
+      className="max-w-5xl mx-auto space-y-6 pb-16 px-4"
     >
-      {/* Services */}
-      <div className="mb-16">
-        <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.services")}
-        </Label>
-
-        {/* Add Service Form */}
-        <div className="border rounded-md p-4 mb-4 space-y-3 bg-muted/20">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <Label className="block text-xs font-medium mb-1">
+      {/* Add Service Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            {t("booking:form.addService")}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Create a new service for your business
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
                 {t("booking:form.serviceName")}
               </Label>
               <Input
@@ -147,10 +151,11 @@ export default function ServiceForm() {
                   setNewService({ ...newService, name: e.target.value })
                 }
                 placeholder={t("booking:form.serviceNamePlaceholder")}
+                className="h-11 transition-all"
               />
             </div>
-            <div>
-              <Label className="block text-xs font-medium mb-1">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
                 {t("booking:form.price")}
               </Label>
               <Input
@@ -164,10 +169,11 @@ export default function ServiceForm() {
                   })
                 }
                 placeholder={t("booking:form.pricePlaceholder")}
+                className="h-11 transition-all"
               />
             </div>
-            <div>
-              <Label className="block text-xs font-medium mb-1">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
                 {t("booking:form.duration")}
               </Label>
               <Input
@@ -182,11 +188,12 @@ export default function ServiceForm() {
                   })
                 }
                 placeholder={t("booking:form.durationPlaceholder")}
+                className="h-11 transition-all"
               />
             </div>
           </div>
-          <div>
-            <Label className="block text-xs font-medium mb-1">
+          <div className="space-y-2.5">
+            <Label className="text-sm font-medium">
               {t("booking:form.serviceDescription")}
             </Label>
             <Input
@@ -195,76 +202,92 @@ export default function ServiceForm() {
                 setNewService({ ...newService, description: e.target.value })
               }
               placeholder={t("booking:form.serviceDescriptionPlaceholder")}
+              className="h-11 transition-all"
             />
           </div>
           <Button
             type="button"
             onClick={addService}
-            className="w-full"
+            className="w-full h-11 font-medium transition-all"
             variant="outline"
           >
             {t("booking:form.addService")}
           </Button>
 
           {serviceError && (
-            <p className="text-sm text-red-500 mt-2 text-center">
+            <p className="text-sm text-red-500 font-medium text-center bg-red-50 p-3 rounded-lg">
               {serviceError}
             </p>
           )}
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Services List */}
-        {services && services.length > 0 && (
-          <div className="space-y-2">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 border rounded-md"
-              >
-                <div className="flex-1">
-                  <p className="font-medium">{service.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {service.price} ₾ • {service.duration}{" "}
-                    {t("booking:form.minutes")}
-                  </p>
-                  {service.description && (
-                    <p className="text-sm text-gray-500 mt-1">
-                      {service.description}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeService(index)}
-                  className="text-red-500 hover:text-red-700"
+      {/* Services List Card */}
+      {services && services.length > 0 && (
+        <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-6 space-y-1">
+            <CardTitle className="text-2xl font-semibold tracking-tight">
+              {t("booking:form.services")} ({services.length})
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {t("booking:form.servicesHelp")}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {services.map((service, index) => (
+                <div
+                  key={index}
+                  className="group flex items-start justify-between p-5 border border-border/50 rounded-lg bg-background/50 hover:border-border hover:shadow-md transition-all"
                 >
-                  {t("booking:form.delete")}
-                </Button>
-              </div>
-            ))}
-          </div>
+                  <div className="flex-1 space-y-1.5">
+                    <p className="font-semibold text-base">{service.name}</p>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <span className="font-medium text-primary">
+                        {service.price} ₾
+                      </span>
+                      <span className="text-muted-foreground/50">•</span>
+                      <span>
+                        {service.duration} {t("booking:form.minutes")}
+                      </span>
+                    </div>
+                    {service.description && (
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                        {service.description}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeService(index)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                  >
+                    {t("booking:form.delete")}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {errors.services &&
+        !Array.isArray(errors.services) &&
+        services.length === 0 && (
+          <p className="text-sm text-red-500 font-medium bg-red-50 p-4 rounded-lg text-center">
+            {errors.services.message as string}
+          </p>
         )}
 
-        {errors.services &&
-          !Array.isArray(errors.services) &&
-          services.length === 0 && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.services.message as string}
-            </p>
-          )}
-        <p className="text-xs text-gray-500 mt-1">
-          {t("booking:form.servicesHelp")}
-        </p>
-      </div>
-
       {/* Submit Button */}
-      <div className="flex justify-end gap-4 pt-4">
+      <div className="flex justify-end pt-4">
         <Button
           type="submit"
-          disabled={isPending}
-          className="p-8 cursor-pointer"
+          disabled={isPending || !services || services.length === 0}
+          size="lg"
+          className="px-16 h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all"
         >
           {isPending ? t("booking:form.processing") : t("booking:form.submit")}
         </Button>
