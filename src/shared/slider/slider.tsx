@@ -29,34 +29,101 @@ function BannerSlider() {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 4000,
     arrows: true,
-    fade: false,
+    fade: true,
+    pauseOnHover: true,
+    cssEase: "cubic-bezier(0.4, 0, 0.2, 1)",
+    dotsClass: "slick-dots !bottom-6",
+    customPaging: () => (
+      <div className="w-3 h-3 rounded-full bg-white/50 hover:bg-white transition-all duration-300 shadow-lg" />
+    ),
   };
 
   return (
-    <div className="w-full mx-auto lg:w-150 lg:mt-20 xl:mt-0 xl:w-full">
-      <Slider {...settings}>
-        {banners.map((banner, index) => (
-          <div key={banner.id} className="relative w-full overflow-hidden rounded-2xl">
-            <img
-              src={banner.image}
-              alt={`Banner ${index + 1}`}
-              loading={index === 0 ? "eager" : "lazy"}
-              className="w-full h-auto rounded-2xl"
-            />
-            {/* <div className="absolute top-1/2 left-8 md:left-16 -translate-y-1/2 max-w-lg">
-              <h2 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-4">
-                {banner.title}
-              </h2>
-            </div> */}
-          </div>
-        ))}
-      </Slider>
+    <div className="w-full mx-auto relative group">
+      <style>{`
+        .slick-slider {
+          position: relative;
+        }
+
+        .slick-dots li button:before {
+          display: none;
+        }
+
+        .slick-dots li {
+          margin: 0 4px;
+        }
+
+        .slick-dots li.slick-active > div {
+          background: white !important;
+          transform: scale(1.2);
+        }
+
+        .slick-prev,
+        .slick-next {
+          width: 48px;
+          height: 48px;
+          z-index: 20 !important;
+          transition: all 0.3s ease;
+        }
+
+        .slick-prev {
+          left: 20px;
+        }
+
+        .slick-next {
+          right: 20px;
+        }
+
+        .slick-prev:before,
+        .slick-next:before {
+          font-size: 48px;
+          opacity: 0.7;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s ease;
+        }
+
+        .slick-prev:hover:before,
+        .slick-next:hover:before {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+
+        .slick-disabled {
+          opacity: 0.3 !important;
+        }
+      `}</style>
+
+      <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/40 backdrop-blur-sm">
+        <Slider {...settings}>
+          {banners.map((banner, index) => (
+            <div key={banner.id} className="relative w-full overflow-hidden focus:outline-none">
+              <div className="relative aspect-video sm:aspect-21/9">
+                <img
+                  src={banner.image}
+                  alt={`E-Commerce Banner ${index + 1}`}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Subtle gradient overlay for depth */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
+              </div>
+            </div>
+          ))}
+        </Slider>
+      </div>
+
+      {/* Corner accents */}
+      <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-blue-400/50 rounded-tl-2xl pointer-events-none" />
+      <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-blue-400/50 rounded-tr-2xl pointer-events-none" />
+      <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-orange-400/50 rounded-bl-2xl pointer-events-none" />
+      <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-orange-400/50 rounded-br-2xl pointer-events-none" />
     </div>
   );
 }
