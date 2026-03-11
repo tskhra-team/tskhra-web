@@ -19,6 +19,7 @@ type BookingDialogProps = {
   availableDays: AvailableDay[];
   availableTimeSlots: string[];
   timeslotsLoading?: boolean;
+  isBooking?: boolean;
   onDateSelect: (dateString: string) => void;
   onTimeSelect: (time: string) => void;
   onConfirm: () => void;
@@ -33,6 +34,7 @@ export default function BookingDialog({
   availableDays,
   availableTimeSlots,
   timeslotsLoading = false,
+  isBooking = false,
   onDateSelect,
   onTimeSelect,
   onConfirm,
@@ -152,13 +154,23 @@ export default function BookingDialog({
             <div className="animate-in fade-in-50 duration-300 pt-4 border-t">
               <Button
                 onClick={onConfirm}
-                className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer"
+                disabled={isBooking}
+                className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 size="lg"
               >
-                {t("businessDetails.booking.confirmBooking", {
-                  date: selectedDate,
-                  time: selectedTime,
-                })}
+                {isBooking ? (
+                  <span className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    {t("businessDetails.booking.processing", {
+                      defaultValue: "Processing...",
+                    })}
+                  </span>
+                ) : (
+                  t("businessDetails.booking.confirmBooking", {
+                    date: selectedDate,
+                    time: selectedTime,
+                  })
+                )}
               </Button>
             </div>
           )}
