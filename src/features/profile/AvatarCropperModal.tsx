@@ -9,6 +9,7 @@ import {
 import { getCroppedImg } from "@/utils";
 import { useState } from "react";
 import Cropper from "react-easy-crop";
+import { toast } from "sonner";
 
 interface AvatarCropperModalProps {
   imageSrc: string | null;
@@ -46,7 +47,7 @@ export default function AvatarCropperModal({
       }
       onClose();
     } catch (e) {
-      console.error("Cropping Error", e);
+      toast.error(`Cropping Error: ${e}`, { position: "top-center" });
     }
   };
 
