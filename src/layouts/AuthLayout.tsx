@@ -2,12 +2,18 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/context/useAuth";
 import Logo from "@/shared/Logo";
 import { Navigate, Outlet } from "react-router-dom";
+import { AuthRedirectHandler } from "@/components/AuthRedirectHandler";
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to="/" />;
+    return (
+      <>
+        <AuthRedirectHandler />
+        <Navigate to="/" />
+      </>
+    );
   }
 
   return (

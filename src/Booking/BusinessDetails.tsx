@@ -49,6 +49,7 @@ export default function BusinessDetails() {
     handleTimeSelect,
     handleBookingConfirm,
     setBookingDialogOpen,
+    isBooking,
   } = useBookingDialog();
 
   const allImages = business
@@ -201,6 +202,7 @@ export default function BusinessDetails() {
           availableDays={availableDays}
           availableTimeSlots={availableTimeSlots}
           timeslotsLoading={timeslotsLoading}
+          isBooking={isBooking}
           onDateSelect={handleDateSelect}
           onTimeSelect={handleTimeSelect}
           onConfirm={handleBookingConfirm}
