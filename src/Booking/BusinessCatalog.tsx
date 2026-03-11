@@ -1,5 +1,5 @@
 import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
-import useGetBookingBusinesses from "@/Booking/useGetBookingBusinesses";
+import useGetAllBookingBusinesses from "@/Booking/useGetAllBookingBusinesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { PaginationControls } from "@/shared/pagination/Pagination";
@@ -15,10 +15,19 @@ export default function BusinessCatalog() {
   const { t } = useTranslation("booking");
   const [searchParams] = useSearchParams();
   const size = 12;
-  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses(page, size);
 
   const categoryFilter = searchParams.get('category');
   const subcategoryFilter = searchParams.get('subcategory');
+
+  // Always fetch all businesses for client-side pagination
+  const { data: allBusinessesData, isLoading, isFetching, isError } = useGetAllBookingBusinesses(true);
+
+  // Use all businesses as data source
+  const businesses = {
+    content: allBusinessesData || [],
+    totalPages: 1,
+    totalElements: allBusinessesData?.length || 0
+  };
 
   // Reset to page 0 when filters change
   useEffect(() => {
@@ -26,8 +35,8 @@ export default function BusinessCatalog() {
   }, [categoryFilter, subcategoryFilter]);
 
   // Filter businesses based on category and subcategory
-  const filteredBusinesses = useMemo(() => {
-    if (!businesses?.content) return null;
+  const { filteredBusinesses, paginatedBusinesses, totalFilteredPages } = useMemo(() => {
+    if (!businesses?.content) return { filteredBusinesses: null, paginatedBusinesses: null, totalFilteredPages: 0 };
 
     let filtered = businesses.content;
 
@@ -45,8 +54,18 @@ export default function BusinessCatalog() {
       );
     }
 
-    return filtered;
-  }, [businesses, categoryFilter, subcategoryFilter]);
+    // Calculate pagination for filtered results
+    const totalPages = Math.ceil(filtered.length / size);
+    const startIndex = page * size;
+    const endIndex = startIndex + size;
+    const paginated = filtered.slice(startIndex, endIndex);
+
+    return {
+      filteredBusinesses: filtered,
+      paginatedBusinesses: paginated,
+      totalFilteredPages: totalPages
+    };
+  }, [businesses, categoryFilter, subcategoryFilter, page, size]);
 
   const handkleClick = (id: string) => {
     scrollToTop();
@@ -88,7 +107,7 @@ export default function BusinessCatalog() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBusinesses?.map((business) => {
+          {paginatedBusinesses?.map((business) => {
           return (
             <Card
               key={business.businessId}
@@ -149,12 +168,12 @@ export default function BusinessCatalog() {
         </div>
       )}
 
-      {/* Pagination - only show when not filtering */}
-      {!categoryFilter && !subcategoryFilter && businesses && businesses.totalPages > 1 && (
+      {/* Pagination - show when there's more than one page */}
+      {totalFilteredPages > 1 && (
         <div className="mt-8">
           <PaginationControls
             currentPage={page}
-            totalPages={businesses.totalPages}
+            totalPages={totalFilteredPages}
             onPageChange={(newPage) => {
               setPage(newPage);
               scrollToTop();
