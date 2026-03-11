@@ -183,7 +183,8 @@
       "errorLoading": "Error loading business",
       "somethingWrong": "Something went wrong",
       "notFound": "Business not found",
-      "openUntil": "Open until"
+      "openUntil": "Open until",
+      "noServices": "No services available"
     },
     "social": {
       "facebook": "Facebook",

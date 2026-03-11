@@ -183,7 +183,8 @@
       "errorLoading": "შეცდომა ბიზნესის ჩატვირთვისას",
       "somethingWrong": "რაღაც არასწორად მოხდა",
       "notFound": "ბიზნესი ვერ მოიძებნა",
-      "openUntil": "ღიაა"
+      "openUntil": "ღიაა",
+      "noServices": "სერვისები არ არის ხელმისაწვდომი"
     },
     "social": {
       "facebook": "ფეისბუქი",
