@@ -1,5 +1,6 @@
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -130,7 +131,7 @@ export default function IndividualBusinessForm() {
             closeModal();
             showModal(
               "error",
-              "Something went worng",
+              "Something went wrong",
               t("booking:messages.error"),
               "Try again",
             );
@@ -161,344 +162,436 @@ export default function IndividualBusinessForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-4xl mx-auto space-y-6"
+      className="max-w-5xl mx-auto space-y-6 pb-16 px-4"
     >
-      {/* Business Name */}
-      <div className="my-12">
-        <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.businessName")}
-        </Label>
-        <Input {...register("businessName")} placeholder="" />
-        {errors.businessName && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.businessName.message}
+      {/* Basic Information Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            {t("booking:form.businessName")}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Basic information about your business
           </p>
-        )}
-      </div>
-
-      {/* Call Type */}
-      <div className="mb-12">
-        <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.callTypeLabel")}
-        </Label>
-        <Controller
-          name="callType"
-          control={control}
-          render={({ field }) => (
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant={field.value === "OUTCALL" ? "default" : "outline"}
-                onClick={() => field.onChange("OUTCALL")}
-                className="flex-1"
-              >
-                {t("booking:form.callType.outcall")}
-              </Button>
-              <Button
-                type="button"
-                variant={field.value === "ONSITE" ? "default" : "outline"}
-                onClick={() => field.onChange("ONSITE")}
-                className="flex-1"
-              >
-                {t("booking:form.callType.onsite")}
-              </Button>
-              <Button
-                type="button"
-                variant={field.value === "BOTH" ? "default" : "outline"}
-                onClick={() => field.onChange("BOTH")}
-                className="flex-1"
-              >
-                {t("booking:form.callType.both")}
-              </Button>
-            </div>
-          )}
-        />
-        {errors.callType && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.callType.message}
-          </p>
-        )}
-      </div>
-
-      {/* City and Address */}
-      <div className="grid grid-cols-2 gap-4 mb-12">
-        <div>
-          <Label className="block text-lg font-medium mb-2">
-            {t("booking:form.city")}
-          </Label>
-          <Controller
-            name="city"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full" style={{ height: "44px" }}>
-                  <SelectValue placeholder={t("booking:form.city")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities?.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        </CardHeader>
+        <CardContent className="space-y-7">
+          <div className="space-y-2.5">
+            <Label className="text-sm font-medium">
+              {t("booking:form.businessName")}
+            </Label>
+            <Input
+              {...register("businessName")}
+              placeholder="Enter your business name"
+              className="h-11 transition-all"
+            />
+            {errors.businessName && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.businessName.message}
+              </p>
             )}
-          />
-          {errors.city && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.city.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Label className="block text-lg font-medium mb-2">
-            {t("booking:form.address")}
-          </Label>
-          <Input
-            {...register("addressDetails")}
-            disabled={callType === "OUTCALL"}
-            placeholder={t("booking:form.addressPlaceholder")}
-          />
+          </div>
 
-          {errors.addressDetails && callType !== "OUTCALL" && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.addressDetails.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Detailed Description */}
-      <div className="mb-12">
-        <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.description")}
-        </Label>
-        <textarea
-          {...register("description")}
-          placeholder={t("booking:form.descriptionPlaceholder")}
-          rows={6}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-        />
-        {errors.description && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.description.message}
-          </p>
-        )}
-      </div>
-
-      {/* Category Selection */}
-      <div className="grid grid-cols-2 gap-4 mb-12">
-        <div>
-          <Label className="block text-lg font-medium mb-2">
-            {t("booking:form.category")}
-          </Label>
-          <Controller
-            name="mainCategory"
-            control={control}
-            render={({ field }) => (
-              <Select
-                value={field.value}
-                onValueChange={(value) => {
-                  handleCategoryChange(value);
-                  field.onChange(value);
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("booking:form.category")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories?.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.mainCategory && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.mainCategory.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <Label className="block text-lg font-medium mb-2">
-            {t("booking:form.subcategory")}
-          </Label>
-          <Controller
-            name="subCategory"
-            control={control}
-            render={({ field }) => (
-              <Select
-                value={field.value}
-                onValueChange={field.onChange}
-                disabled={!mainCategory}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("booking:form.subcategory")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {mainCategory &&
-                    subCategories?.[mainCategory]?.map((subcategory) => (
-                      <SelectItem key={subcategory} value={subcategory}>
-                        {subcategory}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.subCategory && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.subCategory.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Working Schedule */}
-      <div className="mb-16">
-        <Label className="block text-lg font-medium mb-4">
-          {t("booking:form.workingSchedule")}
-        </Label>
-        <Controller
-          name="workTimes"
-          control={control}
-          render={({ field: workField }) => (
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">
+              {t("booking:form.callTypeLabel")}
+            </Label>
             <Controller
-              name="restTimes"
+              name="callType"
               control={control}
-              render={({ field: restField }) => (
-                <WorkingSchedule
-                  workTimes={workField.value || []}
-                  restTimes={restField.value || []}
-                  onWorkTimesChange={workField.onChange}
-                  onRestTimesChange={restField.onChange}
-                  workTimesErrors={errors.workTimes}
-                  restTimesErrors={errors.restTimes}
+              render={({ field }) => (
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant={field.value === "OUTCALL" ? "default" : "outline"}
+                    onClick={() => field.onChange("OUTCALL")}
+                    className="flex-1 h-11 transition-all"
+                  >
+                    {t("booking:form.callType.outcall")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={field.value === "ONSITE" ? "default" : "outline"}
+                    onClick={() => field.onChange("ONSITE")}
+                    className="flex-1 h-11 transition-all"
+                  >
+                    {t("booking:form.callType.onsite")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={field.value === "BOTH" ? "default" : "outline"}
+                    onClick={() => field.onChange("BOTH")}
+                    className="flex-1 h-11 transition-all"
+                  >
+                    {t("booking:form.callType.both")}
+                  </Button>
+                </div>
+              )}
+            />
+            {errors.callType && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.callType.message}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Location Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            Location
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Where can clients find you
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.city")}
+              </Label>
+              <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      className="w-full h-11 transition-all"
+                      style={{ height: "44px" }}
+                    >
+                      <SelectValue placeholder={t("booking:form.city")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities?.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.city && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.city.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.address")}
+              </Label>
+              <Input
+                {...register("addressDetails")}
+                disabled={callType === "OUTCALL"}
+                placeholder={t("booking:form.addressPlaceholder")}
+                className="h-11 transition-all"
+              />
+              {errors.addressDetails && callType !== "OUTCALL" && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.addressDetails.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Description Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            {t("booking:form.description")}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Describe your services and what makes your business unique
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-2.5">
+          <textarea
+            {...register("description")}
+            placeholder={t("booking:form.descriptionPlaceholder")}
+            rows={6}
+            className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+          />
+          {errors.description && (
+            <p className="text-xs text-red-500 font-medium">
+              {errors.description.message}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Category Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            Categories
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Help clients find your business
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.category")}
+              </Label>
+              <Controller
+                name="mainCategory"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      handleCategoryChange(value);
+                      field.onChange(value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full h-11 transition-all">
+                      <SelectValue placeholder={t("booking:form.category")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.mainCategory && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.mainCategory.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.subcategory")}
+              </Label>
+              <Controller
+                name="subCategory"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!mainCategory}
+                  >
+                    <SelectTrigger className="w-full h-11 transition-all">
+                      <SelectValue
+                        placeholder={t("booking:form.subcategory")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mainCategory &&
+                        subCategories?.[mainCategory]?.map((subcategory) => (
+                          <SelectItem key={subcategory} value={subcategory}>
+                            {subcategory}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.subCategory && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.subCategory.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Working Schedule Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            {t("booking:form.workingSchedule")}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Set your availability for bookings
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Controller
+            name="workTimes"
+            control={control}
+            render={({ field: workField }) => (
+              <Controller
+                name="restTimes"
+                control={control}
+                render={({ field: restField }) => (
+                  <WorkingSchedule
+                    workTimes={workField.value || []}
+                    restTimes={restField.value || []}
+                    onWorkTimesChange={workField.onChange}
+                    onRestTimesChange={restField.onChange}
+                    workTimesErrors={errors.workTimes}
+                    restTimesErrors={errors.restTimes}
+                  />
+                )}
+              />
+            )}
+          />
+          {errors.workTimes && !Array.isArray(errors.workTimes) && (
+            <p className="text-xs text-red-500 font-medium">
+              {errors.workTimes.message as string}
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            {t("booking:form.scheduleHelp")}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Images Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            Photos
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Showcase your business with high-quality images
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-8">
+          <div className="space-y-3">
+            <div>
+              <Label className="text-sm font-medium">
+                {t("booking:form.mainImage")}
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                This will be the main photo displayed on your profile
+              </p>
+            </div>
+            <Controller
+              name="images.businessPhoto"
+              control={control}
+              render={({ field }) => (
+                <FileUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  maxFiles={1}
                 />
               )}
             />
-          )}
-        />
-        {errors.workTimes && !Array.isArray(errors.workTimes) && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {errors.workTimes.message as string}
-          </p>
-        )}
-        <p className="text-xs text-gray-500 mt-2">
-          {t("booking:form.scheduleHelp")}
-        </p>
-      </div>
+            {errors.images?.businessPhoto && (
+              <p className="text-xs text-red-500 font-medium">
+                {Array.isArray(errors.images.businessPhoto)
+                  ? errors.images.businessPhoto.find((err) => err?.message)
+                      ?.message
+                  : errors.images.businessPhoto.message}
+              </p>
+            )}
+          </div>
 
-      {/* Main Image */}
-      <div className="mb-12">
-        <Label className="block text-lg font-medium mb-2">
-          {t("booking:form.mainImage")}
-        </Label>
-        <Controller
-          name="images.businessPhoto"
-          control={control}
-          render={({ field }) => (
-            <FileUpload
-              value={field.value}
-              onChange={field.onChange}
-              maxFiles={1}
+          <div className="space-y-3">
+            <div>
+              <Label className="text-sm font-medium">
+                {t("booking:form.galleryImages")}
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                {t("booking:form.galleryHelp")}
+              </p>
+            </div>
+            <Controller
+              name="images.galleryPhoto"
+              control={control}
+              render={({ field }) => (
+                <FileUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  maxFiles={4}
+                />
+              )}
             />
-          )}
-        />
-        {errors.images?.businessPhoto && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {Array.isArray(errors.images.businessPhoto)
-              ? errors.images.businessPhoto.find((err) => err?.message)?.message
-              : errors.images.businessPhoto.message}
-          </p>
-        )}
-      </div>
+            {errors.images?.galleryPhoto && (
+              <p className="text-xs text-red-500 font-medium">
+                {Array.isArray(errors.images.galleryPhoto)
+                  ? errors.images.galleryPhoto.find((err) => err?.message)
+                      ?.message
+                  : errors.images.galleryPhoto.message}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Gallery Images */}
-      <div className="mb-14">
-        <Label className="block text-lg font-medium mb-2 mt-4">
-          {t("booking:form.galleryImages")}
-        </Label>
-        <Controller
-          name="images.galleryPhoto"
-          control={control}
-          render={({ field }) => (
-            <FileUpload
-              value={field.value}
-              onChange={field.onChange}
-              maxFiles={4}
-            />
-          )}
-        />
-        {errors.images?.galleryPhoto && (
-          <p className="text-xs text-red-500 font-bold mt-2">
-            {Array.isArray(errors.images.galleryPhoto)
-              ? errors.images.galleryPhoto.find((err) => err?.message)?.message
-              : errors.images.galleryPhoto.message}
+      {/* Contact Information Card */}
+      <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-6 space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            Contact Information
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            How can clients reach you
           </p>
-        )}
-        <p className="text-xs text-gray-500 mt-1">
-          {t("booking:form.galleryHelp")}
-        </p>
-      </div>
-
-      {/* Contact Info */}
-      <div className="grid grid-cols-3 gap-4 mb-12">
-        <div>
-          <Label className="block text-sm font-medium mb-2">
-            {t("booking:form.phoneNumber")}
-          </Label>
-          <Input
-            type="text"
-            {...register("info.phoneNumber")}
-            placeholder="+995511111111"
-          />
-          {errors.info?.phoneNumber && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.info.phoneNumber.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Label className="block text-sm font-medium mb-2">Facebook URL</Label>
-          <Input
-            type="text"
-            {...register("info.facebookUrl")}
-            placeholder="https://facebook.com/yourpage"
-          />
-          {errors.info?.facebookUrl && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.info.facebookUrl.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Label className="block text-sm font-medium mb-2">
-            Instagram URL
-          </Label>
-          <Input
-            type="text"
-            {...register("info.instagramUrl")}
-            placeholder="https://instagram.com/youraccount"
-          />
-          {errors.info?.instagramUrl && (
-            <p className="text-xs text-red-500 font-bold mt-2">
-              {errors.info.instagramUrl.message}
-            </p>
-          )}
-        </div>
-      </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.phoneNumber")}
+              </Label>
+              <Input
+                type="text"
+                {...register("info.phoneNumber")}
+                placeholder="+995511111111"
+                className="h-11 transition-all"
+              />
+              {errors.info?.phoneNumber && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.info.phoneNumber.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">Facebook URL</Label>
+              <Input
+                type="text"
+                {...register("info.facebookUrl")}
+                placeholder="https://facebook.com/yourpage"
+                className="h-11 transition-all"
+              />
+              {errors.info?.facebookUrl && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.info.facebookUrl.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">Instagram URL</Label>
+              <Input
+                type="text"
+                {...register("info.instagramUrl")}
+                placeholder="https://instagram.com/youraccount"
+                className="h-11 transition-all"
+              />
+              {errors.info?.instagramUrl && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.info.instagramUrl.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Submit Button */}
-      <div className="flex justify-end gap-4 pt-4">
+      <div className="flex justify-end pt-4">
         <Button
           type="submit"
           disabled={isCreating || isUploading}
-          className="p-8 cursor-pointer"
+          size="lg"
+          className="px-16 h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all"
         >
           {isCreating || isUploading
             ? t("booking:form.processing")

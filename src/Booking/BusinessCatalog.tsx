@@ -157,7 +157,7 @@ export default function BusinessCatalog() {
 
                 {/* Description - Fixed size for consistent UI */}
                 <p className="text-sm text-gray-600 line-clamp-2 mb-3 h-10">
-                  {business.description || '\u00A0'}
+                  {business.description || "\u00A0"}
                 </p>
 
                 {/* City */}

@@ -161,7 +161,6 @@ export default function WorkingSchedule({
             key={dayCode}
             className="border rounded-lg overflow-hidden bg-card"
           >
-            {/* Оставил ваш JSX без изменений, он написан хорошо */}
             <div className="flex flex-col gap-2 p-4">
               <div className="flex items-center gap-4">
                 <Button
@@ -214,7 +213,7 @@ export default function WorkingSchedule({
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleRestTime(dayCode)}
-                      className="ml-auto text-xs"
+                      className="ml-auto text-xs cursor-pointer"
                     >
                       {hasRestTime
                         ? t("schedule.buttons.removeRest")

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
-import { Building2, LogOut, User } from "lucide-react";
+import { LayoutDashboard, LogOut, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
@@ -74,8 +74,8 @@ export default function TopBar() {
                   onClick={() => navigate("/my-businesses")}
                   className="cursor-pointer"
                 >
-                  <Building2 className="mr-2 h-4 w-4" />
-                  <span>My Businesses</span>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Check, TriangleAlert } from "lucide-react";
+import { AlertCircle, Check, TriangleAlert } from "lucide-react";
 import React, {
   createContext,
   type ReactNode,
@@ -9,7 +9,7 @@ import React, {
 } from "react";
 
 // 1. Описываем возможные статусы модалки
-export type ModalStatus = "pending" | "success" | "error" | "idle";
+export type ModalStatus = "pending" | "success" | "error" | "warning" | "idle";
 
 // 2. Описываем данные, которые хранит модалка
 interface ModalData {
@@ -129,7 +129,10 @@ const GlobalModal: React.FC = () => {
     pending: "text-gray-500 border-gray-500",
     success: "text-green-800 border-green-800",
     error: "text-red-900 border-red-500",
+    warning: "text-yellow-800 border-yellow-800",
   };
+
+  const shortenedText = title.length > 30 ? title.slice(0, 30) + "..." : title;
 
   return (
     <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">
@@ -144,6 +147,12 @@ const GlobalModal: React.FC = () => {
           </div>
         )}
 
+        {status === "warning" && (
+          <div className="w-14 h-14 rounded-full bg-yellow-50 flex items-center justify-center mb-5">
+            <AlertCircle className="w-8 h-8 text-yellow-700" />
+          </div>
+        )}
+
         {status === "success" && (
           <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5">
             <Check className="w-8 h-8 text-green-700" />
@@ -154,7 +163,7 @@ const GlobalModal: React.FC = () => {
         <h2
           className={`text-2xl font-bold mb-3 ${statusStyles[status].split(" ")[0]}`}
         >
-          {title}
+          {shortenedText}
         </h2>
 
         <p className="text-gray-600 text-base text-center mb-8 leading-relaxed max-w-sm">

@@ -20,14 +20,13 @@ import {
 import useGetMyBusinesses, {
   type MyBusinessResponse,
 } from "@/features/my-businesses/useGetMyBusinesses";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
   const { isMobile } = useSidebar();
   const [activeBusiness, setActiveBusiness] = React.useState<
     MyBusinessResponse | string
   >("Select Business");
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: businesses } = useGetMyBusinesses();
   const businessId = searchParams.get("businessId");
@@ -136,12 +135,12 @@ function BusinessSwitcherComponent() {
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <Plus className="size-4" />
               </div>
-              <div
+              <Link
+                to="/create-business"
                 className="text-muted-foreground font-medium"
-                onClick={() => navigate("/create-business")}
               >
                 Add business
-              </div>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

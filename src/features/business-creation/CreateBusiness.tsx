@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import CreateBookingBusiness from "@/features/business-creation/booking-business/CreateBookingBusiness";
 import { scrollToTop } from "@/utils";
-import { Calendar, ShoppingCart } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { Calendar, Check, ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 
 export default function CreateBusiness() {
   const { t } = useTranslation("common");
@@ -32,105 +33,120 @@ export default function CreateBusiness() {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+    <div className="min-h-screen bg-linear-to-b from-background via-background to-muted/30 py-12 px-4">
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold tracking-tight mb-4 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t("businessTypeSelection.title")}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             {t("businessTypeSelection.subtitle")}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Booking Business Card */}
-          <div className="relative bg-white rounded-xl border border-slate-300 shadow-sm">
-            <div className="p-10">
+          <Card className="relative group border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-8">
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 bg-[#FF6439] rounded-lg flex items-center justify-center">
-                  <Calendar className="w-8 h-8 text-white" />
+                <div className="w-20 h-20 bg-linear-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <Calendar className="w-10 h-10 text-primary-foreground" />
                 </div>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-900 text-center mb-3">
+              <h2 className="text-3xl font-bold text-center mb-4 tracking-tight">
                 {t("businessTypeSelection.booking.title")}
               </h2>
-              <p className="text-slate-600 text-center mb-8 leading-relaxed text-sm">
+              <p className="text-muted-foreground text-center mb-8 leading-relaxed">
                 {t("businessTypeSelection.booking.description")}
               </p>
-              <ul className="space-y-3 mb-10">
+              <ul className="space-y-4 mb-10">
                 <li className="flex items-start">
-                  <span className="text-slate-500 mr-3 text-base">✓</span>
-                  <span className="text-slate-700 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm leading-relaxed">
                     {t("businessTypeSelection.booking.feature1")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-slate-500 mr-3 text-base">✓</span>
-                  <span className="text-slate-700 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm leading-relaxed">
                     {t("businessTypeSelection.booking.feature2")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-slate-500 mr-3 text-base">✓</span>
-                  <span className="text-slate-700 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm leading-relaxed">
                     {t("businessTypeSelection.booking.feature3")}
                   </span>
                 </li>
               </ul>
               <Button
                 onClick={() => handleClick("booking")}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11 cursor-pointer"
+                size="lg"
+                className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all"
               >
                 {t("businessTypeSelection.getStarted")}
               </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="relative bg-gray-100 rounded-xl border border-gray-300 shadow-sm opacity-60">
-            <div className="absolute top-4 right-4 bg-slate-500 text-white px-4 py-1.5 rounded-full text-sm font-medium">
+          {/* E-commerce Card */}
+          <Card className="relative border-2 border-border/30 bg-muted/30 backdrop-blur-sm">
+            <div className="absolute -top-3 right-6 bg-muted-foreground text-background px-5 py-1.5 rounded-full text-sm font-semibold shadow-md">
               {t("businessTypeSelection.comingSoon")}
             </div>
-            <div className="p-10">
+            <CardContent className="p-8 opacity-60">
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <ShoppingCart className="w-8 h-8 text-gray-500" />
+                <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center">
+                  <ShoppingCart className="w-10 h-10 text-muted-foreground" />
                 </div>
               </div>
-              <h2 className="text-2xl font-semibold text-gray-600 text-center mb-3">
+              <h2 className="text-3xl font-bold text-center mb-4 tracking-tight text-muted-foreground">
                 {t("businessTypeSelection.ecommerce.title")}
               </h2>
-              <p className="text-gray-500 text-center mb-8 leading-relaxed text-sm">
+              <p className="text-muted-foreground/80 text-center mb-8 leading-relaxed">
                 {t("businessTypeSelection.ecommerce.description")}
               </p>
-              <ul className="space-y-3 mb-10">
+              <ul className="space-y-4 mb-10">
                 <li className="flex items-start">
-                  <span className="text-gray-400 mr-3 text-base">✓</span>
-                  <span className="text-gray-500 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-sm leading-relaxed text-muted-foreground/80">
                     {t("businessTypeSelection.ecommerce.feature1")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-gray-400 mr-3 text-base">✓</span>
-                  <span className="text-gray-500 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-sm leading-relaxed text-muted-foreground/80">
                     {t("businessTypeSelection.ecommerce.feature2")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-gray-400 mr-3 text-base">✓</span>
-                  <span className="text-gray-500 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-sm leading-relaxed text-muted-foreground/80">
                     {t("businessTypeSelection.ecommerce.feature3")}
                   </span>
                 </li>
               </ul>
               <Button
                 disabled
-                className="w-full bg-gray-400 text-white font-medium h-11 cursor-not-allowed"
+                size="lg"
+                className="w-full h-12 text-base font-semibold cursor-not-allowed"
               >
                 {t("businessTypeSelection.getStarted")}
               </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

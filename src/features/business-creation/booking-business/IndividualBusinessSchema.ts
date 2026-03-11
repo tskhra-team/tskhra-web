@@ -12,14 +12,14 @@ export const createServiceSchema = (t: TFunction) => {
       .max(40, t("booking:validation.serviceNameMax")),
     price: yup
       .number()
-      .typeError(t("booking:validation.servicePriceInvalid"))
       .required(t("booking:validation.servicePriceRequired"))
+      .typeError(t("booking:validation.servicePriceRequired"))
       .positive(t("booking:validation.servicePricePositiveError"))
       .max(1000000, t("booking:validation.servicePriceMax")),
     duration: yup
       .number()
-      .typeError(t("booking:validation.serviceDurationInvalid"))
       .required(t("booking:validation.serviceDurationRequired"))
+      .typeError(t("booking:validation.serviceDurationRequired"))
       .positive(t("booking:validation.serviceDurationPositive"))
       .max(1440, t("booking:validation.serviceDurationMax"))
       .test(
@@ -45,6 +45,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     "image/jpg",
     "image/png",
     "image/webp",
+    "image/avif",
   ];
 
   const fileValidation = yup

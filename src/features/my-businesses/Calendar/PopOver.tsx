@@ -26,7 +26,7 @@ export default function PopOver({
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-bold text-slate-900 leading-tight">
-            {selectedBooking.service}
+            {selectedBooking.serviceName}
           </h3>
           <p className="text-sm text-slate-500 font-medium">Booking Details</p>
         </div>
@@ -105,7 +105,7 @@ export default function PopOver({
           </span>
           <span
             className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-              selectedBooking.status === "done"
+              selectedBooking.status === "SCHEDULED"
                 ? "bg-emerald-100 text-emerald-700"
                 : "bg-amber-100 text-amber-700"
             }`}
