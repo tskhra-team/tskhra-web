@@ -155,21 +155,46 @@ export default function BookingDialog({
               <Button
                 onClick={onConfirm}
                 disabled={isBooking}
-                className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                 size="lg"
+                style={{
+                  transition: 'all 0.5s ease-out',
+                  boxShadow: '0 4px 14px -2px rgba(255, 100, 57, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isBooking) {
+                    e.currentTarget.style.transform = 'scale(1.05) translateY(-4px) rotate(0.5deg)';
+                    e.currentTarget.style.boxShadow = '0 20px 50px -10px rgba(255, 100, 57, 0.6)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isBooking) {
+                    e.currentTarget.style.transform = 'scale(1) translateY(0) rotate(0deg)';
+                    e.currentTarget.style.boxShadow = '0 4px 14px -2px rgba(255, 100, 57, 0.3)';
+                  }
+                }}
               >
+                {/* Decorative shine effect */}
+                <div
+                  className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
+                  }}
+                />
                 {isBooking ? (
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-2 relative z-10">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     {t("businessDetails.booking.processing", {
                       defaultValue: "Processing...",
                     })}
                   </span>
                 ) : (
-                  t("businessDetails.booking.confirmBooking", {
-                    date: selectedDate,
-                    time: selectedTime,
-                  })
+                  <span className="relative z-10">
+                    {t("businessDetails.booking.confirmBooking", {
+                      date: selectedDate,
+                      time: selectedTime,
+                    })}
+                  </span>
                 )}
               </Button>
             </div>
