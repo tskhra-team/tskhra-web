@@ -76,7 +76,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
               {isActive && category.childItems && (
                 <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                   <h3 className="mb-4 text-sm font-semibold">{categoryDisplayName}</h3>
-                  <SubcategoryView subcategories={category.childItems} platform={platform} />
+                  <SubcategoryView subcategories={category.childItems} platform={platform} categorySlug={categorySlug} />
                 </div>
               )}
             </li>
