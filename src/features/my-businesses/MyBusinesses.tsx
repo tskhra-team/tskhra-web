@@ -1,4 +1,5 @@
 import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarProvider";
+import useGetAllBookings from "@/features/my-businesses/Calendar/hooks/useGetAllBookings";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
 import Notifications from "@/features/my-businesses/Notifications/Notifications";
@@ -42,6 +43,8 @@ export default function MyBusinesses() {
   const section = searchParams.get("section");
   const businessId = searchParams.get("businessId");
 
+  const { fullBookings } = useGetAllBookings(businessId);
+
   const { data: businesses } = useGetMyBusinesses();
 
   // Получаем текущий бизнес по businessId
@@ -70,7 +73,10 @@ export default function MyBusinesses() {
       case "calendar":
         return (
           <>
-            <ReadOnlyCalendar schedule={schedule} />
+            <ReadOnlyCalendar
+              schedule={schedule}
+              bookings={fullBookings || []}
+            />
           </>
         );
       case "manage":

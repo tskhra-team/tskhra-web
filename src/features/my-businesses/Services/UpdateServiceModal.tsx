@@ -6,8 +6,8 @@ import {
   createServiceSchema,
   type ServiceType,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
-import type { ServiceResponse } from "@/features/my-businesses/Services/useGetMyServices";
-import useUpdateService from "@/features/my-businesses/Services/useUpdateService";
+import type { ServiceResponse } from "@/features/my-businesses/Services/hooks/useGetMyServices";
+import useUpdateService from "@/features/my-businesses/Services/hooks/useUpdateService";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { X } from "lucide-react";

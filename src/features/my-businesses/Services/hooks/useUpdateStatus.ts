@@ -1,5 +1,5 @@
 import { privateInstance } from "@/api";
-import type { ServiceResponse } from "@/features/my-businesses/Services/useGetMyServices";
+import type { ServiceResponse } from "@/features/my-businesses/Services/hooks/useGetMyServices";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import type { ErrorResponse } from "react-router-dom";

@@ -1,6 +1,6 @@
 import { privateInstance } from "@/api";
 import type { ServiceType } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
-import type { ServiceResponse } from "@/features/my-businesses/Services/useDeleteService";
+import type { ServiceResponse } from "@/features/my-businesses/Services/hooks/useDeleteService";
 import type { ErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
