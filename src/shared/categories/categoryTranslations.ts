@@ -7,19 +7,19 @@ export const categoryNameToKey: Record<string, string> = {
   "Books & Media": "categories.booksMedia",
   "Sports & Outdoors": "categories.sportsOutdoors",
   
-  // Main categories - Booking
-  "Automotive Services": "categories.automotiveServices",
-  "Home & Property": "categories.homeProperty",
-  "Professional Services": "categories.professionalServices",
-  "Personal Care & Wellness": "categories.personalCareWellness",
-  "Events & Entertainment": "categories.eventsEntertainment",
-  "Education & Learning": "categories.educationLearning",
-  "Business & Equipment": "categories.businessEquipment",
-  "On-Call Services": "categories.onCallServices",
-  "Products & Marketplace": "categories.productsMarketplace",
-  "Media & Technology": "categories.mediaTechnology",
-  "Children's Services": "categories.childrensServices",
-  "Outdoor & Recreation": "categories.outdoorRecreation",
+  // Main categories - Booking (New API categories)
+  "Legal and Finance": "categories.legalAndFinance",
+  "Beauty and Personal Care": "categories.beautyAndPersonalCare",
+  "Health": "categories.health",
+  "Home Services": "categories.homeServices",
+  "Cleaning": "categories.cleaning",
+  "Auto Services": "categories.autoServices",
+  "Education": "categories.education",
+  "Fitness and Sports": "categories.fitnessAndSports",
+  "Pets": "categories.pets",
+  "Events": "categories.events",
+  "IT and Technology": "categories.itAndTechnology",
+  "Transport": "categories.transport",
 
   // Ecommerce & Swapping Subcategories
   "Phones & Tablets": "subcategories.phonesTablets",
@@ -49,38 +49,78 @@ export const categoryNameToKey: Record<string, string> = {
   "Camping & Hiking": "subcategories.campingHiking",
   "Cycling": "subcategories.cycling",
   
-  // Booking Subcategories
-  "Auto-Moto Service": "subcategories.autoMotoService",
-  "Car Rental": "subcategories.carRental",
-  "Tow Truck Service": "subcategories.towTruckService",
-  "Furniture & Interior": "subcategories.furnitureInterior",
-  "Construction & Repair": "subcategories.constructionRepair",
-  "Cleaning & Organization": "subcategories.cleaningOrganization",
-  "Locks & Safes": "subcategories.locksSafes",
-  "Legal & Financial Services": "subcategories.legalFinancialServices",
-  "Computer Services": "subcategories.computerServices",
-  "Advertising Services": "subcategories.advertisingServices",
-  "Courier Service": "subcategories.courierService",
-  "Beauty Fitness Sports": "subcategories.beautyFitnessSports",
-  "Medicine Healthcare": "subcategories.medicineHealthcare",
-  "Event Services": "subcategories.eventServices",
-  "Entertainment": "subcategories.entertainment",
-  "Travel Tourism": "subcategories.travelTourism",
-  "Education": "subcategories.education",
-  "Art": "subcategories.art",
-  "Business Equipment": "subcategories.businessEquipment",
-  "Special Equipment Service": "subcategories.specialEquipmentService",
-  "Transportation Service": "subcategories.transportationService",
-  "Workers on Call": "subcategories.workersOnCall",
-  "Craftsmen on Call": "subcategories.craftsmenOnCall",
-  "Pet Care": "subcategories.petCare",
-  "Security Protection": "subcategories.securityProtection",
-  "Food Products": "subcategories.foodProducts",
-  "Gifts": "subcategories.gifts",
-  "Buying Selling": "subcategories.buyingSelling",
-  "Audio Video Photo": "subcategories.audioVideoPhoto",
-  "Children's World": "subcategories.childrensWorld",
-  "Weapons Hunting Fishing": "subcategories.weaponsHuntingFishing",
-  "Auto Parts": "subcategories.autoParts",
-  "Tires": "subcategories.tires",
+  // Booking Subcategories - Beauty and Personal Care
+  "Hair Care Services": "subcategories.hairCareServices",
+  "Nail Care Services": "subcategories.nailCareServices",
+  "Aesthetic Cosmetology": "subcategories.aestheticCosmetology",
+  "Makeup Services": "subcategories.makeupServices",
+  "Spa and Relaxation Procedures": "subcategories.spaAndRelaxationProcedures",
+
+  // Booking Subcategories - Legal and Finance
+  "Legal Services": "subcategories.legalServices",
+  "Notary Services": "subcategories.notaryServices",
+  "Accounting and Audit": "subcategories.accountingAndAudit",
+  "Business Consulting": "subcategories.businessConsulting",
+
+  // Booking Subcategories - Pets
+  "Veterinary Services": "subcategories.veterinaryServices",
+  "Pet Grooming and Care": "subcategories.petGroomingAndCare",
+  "Pet Training and Behavior Correction": "subcategories.petTrainingAndBehaviorCorrection",
+  "Pet Boarding": "subcategories.petBoarding",
+
+  // Booking Subcategories - Auto Services
+  "Vehicle Maintenance": "subcategories.vehicleMaintenance",
+  "Chassis and Suspension Repair": "subcategories.chassisAndSuspensionRepair",
+  "Auto Electrics and Diagnostics": "subcategories.autoElectricsAndDiagnostics",
+  "Car Wash and Polishing": "subcategories.carWashAndPolishing",
+
+  // Booking Subcategories - Health
+  "Physiotherapy and Rehabilitation": "subcategories.physiotherapyAndRehabilitation",
+  "Psychological Counseling": "subcategories.psychologicalCounseling",
+  "Nursing and Ambulatory Care": "subcategories.nursingAndAmbulatoryCare",
+  "Dietetics and Nutrition": "subcategories.dieteticsAndNutrition",
+
+  // Booking Subcategories - Education
+  "Foreign Language Teaching": "subcategories.foreignLanguageTeaching",
+  "Exact and Natural Sciences": "subcategories.exactAndNaturalSciences",
+  "Music and Arts Education": "subcategories.musicAndArtsEducation",
+  "Professional Training and Retraining": "subcategories.professionalTrainingAndRetraining",
+
+  // Booking Subcategories - Events
+  "Photo and Video Production": "subcategories.photoAndVideoProduction",
+  "Event Planning and Organization": "subcategories.eventPlanningAndOrganization",
+  "Musical and Visual Entertainment": "subcategories.musicalAndVisualEntertainment",
+  "Festive Decoration and Floristry": "subcategories.festiveDecorationAndFloristry",
+  "Catering": "subcategories.catering",
+
+  // Booking Subcategories - Home Services
+  "Plumbing": "subcategories.plumbing",
+  "Electrical Works": "subcategories.electricalWorks",
+  "HVAC Services": "subcategories.hvacServices",
+  "Home Appliance Repair": "subcategories.homeApplianceRepair",
+  "Disinfection Services": "subcategories.disinfectionServices",
+
+  // Booking Subcategories - Fitness and Sports
+  "Personal Trainer and Fitness": "subcategories.personalTrainerAndFitness",
+  "Wellness Exercises": "subcategories.wellnessExercises",
+  "Swimming Pool Services": "subcategories.swimmingPoolServices",
+  "Martial Arts Training": "subcategories.martialArtsTraining",
+
+  // Booking Subcategories - Cleaning
+  "Residential Cleaning": "subcategories.residentialCleaning",
+  "Commercial Cleaning": "subcategories.commercialCleaning",
+  "Dry Cleaning (Furniture/Carpets)": "subcategories.dryCleaningFurnitureCarpets",
+  "Facade and Window Cleaning": "subcategories.facadeAndWindowCleaning",
+
+  // Booking Subcategories - Transport
+  "Freight Transport and Logistics": "subcategories.freightTransportAndLogistics",
+  "Passenger Transportation": "subcategories.passengerTransportation",
+  "Courier and Postal Services": "subcategories.courierAndPostalServices",
+  "Special Equipment Services": "subcategories.specialEquipmentServices",
+
+  // Booking Subcategories - IT and Technology
+  "Computer Hardware Services": "subcategories.computerHardwareServices",
+  "Software and Web Services": "subcategories.softwareAndWebServices",
+  "Mobile Device Repair": "subcategories.mobileDeviceRepair",
+  "Network Infrastructure Installation": "subcategories.networkInfrastructureInstallation",
 };

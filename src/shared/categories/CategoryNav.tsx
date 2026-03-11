@@ -18,7 +18,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
   const colors = getPlatformColors(platform);
 
   return (
-    <nav className="w-full lg:w-64 lg:h-125 rounded-2xl border  p-4 lg:overflow-hidden">
+    <nav className="w-full lg:w-64 rounded-2xl border p-4">
       <ul className="space-y-1">
         {categories.map((category, index) => {
           const translationKey = categoryNameToKey[category.name];

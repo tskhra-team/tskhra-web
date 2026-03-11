@@ -52,10 +52,10 @@ export default function BusinessHeader({
         </button>
         <span className="text-muted-foreground/50">•</span>
         <button
-          onClick={() => navigate("/services")}
+          onClick={() => navigate("/booking")}
           className="hover:text-primary transition-colors font-medium"
         >
-          {t("businessDetails.breadcrumb.services")}
+          {t("businessDetails.breadcrumb.booking")}
         </button>
         <span className="text-muted-foreground/50">•</span>
         <span className="text-[#100b2e] font-semibold">{businessName}</span>

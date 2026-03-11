@@ -153,7 +153,8 @@
   "businessDetails": {
     "breadcrumb": {
       "home": "მთავარი",
-      "services": "სერვისები"
+      "services": "სერვისები",
+      "booking": "დაჯავშნა"
     },
     "callType": {
       "outcall": "მხოლოდ გასვლით",

@@ -5,16 +5,48 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { MapPin } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function BusinessCatalog() {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
+  const [searchParams] = useSearchParams();
   const size = 12;
   const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses(page, size);
+
+  const categoryFilter = searchParams.get('category');
+  const subcategoryFilter = searchParams.get('subcategory');
+
+  // Reset to page 0 when filters change
+  useEffect(() => {
+    setPage(0);
+  }, [categoryFilter, subcategoryFilter]);
+
+  // Filter businesses based on category and subcategory
+  const filteredBusinesses = useMemo(() => {
+    if (!businesses?.content) return null;
+
+    let filtered = businesses.content;
+
+    // Filter by category if selected
+    if (categoryFilter) {
+      filtered = filtered.filter(
+        (business) => business.category.toLowerCase().replace(/\s+/g, '-') === categoryFilter
+      );
+    }
+
+    // Filter by subcategory if selected
+    if (subcategoryFilter) {
+      filtered = filtered.filter(
+        (business) => business.subCategory.toLowerCase().replace(/\s+/g, '-') === subcategoryFilter
+      );
+    }
+
+    return filtered;
+  }, [businesses, categoryFilter, subcategoryFilter]);
 
   const handkleClick = (id: string) => {
     scrollToTop();
@@ -48,8 +80,15 @@ export default function BusinessCatalog() {
         <p className="text-muted-foreground">{t("catalog.subtitle")}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {businesses?.content.map((business) => {
+      {filteredBusinesses && filteredBusinesses.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-64 gap-4">
+          <p className="text-muted-foreground text-lg">
+            No businesses found for the selected filters.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredBusinesses?.map((business) => {
           return (
             <Card
               key={business.businessId}
@@ -107,10 +146,11 @@ export default function BusinessCatalog() {
             </Card>
           );
         })}
-      </div>
+        </div>
+      )}
 
-      {/* Pagination */}
-      {businesses && businesses.totalPages > 1 && (
+      {/* Pagination - only show when not filtering */}
+      {!categoryFilter && !subcategoryFilter && businesses && businesses.totalPages > 1 && (
         <div className="mt-8">
           <PaginationControls
             currentPage={page}
