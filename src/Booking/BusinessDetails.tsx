@@ -1,7 +1,8 @@
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
-import { getAvailableDays, getAvailableTimeSlots } from "@/Booking/utils/businessDetailsUtils";
+import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
+import { getAvailableDays, getAvailableTimeSlots, convertTimeslotsToStrings } from "@/Booking/utils/businessDetailsUtils";
 import { useBookingDialog } from "@/Booking/hooks/useBookingDialog";
 import { useImageGallery } from "@/Booking/hooks/useImageGallery";
 import BusinessHeader from "@/Booking/components/BusinessHeader";
@@ -56,12 +57,24 @@ export default function BusinessDetails() {
 
   const { currentImageIndex, handleImageClick } = useImageGallery(allImages);
 
-  const availableDays = getAvailableDays();
-  const availableTimeSlots = getAvailableTimeSlots(
+  // Fetch timeslots from API when service and date are selected
+  const { data: timeslotsData, isLoading: timeslotsLoading } = useGetBusinessTimeslots(
+    id || "",
     selectedDate,
-    business?.workTimes,
-    business?.restTimes,
+    selectedService?.id ? String(selectedService.id) : null,
+    !!id && !!selectedDate && !!selectedService?.id,
   );
+
+  const availableDays = getAvailableDays();
+
+  // Use API timeslots if available, otherwise fallback to mock data
+  const availableTimeSlots = timeslotsData && timeslotsData.length > 0
+    ? convertTimeslotsToStrings(timeslotsData)
+    : getAvailableTimeSlots(
+        selectedDate,
+        business?.workTimes,
+        business?.restTimes,
+      );
 
   const scrollToServices = () => {
     servicesRef.current?.scrollIntoView({
@@ -187,6 +200,7 @@ export default function BusinessDetails() {
           selectedTime={selectedTime}
           availableDays={availableDays}
           availableTimeSlots={availableTimeSlots}
+          timeslotsLoading={timeslotsLoading}
           onDateSelect={handleDateSelect}
           onTimeSelect={handleTimeSelect}
           onConfirm={handleBookingConfirm}
