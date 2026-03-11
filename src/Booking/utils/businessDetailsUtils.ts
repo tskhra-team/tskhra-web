@@ -22,6 +22,18 @@ export const timeToMinutes = (timeString: string): number => {
   return hours * 60 + minutes;
 };
 
+// Helper function to convert minutes to time string (HH:MM)
+export const minutesToTime = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+};
+
+// Convert API timeslot response (array of minutes) to time strings
+export const convertTimeslotsToStrings = (timeslots: number[]): string[] => {
+  return timeslots.map((minutes) => minutesToTime(minutes)).sort();
+};
+
 // Helper function to convert day name to day number (0 = Sunday, 1 = Monday, etc.)
 export const dayNameToDayNumber = (dayName: string | number): number => {
   if (typeof dayName === "number") return dayName;

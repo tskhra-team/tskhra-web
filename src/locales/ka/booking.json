@@ -150,12 +150,15 @@
     "min": "წთ",
     "notAvailable": "არ არის",
     "errorLoading": "ბიზნესების ჩატვირთვა ვერ მოხერხდა",
-    "retry": "თავიდან ცდა"
+    "retry": "თავიდან ცდა",
+    "noBusinessesFound": "არჩეული ფილტრებისთვის ბიზნესები არ მოიძებნა.",
+    "clearFilters": "ფილტრების გასუფთავება"
   },
   "businessDetails": {
     "breadcrumb": {
       "home": "მთავარი",
-      "services": "სერვისები"
+      "services": "სერვისები",
+      "booking": "დაჯავშნა"
     },
     "callType": {
       "outcall": "მხოლოდ გასვლით",
@@ -183,7 +186,8 @@
       "errorLoading": "შეცდომა ბიზნესის ჩატვირთვისას",
       "somethingWrong": "რაღაც არასწორად მოხდა",
       "notFound": "ბიზნესი ვერ მოიძებნა",
-      "openUntil": "ღიაა"
+      "openUntil": "ღიაა",
+      "noServices": "სერვისები არ არის ხელმისაწვდომი"
     },
     "social": {
       "facebook": "ფეისბუქი",

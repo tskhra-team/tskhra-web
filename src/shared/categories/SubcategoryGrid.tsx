@@ -36,7 +36,7 @@ export default function SubcategoryGrid({
         return (
           <Link
             key={subcategory.name}
-            to={`/${platform}/category/${categorySlug}/${subcategorySlug}`}
+            to={`/${platform}/category/${categorySlug}?tab=${subcategorySlug}`}
             className="group rounded-xl bg-white p-4 transition-all duration-200 ease-in-out flex flex-col text-left cursor-pointer hover:shadow-lg border border-gray-200 animate-in fade-in slide-in-from-bottom-2"
             style={{
               animationDelay: `${index * 30}ms`,

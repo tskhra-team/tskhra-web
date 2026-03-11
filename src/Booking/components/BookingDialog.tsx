@@ -18,6 +18,8 @@ type BookingDialogProps = {
   selectedTime: string | null;
   availableDays: AvailableDay[];
   availableTimeSlots: string[];
+  timeslotsLoading?: boolean;
+  isBooking?: boolean;
   onDateSelect: (dateString: string) => void;
   onTimeSelect: (time: string) => void;
   onConfirm: () => void;
@@ -31,6 +33,8 @@ export default function BookingDialog({
   selectedTime,
   availableDays,
   availableTimeSlots,
+  timeslotsLoading = false,
+  isBooking = false,
   onDateSelect,
   onTimeSelect,
   onConfirm,
@@ -115,21 +119,33 @@ export default function BookingDialog({
                 <Clock className="w-5 h-5 text-primary" />
                 {t("businessDetails.booking.selectTime")}
               </h3>
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                {availableTimeSlots.map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => onTimeSelect(time)}
-                    className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
-                      selectedTime === time
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border hover:border-primary/50 hover:bg-primary/5"
-                    }`}
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
+              {timeslotsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : availableTimeSlots.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  {t("businessDetails.booking.noTimeslots", {
+                    defaultValue: "No available time slots for this date",
+                  })}
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {availableTimeSlots.map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => onTimeSelect(time)}
+                      className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
+                        selectedTime === time
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary/50 hover:bg-primary/5"
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -138,13 +154,23 @@ export default function BookingDialog({
             <div className="animate-in fade-in-50 duration-300 pt-4 border-t">
               <Button
                 onClick={onConfirm}
-                className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer"
+                disabled={isBooking}
+                className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 size="lg"
               >
-                {t("businessDetails.booking.confirmBooking", {
-                  date: selectedDate,
-                  time: selectedTime,
-                })}
+                {isBooking ? (
+                  <span className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    {t("businessDetails.booking.processing", {
+                      defaultValue: "Processing...",
+                    })}
+                  </span>
+                ) : (
+                  t("businessDetails.booking.confirmBooking", {
+                    date: selectedDate,
+                    time: selectedTime,
+                  })
+                )}
               </Button>
             </div>
           )}

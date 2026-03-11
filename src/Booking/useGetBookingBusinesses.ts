@@ -42,11 +42,12 @@ const getBookingBusinesses = async (
   return response.data;
 };
 
-const useGetBookingBusinesses = (page: number, size = 10) => {
+const useGetBookingBusinesses = (page: number, size = 10, enabled = true) => {
   return useQuery<PaginatedBusinessesResponse, AxiosError<ErrorResponse>>({
     queryKey: ["businesses", page, size],
     queryFn: () => getBookingBusinesses(page, size),
     staleTime: 5 * 60 * 1000,
+    enabled,
   });
 };
 

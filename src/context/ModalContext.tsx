@@ -67,6 +67,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     secondButtonText?: string,
     onSecondButtonClick?: () => void,
   ) => {
+    console.log("showModal called with:", { status, title, text, buttonText, secondButtonText });
     setModalData({
       status,
       title,
@@ -77,6 +78,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
       onSecondButtonClick,
     });
     setIsOpen(true);
+    console.log("Modal state updated, isOpen should be true");
   };
 
   const closeModal = () => setIsOpen(false);
@@ -133,7 +135,7 @@ const GlobalModal: React.FC = () => {
   const shortenedText = title.length > 30 ? title.slice(0, 30) + "..." : title;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-105 max-w-[90vw] flex flex-col items-center animate-in zoom-in-95 duration-200 border border-gray-100">
         {status === "pending" && (
           <div className="w-14 h-14 border-4 border-gray-200 border-t-gray-500 rounded-full animate-spin mb-5" />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import CategoryNav from "./CategoryNav";
@@ -12,8 +12,10 @@ import { useCategories } from "./useCategories";
 export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const { data, isLoading, error } = useCategories(platform);
   const { t } = useTranslation("categories");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [hoverEnabled, setHoverEnabled] = useState(true);
+  const closeTimeoutRef = useRef<number | null>(null);
   const colors = getPlatformColors(platform);
 
   // Sync activeIndex with URL params
@@ -28,6 +30,15 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       }
     }
   }, [searchParams, data]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const activeCategory = useMemo(
     () => (activeIndex !== null ? data?.[activeIndex] : null),
@@ -49,20 +60,49 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   const handleSelectCategory = (
     index: number | null,
-    categoryName?: string,
   ) => {
-    setActiveIndex(index);
-    if (index !== null && categoryName) {
-      setSearchParams({ category: categoryName.toLowerCase() });
+    const isMobile = window.innerWidth < 1024;
+
+    if (isMobile) {
+      // On mobile, just toggle accordion - don't set search params yet
+      setActiveIndex(index);
     } else {
-      setSearchParams({});
+      // On desktop, set activeIndex for hover effect only if hover is enabled
+      if (hoverEnabled) {
+        setActiveIndex(index);
+      }
     }
+  };
+
+  const handleSubcategorySelected = () => {
+    // Temporarily disable hover and close panel
+    setHoverEnabled(false);
+    setActiveIndex(null);
+
+    // Re-enable hover after a short delay (gives time for mouse to move away)
+    setTimeout(() => {
+      setHoverEnabled(true);
+    }, 800);
   };
 
   return (
     <div
       className="relative left-1 sm:left-2 lg:left-10 z-50"
-      onMouseLeave={() => setActiveIndex(null)}
+      onMouseLeave={() => {
+        if (hoverEnabled) {
+          // Delay closing to allow mouse to move to subcategory panel
+          closeTimeoutRef.current = window.setTimeout(() => {
+            setActiveIndex(null);
+          }, 200);
+        }
+      }}
+      onMouseEnter={() => {
+        // Cancel delayed close if mouse re-enters
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
+        }
+      }}
     >
       <CategoryNav
         categories={data}
@@ -73,12 +113,25 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       />
 
       {/* Desktop subcategory panel - hidden on mobile */}
-      {activeCategory && (
+      {activeCategory && hoverEnabled && (
         <div
           className="hidden lg:block absolute left-full top-0 min-w-175 h-126 overflow-hidden rounded-2xl border p-6 shadow-2xl xl:min-w-250 animate-in fade-in slide-in-from-left-4 duration-200"
           style={{
             backgroundColor: colors.subcategoryPanel.background,
             zIndex: 9999,
+          }}
+          onMouseEnter={() => {
+            // Cancel any pending close timeout
+            if (closeTimeoutRef.current) {
+              clearTimeout(closeTimeoutRef.current);
+              closeTimeoutRef.current = null;
+            }
+          }}
+          onMouseLeave={() => {
+            // Close panel when leaving the subcategory panel area
+            if (hoverEnabled) {
+              setActiveIndex(null);
+            }
           }}
         >
           <h3 className="mb-6 text-lg font-semibold text-white transition-opacity duration-300">
@@ -87,6 +140,8 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
           <SubcategoryView
             subcategories={activeCategory?.childItems}
             platform={platform}
+            categorySlug={activeCategory?.name.toLowerCase().replace(/\s+/g, '-')}
+            onSubcategorySelect={handleSubcategorySelected}
           />
         </div>
       )}
