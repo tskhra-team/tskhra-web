@@ -7,6 +7,10 @@ export default function HomeNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  if (location.pathname === "/create-business") {
+    return null;
+  }
+
   function handleClick(item: any) {
     if (location.pathname === "/profile") {
       return navigate(item.redirect);

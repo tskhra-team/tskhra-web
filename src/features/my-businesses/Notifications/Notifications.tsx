@@ -20,10 +20,6 @@ export default function Notifications({ businessId }: MyNotificationProps) {
     // TODO: Add reject logic
   };
 
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString();
-  };
-
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;

@@ -14,7 +14,12 @@ export default function BusinessCatalog() {
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
   const size = 12;
-  const { data: businesses, isLoading, isFetching, isError } = useGetBookingBusinesses(page, size);
+  const {
+    data: businesses,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetBookingBusinesses(page, size);
 
   const handkleClick = (id: string) => {
     scrollToTop();
@@ -81,7 +86,7 @@ export default function BusinessCatalog() {
 
                 {/* Description - Fixed size for consistent UI */}
                 <p className="text-sm text-gray-600 line-clamp-2 mb-3 h-10">
-                  {business.description || '\u00A0'}
+                  {business.description || "\u00A0"}
                 </p>
 
                 {/* City */}

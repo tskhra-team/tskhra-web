@@ -45,6 +45,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     "image/jpg",
     "image/png",
     "image/webp",
+    "image/avif",
   ];
 
   const fileValidation = yup
