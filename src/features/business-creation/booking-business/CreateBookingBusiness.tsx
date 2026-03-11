@@ -41,7 +41,7 @@ export default function CreateBookingBusiness() {
                 {currentStep && (
                   <p className="text-lg text-muted-foreground">
                     {t("booking:form.step")} {currentStep}{" "}
-                    {currentStep === "1" ? "of 2" : "of 2"}
+                    {currentStep === "1" ? "/ 2" : "/ 2"}
                   </p>
                 )}
               </div>
@@ -89,7 +89,7 @@ export default function CreateBookingBusiness() {
         </Button>
 
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold tracking-tight mb-4 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold tracking-tight mb-4 pb-2 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t("businessCreation.title")}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

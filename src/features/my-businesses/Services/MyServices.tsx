@@ -158,7 +158,7 @@ export default function MyServices({ businessId }: MyServicesProps) {
         {services?.map((service) => (
           <Card key={service.id}>
             <CardHeader>
-              <CardTitle className="line-clamp-1">
+              <CardTitle className="line-clamp-1 pb-2">
                 {service.name.length > 25
                   ? service.name.slice(0, 25) + "..."
                   : service.name}

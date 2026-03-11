@@ -36,7 +36,7 @@ export default function CreateBusiness() {
     <div className="min-h-screen bg-linear-to-b from-background via-background to-muted/30 py-12 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold tracking-tight mb-4 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold tracking-tight mb-4 pb-2 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {t("businessTypeSelection.title")}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
