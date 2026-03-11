@@ -18,6 +18,7 @@ type BookingDialogProps = {
   selectedTime: string | null;
   availableDays: AvailableDay[];
   availableTimeSlots: string[];
+  timeslotsLoading?: boolean;
   onDateSelect: (dateString: string) => void;
   onTimeSelect: (time: string) => void;
   onConfirm: () => void;
@@ -31,6 +32,7 @@ export default function BookingDialog({
   selectedTime,
   availableDays,
   availableTimeSlots,
+  timeslotsLoading = false,
   onDateSelect,
   onTimeSelect,
   onConfirm,
@@ -115,21 +117,33 @@ export default function BookingDialog({
                 <Clock className="w-5 h-5 text-primary" />
                 {t("businessDetails.booking.selectTime")}
               </h3>
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                {availableTimeSlots.map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => onTimeSelect(time)}
-                    className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
-                      selectedTime === time
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border hover:border-primary/50 hover:bg-primary/5"
-                    }`}
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
+              {timeslotsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : availableTimeSlots.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  {t("businessDetails.booking.noTimeslots", {
+                    defaultValue: "No available time slots for this date",
+                  })}
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {availableTimeSlots.map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => onTimeSelect(time)}
+                      className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
+                        selectedTime === time
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary/50 hover:bg-primary/5"
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
