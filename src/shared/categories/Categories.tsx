@@ -127,10 +127,17 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       {/* Desktop subcategory panel - hidden on mobile */}
       {activeCategory && hoverEnabled && (
         <div
-          className="hidden lg:block absolute left-full top-0 min-w-175 h-126 overflow-hidden rounded-2xl border p-6 shadow-2xl xl:min-w-250 animate-in fade-in slide-in-from-left-4 duration-200"
+          className="hidden lg:block absolute left-full ml-6 min-w-175 max-h-96 overflow-y-auto rounded-3xl border-2 p-8 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.4)] xl:min-w-250 animate-in fade-in slide-in-from-left-6 duration-400 backdrop-blur-md"
           style={{
-            backgroundColor: colors.subcategoryPanel.background,
+            background: `linear-gradient(145deg, ${colors.subcategoryPanel.background}f5 0%, ${colors.subcategoryPanel.background}e8 50%, ${colors.subcategoryPanel.background}dd 100%)`,
+            borderColor: 'rgba(255, 255, 255, 0.25)',
+            boxShadow: `
+              0 25px 80px -20px rgba(0,0,0,0.4),
+              0 0 0 1px rgba(255,255,255,0.1) inset,
+              0 2px 4px rgba(255,255,255,0.1) inset
+            `,
             zIndex: 9999,
+            top: `${(activeIndex || 0) * 48}px`,
           }}
           onMouseEnter={() => {
             // Cancel any pending close timeout
@@ -146,8 +153,20 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
             }
           }}
         >
-          <h3 className="mb-6 text-lg font-semibold text-white transition-opacity duration-300">
-            {categoryDisplayName}
+          {/* Decorative top glow */}
+          <div
+            className="absolute top-0 left-0 right-0 h-32 opacity-30 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse at top, rgba(255,255,255,0.3) 0%, transparent 70%)`
+            }}
+          />
+
+          <h3 className="mb-8 text-2xl font-bold text-white transition-all duration-300 flex items-center gap-3 relative z-10">
+            <span className="flex flex-col gap-1">
+              <span className="w-1.5 h-8 bg-white rounded-full shadow-lg"></span>
+              <span className="w-1 h-4 bg-white/60 rounded-full"></span>
+            </span>
+            <span className="drop-shadow-lg">{categoryDisplayName}</span>
           </h3>
           <SubcategoryView
             subcategories={activeCategory?.childItems}
