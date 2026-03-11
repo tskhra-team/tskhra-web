@@ -152,9 +152,7 @@ export default function Notifications({ businessId }: MyNotificationProps) {
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-0.5">Date</p>
-                  <p className="font-medium text-sm">
-                    {new Date().toLocaleDateString()}
-                  </p>
+                  <p className="font-medium text-sm">{notification.date}</p>
                 </div>
 
                 <div>

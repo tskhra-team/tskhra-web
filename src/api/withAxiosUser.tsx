@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 
 import { useAuth } from "@/context/useAuth";
 import { keycloakClient } from "@/features/auth/useKeycloak";
+import { toast } from "sonner";
 import { privateInstance } from ".";
 
 interface Props {
@@ -33,7 +34,10 @@ const refreshTokenHandler = async (actualAccessRef: {
       return keycloakClient.token;
     }
   } catch (error: unknown) {
-    console.error("Failed to refresh token:", error);
+    toast.error(`Failed to refresh token: ${error}`, {
+      position: "top-center",
+    });
+
     // Token refresh failed - logout and redirect
     keycloakClient.logout();
   }

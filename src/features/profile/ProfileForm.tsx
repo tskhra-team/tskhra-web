@@ -181,7 +181,6 @@ function ProfileForm() {
         setValue("avatarFile", compressedFile, { shouldValidate: true });
       }
     } catch (error) {
-      console.error("Ошибка при сжатии картинки:", error);
       toast.error("Error compressing image", { position: "top-center" });
     }
   };

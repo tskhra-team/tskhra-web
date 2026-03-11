@@ -67,7 +67,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     secondButtonText?: string,
     onSecondButtonClick?: () => void,
   ) => {
-    console.log("showModal called with:", { status, title, text, buttonText, secondButtonText });
     setModalData({
       status,
       title,
@@ -78,7 +77,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
       onSecondButtonClick,
     });
     setIsOpen(true);
-    console.log("Modal state updated, isOpen should be true");
   };
 
   const closeModal = () => setIsOpen(false);

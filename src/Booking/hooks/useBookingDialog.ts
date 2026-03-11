@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import type { Service } from "@/Booking/types/booking.types";
-import { useAuth } from "@/context/useAuth";
-import { useModal } from "@/context/ModalContext";
 import useCreateBooking from "@/Booking/useCreateBooking";
+import { useModal } from "@/context/ModalContext";
+import { useAuth } from "@/context/useAuth";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // Convert time string (HH:MM) to minutes since midnight
@@ -29,7 +29,6 @@ export const useBookingDialog = (businessId: string) => {
       if (savedBookingState) {
         try {
           const { service, date, time } = JSON.parse(savedBookingState);
-          console.log("Restoring booking state:", { service, date, time });
 
           // Restore the state
           setSelectedService(service);
@@ -40,7 +39,6 @@ export const useBookingDialog = (businessId: string) => {
           // Clear the saved state
           localStorage.removeItem("pendingBookingState");
         } catch (error) {
-          console.error("Failed to restore booking state:", error);
           localStorage.removeItem("pendingBookingState");
         }
       }
@@ -64,19 +62,15 @@ export const useBookingDialog = (businessId: string) => {
   };
 
   const handleBookingConfirm = () => {
-    console.log("handleBookingConfirm called", { isAuthenticated });
-
     // Check if user is authenticated
     if (!isAuthenticated) {
-      console.log("User not authenticated, showing login modal");
-
       // Close booking dialog first so modal is visible
       setBookingDialogOpen(false);
 
       // Save current URL and booking state to localStorage for redirect after login
       localStorage.setItem(
         "redirectAfterLogin",
-        window.location.pathname + window.location.search
+        window.location.pathname + window.location.search,
       );
 
       // Save booking state
@@ -86,7 +80,7 @@ export const useBookingDialog = (businessId: string) => {
           service: selectedService,
           date: selectedDate,
           time: selectedTime,
-        })
+        }),
       );
 
       // Small delay to ensure dialog closes before showing modal
@@ -103,15 +97,12 @@ export const useBookingDialog = (businessId: string) => {
           },
           "Login",
           () => {
-            console.log("Login button clicked");
             login();
-          }
+          },
         );
       }, 100);
       return;
     }
-
-    console.log("User is authenticated, proceeding with booking");
 
     // Validate all required fields
     if (!selectedService || !selectedDate || !selectedTime) {
@@ -119,7 +110,7 @@ export const useBookingDialog = (businessId: string) => {
         "error",
         "Missing Information",
         "Please select a service, date, and time before booking",
-        "Close"
+        "Close",
       );
       return;
     }
@@ -137,7 +128,7 @@ export const useBookingDialog = (businessId: string) => {
             "success",
             "Booking Confirmed",
             "Your booking has been successfully created",
-            "OK"
+            "OK",
           );
           setBookingDialogOpen(false);
 
@@ -151,11 +142,12 @@ export const useBookingDialog = (businessId: string) => {
           showModal(
             "error",
             "Booking Failed",
-            error.response?.data?.message || "Failed to create booking. Please try again.",
-            "Close"
+            error.response?.data?.message ||
+              "Failed to create booking. Please try again.",
+            "Close",
           );
         },
-      }
+      },
     );
   };
 

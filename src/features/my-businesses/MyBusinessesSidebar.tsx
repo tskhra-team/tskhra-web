@@ -72,8 +72,6 @@ export function MyBusinessesSidebar() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isBusinessChoosed = searchParams.get("businessId");
 
-  // console.log(isBusinessChoosed);
-
   const handleSectionClick = (section: string) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set("section", section);

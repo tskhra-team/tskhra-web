@@ -29,21 +29,14 @@ type PaginatedBusinessesResponse = {
 };
 
 const getAllBookingBusinesses = async (): Promise<BusinessType[]> => {
-  console.log('📡 Fetching all businesses...');
-
   // First, get the first page to know how many total pages we have
-  const firstPageResponse = await publicInstance.get<PaginatedBusinessesResponse>("/business", {
-    params: {
-      page: 0,
-      size: 100, // Use larger page size to minimize requests
-    },
-  });
-
-  console.log('First page response:', {
-    totalPages: firstPageResponse.data.totalPages,
-    totalElements: firstPageResponse.data.totalElements,
-    contentLength: firstPageResponse.data.content.length
-  });
+  const firstPageResponse =
+    await publicInstance.get<PaginatedBusinessesResponse>("/business", {
+      params: {
+        page: 0,
+        size: 100, // Use larger page size to minimize requests
+      },
+    });
 
   const totalPages = firstPageResponse.data.totalPages;
   let allBusinesses = [...firstPageResponse.data.content];
@@ -58,7 +51,7 @@ const getAllBookingBusinesses = async (): Promise<BusinessType[]> => {
             page,
             size: 100,
           },
-        })
+        }),
       );
     }
 
@@ -68,7 +61,6 @@ const getAllBookingBusinesses = async (): Promise<BusinessType[]> => {
     });
   }
 
-  console.log('✅ Total businesses fetched:', allBusinesses.length);
   return allBusinesses;
 };
 

@@ -1,5 +1,6 @@
 import Keycloak from "keycloak-js";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const keycloakClient = new Keycloak({
   url: "http://10.227.164.247:8080",
@@ -37,7 +38,9 @@ export const useKeycloak = () => {
           });
         };
       } catch (error: unknown) {
-        console.error("Failed to initialize Keycloak:", error);
+        toast.error(`Failed to initialize Keycloak: ${error}`, {
+          position: "top-center",
+        });
       } finally {
         setIsLoading(false);
       }
