@@ -85,6 +85,17 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
     }, 800);
   };
 
+  const handleCategorySelected = () => {
+    // Close panel when category is clicked
+    setHoverEnabled(false);
+    setActiveIndex(null);
+
+    // Re-enable hover after a short delay
+    setTimeout(() => {
+      setHoverEnabled(true);
+    }, 800);
+  };
+
   return (
     <div
       className="relative left-1 sm:left-2 lg:left-10 z-50"
@@ -110,6 +121,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
         onSelect={handleSelectCategory}
         categoryDisplayName={categoryDisplayName}
         platform={platform}
+        onCategoryClick={handleCategorySelected}
       />
 
       {/* Desktop subcategory panel - hidden on mobile */}
