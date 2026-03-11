@@ -149,7 +149,8 @@
     "notAvailable": "N/A",
     "errorLoading": "Failed to load businesses",
     "retry": "Retry",
-    "noBusinessesFound": "No businesses found for the selected filters."
+    "noBusinessesFound": "No businesses found for the selected filters.",
+    "clearFilters": "Clear Filters"
   },
   "businessDetails": {
     "breadcrumb": {

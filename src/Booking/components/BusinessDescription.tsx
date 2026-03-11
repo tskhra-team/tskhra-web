@@ -19,7 +19,7 @@ export default function BusinessDescription({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground leading-relaxed text-base">
+        <p className="text-muted-foreground leading-relaxed text-base wrap-break-word">
           {description}
         </p>
       </CardContent>
