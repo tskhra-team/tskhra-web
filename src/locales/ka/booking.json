@@ -149,7 +149,8 @@
     "notAvailable": "არ არის",
     "errorLoading": "ბიზნესების ჩატვირთვა ვერ მოხერხდა",
     "retry": "თავიდან ცდა",
-    "noBusinessesFound": "არჩეული ფილტრებისთვის ბიზნესები არ მოიძებნა."
+    "noBusinessesFound": "არჩეული ფილტრებისთვის ბიზნესები არ მოიძებნა.",
+    "clearFilters": "ფილტრების გასუფთავება"
   },
   "businessDetails": {
     "breadcrumb": {

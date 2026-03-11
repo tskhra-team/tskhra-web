@@ -31,6 +31,16 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
     if (onSubcategorySelect) {
       onSubcategorySelect();
     }
+
+    // Scroll to catalog on desktop (on mobile it's handled in Booking.tsx)
+    if (window.innerWidth >= 1024) {
+      setTimeout(() => {
+        const catalogElement = document.querySelector('[data-catalog]');
+        if (catalogElement) {
+          catalogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
   };
 
   return (

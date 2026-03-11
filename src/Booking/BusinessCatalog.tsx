@@ -94,10 +94,27 @@ export default function BusinessCatalog() {
   }
 
   return (
-    <div className="container mx-auto px-2 py-8">
+    <div className="container mx-auto px-2 py-8" data-catalog>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t("catalog.title")}</h1>
         <p className="text-muted-foreground">{t("catalog.subtitle")}</p>
+
+        {/* Clear Filters Button - only show when filters are active */}
+        {(categoryFilter || subcategoryFilter) && (
+          <div className="mt-4">
+            <Button
+              onClick={() => {
+                navigate('/booking');
+                scrollToTop();
+              }}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <span>✕</span>
+              {t("catalog.clearFilters", { defaultValue: "Clear Filters" })}
+            </Button>
+          </div>
+        )}
       </div>
 
       {filteredBusinesses && filteredBusinesses.length === 0 ? (
