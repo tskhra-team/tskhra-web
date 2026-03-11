@@ -38,7 +38,8 @@ export default function BusinessCatalog() {
   const { filteredBusinesses, paginatedBusinesses, totalFilteredPages } = useMemo(() => {
     if (!businesses?.content) return { filteredBusinesses: null, paginatedBusinesses: null, totalFilteredPages: 0 };
 
-    let filtered = businesses.content;
+    // Reverse to show last added first
+    let filtered = [...businesses.content].reverse();
 
     // Filter by category if selected
     if (categoryFilter) {
