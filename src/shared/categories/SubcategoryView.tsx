@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { categoryNameToKey } from "./categoryTranslations";
 import { getPlatformColors } from "./platformColors";
 import type { CategoryItem, Platform } from "./types";
@@ -10,15 +10,22 @@ interface SubcategoryViewProps {
   categorySlug?: string;
 }
 
-export default function SubcategoryView({ subcategories, platform, categorySlug: categorySlugProp }: SubcategoryViewProps) {
+export default function SubcategoryView({ subcategories, platform, categorySlug }: SubcategoryViewProps) {
   const { t } = useTranslation("categories");
-  const params = useParams<{ categorySlug: string }>();
-  const categorySlug = categorySlugProp || params.categorySlug;
+  const [searchParams, setSearchParams] = useSearchParams();
   const colors = getPlatformColors(platform);
 
   if (!subcategories || subcategories.length === 0) {
     return <div className="text-sm text-gray-500">No subcategories available.</div>;
   }
+
+  const handleSubcategoryClick = (subcategoryName: string) => {
+    const subcategorySlug = subcategoryName.toLowerCase().replace(/\s+/g, '-');
+    setSearchParams({
+      category: categorySlug || '',
+      subcategory: subcategorySlug
+    });
+  };
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -26,34 +33,37 @@ export default function SubcategoryView({ subcategories, platform, categorySlug:
         const translationKey = categoryNameToKey[subcategory.name];
         const displayName = translationKey ? t(translationKey) : subcategory.name;
         const subcategorySlug = subcategory.name.toLowerCase().replace(/\s+/g, '-');
-        const subcategoryUrl = platform && categorySlug
-          ? `/${platform}/category/${categorySlug}?tab=${subcategorySlug}`
-          : '#';
+        const isActive = searchParams.get('subcategory') === subcategorySlug;
 
         return (
-          <Link
+          <div
             key={subcategory.name}
-            to={subcategoryUrl}
+            onClick={() => handleSubcategoryClick(subcategory.name)}
             className="group rounded-xl bg-white p-3 sm:p-4 transition-all duration-200 ease-in-out flex flex-col text-left cursor-pointer hover:shadow-lg animate-in fade-in slide-in-from-bottom-2 border"
             style={{
-              borderColor: '#E5E7EB',
+              borderColor: isActive ? colors.active.icon : '#E5E7EB',
+              backgroundColor: isActive ? colors.active.background : 'white',
               animationDelay: `${index * 30}ms`,
               animationFillMode: 'backwards'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.active.background;
-              e.currentTarget.style.borderColor = colors.active.icon;
-              const heading = e.currentTarget.querySelector('h4');
-              if (heading instanceof HTMLElement) {
-                heading.style.color = colors.active.text;
+              if (!isActive) {
+                e.currentTarget.style.backgroundColor = colors.active.background;
+                e.currentTarget.style.borderColor = colors.active.icon;
+                const heading = e.currentTarget.querySelector('h4');
+                if (heading instanceof HTMLElement) {
+                  heading.style.color = colors.active.text;
+                }
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-              e.currentTarget.style.borderColor = '#E5E7EB';
-              const heading = e.currentTarget.querySelector('h4');
-              if (heading instanceof HTMLElement) {
-                heading.style.color = colors.inactive.text;
+              if (!isActive) {
+                e.currentTarget.style.backgroundColor = 'white';
+                e.currentTarget.style.borderColor = '#E5E7EB';
+                const heading = e.currentTarget.querySelector('h4');
+                if (heading instanceof HTMLElement) {
+                  heading.style.color = colors.inactive.text;
+                }
               }
             }}
           >
@@ -83,11 +93,11 @@ export default function SubcategoryView({ subcategories, platform, categorySlug:
             )}
             <h4
               className="text-xs sm:text-sm font-medium transition-colors duration-200"
-              style={{ color: colors.inactive.text }}
+              style={{ color: isActive ? colors.active.text : colors.inactive.text }}
             >
               {displayName}
             </h4>
-          </Link>
+          </div>
         );
       })}
     </div>
