@@ -5,19 +5,19 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { MapPin } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function BusinessCatalog() {
-  const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const { t } = useTranslation("booking");
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const size = 12;
 
   const categoryFilter = searchParams.get('category');
   const subcategoryFilter = searchParams.get('subcategory');
+  const page = parseInt(searchParams.get('page') || '0', 10);
 
   // Always fetch all businesses for client-side pagination
   const { data: allBusinessesData, isLoading, isFetching, isError } = useGetAllBookingBusinesses(true);
@@ -31,8 +31,12 @@ export default function BusinessCatalog() {
 
   // Reset to page 0 when filters change
   useEffect(() => {
-    setPage(0);
-  }, [categoryFilter, subcategoryFilter]);
+    if ((categoryFilter || subcategoryFilter) && page !== 0) {
+      const params = new URLSearchParams(searchParams);
+      params.set('page', '0');
+      setSearchParams(params, { replace: true });
+    }
+  }, [categoryFilter, subcategoryFilter, page, searchParams, setSearchParams]);
 
   // Filter businesses based on category and subcategory
   const { filteredBusinesses, paginatedBusinesses, totalFilteredPages } = useMemo(() => {
@@ -129,21 +133,24 @@ export default function BusinessCatalog() {
           return (
             <Card
               key={business.businessId}
-              className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer flex flex-col"
+              className="group overflow-hidden transition-all duration-500 cursor-pointer flex flex-col"
               onClick={() => handkleClick(business.businessId)}
             >
               {/* Image Section */}
               <div className="w-full h-48 overflow-hidden relative">
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-500 z-10" />
+
                 <img
                   src={business.mainImage}
                   alt={business.businessName}
                   loading="lazy"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  className="w-full h-full object-cover transition-all duration-500 brightness-95 group-hover:brightness-105"
                 />
 
                 {/* Call Type Tag Overlay */}
-                <div className="absolute top-3 left-3">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm text-slate-800 shadow-sm">
+                <div className="absolute top-3 left-3 z-20">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-md text-slate-800 shadow-lg border border-white/40">
                     {t(`businessDetails.callType.${business.callType.toLowerCase()}`)}
                   </span>
                 </div>
@@ -168,15 +175,21 @@ export default function BusinessCatalog() {
                 </div>
 
                 {/* Button Section */}
-                <div className="flex justify-end mt-auto pt-3 border-t">
+                <div className="flex justify-end mt-auto pt-3 border-t border-gray-100">
                   <Button
-                    className="bg-slate-800 hover:bg-slate-900 text-white px-6 rounded-full cursor-pointer"
+                    className="relative overflow-hidden bg-linear-to-r from-slate-700 to-slate-900 text-white px-8 py-2.5 rounded-full cursor-pointer font-semibold shadow-lg transition-all duration-500 border-2 border-slate-600/30 backdrop-blur-sm group-hover:shadow-2xl hover:from-slate-600 hover:to-slate-800"
                     onClick={(e) => {
                       e.stopPropagation();
                       handkleClick(business.businessId);
                     }}
                   >
-                    {t("catalog.viewDetails")}
+                    <span className="relative z-10 tracking-wide">{t("catalog.viewDetails")}</span>
+                    {/* Animated shine effect */}
+                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-linear-to-r from-transparent via-white/25 to-transparent" />
+                    {/* Inner subtle glow */}
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-900/40 to-transparent" />
+                    {/* Top highlight */}
+                    <div className="absolute top-0 left-0 right-0 h-px bg-white/20" />
                   </Button>
                 </div>
               </div>
@@ -193,7 +206,9 @@ export default function BusinessCatalog() {
             currentPage={page}
             totalPages={totalFilteredPages}
             onPageChange={(newPage) => {
-              setPage(newPage);
+              const params = new URLSearchParams(searchParams);
+              params.set('page', String(newPage));
+              setSearchParams(params);
               scrollToTop();
             }}
           />
