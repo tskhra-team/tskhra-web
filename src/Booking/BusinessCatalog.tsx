@@ -103,7 +103,7 @@ export default function BusinessCatalog() {
       {filteredBusinesses && filteredBusinesses.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-64 gap-4">
           <p className="text-muted-foreground text-lg">
-            No businesses found for the selected filters.
+            {t("catalog.noBusinessesFound")}
           </p>
         </div>
       ) : (

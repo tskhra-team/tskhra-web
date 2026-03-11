@@ -148,7 +148,8 @@
     "min": "min",
     "notAvailable": "N/A",
     "errorLoading": "Failed to load businesses",
-    "retry": "Retry"
+    "retry": "Retry",
+    "noBusinessesFound": "No businesses found for the selected filters."
   },
   "businessDetails": {
     "breadcrumb": {

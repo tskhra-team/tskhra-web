@@ -148,7 +148,8 @@
     "min": "წთ",
     "notAvailable": "არ არის",
     "errorLoading": "ბიზნესების ჩატვირთვა ვერ მოხერხდა",
-    "retry": "თავიდან ცდა"
+    "retry": "თავიდან ცდა",
+    "noBusinessesFound": "არჩეული ფილტრებისთვის ბიზნესები არ მოიძებნა."
   },
   "businessDetails": {
     "breadcrumb": {
