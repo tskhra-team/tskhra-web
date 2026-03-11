@@ -147,6 +147,7 @@ export const useBookingDialog = (businessId: string) => {
           });
         },
         onError: (error) => {
+          setBookingDialogOpen(false);
           showModal(
             "error",
             "Booking Failed",
