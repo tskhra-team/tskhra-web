@@ -1,3 +1,4 @@
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -32,7 +33,9 @@ export function NavUser() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const fallBackPhoto =
-    (user?.firstName?.at(0) ?? "") + (user?.lastName?.at(0) ?? "");
+    (user?.firstName?.at(0) ?? "") + (user?.lastName?.at(0) ?? "")
+      ? (user?.firstName?.at(0) ?? "") + (user?.lastName?.at(0) ?? "")
+      : user?.userName.at(0)?.toUpperCase();
 
   return (
     <SidebarMenu>
@@ -85,6 +88,7 @@ export function NavUser() {
                 onClick={() => {
                   navigate("/profile");
                 }}
+                className="cursor-pointer"
               >
                 <BadgeCheck />
                 Profile
@@ -94,14 +98,17 @@ export function NavUser() {
                 onClick={() => {
                   navigate("/booking");
                 }}
+                className="cursor-pointer"
               >
                 <Calendar />
                 Booking
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 onClick={() => {
                   navigate("/swapping");
                 }}
+                className="cursor-pointer"
               >
                 <RefreshCcw />
                 Swapping
@@ -110,17 +117,26 @@ export function NavUser() {
                 onClick={() => {
                   navigate("/ecommerce");
                 }}
+                className="cursor-pointer"
               >
                 <ShoppingBag />
                 Ecommerce
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+
+            <DropdownMenuItem>
+              <LanguageSwitcher
+                className="w-full cursor-pointer"
+                style={{ height: "auto", border: "none" }}
+              />
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 navigate("/");
                 logout();
               }}
+              className="cursor-pointer"
             >
               <LogOut />
               Log out

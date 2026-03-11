@@ -94,7 +94,10 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
   });
 
   const infoSchema = yup.object({
-    phoneNumber: yup.string().optional(),
+    phoneNumber: yup
+      .string()
+      .matches(/^\+995\d{9}$/, t("booking:validation.phoneNumberFormat"))
+      .optional(),
     instagramUrl: yup.string().optional(),
     facebookUrl: yup.string().optional(),
   });

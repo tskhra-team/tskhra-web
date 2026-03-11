@@ -3,9 +3,13 @@ import { useTranslation } from "react-i18next";
 
 interface LanguageSwitcherProps {
   className?: string;
+  style?: object;
 }
 
-export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({
+  className,
+  style,
+}: LanguageSwitcherProps) {
   const { i18n } = useTranslation();
 
   const toggleLanguage = () => {
@@ -17,6 +21,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
 
   return (
     <button
+      style={style}
       onClick={toggleLanguage}
       className={cn(
         "text-[#1E1E1E]",

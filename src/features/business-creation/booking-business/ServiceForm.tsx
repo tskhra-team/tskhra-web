@@ -136,7 +136,7 @@ export default function ServiceForm() {
             {t("booking:form.addService")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Create a new service for your business
+            {t("booking:form.addServiceSub")}
           </p>
         </CardHeader>
         <CardContent className="space-y-5">

@@ -171,7 +171,7 @@ export default function IndividualBusinessForm() {
             {t("booking:form.businessName")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Basic information about your business
+            {t("booking:form.subName")}
           </p>
         </CardHeader>
         <CardContent className="space-y-7">
@@ -181,7 +181,7 @@ export default function IndividualBusinessForm() {
             </Label>
             <Input
               {...register("businessName")}
-              placeholder="Enter your business name"
+              placeholder={t("booking:form.enterName")}
               className="h-11 transition-all"
             />
             {errors.businessName && (
@@ -240,10 +240,10 @@ export default function IndividualBusinessForm() {
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-6 space-y-1">
           <CardTitle className="text-2xl font-semibold tracking-tight">
-            Location
+            {t("booking:form.location")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Where can clients find you
+            {t("booking:form.subLocation")}
           </p>
         </CardHeader>
         <CardContent>
@@ -306,7 +306,7 @@ export default function IndividualBusinessForm() {
             {t("booking:form.description")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Describe your services and what makes your business unique
+            {t("booking:form.subDescription")}
           </p>
         </CardHeader>
         <CardContent className="space-y-2.5">
@@ -328,10 +328,10 @@ export default function IndividualBusinessForm() {
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-6 space-y-1">
           <CardTitle className="text-2xl font-semibold tracking-tight">
-            Categories
+            {t("booking:form.categoryName")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Help clients find your business
+            {t("booking:form.categoryNameSub")}
           </p>
         </CardHeader>
         <CardContent>
@@ -417,7 +417,7 @@ export default function IndividualBusinessForm() {
             {t("booking:form.workingSchedule")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Set your availability for bookings
+            {t("booking:form.workingScheduleSub")}
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -456,10 +456,10 @@ export default function IndividualBusinessForm() {
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-6 space-y-1">
           <CardTitle className="text-2xl font-semibold tracking-tight">
-            Photos
+            {t("booking:form.photos")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Showcase your business with high-quality images
+            {t("booking:form.photosSub")}
           </p>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -469,7 +469,7 @@ export default function IndividualBusinessForm() {
                 {t("booking:form.mainImage")}
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                This will be the main photo displayed on your profile
+                {t("booking:form.mainImageSub")}
               </p>
             </div>
             <Controller
@@ -529,10 +529,10 @@ export default function IndividualBusinessForm() {
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-6 space-y-1">
           <CardTitle className="text-2xl font-semibold tracking-tight">
-            Contact Information
+            {t("booking:form.contactInfo")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            How can clients reach you
+            {t("booking:form.contactInfoSub")}
           </p>
         </CardHeader>
         <CardContent>
