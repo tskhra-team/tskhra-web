@@ -8,7 +8,7 @@ import type { CategoryItem, Platform } from "./types";
 interface CategoryNavProps {
   categories: CategoryItem[];
   activeIndex: number | null;
-  onSelect: (index: number | null, categoryName?: string) => void;
+  onSelect: (index: number | null) => void;
   categoryDisplayName?: string;
   platform?: Platform;
 }
@@ -16,7 +16,7 @@ interface CategoryNavProps {
 export default function CategoryNav({ categories, activeIndex, onSelect, categoryDisplayName, platform }: CategoryNavProps) {
   const { t } = useTranslation("categories");
   const colors = getPlatformColors(platform);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   return (
     <nav className="w-full lg:w-64 rounded-2xl border p-4">
@@ -40,7 +40,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
 
                   if (window.innerWidth < 1024) {
                     // On mobile, toggle accordion
-                    onSelect(isActive ? null : index, category.name);
+                    onSelect(isActive ? null : index);
                   } else {
                     // On desktop, filter by category in the catalog
                     setSearchParams({ category: categorySlug });

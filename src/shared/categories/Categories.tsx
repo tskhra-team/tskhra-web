@@ -12,7 +12,7 @@ import { useCategories } from "./useCategories";
 export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const { data, isLoading, error } = useCategories(platform);
   const { t } = useTranslation("categories");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const colors = getPlatformColors(platform);
 
@@ -49,7 +49,6 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   const handleSelectCategory = (
     index: number | null,
-    categoryName?: string,
   ) => {
     const isMobile = window.innerWidth < 1024;
 
