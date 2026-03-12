@@ -15,6 +15,7 @@ const CreateBusinessPage = lazy(() => import("@/pages/CreateBusinessPage"));
 const BusinessCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const MyBusinessesPage = lazy(() => import("@/pages/MyBusinessesPage"));
 const BusinessDetailsPage = lazy(() => import("@/pages/BusinessDetailsPage"));
+const MyBookingsPage = lazy(() => import("@/pages/MyBookingsPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
@@ -115,6 +116,14 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <MyBusinessesPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/my-bookings",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <MyBookingsPage />
           </Suspense>
         ),
       },
