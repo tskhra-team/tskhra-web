@@ -36,6 +36,7 @@ type VerificationFormData = {
   lastName: string;
   birthDate: string;
   personalID: string;
+  phoneNumber: string;
   gender: "MALE" | "FEMALE";
   idCardFront: File | null;
   facePhoto: File | null;
@@ -47,6 +48,7 @@ const validationSchema = yup.object({
   lastName: yup.string().required("Last name is required"),
   birthDate: yup.string().required("Birth date is required"),
   personalID: yup.string().required("Personal ID is required"),
+  phoneNumber: yup.string().required("Phone number is required"),
   gender: yup
     .string()
     .oneOf(["MALE", "FEMALE"], "Gender must be either MALE or FEMALE")
@@ -101,6 +103,7 @@ export default function Verification() {
       lastName: "",
       birthDate: "",
       personalID: "",
+      phoneNumber: "",
       gender: "MALE",
       idCardFront: null,
       facePhoto: null,
@@ -143,6 +146,7 @@ export default function Verification() {
         "lastName",
         "birthDate",
         "personalID",
+        "phoneNumber",
         "gender",
       ];
     } else if (currentStep === 2) {
@@ -196,7 +200,7 @@ export default function Verification() {
       {
         onSuccess: (kycResponse) => {
           // Check if face match is verified
-          if (!kycResponse.face_match.verified) {
+          if (!kycResponse.verified) {
             setModalState({
               isOpen: true,
               isLoading: false,
@@ -224,14 +228,21 @@ export default function Verification() {
           // Convert birthDate string to Date object for useUpdateProfile
           const birthDateObj = new Date(data.birthDate);
 
+          // Parse phone number - split country code and number
+          // Expected format: "+995 555 123 456" or "+995555123456"
+          const cleanedPhone = data.phoneNumber.replace(/\s/g, ""); // Remove spaces
+          const phoneMatch = cleanedPhone.match(/^(\+\d{1,3})(\d+)$/);
+          const phoneCountryCode = phoneMatch ? phoneMatch[1] : "+995";
+          const phoneNumber = phoneMatch ? phoneMatch[2] : cleanedPhone;
+
           updateProfile(
             {
               firstName: data.firstName,
               lastName: data.lastName,
               birthDate: birthDateObj,
               gender: data.gender,
-              phoneCountryCode: "",
-              phoneNumber: "",
+              phoneCountryCode: phoneCountryCode,
+              phoneNumber: phoneNumber,
             },
             {
               onSuccess: () => {
@@ -493,6 +504,30 @@ export default function Verification() {
                     {errors.personalID && (
                       <p className="text-sm text-red-600">
                         {errors.personalID.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">
+                      {t("step1.phoneNumber.label")}
+                    </Label>
+                    <Controller
+                      name="phoneNumber"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          id="phoneNumber"
+                          type="tel"
+                          placeholder={t("step1.phoneNumber.placeholder")}
+                          className="h-12"
+                        />
+                      )}
+                    />
+                    {errors.phoneNumber && (
+                      <p className="text-sm text-red-600">
+                        {errors.phoneNumber.message}
                       </p>
                     )}
                   </div>

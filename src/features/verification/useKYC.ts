@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
+import axios from "axios";
 
-const KYC_BASE_URL = "https://10.3.12.144:8000";
+const KYC_BASE_URL = "http://10.3.12.144:8000";
 
 const kycInstance = axios.create({
   baseURL: KYC_BASE_URL,
@@ -17,29 +17,11 @@ type KYCPayload = {
 };
 
 type KYCResponse = {
-  overall_verified: boolean;
-  face_match: {
-    verified: boolean;
-    distance: number;
-    threshold: number;
-    model: string;
-    similarity_percent: number;
-  };
-  ocr: {
-    raw_texts: string[];
-    parsed_fields: Record<string, any>;
-  };
-  liveness: {
-    is_live: boolean;
-    confidence: number;
-    checks: Record<string, any>;
-  };
-  document: {
-    is_valid: boolean;
-    confidence: number;
-    checks: Record<string, any>;
-  };
-  errors: string[];
+  verified: boolean;
+  distance: number;
+  threshold: number;
+  model: string;
+  similarity_percent: number;
 };
 
 const sendKYCVerification = async (payload: KYCPayload) => {
@@ -47,7 +29,10 @@ const sendKYCVerification = async (payload: KYCPayload) => {
   formData.append("id_image", payload.idCardFront);
   formData.append("selfie", payload.facePhoto);
 
-  const response = await kycInstance.post<KYCResponse>("/verify/full", formData);
+  const response = await kycInstance.post<KYCResponse>(
+    "/verify/face-match",
+    formData,
+  );
 
   return response.data;
 };

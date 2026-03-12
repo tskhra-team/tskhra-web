@@ -12,7 +12,10 @@ export default function Header() {
   }
 
   // Check for booking paths (includes /booking/*)
-  if (location.pathname.includes("/booking")) {
+  if (
+    location.pathname.includes("/booking") ||
+    location.pathname.includes("/business")
+  ) {
     return <BookingHeader />;
   }
 
