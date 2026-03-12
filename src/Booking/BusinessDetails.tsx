@@ -2,7 +2,7 @@ import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
 import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
-import { getAvailableDays, getAvailableTimeSlots, convertTimeslotsToStrings } from "@/Booking/utils/businessDetailsUtils";
+import { getAvailableDays, getAllTimeslotsWithAvailability } from "@/Booking/utils/businessDetailsUtils";
 import { useBookingDialog } from "@/Booking/hooks/useBookingDialog";
 import { useImageGallery } from "@/Booking/hooks/useImageGallery";
 import BusinessHeader from "@/Booking/components/BusinessHeader";
@@ -66,16 +66,15 @@ export default function BusinessDetails() {
     !!id && !!selectedDate && !!selectedService?.id,
   );
 
-  const availableDays = getAvailableDays();
+  const availableDays = getAvailableDays(business?.workTimes);
 
-  // Use API timeslots if available, otherwise fallback to mock data
-  const availableTimeSlots = timeslotsData && timeslotsData.length > 0
-    ? convertTimeslotsToStrings(timeslotsData)
-    : getAvailableTimeSlots(
-        selectedDate,
-        business?.workTimes,
-        business?.restTimes,
-      );
+  // Generate all timeslots with availability status based on API data and business hours
+  const availableTimeSlots = getAllTimeslotsWithAvailability(
+    selectedDate,
+    timeslotsData,
+    business?.workTimes,
+    business?.restTimes,
+  );
 
   const scrollToServices = () => {
     servicesRef.current?.scrollIntoView({

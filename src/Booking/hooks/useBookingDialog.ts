@@ -132,8 +132,14 @@ export const useBookingDialog = (businessId: string) => {
           );
           setBookingDialogOpen(false);
 
-          // Invalidate timeslots query to refresh available time slots
+          // Invalidate and refetch timeslots query to refresh available time slots
           queryClient.invalidateQueries({
+            queryKey: ["business", businessId, "timeslots"],
+            refetchType: "active",
+          });
+
+          // Also refetch the specific query immediately
+          queryClient.refetchQueries({
             queryKey: ["business", businessId, "timeslots", selectedDate, String(selectedService?.id)],
           });
         },
