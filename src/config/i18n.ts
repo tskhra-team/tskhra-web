@@ -7,6 +7,7 @@ import authEN from "../locales/en/auth.json";
 import bookingEN from "../locales/en/booking.json";
 import categoriesEN from "../locales/en/categories.json";
 import commonEN from "../locales/en/common.json";
+import dashboardEN from "../locales/en/dashboard.json";
 import ecommerceEN from "../locales/en/ecommerce.json";
 import homeEN from "../locales/en/home.json";
 import modalEN from "../locales/en/modal.json";
@@ -17,6 +18,7 @@ import authKA from "../locales/ka/auth.json";
 import bookingKA from "../locales/ka/booking.json";
 import categoriesKA from "../locales/ka/categories.json";
 import commonKA from "../locales/ka/common.json";
+import dashboardKA from "../locales/ka/dashboard.json";
 import ecommerceKA from "../locales/ka/ecommerce.json";
 import homeKA from "../locales/ka/home.json";
 import modalGE from "../locales/ka/modal.json";
@@ -34,6 +36,7 @@ i18n
         home: homeEN,
         auth: authEN,
         booking: bookingEN,
+        dashboard: dashboardEN,
         ecommerce: ecommerceEN,
         swapping: swappingEN,
         categories: categoriesEN,
@@ -46,6 +49,7 @@ i18n
         home: homeKA,
         auth: authKA,
         booking: bookingKA,
+        dashboard: dashboardKA,
         ecommerce: ecommerceKA,
         swapping: swappingKA,
         categories: categoriesKA,

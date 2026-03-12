@@ -16,7 +16,7 @@ interface MyNotificationProps {
 
 export default function Notifications({ businessId }: MyNotificationProps) {
   if (!businessId) return;
-  const { t } = useTranslation("modal");
+  const { t } = useTranslation(["dashboard", "modal"]);
   const { data: notifications, isLoading } = useGetNotifications(businessId);
   const { mutate: rejectBooking } = useRejectBooking();
   const { mutate: approveBooking } = useApproveBooking();
@@ -26,11 +26,11 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   const handleApprove = (bookingId: string) => {
     showModal(
       "warning",
-      t("titles.approveBooking"),
-      t("messages.confirmApproveBooking"),
-      t("buttons.close"),
+      t("modal:titles.approveBooking"),
+      t("modal:messages.confirmApproveBooking"),
+      t("modal:buttons.close"),
       () => {},
-      t("buttons.approve"),
+      t("modal:buttons.approve"),
       () => {
         approveBooking(
           { bookingId },
@@ -38,8 +38,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onSuccess: () => {
               showModal(
                 "success",
-                t("titles.successful"),
-                t("messages.bookingApprovedSuccess"),
+                t("modal:titles.successful"),
+                t("modal:messages.bookingApprovedSuccess"),
               );
 
               queryClient.invalidateQueries({
@@ -54,8 +54,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onError: () => {
               showModal(
                 "error",
-                t("titles.somethingWentWrong"),
-                t("messages.cantApproveBooking"),
+                t("modal:titles.somethingWentWrong"),
+                t("modal:messages.cantApproveBooking"),
               );
             },
           },
@@ -67,11 +67,11 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   const handleReject = (bookingId: string) => {
     showModal(
       "warning",
-      t("titles.rejectBooking"),
-      t("messages.confirmRejectBooking"),
-      t("buttons.close"),
+      t("modal:titles.rejectBooking"),
+      t("modal:messages.confirmRejectBooking"),
+      t("modal:buttons.close"),
       () => {},
-      t("buttons.reject"),
+      t("modal:buttons.reject"),
       () => {
         rejectBooking(
           { bookingId },
@@ -79,8 +79,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onSuccess: () => {
               showModal(
                 "success",
-                t("titles.successful"),
-                t("messages.bookingRejectedSuccess"),
+                t("modal:titles.successful"),
+                t("modal:messages.bookingRejectedSuccess"),
               );
 
               queryClient.invalidateQueries({
@@ -91,8 +91,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onError: () => {
               showModal(
                 "error",
-                t("titles.somethingWentWrong"),
-                t("messages.cantRejectBooking"),
+                t("modal:titles.somethingWentWrong"),
+                t("modal:messages.cantRejectBooking"),
               );
             },
           },
@@ -121,10 +121,10 @@ export default function Notifications({ businessId }: MyNotificationProps) {
           <Calendar className="w-8 h-8 text-muted-foreground" />
         </div>
         <p className="text-lg font-medium text-muted-foreground">
-          No pending notifications
+          {t("dashboard:notifications.empty.title")}
         </p>
         <p className="text-sm text-muted-foreground/70 mt-1">
-          You're all caught up!
+          {t("dashboard:notifications.empty.subtitle")}
         </p>
       </div>
     );
@@ -133,9 +133,9 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   return (
     <div className="p-6 space-y-6 ">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">Notifications</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("dashboard:notifications.title")}</h2>
         <span className="px-3 py-1 bg-muted text-muted-foreground text-sm font-semibold rounded-full">
-          {notifications.length} pending
+          {t("dashboard:notifications.pending", { count: notifications.length })}
         </span>
       </div>
 
@@ -148,18 +148,18 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             <CardContent className="p-4 flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-0.5">ID</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">{t("dashboard:notifications.labels.id")}</p>
                   <p className="font-medium text-sm">{notification.id}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-muted-foreground mb-0.5">Date</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">{t("dashboard:notifications.labels.date")}</p>
                   <p className="font-medium text-sm">{notification.date}</p>
                 </div>
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-0.5">
-                    Service
+                    {t("dashboard:notifications.labels.service")}
                   </p>
                   <p className="font-medium text-sm">
                     {notification.serviceName}
@@ -168,14 +168,14 @@ export default function Notifications({ businessId }: MyNotificationProps) {
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-0.5">
-                    Customer
+                    {t("dashboard:notifications.labels.customer")}
                   </p>
                   <p className="font-medium text-sm">{notification.userName}</p>
                 </div>
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-0.5">
-                    Start Time
+                    {t("dashboard:notifications.labels.startTime")}
                   </p>
                   <p className="font-medium text-sm">
                     {minutesToTime(notification.startTime)}
@@ -184,7 +184,7 @@ export default function Notifications({ businessId }: MyNotificationProps) {
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-0.5">
-                    Duration
+                    {t("dashboard:notifications.labels.duration")}
                   </p>
                   <p className="font-medium text-sm">
                     {formatDuration(notification.duration)}
@@ -200,7 +200,7 @@ export default function Notifications({ businessId }: MyNotificationProps) {
                   className="flex-1 h-9 gap-1.5 text-xs"
                 >
                   <X className="w-3.5 h-3.5" />
-                  Reject
+                  {t("dashboard:notifications.buttons.reject")}
                 </Button>
                 <Button
                   onClick={() => handleApprove(notification.id)}
@@ -208,7 +208,7 @@ export default function Notifications({ businessId }: MyNotificationProps) {
                   className="flex-1 h-9 gap-1.5 text-xs"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  Approve
+                  {t("dashboard:notifications.buttons.approve")}
                 </Button>
               </div>
             </CardContent>

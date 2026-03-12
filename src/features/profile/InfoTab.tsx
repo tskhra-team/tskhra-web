@@ -4,9 +4,11 @@ import type { ProfileType } from "@/types";
 import { scrollToTop } from "@/utils";
 import {
   AtSign,
+  Building2,
   Calendar,
   CheckCircle2,
   ShieldCheck,
+  Sparkles,
   User,
   UserCircle,
   XCircle,
@@ -152,7 +154,7 @@ export default function InfoTab({
 
       <Button
         type="button"
-        className="w-full cursor-pointer p-10 text-lg font-bold bg-blue-900 rounded-2xl text-white border-4 border-blue-800 shadow-2xl hover:bg-blue-800 hover:border-blue-800 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+        className="relative w-full overflow-hidden cursor-pointer p-10 text-lg font-bold bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-500 hover:scale-[1.02] group border-2 border-blue-400/30"
         onClick={() => {
           if (!verificationStatus) {
             setIsDialogOpen(true);
@@ -162,7 +164,19 @@ export default function InfoTab({
           }
         }}
       >
-        ADD YOUR BUSINESS!
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+        {/* Content */}
+        <div className="relative flex items-center justify-center gap-4">
+          <div className="p-3 bg-white/20 rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:rotate-12">
+            <Building2 className="w-7 h-7 text-white" />
+          </div>
+          <span className="font-bold text-white tracking-wide">
+            {t("infoTab.addBusinessButton")}
+          </span>
+          <Sparkles className="w-6 h-6 text-yellow-300 animate-pulse" />
+        </div>
       </Button>
 
       <VerifyDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />

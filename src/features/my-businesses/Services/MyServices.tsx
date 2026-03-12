@@ -27,7 +27,7 @@ interface MyServicesProps {
 export default function MyServices({ businessId }: MyServicesProps) {
   if (!businessId) return;
 
-  const { t } = useTranslation("modal");
+  const { t } = useTranslation(["dashboard", "modal"]);
   const { data: services, isLoading } = useGetMyServices(businessId);
   const { showModal } = useModal();
   const { mutate: deleteService } = useDeleteService();
@@ -50,24 +50,24 @@ export default function MyServices({ businessId }: MyServicesProps) {
     if (serviceStatus === "ACTIVE") {
       return showModal(
         "warning",
-        t("titles.serviceActive"),
-        t("messages.cantDeleteActiveService"),
+        t("modal:titles.serviceActive"),
+        t("modal:messages.cantDeleteActiveService"),
       );
     }
 
     showModal(
       "error",
-      t("titles.deleteService", { serviceName }),
-      t("messages.confirmDeleteService"),
-      t("buttons.close"),
+      t("modal:titles.deleteService", { serviceName }),
+      t("modal:messages.confirmDeleteService"),
+      t("modal:buttons.close"),
       () => {},
-      t("buttons.delete"),
+      t("modal:buttons.delete"),
       () => {
         setTimeout(() => {
           showModal(
             "pending",
-            t("titles.deletingService"),
-            t("messages.deletingServiceWait"),
+            t("modal:titles.deletingService"),
+            t("modal:messages.deletingServiceWait"),
           );
 
           deleteService(
@@ -80,15 +80,15 @@ export default function MyServices({ businessId }: MyServicesProps) {
 
                 showModal(
                   "success",
-                  t("titles.successful"),
-                  t("messages.serviceDeletedSuccess"),
+                  t("modal:titles.successful"),
+                  t("modal:messages.serviceDeletedSuccess"),
                 );
               },
               onError: () => {
                 showModal(
                   "error",
-                  t("titles.somethingWentWrong"),
-                  t("messages.serviceDidntDeleted"),
+                  t("modal:titles.somethingWentWrong"),
+                  t("modal:messages.serviceDidntDeleted"),
                 );
               },
             },
@@ -103,11 +103,11 @@ export default function MyServices({ businessId }: MyServicesProps) {
 
     showModal(
       `${serviceStatus === "ACTIVE" ? "error" : "warning"}`,
-      `${serviceStatus === "ACTIVE" ? t("titles.attention") : t("titles.makeServiceActive")}`,
-      `${serviceStatus === "ACTIVE" ? t("messages.deactivateServiceWarning") : t("messages.activateServiceConfirm")}`,
-      t("buttons.cancel"),
+      `${serviceStatus === "ACTIVE" ? t("modal:titles.attention") : t("modal:titles.makeServiceActive")}`,
+      `${serviceStatus === "ACTIVE" ? t("modal:messages.deactivateServiceWarning") : t("modal:messages.activateServiceConfirm")}`,
+      t("modal:buttons.cancel"),
       () => {},
-      t("buttons.continue"),
+      t("modal:buttons.continue"),
       () => {
         updateStatus(
           { serviceId, businessId, serviceStatus: finalStatus },
@@ -123,8 +123,8 @@ export default function MyServices({ businessId }: MyServicesProps) {
 
               showModal(
                 "success",
-                t("titles.updatedSuccessfully"),
-                t("messages.serviceStatusUpdated"),
+                t("modal:titles.updatedSuccessfully"),
+                t("modal:messages.serviceStatusUpdated"),
               );
             },
           },
@@ -142,15 +142,17 @@ export default function MyServices({ businessId }: MyServicesProps) {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">My Services</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          {t("dashboard:services.title")}
+        </h2>
         <span className="px-3 py-1 bg-muted text-muted-foreground text-sm font-semibold rounded-full">
-          {services?.length || 0} services
+          {t("dashboard:services.count", { count: services?.length || 0 })}
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card
-          title="Add new service"
+          title={t("dashboard:services.addNewService")}
           className="cursor-pointer hover:border-primary transition-colors flex items-center justify-center min-h-37.5"
           onClick={handleAddService}
         >
@@ -173,61 +175,85 @@ export default function MyServices({ businessId }: MyServicesProps) {
             <CardContent className="flex-1 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Price:</span>
+                  <span className="text-muted-foreground">
+                    {t("dashboard:services.labels.price")}
+                  </span>
                   <span className="font-semibold">₾ {service.price}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Duration:</span>
+                  <span className="text-muted-foreground">
+                    {t("dashboard:services.labels.duration")}
+                  </span>
                   <span className="font-semibold">{service.duration} min</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Status:</span>
+                  <span className="text-muted-foreground">
+                    {t("dashboard:services.labels.status")}
+                  </span>
                   <span
-                    title={`${service.status === "ACTIVE" ? "This is active service" : "This is inactive service"}`}
+                    title={
+                      service.status === "ACTIVE"
+                        ? t("dashboard:services.status.activeTooltip")
+                        : t("dashboard:services.status.inactiveTooltip")
+                    }
                     className={`font-bold text-white px-2 py-0.5 rounded-full text-xs ${service.status === "ACTIVE" ? "bg-green-800" : "bg-red-800"} `}
                   >
-                    {service.status}
+                    {service.status === "ACTIVE"
+                      ? t("dashboard:services.status.active")
+                      : t("dashboard:services.status.inactive")}
                   </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4 pt-4 border-t">
                 <Button
-                  title="Edit service"
+                  title={t("dashboard:services.tooltips.editService")}
                   variant="outline"
                   size="sm"
                   onClick={() => handleUpdate(service)}
-                  aria-label="Edit service"
-                  className="w-full"
+                  aria-label={t("dashboard:services.tooltips.editService")}
+                  className="w-full cursor-pointer"
                 >
                   <Pencil className="h-4 w-4" />
-                  <span className="sr-only sm:not-sr-only sm:ml-1">Edit</span>
+                  {/* <span className="sr-only sm:not-sr-only sm:ml-1">
+                    {t("dashboard:services.buttons.edit")}
+                  </span> */}
                 </Button>
                 <Button
-                  title="Delete service"
+                  title={t("dashboard:services.tooltips.deleteService")}
                   variant="outline"
                   size="sm"
                   onClick={() =>
                     handleDelete(service.id, service.name, service.status)
                   }
-                  aria-label="Delete service"
-                  className="w-full"
+                  aria-label={t("dashboard:services.tooltips.deleteService")}
+                  className="w-full cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
-                  <span className="sr-only sm:not-sr-only sm:ml-1">Delete</span>
+                  {/* <span className="sr-only sm:not-sr-only sm:ml-1">{t("dashboard:services.buttons.delete")}</span> */}
                 </Button>
                 <Button
-                  title={`${service.status === "ACTIVE" ? "Deactivate" : "Activate"} service`}
+                  title={
+                    service.status === "ACTIVE"
+                      ? t("dashboard:services.tooltips.deactivateService")
+                      : t("dashboard:services.tooltips.activateService")
+                  }
                   variant="outline"
                   size="sm"
                   onClick={() => handleUpdateStatus(service.id, service.status)}
-                  aria-label="Toggle service status"
-                  className="w-full"
+                  aria-label={
+                    service.status === "ACTIVE"
+                      ? t("dashboard:services.tooltips.deactivateService")
+                      : t("dashboard:services.tooltips.activateService")
+                  }
+                  className="w-full cursor-pointer"
                 >
                   <Power className="h-4 w-4" />
-                  <span className="sr-only sm:not-sr-only sm:ml-1">
-                    {service.status === "ACTIVE" ? "Off" : "On"}
-                  </span>
+                  {/* <span className="sr-only sm:not-sr-only sm:ml-1">
+                    {service.status === "ACTIVE"
+                      ? t("dashboard:services.buttons.off")
+                      : t("dashboard:services.buttons.on")}
+                  </span> */}
                 </Button>
               </div>
             </CardContent>

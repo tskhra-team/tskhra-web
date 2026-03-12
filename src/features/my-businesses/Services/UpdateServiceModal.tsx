@@ -25,7 +25,7 @@ export default function UpdateServiceModal({
   service,
   onShowUpdateModal,
 }: CreateServiceModalProps) {
-  const { t } = useTranslation(["booking", "modal"]);
+  const { t } = useTranslation(["dashboard", "booking", "modal"]);
   const { mutate: updateService } = useUpdateService();
   const { showModal } = useModal();
 
@@ -90,8 +90,8 @@ export default function UpdateServiceModal({
         >
           <div className="flex gap-7">
             <div className="flex flex-col w-full gap-2">
-              <Label>Service Name</Label>
-              <Input placeholder="Example: Haircut" {...register("name")} />
+              <Label>{t("dashboard:services.form.serviceName")}</Label>
+              <Input placeholder={t("dashboard:services.form.serviceNamePlaceholder")} {...register("name")} />
               {errors.name && (
                 <span className="text-red-500 text-sm">
                   {errors.name.message}
@@ -99,10 +99,10 @@ export default function UpdateServiceModal({
               )}
             </div>
             <div className="flex flex-col w-full gap-2">
-              <Label>Price(₾)</Label>
+              <Label>{t("dashboard:services.form.price")}</Label>
               <Input
                 type="number"
-                placeholder="0.00"
+                placeholder={t("dashboard:services.form.pricePlaceholder")}
                 step={0.01}
                 {...register("price")}
               />
@@ -113,10 +113,10 @@ export default function UpdateServiceModal({
               )}
             </div>
             <div className="flex flex-col w-full gap-2">
-              <Label>Duration(minutes)</Label>
+              <Label>{t("dashboard:services.form.duration")}</Label>
               <Input
                 type="number"
-                placeholder="30"
+                placeholder={t("dashboard:services.form.durationPlaceholder")}
                 step={5}
                 {...register("duration")}
               />
@@ -129,8 +129,8 @@ export default function UpdateServiceModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Description(optional)</Label>
-            <Input {...register("description")} />
+            <Label>{t("dashboard:services.form.description")}</Label>
+            <Input placeholder={t("dashboard:services.form.descriptionPlaceholder")} {...register("description")} />
             {errors.description && (
               <span className="text-red-500 text-sm">
                 {errors.description.message}
@@ -139,7 +139,7 @@ export default function UpdateServiceModal({
           </div>
 
           <Button type="submit" className="mt-5 cursor-pointer">
-            Update Service
+            {t("dashboard:services.form.update")}
           </Button>
         </form>
       </div>

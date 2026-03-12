@@ -25,9 +25,11 @@ import {
   RefreshCcw,
   ShoppingBag,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
+  const { t } = useTranslation("dashboard");
   const { isMobile } = useSidebar();
   const { data: user } = useGetUser();
   const { logout } = useAuth();
@@ -91,7 +93,7 @@ export function NavUser() {
                 className="cursor-pointer"
               >
                 <BadgeCheck />
-                Profile
+                {t("userMenu.profile")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -101,7 +103,7 @@ export function NavUser() {
                 className="cursor-pointer"
               >
                 <Calendar />
-                Booking
+                {t("userMenu.booking")}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -111,7 +113,7 @@ export function NavUser() {
                 className="cursor-pointer"
               >
                 <RefreshCcw />
-                Swapping
+                {t("userMenu.swapping")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
@@ -120,7 +122,7 @@ export function NavUser() {
                 className="cursor-pointer"
               >
                 <ShoppingBag />
-                Ecommerce
+                {t("userMenu.ecommerce")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -139,7 +141,7 @@ export function NavUser() {
               className="cursor-pointer"
             >
               <LogOut />
-              Log out
+              {t("userMenu.logOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
