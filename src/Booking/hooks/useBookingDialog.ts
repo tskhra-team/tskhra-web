@@ -4,6 +4,7 @@ import { useModal } from "@/context/ModalContext";
 import { useAuth } from "@/context/useAuth";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 // Convert time string (HH:MM) to minutes since midnight
 const timeToMinutes = (time: string): number => {
@@ -12,6 +13,7 @@ const timeToMinutes = (time: string): number => {
 };
 
 export const useBookingDialog = (businessId: string) => {
+  const { t } = useTranslation("modal");
   const { isAuthenticated, login } = useAuth();
   const { showModal } = useModal();
   const { mutate: createBooking, isPending } = useCreateBooking();
@@ -87,15 +89,15 @@ export const useBookingDialog = (businessId: string) => {
       setTimeout(() => {
         showModal(
           "error",
-          "You aren't authorized",
-          "To book a service, you need to be authorized",
-          "Close",
+          t("titles.notAuthorized"),
+          t("messages.authorizeFirst"),
+          t("buttons.close"),
           () => {
             // User clicked Close - clear the pending booking state
             localStorage.removeItem("pendingBookingState");
             localStorage.removeItem("redirectAfterLogin");
           },
-          "Login",
+          t("buttons.login"),
           () => {
             login();
           },
@@ -108,9 +110,9 @@ export const useBookingDialog = (businessId: string) => {
     if (!selectedService || !selectedDate || !selectedTime) {
       showModal(
         "error",
-        "Missing Information",
-        "Please select a service, date, and time before booking",
-        "Close",
+        t("titles.missingInformation"),
+        t("messages.selectServiceDateTime"),
+        t("buttons.close"),
       );
       return;
     }
@@ -126,9 +128,9 @@ export const useBookingDialog = (businessId: string) => {
         onSuccess: () => {
           showModal(
             "success",
-            "Booking Confirmed",
-            "Your booking has been successfully created",
-            "OK",
+            t("titles.bookingConfirmed"),
+            t("messages.bookingCreatedSuccess"),
+            t("buttons.ok"),
           );
           setBookingDialogOpen(false);
 
@@ -147,10 +149,10 @@ export const useBookingDialog = (businessId: string) => {
           setBookingDialogOpen(false);
           showModal(
             "error",
-            "Booking Failed",
+            t("titles.bookingFailed"),
             error.response?.data?.message ||
-              "Failed to create booking. Please try again.",
-            "Close",
+              t("messages.bookingCreateFailed"),
+            t("buttons.close"),
           );
         },
       },

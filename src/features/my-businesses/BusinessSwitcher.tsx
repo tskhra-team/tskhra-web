@@ -2,6 +2,7 @@
 
 import { ChevronsUpDown, Plus } from "lucide-react";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   DropdownMenu,
@@ -23,10 +24,11 @@ import useGetMyBusinesses, {
 import { Link, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
+  const { t } = useTranslation("dashboard");
   const { isMobile } = useSidebar();
   const [activeBusiness, setActiveBusiness] = React.useState<
     MyBusinessResponse | string
-  >("Select Business");
+  >(t("businessSwitcher.selectBusiness"));
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: businesses } = useGetMyBusinesses();
   const businessId = searchParams.get("businessId");
@@ -112,7 +114,7 @@ function BusinessSwitcherComponent() {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Businesses
+              {t("businessSwitcher.businesses")}
             </DropdownMenuLabel>
             {businesses?.map((business, _index) => (
               <DropdownMenuItem
@@ -139,7 +141,7 @@ function BusinessSwitcherComponent() {
                 to="/create-business"
                 className="text-muted-foreground font-medium"
               >
-                Add business
+                {t("businessSwitcher.addBusiness")}
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

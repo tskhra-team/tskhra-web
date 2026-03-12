@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import useCreateBusinessService from "./useCreateBusinessService";
 
 export default function ServiceForm() {
-  const { t } = useTranslation("booking");
+  const { t } = useTranslation(["booking", "modal"]);
   const navigate = useNavigate();
   const { mutate: createBusinessService, isPending } =
     useCreateBusinessService();
@@ -86,9 +86,9 @@ export default function ServiceForm() {
     if (!businessId) {
       showModal(
         "error",
-        "Can't find your business",
-        "You don't register your business yet",
-        "Go Back",
+        t("modal:titles.cantFindBusiness"),
+        t("modal:messages.businessNotFound"),
+        t("modal:buttons.goBack"),
         () => {
           navigate("/create-business?business=booking&type=individual&step=1");
         },
@@ -96,7 +96,7 @@ export default function ServiceForm() {
       return;
     }
 
-    showModal("pending", "Adding services...", "Please wait");
+    showModal("pending", t("modal:titles.addingServices"), t("modal:messages.pleaseWait"));
 
     createBusinessService(
       { businessId, services: data.services },
@@ -105,9 +105,9 @@ export default function ServiceForm() {
           localStorage.removeItem("businessId");
           showModal(
             "success",
-            "Success!",
-            "All services has been added to your business!",
-            "Go to Home",
+            t("modal:titles.success"),
+            t("modal:messages.servicesAddedSuccess"),
+            t("modal:buttons.goToHome"),
             () => {
               queryClient.invalidateQueries({
                 queryKey: ["getMyBusinesses"],
@@ -118,7 +118,7 @@ export default function ServiceForm() {
         },
         onError: () => {
           closeModal();
-          showModal("error", "Error", t("booking:messages.error"));
+          showModal("error", t("modal:titles.error"), t("booking:messages.error"));
         },
       },
     );

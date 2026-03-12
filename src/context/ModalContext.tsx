@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 // 1. Описываем возможные статусы модалки
 export type ModalStatus = "pending" | "success" | "error" | "warning" | "idle";
@@ -93,6 +94,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
 // 5. Компонент модального окна
 const GlobalModal: React.FC = () => {
+  const { t } = useTranslation("modal");
   const context = useModal();
   const {
     isOpen,
@@ -159,7 +161,7 @@ const GlobalModal: React.FC = () => {
 
         {/* Извлекаем нужный цвет текста из объекта statusStyles */}
         <h2
-          className={`text-2xl font-bold mb-3 ${statusStyles[status].split(" ")[0]}`}
+          className={`text-2xl text-center font-bold mb-3 ${statusStyles[status].split(" ")[0]}`}
         >
           {shortenedText}
         </h2>
@@ -181,23 +183,28 @@ const GlobalModal: React.FC = () => {
                 variant="outline"
                 className="px-8 py-2.5 rounded-lg cursor-pointer font-medium relative overflow-hidden"
                 style={{
-                  transition: 'all 0.5s ease-out',
-                  boxShadow: '0 2px 8px -2px rgba(0, 0, 0, 0.1)'
+                  transition: "all 0.5s ease-out",
+                  boxShadow: "0 2px 8px -2px rgba(0, 0, 0, 0.1)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05) translateY(-4px) rotate(0.5deg)';
-                  e.currentTarget.style.boxShadow = '0 20px 50px -10px rgba(0, 0, 0, 0.3)';
+                  e.currentTarget.style.transform =
+                    "scale(1.05) translateY(-4px) rotate(0.5deg)";
+                  e.currentTarget.style.boxShadow =
+                    "0 20px 50px -10px rgba(0, 0, 0, 0.3)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1) translateY(0) rotate(0deg)';
-                  e.currentTarget.style.boxShadow = '0 2px 8px -2px rgba(0, 0, 0, 0.1)';
+                  e.currentTarget.style.transform =
+                    "scale(1) translateY(0) rotate(0deg)";
+                  e.currentTarget.style.boxShadow =
+                    "0 2px 8px -2px rgba(0, 0, 0, 0.1)";
                 }}
               >
                 {/* Decorative shine effect */}
                 <div
                   className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    background: 'linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.05) 50%, transparent 100%)',
+                    background:
+                      "linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.05) 50%, transparent 100%)",
                   }}
                 />
                 <span className="relative z-10">{secondButtonText}</span>
@@ -212,26 +219,33 @@ const GlobalModal: React.FC = () => {
               }}
               className="px-8 py-2.5 bg-gray-900 text-white rounded-lg cursor-pointer font-medium relative overflow-hidden"
               style={{
-                transition: 'all 0.5s ease-out',
-                boxShadow: '0 4px 14px -2px rgba(0, 0, 0, 0.3)'
+                transition: "all 0.5s ease-out",
+                boxShadow: "0 4px 14px -2px rgba(0, 0, 0, 0.3)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05) translateY(-4px) rotate(0.5deg)';
-                e.currentTarget.style.boxShadow = '0 20px 50px -10px rgba(0, 0, 0, 0.5)';
+                e.currentTarget.style.transform =
+                  "scale(1.05) translateY(-4px) rotate(0.5deg)";
+                e.currentTarget.style.boxShadow =
+                  "0 20px 50px -10px rgba(0, 0, 0, 0.5)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1) translateY(0) rotate(0deg)';
-                e.currentTarget.style.boxShadow = '0 4px 14px -2px rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.transform =
+                  "scale(1) translateY(0) rotate(0deg)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 14px -2px rgba(0, 0, 0, 0.3)";
               }}
             >
               {/* Decorative shine effect */}
               <div
                 className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
+                  background:
+                    "linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)",
                 }}
               />
-              <span className="relative z-10">{buttonText || "Close"}</span>
+              <span className="relative z-10">
+                {buttonText || t("buttons.close")}
+              </span>
             </Button>
           </div>
         )}
@@ -243,7 +257,7 @@ const GlobalModal: React.FC = () => {
 export const useModal = (): ModalContextProps => {
   const context = useContext(ModalContext);
   if (!context) {
-    throw new Error("useModal должен использоваться внутри ModalProvider");
+    throw new Error("useModal should be inside ModalProvider");
   }
   return context;
 };

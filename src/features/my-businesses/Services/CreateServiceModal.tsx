@@ -22,7 +22,7 @@ export default function CreateServiceModal({
   businessId,
   onShowCreateModal,
 }: CreateServiceModalProps) {
-  const { t } = useTranslation("booking");
+  const { t } = useTranslation(["dashboard", "booking", "modal"]);
   const { mutate: createBusinessService } = useCreateBusinessService();
   const { showModal } = useModal();
 
@@ -39,8 +39,8 @@ export default function CreateServiceModal({
 
     (showModal(
       "pending",
-      "Adding service",
-      "Please wait, adding your service...",
+      t("modal:titles.addingService"),
+      t("modal:messages.addingServiceWait"),
     ),
       createBusinessService(
         { businessId, services },
@@ -48,9 +48,9 @@ export default function CreateServiceModal({
           onSuccess: () => {
             showModal(
               "success",
-              "Suceess",
-              "Service was created successfully",
-              "Great",
+              t("modal:titles.success"),
+              t("modal:messages.serviceCreatedSuccess"),
+              t("modal:buttons.great"),
               () => {
                 onShowCreateModal(false);
               },
@@ -62,8 +62,8 @@ export default function CreateServiceModal({
           onError: () =>
             showModal(
               "error",
-              "Something went wrong",
-              "Service did't created, plase try again",
+              t("modal:titles.somethingWentWrong"),
+              t("modal:messages.serviceDidntCreated"),
             ),
         },
       ));
@@ -83,8 +83,8 @@ export default function CreateServiceModal({
         >
           <div className="flex gap-7">
             <div className="flex flex-col w-full gap-2">
-              <Label>Service Name</Label>
-              <Input placeholder="Example: Haircut" {...register("name")} />
+              <Label>{t("dashboard:services.form.serviceName")}</Label>
+              <Input placeholder={t("dashboard:services.form.serviceNamePlaceholder")} {...register("name")} />
               {errors.name && (
                 <span className="text-red-500 text-sm">
                   {errors.name.message}
@@ -92,10 +92,10 @@ export default function CreateServiceModal({
               )}
             </div>
             <div className="flex flex-col w-full gap-2">
-              <Label>Price(₾)</Label>
+              <Label>{t("dashboard:services.form.price")}</Label>
               <Input
                 type="number"
-                placeholder="0.00"
+                placeholder={t("dashboard:services.form.pricePlaceholder")}
                 step={0.01}
                 {...register("price")}
               />
@@ -106,10 +106,10 @@ export default function CreateServiceModal({
               )}
             </div>
             <div className="flex flex-col w-full gap-2">
-              <Label>Duration(minutes)</Label>
+              <Label>{t("dashboard:services.form.duration")}</Label>
               <Input
                 type="number"
-                placeholder="30"
+                placeholder={t("dashboard:services.form.durationPlaceholder")}
                 step={5}
                 {...register("duration")}
               />
@@ -122,8 +122,8 @@ export default function CreateServiceModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Description(optional)</Label>
-            <Input {...register("description")} />
+            <Label>{t("dashboard:services.form.description")}</Label>
+            <Input placeholder={t("dashboard:services.form.descriptionPlaceholder")} {...register("description")} />
             {errors.description && (
               <span className="text-red-500 text-sm">
                 {errors.description.message}
@@ -132,7 +132,7 @@ export default function CreateServiceModal({
           </div>
 
           <Button type="submit" className="mt-5 cursor-pointer">
-            Add service
+            {t("dashboard:services.addNewService")}
           </Button>
         </form>
       </div>
