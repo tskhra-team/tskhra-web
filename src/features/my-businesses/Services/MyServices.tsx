@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -19,6 +18,7 @@ import useUpdateStatus from "@/features/my-businesses/Services/hooks/useUpdateSt
 import queryClient from "@/query/queryClient";
 import { Pencil, Plus, Power, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface MyServicesProps {
   businessId: string | null;
@@ -27,6 +27,7 @@ interface MyServicesProps {
 export default function MyServices({ businessId }: MyServicesProps) {
   if (!businessId) return;
 
+  const { t } = useTranslation("modal");
   const { data: services, isLoading } = useGetMyServices(businessId);
   const { showModal } = useModal();
   const { mutate: deleteService } = useDeleteService();
@@ -49,24 +50,24 @@ export default function MyServices({ businessId }: MyServicesProps) {
     if (serviceStatus === "ACTIVE") {
       return showModal(
         "warning",
-        "This Service is aticve!",
-        "We can't delete an active service, please make it inacctive to delete it!",
+        t("titles.serviceActive"),
+        t("messages.cantDeleteActiveService"),
       );
     }
 
     showModal(
       "error",
-      `Delete ${serviceName}`,
-      "Are you sure you want to delete this service?",
-      "Close",
+      t("titles.deleteService", { serviceName }),
+      t("messages.confirmDeleteService"),
+      t("buttons.close"),
       () => {},
-      "Delete",
+      t("buttons.delete"),
       () => {
         setTimeout(() => {
           showModal(
             "pending",
-            "Deleting Service",
-            "Please wait, deleting your service...",
+            t("titles.deletingService"),
+            t("messages.deletingServiceWait"),
           );
 
           deleteService(
@@ -79,15 +80,15 @@ export default function MyServices({ businessId }: MyServicesProps) {
 
                 showModal(
                   "success",
-                  "Successfull",
-                  "Service deleted successfully!",
+                  t("titles.successful"),
+                  t("messages.serviceDeletedSuccess"),
                 );
               },
               onError: () => {
                 showModal(
                   "error",
-                  "Something went wrong",
-                  "Service didn't deleted",
+                  t("titles.somethingWentWrong"),
+                  t("messages.serviceDidntDeleted"),
                 );
               },
             },
@@ -101,12 +102,12 @@ export default function MyServices({ businessId }: MyServicesProps) {
     const finalStatus = serviceStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
 
     showModal(
-      "warning",
-      `Make this service ${serviceStatus === "ACTIVE" ? "inactive" : "active"}?`,
-      `Are you sure you want to make this service ${serviceStatus === "ACTIVE" ? "inactive" : "active"}?`,
-      "Cancel",
+      `${serviceStatus === "ACTIVE" ? "error" : "warning"}`,
+      `${serviceStatus === "ACTIVE" ? t("titles.attention") : t("titles.makeServiceActive")}`,
+      `${serviceStatus === "ACTIVE" ? t("messages.deactivateServiceWarning") : t("messages.activateServiceConfirm")}`,
+      t("buttons.cancel"),
       () => {},
-      "Continue",
+      t("buttons.continue"),
       () => {
         updateStatus(
           { serviceId, businessId, serviceStatus: finalStatus },
@@ -122,8 +123,8 @@ export default function MyServices({ businessId }: MyServicesProps) {
 
               showModal(
                 "success",
-                "Updated Successfully",
-                "Service status was updated successfully",
+                t("titles.updatedSuccessfully"),
+                t("messages.serviceStatusUpdated"),
               );
             },
           },
@@ -156,11 +157,11 @@ export default function MyServices({ businessId }: MyServicesProps) {
           <Plus className="h-12 w-12 text-muted-foreground" />
         </Card>
         {services?.map((service) => (
-          <Card key={service.id}>
+          <Card key={service.id} className="flex flex-col">
             <CardHeader>
               <CardTitle className="line-clamp-1 pb-2">
-                {service.name.length > 25
-                  ? service.name.slice(0, 25) + "..."
+                {service.name.length > 18
+                  ? service.name.slice(0, 17) + "..."
                   : service.name}
               </CardTitle>
               <CardDescription className="line-clamp-2">
@@ -168,60 +169,66 @@ export default function MyServices({ businessId }: MyServicesProps) {
                   ? service.description.slice(0, 25) + "..."
                   : service.description}
               </CardDescription>
-              <CardAction>
-                <div className="flex gap-1">
-                  <Button
-                    title="Edit service"
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => handleUpdate(service)}
-                    aria-label="Edit service"
-                    className="cursor-pointer"
-                  >
-                    <Pencil className="h-4 w-4 cursor-pointer" />
-                  </Button>
-                  <Button
-                    title="Delete service"
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() =>
-                      handleDelete(service.id, service.name, service.status)
-                    }
-                    className="cursor-pointer"
-                    aria-label="Delete service"
-                  >
-                    <Trash2 className="h-4 w-4 " />
-                  </Button>
-                  <Button
-                    title="Activate or diactivate service"
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() =>
-                      handleUpdateStatus(service.id, service.status)
-                    }
-                    aria-label="Toggle service status"
-                    className="cursor-pointer"
-                  >
-                    <Power className="h-4 w-4 " />
-                  </Button>
-                </div>
-              </CardAction>
             </CardHeader>
-            <CardContent>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Price:</span>
-                <span className="font-semibold">₾ {service.price}</span>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Price:</span>
+                  <span className="font-semibold">₾ {service.price}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Duration:</span>
+                  <span className="font-semibold">{service.duration} min</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Status:</span>
+                  <span
+                    title={`${service.status === "ACTIVE" ? "This is active service" : "This is inactive service"}`}
+                    className={`font-bold text-white px-2 py-0.5 rounded-full text-xs ${service.status === "ACTIVE" ? "bg-green-800" : "bg-red-800"} `}
+                  >
+                    {service.status}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Duration:</span>
-                <span className="font-semibold">{service.duration} min</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Status:</span>
-                <span
-                  title={`${service.status === "ACTIVE" ? "This is active service" : "This is inactive service"}`}
-                  className={`font-bold text-white w-5 rounded-2xl cursor-pointer text-center  ${service.status === "ACTIVE" ? "bg-green-900" : "bg-red-800"} `}
-                ></span>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4 pt-4 border-t">
+                <Button
+                  title="Edit service"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleUpdate(service)}
+                  aria-label="Edit service"
+                  className="w-full"
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span className="sr-only sm:not-sr-only sm:ml-1">Edit</span>
+                </Button>
+                <Button
+                  title="Delete service"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleDelete(service.id, service.name, service.status)
+                  }
+                  aria-label="Delete service"
+                  className="w-full"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="sr-only sm:not-sr-only sm:ml-1">Delete</span>
+                </Button>
+                <Button
+                  title={`${service.status === "ACTIVE" ? "Deactivate" : "Activate"} service`}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleUpdateStatus(service.id, service.status)}
+                  aria-label="Toggle service status"
+                  className="w-full"
+                >
+                  <Power className="h-4 w-4" />
+                  <span className="sr-only sm:not-sr-only sm:ml-1">
+                    {service.status === "ACTIVE" ? "Off" : "On"}
+                  </span>
+                </Button>
               </div>
             </CardContent>
           </Card>

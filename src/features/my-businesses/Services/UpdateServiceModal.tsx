@@ -25,7 +25,7 @@ export default function UpdateServiceModal({
   service,
   onShowUpdateModal,
 }: CreateServiceModalProps) {
-  const { t } = useTranslation("booking");
+  const { t } = useTranslation(["booking", "modal"]);
   const { mutate: updateService } = useUpdateService();
   const { showModal } = useModal();
 
@@ -46,8 +46,8 @@ export default function UpdateServiceModal({
   const onSubmit = (data: ServiceType) => {
     (showModal(
       "pending",
-      "Updating service",
-      "Please wait, updating your service...",
+      t("modal:titles.updatingService"),
+      t("modal:messages.updatingServiceWait"),
     ),
       updateService(
         { businessId, service: data, serviceId: service.id },
@@ -55,9 +55,9 @@ export default function UpdateServiceModal({
           onSuccess: () => {
             showModal(
               "success",
-              "Suceess",
-              "Service was updated successfully",
-              "Great",
+              t("modal:titles.success"),
+              t("modal:messages.serviceUpdatedSuccess"),
+              t("modal:buttons.great"),
               () => {
                 onShowUpdateModal(false);
               },
@@ -69,8 +69,8 @@ export default function UpdateServiceModal({
           onError: () =>
             showModal(
               "error",
-              "Something went wrong",
-              "Service did't updated, plase try again",
+              t("modal:titles.somethingWentWrong"),
+              t("modal:messages.serviceDidntUpdated"),
             ),
         },
       ));

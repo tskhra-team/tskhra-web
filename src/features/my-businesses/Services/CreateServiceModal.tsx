@@ -22,7 +22,7 @@ export default function CreateServiceModal({
   businessId,
   onShowCreateModal,
 }: CreateServiceModalProps) {
-  const { t } = useTranslation("booking");
+  const { t } = useTranslation(["booking", "modal"]);
   const { mutate: createBusinessService } = useCreateBusinessService();
   const { showModal } = useModal();
 
@@ -39,8 +39,8 @@ export default function CreateServiceModal({
 
     (showModal(
       "pending",
-      "Adding service",
-      "Please wait, adding your service...",
+      t("modal:titles.addingService"),
+      t("modal:messages.addingServiceWait"),
     ),
       createBusinessService(
         { businessId, services },
@@ -48,9 +48,9 @@ export default function CreateServiceModal({
           onSuccess: () => {
             showModal(
               "success",
-              "Suceess",
-              "Service was created successfully",
-              "Great",
+              t("modal:titles.success"),
+              t("modal:messages.serviceCreatedSuccess"),
+              t("modal:buttons.great"),
               () => {
                 onShowCreateModal(false);
               },
@@ -62,8 +62,8 @@ export default function CreateServiceModal({
           onError: () =>
             showModal(
               "error",
-              "Something went wrong",
-              "Service did't created, plase try again",
+              t("modal:titles.somethingWentWrong"),
+              t("modal:messages.serviceDidntCreated"),
             ),
         },
       ));

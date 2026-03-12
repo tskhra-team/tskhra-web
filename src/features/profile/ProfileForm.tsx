@@ -44,7 +44,7 @@ function ProfileForm() {
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const [timeZone, setTimeZone] = useState<string>();
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation(["profile", "modal"]);
   const { mutate: verifyUser } = useVerify();
   const { mutate: uploadAvatar, isPending: isUploading } = useUploadAvatar();
   const { mutate: deleteAvatar } = useDeleteAvatar();
@@ -295,9 +295,9 @@ function ProfileForm() {
                   onClick={() =>
                     showModal(
                       "idle",
-                      "Delete avatar",
-                      "Are you sure you wnat to delete your avatar?",
-                      "Yes, delete",
+                      t("modal:titles.deleteAvatar"),
+                      t("modal:messages.confirmDeleteAvatar"),
+                      t("modal:buttons.yesDelete"),
                       () => {
                         deleteAvatar(undefined, {
                           onSuccess: () => {

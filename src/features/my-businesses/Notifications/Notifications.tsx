@@ -8,6 +8,7 @@ import useGetNotifications from "@/features/my-businesses/Notifications/hooks/us
 import useRejectBooking from "@/features/my-businesses/Notifications/hooks/useRejectBooking";
 import queryClient from "@/query/queryClient";
 import { Calendar, Check, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface MyNotificationProps {
   businessId: string | null;
@@ -15,6 +16,7 @@ interface MyNotificationProps {
 
 export default function Notifications({ businessId }: MyNotificationProps) {
   if (!businessId) return;
+  const { t } = useTranslation("modal");
   const { data: notifications, isLoading } = useGetNotifications(businessId);
   const { mutate: rejectBooking } = useRejectBooking();
   const { mutate: approveBooking } = useApproveBooking();
@@ -24,11 +26,11 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   const handleApprove = (bookingId: string) => {
     showModal(
       "warning",
-      "Approve this booking",
-      "Are you sure you want to approve this booking?",
-      "Close",
+      t("titles.approveBooking"),
+      t("messages.confirmApproveBooking"),
+      t("buttons.close"),
       () => {},
-      "Approve",
+      t("buttons.approve"),
       () => {
         approveBooking(
           { bookingId },
@@ -36,8 +38,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onSuccess: () => {
               showModal(
                 "success",
-                "Suceessfully",
-                "You successfully approve this booking!",
+                t("titles.successful"),
+                t("messages.bookingApprovedSuccess"),
               );
 
               queryClient.invalidateQueries({
@@ -52,8 +54,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onError: () => {
               showModal(
                 "error",
-                "Something went wrong!",
-                "We can't approve this booking please try again!",
+                t("titles.somethingWentWrong"),
+                t("messages.cantApproveBooking"),
               );
             },
           },
@@ -65,11 +67,11 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   const handleReject = (bookingId: string) => {
     showModal(
       "warning",
-      "Reject this booking",
-      "Are you sure you want to reject this booking?",
-      "Close",
+      t("titles.rejectBooking"),
+      t("messages.confirmRejectBooking"),
+      t("buttons.close"),
       () => {},
-      "Reject",
+      t("buttons.reject"),
       () => {
         rejectBooking(
           { bookingId },
@@ -77,8 +79,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onSuccess: () => {
               showModal(
                 "success",
-                "Suceessfully",
-                "You successfully reject this booking!",
+                t("titles.successful"),
+                t("messages.bookingRejectedSuccess"),
               );
 
               queryClient.invalidateQueries({
@@ -89,8 +91,8 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             onError: () => {
               showModal(
                 "error",
-                "Something went wrong!",
-                "We can't reject this booking please try again!",
+                t("titles.somethingWentWrong"),
+                t("messages.cantRejectBooking"),
               );
             },
           },

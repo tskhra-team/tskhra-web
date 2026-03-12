@@ -29,7 +29,7 @@ import useUploadBusinessPhotos from "./useUploadBusinessPhotos";
 import WorkingSchedule from "./WorkingSchedule";
 
 export default function IndividualBusinessForm() {
-  const { t } = useTranslation(["booking"]);
+  const { t } = useTranslation(["booking", "modal"]);
   const navigate = useNavigate();
 
   const { mutate: createBusiness, isPending: isCreating } =
@@ -80,7 +80,7 @@ export default function IndividualBusinessForm() {
 
   const onSubmit = (data: IndividualBusinessFormData) => {
     // Show loading modal
-    showModal("pending", "Uploading photos...", "Please wait");
+    showModal("pending", t("modal:titles.uploadingPhotos"), t("modal:messages.pleaseWait"));
 
     // Step 1: Upload photos
     const allPhotos = [
@@ -91,7 +91,7 @@ export default function IndividualBusinessForm() {
     uploadPhotos(allPhotos, {
       onSuccess: (photoResult) => {
         // Update modal for creating business
-        showModal("pending", "Creating business...", "Almost done");
+        showModal("pending", t("modal:titles.creatingBusiness"), t("modal:messages.almostDone"));
 
         // Step 2: Create business with photo IDs
         const businessData = {
@@ -116,9 +116,9 @@ export default function IndividualBusinessForm() {
             localStorage.setItem("businessId", result.businessId);
             showModal(
               "success",
-              "Congratulations!",
-              "Your business was successfully created, go and add your services!",
-              "Add services",
+              t("modal:titles.congratulations"),
+              t("modal:messages.businessCreatedSuccess"),
+              t("modal:buttons.addServices"),
               () => {
                 navigate(
                   "/create-business?business=booking&type=individual&step=2",
@@ -131,9 +131,9 @@ export default function IndividualBusinessForm() {
             closeModal();
             showModal(
               "error",
-              "Something went wrong",
+              t("modal:titles.somethingWentWrong"),
               t("booking:messages.error"),
-              "Try again",
+              t("modal:buttons.tryAgain"),
             );
           },
         });
@@ -142,9 +142,9 @@ export default function IndividualBusinessForm() {
         closeModal();
         showModal(
           "error",
-          "Something went wrong",
+          t("modal:titles.somethingWentWrong"),
           t("booking:messages.error"),
-          "Try again",
+          t("modal:buttons.tryAgain"),
         );
       },
     });
