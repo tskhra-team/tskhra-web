@@ -30,7 +30,10 @@ const useGetBusinessTimeslots = (
     queryFn: () =>
       getBusinessTimeslots(businessId, date!, serviceId!),
     queryKey: ["business", businessId, "timeslots", date, serviceId],
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 30 * 1000, // 30 seconds - shorter to get fresh data more frequently
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache but allow garbage collection
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when user returns to the tab
     enabled: enabled && !!businessId && !!date && !!serviceId,
   });
 };
