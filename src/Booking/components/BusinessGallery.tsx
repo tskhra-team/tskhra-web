@@ -1,3 +1,5 @@
+import { SmartImage } from "@/components/SmartImage";
+
 type BusinessGalleryProps = {
   allImages: string[];
   currentImageIndex: number;
@@ -15,12 +17,10 @@ export default function BusinessGallery({
     <>
       {/* Main Image Display */}
       <div className="aspect-video w-full overflow-hidden rounded-2xl shadow-xl ring-1 ring-border/50">
-        <img
+        <SmartImage
           src={allImages[currentImageIndex]}
           alt={businessName}
-          loading="eager"
-          width={1200}
-          height={675}
+          containerClassName="aspect-video w-full rounded-lg"
           className="w-full h-full object-cover transition-all duration-300"
         />
       </div>
@@ -38,13 +38,12 @@ export default function BusinessGallery({
                   : "ring-1 ring-border/50 hover:ring-primary/50"
               }`}
             >
-              <img
+              <SmartImage
                 src={url}
                 alt={`Gallery ${index + 1}`}
                 loading="lazy"
-                width={400}
-                height={225}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                containerClassName="aspect-video w-full rounded-lg"
               />
             </div>
           ))}

@@ -49,6 +49,13 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                     if (onCategoryClick) {
                       onCategoryClick();
                     }
+                    // Scroll to catalog
+                    setTimeout(() => {
+                      const catalogElement = document.querySelector('[data-catalog]');
+                      if (catalogElement) {
+                        catalogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }, 100);
                   }
                 }}
                 className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between"
