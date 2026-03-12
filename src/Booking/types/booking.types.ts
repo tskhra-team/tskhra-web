@@ -46,4 +46,10 @@ export type AvailableDay = {
   dayName: string;
   dayNumber: number;
   monthName: string;
+  isAvailable: boolean;
+};
+
+export type TimeSlot = {
+  time: string;
+  isAvailable: boolean;
 };

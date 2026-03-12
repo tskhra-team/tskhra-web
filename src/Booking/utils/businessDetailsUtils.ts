@@ -1,16 +1,31 @@
-// Mock available days (next 14 days)
-export const getAvailableDays = () => {
+// Get available days (next 14 days) with availability status based on work times
+export const getAvailableDays = (
+  workTimes?: Array<{
+    weekDay: string | number;
+    startTime: number;
+    endTime: number;
+  }>,
+) => {
   const days = [];
   const today = new Date();
   for (let i = 0; i < 14; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
+    const dayOfWeek = date.getDay();
+
+    // Check if business has work times for this day
+    const hasWorkTime = workTimes?.some((wt) => {
+      const wtDay = dayNameToDayNumber(wt.weekDay);
+      return wtDay === dayOfWeek;
+    });
+
     days.push({
       date: date,
       dateString: date.toISOString().split("T")[0],
       dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
       dayNumber: date.getDate(),
       monthName: date.toLocaleDateString("en-US", { month: "short" }),
+      isAvailable: hasWorkTime ?? true, // If no workTimes provided, assume available
     });
   }
   return days;
@@ -32,6 +47,89 @@ export const minutesToTime = (minutes: number): string => {
 // Convert API timeslot response (array of minutes) to time strings
 export const convertTimeslotsToStrings = (timeslots: number[]): string[] => {
   return timeslots.map((minutes) => minutesToTime(minutes)).sort();
+};
+
+// Generate all timeslots with availability status
+export const getAllTimeslotsWithAvailability = (
+  selectedDate: string | null,
+  availableTimeslotsFromAPI: number[] | undefined,
+  workTimes?: Array<{
+    weekDay: string | number;
+    startTime: number;
+    endTime: number;
+  }>,
+  restTimes?: Array<{
+    weekDay: string | number;
+    startTime: number;
+    endTime: number;
+  }>,
+): Array<{ time: string; isAvailable: boolean }> => {
+  if (!selectedDate || !workTimes) return [];
+
+  // Get the day of week for the selected date (0 = Sunday, 1 = Monday, etc.)
+  const date = new Date(selectedDate);
+  const dayOfWeek = date.getDay();
+
+  // Find working hours for this day
+  const workTime = workTimes.find((wt) => {
+    const wtDay = dayNameToDayNumber(wt.weekDay);
+    return wtDay === dayOfWeek;
+  });
+
+  if (!workTime) return []; // Business is closed this day
+
+  // Find rest times for this day
+  const restTime = restTimes?.find((rt) => {
+    const rtDay = dayNameToDayNumber(rt.weekDay);
+    return rtDay === dayOfWeek;
+  });
+
+  // Generate all possible time slots (every 30 minutes)
+  const allSlots = [
+    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+    "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+  ];
+
+  // Convert API available timeslots to strings for comparison
+  const availableTimesSet = new Set(
+    availableTimeslotsFromAPI ? convertTimeslotsToStrings(availableTimeslotsFromAPI) : []
+  );
+
+  // Filter and map slots to include availability status
+  const timeslotsWithAvailability = allSlots
+    .map((slot) => {
+      const slotMinutes = timeToMinutes(slot);
+
+      // Check if slot is within working hours
+      const isWithinWorkingHours =
+        slotMinutes >= workTime.startTime && slotMinutes < workTime.endTime;
+
+      // Check if slot is during rest time
+      const isDuringRestTime = restTime
+        ? slotMinutes >= restTime.startTime && slotMinutes < restTime.endTime
+        : false;
+
+      // If not within working hours or during rest time, skip this slot entirely
+      if (!isWithinWorkingHours || isDuringRestTime) {
+        return null;
+      }
+
+      // If we have API data, use it to determine availability
+      // If no API data, assume all slots within working hours are available
+      const isAvailable = availableTimeslotsFromAPI
+        ? availableTimesSet.has(slot)
+        : true;
+
+      return {
+        time: slot,
+        isAvailable,
+      };
+    })
+    .filter((slot): slot is { time: string; isAvailable: boolean } => slot !== null);
+
+  return timeslotsWithAvailability;
 };
 
 // Helper function to convert day name to day number (0 = Sunday, 1 = Monday, etc.)

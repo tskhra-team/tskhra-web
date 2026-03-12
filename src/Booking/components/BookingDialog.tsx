@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Calendar, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { Service, AvailableDay } from "@/Booking/types/booking.types";
+import type { Service, AvailableDay, TimeSlot } from "@/Booking/types/booking.types";
 
 type BookingDialogProps = {
   open: boolean;
@@ -17,7 +17,7 @@ type BookingDialogProps = {
   selectedDate: string | null;
   selectedTime: string | null;
   availableDays: AvailableDay[];
-  availableTimeSlots: string[];
+  availableTimeSlots: TimeSlot[];
   timeslotsLoading?: boolean;
   isBooking?: boolean;
   onDateSelect: (dateString: string) => void;
@@ -93,11 +93,14 @@ export default function BookingDialog({
               {availableDays.map((day) => (
                 <button
                   key={day.dateString}
-                  onClick={() => onDateSelect(day.dateString)}
+                  onClick={() => day.isAvailable && onDateSelect(day.dateString)}
+                  disabled={!day.isAvailable}
                   className={`p-3 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-1 ${
                     selectedDate === day.dateString
                       ? "border-primary bg-primary/10 text-primary"
-                      : "border-border hover:border-primary/50 hover:bg-primary/5"
+                      : day.isAvailable
+                      ? "border-border hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                      : "border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                   }`}
                 >
                   <span className="text-xs text-muted-foreground">
@@ -131,17 +134,20 @@ export default function BookingDialog({
                 </div>
               ) : (
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                  {availableTimeSlots.map((time) => (
+                  {availableTimeSlots.map((slot) => (
                     <button
-                      key={time}
-                      onClick={() => onTimeSelect(time)}
+                      key={slot.time}
+                      onClick={() => slot.isAvailable && onTimeSelect(slot.time)}
+                      disabled={!slot.isAvailable}
                       className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
-                        selectedTime === time
+                        selectedTime === slot.time
                           ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/50 hover:bg-primary/5"
+                          : slot.isAvailable
+                          ? "border-border hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                          : "border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                       }`}
                     >
-                      {time}
+                      {slot.time}
                     </button>
                   ))}
                 </div>
