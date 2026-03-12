@@ -169,6 +169,39 @@
     "noBusinessesFound": "No businesses found for the selected filters.",
     "clearFilters": "Clear Filters"
   },
+  "myBookings": {
+    "title": "My Bookings",
+    "subtitle": "Manage your appointments",
+    "back": "Back",
+    "status": {
+      "AWAITING": "Awaiting",
+      "CONFIRMED": "Confirmed",
+      "CANCELLED": "Cancelled",
+      "COMPLETED": "Completed",
+      "SCHEDULED": "Scheduled"
+    },
+    "filters": {
+      "all": "All",
+      "noResults": "No bookings found",
+      "noResultsDescription": "No bookings match the selected filter.",
+      "clearFilter": "Clear Filter"
+    },
+    "empty": {
+      "title": "No bookings yet",
+      "description": "You haven't made any bookings. Browse our services to book your first appointment.",
+      "browseServices": "Browse Services"
+    },
+    "card": {
+      "date": "Date",
+      "time": "Time",
+      "duration": "Duration",
+      "price": "Price",
+      "minutes": "min"
+    },
+    "loading": "Loading your bookings...",
+    "error": "Failed to load bookings",
+    "retry": "Retry"
+  },
   "businessDetails": {
     "breadcrumb": {
       "home": "Home",

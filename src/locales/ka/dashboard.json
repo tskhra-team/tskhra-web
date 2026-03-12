@@ -1,0 +1,115 @@
+{
+  "navigation": {
+    "dashboard": "დეშბორდი",
+    "chart": "დიაგრამა",
+    "calendar": "კალენდარი",
+    "manage": "მართვა",
+    "services": "სერვისები",
+    "notification": "შეტყობინებები"
+  },
+  "userMenu": {
+    "profile": "პროფილი",
+    "booking": "დაჯავშნა",
+    "swapping": "გაცვლა",
+    "ecommerce": "ეკომერსი",
+    "logOut": "გამოსვლა"
+  },
+  "businessSwitcher": {
+    "selectBusiness": "აირჩიეთ ბიზნესი",
+    "businesses": "ბიზნესები",
+    "addBusiness": "ბიზნესის დამატება"
+  },
+  "calendar": {
+    "legend": {
+      "currentDay": "ᲛᲘᲛᲓᲘᲜᲐᲠᲔ დღე",
+      "restTime": "დასვენების დრო",
+      "notWorkingPeriod": "ᲐᲠᲐᲡᲐᲛᲣᲨᲐᲝ ᲞᲔᲠᲘᲝᲓᲘ"
+    },
+    "title": "ჩემი განრიგი",
+    "popover": {
+      "bookingDetails": "დაჯავშნის დეტალები",
+      "min": "წთ",
+      "status": {
+        "SCHEDULED": "დაგეგმილი",
+        "PENDING": "განსახილველი",
+        "AWAITING": "მოლოდინში",
+        "COMPLETED": "დასრულებული",
+        "CANCELLED": "გაუქმებული"
+      }
+    }
+  },
+  "services": {
+    "title": "ჩემი სერვისები",
+    "count": "{{count}} სერვისი",
+    "addNewService": "ახალი სერვისის დამატება",
+    "labels": {
+      "price": "ფასი:",
+      "duration": "ხანგრძლივობა:",
+      "status": "სტატუსი:"
+    },
+    "status": {
+      "active": "ᲐᲥᲢᲘᲣᲠᲘ",
+      "inactive": "ᲐᲠᲐᲐᲥᲢᲘᲣᲠᲘ",
+      "activeTooltip": "ეს არის აქტიური სერვისი",
+      "inactiveTooltip": "ეს არის არააქტიური სერვისი"
+    },
+    "buttons": {
+      "edit": "",
+      "delete": "",
+      "on": "",
+      "off": ""
+    },
+    "form": {
+      "serviceName": "სერვისის სახელი",
+      "serviceNamePlaceholder": "მაგალითი: თმის შეჭრა",
+      "price": "ფასი(₾)",
+      "pricePlaceholder": "0.00",
+      "duration": "ხანგრძლივობა (წუთები)",
+      "durationPlaceholder": "30",
+      "description": "აღწერა (არასავალდებულო)",
+      "descriptionPlaceholder": "შეიყვანეთ სერვისის აღწერა",
+      "submit": "გაგზავნა",
+      "update": "სერვისის განახლება"
+    },
+    "tooltips": {
+      "editService": "სერვისის რედაქტირება",
+      "deleteService": "სერვისის წაშლა",
+      "activateService": "სერვისის გააქტიურება",
+      "deactivateService": "სერვისის დეაქტივაცია"
+    }
+  },
+  "notifications": {
+    "title": "შეტყობინებები",
+    "pending": "{{count}} განსახილველი",
+    "empty": {
+      "title": "განსახილველი შეტყობინებები არ არის",
+      "subtitle": "თქვენ ყველაფერი გააკეთეთ!"
+    },
+    "labels": {
+      "id": "ID",
+      "date": "თარიღი",
+      "service": "სერვისი",
+      "customer": "კლიენტი",
+      "startTime": "დაწყების დრო",
+      "duration": "ხანგრძლივობა"
+    },
+    "buttons": {
+      "reject": "უარყოფა",
+      "approve": "დადასტურება"
+    }
+  },
+  "pages": {
+    "chart": {
+      "title": "დიაგრამა",
+      "description": "ნახეთ თქვენი ბიზნესის ანალიტიკა და შესრულების მეტრიკა."
+    },
+    "manage": {
+      "title": "მართვა",
+      "description": "მართეთ თქვენი ბიზნესის პარამეტრები და კონფიგურაციები."
+    },
+    "default": {
+      "title": "ჩემი ბიზნესები",
+      "description": "მართეთ თქვენი ბიზნესები, კალენდარი და შეტყობინებები!"
+    }
+  }
+}

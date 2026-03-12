@@ -1,0 +1,115 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "chart": "Chart",
+    "calendar": "Calendar",
+    "manage": "Manage",
+    "services": "Services",
+    "notification": "Notification"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "booking": "Booking",
+    "swapping": "Swapping",
+    "ecommerce": "Ecommerce",
+    "logOut": "Log out"
+  },
+  "businessSwitcher": {
+    "selectBusiness": "Select Business",
+    "businesses": "Businesses",
+    "addBusiness": "Add business"
+  },
+  "calendar": {
+    "legend": {
+      "currentDay": "CURRENT DAY",
+      "restTime": "REST TIME",
+      "notWorkingPeriod": "NOT WORKING PERIOD"
+    },
+    "title": "My Schedule",
+    "popover": {
+      "bookingDetails": "Booking Details",
+      "min": "min",
+      "status": {
+        "SCHEDULED": "Scheduled",
+        "PENDING": "Pending",
+        "AWAITING": "Awaiting",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      }
+    }
+  },
+  "services": {
+    "title": "My Services",
+    "count": "{{count}} services",
+    "addNewService": "Add new service",
+    "labels": {
+      "price": "Price:",
+      "duration": "Duration:",
+      "status": "Status:"
+    },
+    "status": {
+      "active": "ACTIVE",
+      "inactive": "INACTIVE",
+      "activeTooltip": "This is active service",
+      "inactiveTooltip": "This is inactive service"
+    },
+    "buttons": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "on": "On",
+      "off": "Off"
+    },
+    "form": {
+      "serviceName": "Service Name",
+      "serviceNamePlaceholder": "Example: Haircut",
+      "price": "Price(₾)",
+      "pricePlaceholder": "0.00",
+      "duration": "Duration (minutes)",
+      "durationPlaceholder": "30",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Enter service description",
+      "submit": "Submit",
+      "update": "Update Service"
+    },
+    "tooltips": {
+      "editService": "Edit service",
+      "deleteService": "Delete service",
+      "activateService": "Activate service",
+      "deactivateService": "Deactivate service"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "pending": "{{count}} pending",
+    "empty": {
+      "title": "No pending notifications",
+      "subtitle": "You're all caught up!"
+    },
+    "labels": {
+      "id": "ID",
+      "date": "Date",
+      "service": "Service",
+      "customer": "Customer",
+      "startTime": "Start Time",
+      "duration": "Duration"
+    },
+    "buttons": {
+      "reject": "Reject",
+      "approve": "Approve"
+    }
+  },
+  "pages": {
+    "chart": {
+      "title": "Chart",
+      "description": "View your business analytics and performance metrics."
+    },
+    "manage": {
+      "title": "Manage",
+      "description": "Manage your business settings and configurations."
+    },
+    "default": {
+      "title": "My Businesses",
+      "description": "Manage your businesses, calendar and notifications!"
+    }
+  }
+}

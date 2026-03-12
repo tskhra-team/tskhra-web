@@ -34,6 +34,10 @@
       "placeholder": "აირჩიეთ სქესი",
       "male": "მამრობითი",
       "female": "მდედრობითი"
+    },
+    "phoneNumber": {
+      "label": "ტელეფონის ნომერი",
+      "placeholder": "+995 555 123 456"
     }
   },
   "step2": {

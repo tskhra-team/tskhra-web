@@ -2,6 +2,7 @@ import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import useGetAllBookingBusinesses from "@/Booking/useGetAllBookingBusinesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { SmartImage } from "@/components/SmartImage";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { MapPin } from "lucide-react";
@@ -141,9 +142,10 @@ export default function BusinessCatalog() {
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-500 z-10" />
 
-                <img
+                <SmartImage
                   src={business.mainImage}
                   alt={business.businessName}
+                  containerClassName="aspect-video w-full rounded-lg"
                   loading="lazy"
                   className="w-full h-full object-cover transition-all duration-500 brightness-95 group-hover:brightness-105"
                 />

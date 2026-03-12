@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Booking } from "./types/calendar.types";
 
 interface PopOverProps {
@@ -13,6 +14,7 @@ export default function PopOver({
   closePopover,
   minutesToTime,
 }: PopOverProps) {
+  const { t } = useTranslation("dashboard");
   return (
     <div
       className="absolute z-20 bg-white rounded-xl shadow-2xl border border-slate-200 p-5 w-80 animate-in fade-in zoom-in duration-200"
@@ -28,7 +30,9 @@ export default function PopOver({
           <h3 className="text-lg font-bold text-slate-900 leading-tight">
             {selectedBooking.serviceName}
           </h3>
-          <p className="text-sm text-slate-500 font-medium">Booking Details</p>
+          <p className="text-sm text-slate-500 font-medium">
+            {t("calendar.popover.bookingDetails")}
+          </p>
         </div>
         <button
           onClick={closePopover}
@@ -94,7 +98,7 @@ export default function PopOver({
               selectedBooking.startTime + selectedBooking.duration,
             )}
             <span className="ml-1 text-slate-400">
-              ({selectedBooking.duration} min)
+              ({selectedBooking.duration} {t("calendar.popover.min")})
             </span>
           </span>
         </div>
@@ -110,7 +114,7 @@ export default function PopOver({
                 : "bg-amber-100 text-amber-700"
             }`}
           >
-            {selectedBooking.status}
+            {t(`calendar.popover.status.${selectedBooking.status}`)}
           </span>
         </div>
       </div>

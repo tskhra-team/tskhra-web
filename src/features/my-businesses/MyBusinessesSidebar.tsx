@@ -19,6 +19,7 @@ import {
   Calendar,
   Settings,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
 // const teams = [
@@ -39,38 +40,38 @@ import { useSearchParams } from "react-router-dom";
 //   },
 // ];
 
-const menuItems = [
-  {
-    title: "Chart",
-    icon: BarChart3,
-    section: "chart",
-  },
-  {
-    title: "Calendar",
-    icon: Calendar,
-    section: "calendar",
-  },
-  {
-    title: "Manage",
-    icon: Settings,
-    section: "manage",
-  },
-
-  {
-    title: "Services",
-    icon: BriefcaseBusiness,
-    section: "services",
-  },
-  {
-    title: "Notification",
-    icon: Bell,
-    section: "notification",
-  },
-];
-
 export function MyBusinessesSidebar() {
+  const { t } = useTranslation("dashboard");
   const [searchParams, setSearchParams] = useSearchParams();
   const isBusinessChoosed = searchParams.get("businessId");
+
+  const menuItems = [
+    {
+      title: t("navigation.chart"),
+      icon: BarChart3,
+      section: "chart",
+    },
+    {
+      title: t("navigation.calendar"),
+      icon: Calendar,
+      section: "calendar",
+    },
+    {
+      title: t("navigation.manage"),
+      icon: Settings,
+      section: "manage",
+    },
+    {
+      title: t("navigation.services"),
+      icon: BriefcaseBusiness,
+      section: "services",
+    },
+    {
+      title: t("navigation.notification"),
+      icon: Bell,
+      section: "notification",
+    },
+  ];
 
   const handleSectionClick = (section: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -86,7 +87,7 @@ export function MyBusinessesSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("navigation.dashboard")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {isBusinessChoosed &&

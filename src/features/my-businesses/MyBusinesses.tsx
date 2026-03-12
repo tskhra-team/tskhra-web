@@ -7,6 +7,7 @@ import MyServices from "@/features/my-businesses/Services/MyServices";
 import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
 import useGetMyBusinesses from "@/features/my-businesses/useGetMyBusinesses";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
 // Функция для объединения workTimes и restTimes в формат WorkSchedule[]
@@ -39,6 +40,7 @@ const combineSchedule = (
 };
 
 export default function MyBusinesses() {
+  const { t } = useTranslation("dashboard");
   const [searchParams] = useSearchParams();
   const section = searchParams.get("section");
   const businessId = searchParams.get("businessId");
@@ -63,9 +65,9 @@ export default function MyBusinesses() {
       case "chart":
         return (
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Chart</h1>
+            <h1 className="text-3xl font-bold">{t("pages.chart.title")}</h1>
             <p className="text-muted-foreground">
-              View your business analytics and performance metrics.
+              {t("pages.chart.description")}
             </p>
             {/* Chart content will go here */}
           </div>
@@ -82,9 +84,9 @@ export default function MyBusinesses() {
       case "manage":
         return (
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Manage</h1>
+            <h1 className="text-3xl font-bold">{t("pages.manage.title")}</h1>
             <p className="text-muted-foreground">
-              Manage your business settings and configurations.
+              {t("pages.manage.description")}
             </p>
             {/* Management content will go here */}
           </div>
@@ -96,9 +98,9 @@ export default function MyBusinesses() {
       default:
         return (
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">My Businesses</h1>
+            <h1 className="text-3xl font-bold">{t("pages.default.title")}</h1>
             <p className="text-muted-foreground">
-              Manage your businesses, calendar and notifications!
+              {t("pages.default.description")}
             </p>
           </div>
         );

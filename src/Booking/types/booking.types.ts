@@ -38,6 +38,7 @@ export type Service = {
   description: string;
   price: number;
   duration: number;
+  status: "ACTIVE" | "INACTIVE"
 };
 
 export type AvailableDay = {
