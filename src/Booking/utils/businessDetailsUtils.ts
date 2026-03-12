@@ -44,6 +44,19 @@ export const minutesToTime = (minutes: number): string => {
   return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
 };
 
+// Generate time slots at specified interval (in minutes)
+export const generateTimeSlots = (
+  startMinutes: number = 540, // 09:00
+  endMinutes: number = 1260, // 21:00
+  intervalMinutes: number = 10
+): string[] => {
+  const slots: string[] = [];
+  for (let minutes = startMinutes; minutes <= endMinutes; minutes += intervalMinutes) {
+    slots.push(minutesToTime(minutes));
+  }
+  return slots;
+};
+
 // Convert API timeslot response (array of minutes) to time strings
 export const convertTimeslotsToStrings = (timeslots: number[]): string[] => {
   return timeslots.map((minutes) => minutesToTime(minutes)).sort();
@@ -84,13 +97,8 @@ export const getAllTimeslotsWithAvailability = (
     return rtDay === dayOfWeek;
   });
 
-  // Generate all possible time slots (every 30 minutes)
-  const allSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-    "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
-    "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
-  ];
+  // Generate all possible time slots (every 10 minutes)
+  const allSlots = generateTimeSlots(540, 1260, 10); // 09:00 to 21:00, 10-min intervals
 
   // Convert API available timeslots to strings for comparison
   const availableTimesSet = new Set(
@@ -192,33 +200,8 @@ export const getAvailableTimeSlots = (
     return rtDay === dayOfWeek;
   });
 
-  // Generate all possible time slots (every 30 minutes)
-  const slots = [
-    "09:00",
-    "09:30",
-    "10:00",
-    "10:30",
-    "11:00",
-    "11:30",
-    "12:00",
-    "12:30",
-    "13:00",
-    "13:30",
-    "14:00",
-    "14:30",
-    "15:00",
-    "15:30",
-    "16:00",
-    "16:30",
-    "17:00",
-    "17:30",
-    "18:00",
-    "18:30",
-    "19:00",
-    "19:30",
-    "20:00",
-    "20:30",
-  ];
+  // Generate all possible time slots (every 10 minutes)
+  const slots = generateTimeSlots(540, 1260, 10); // 09:00 to 21:00, 10-min intervals
 
   // Filter slots based on working hours and rest times
   const availableSlots = slots.filter((slot) => {
