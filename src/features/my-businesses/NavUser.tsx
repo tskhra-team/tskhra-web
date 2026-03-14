@@ -1,4 +1,3 @@
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -127,12 +126,6 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
-              <LanguageSwitcher
-                className="w-full cursor-pointer"
-                style={{ height: "auto", border: "none" }}
-              />
-            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 navigate("/");
@@ -140,8 +133,8 @@ export function NavUser() {
               }}
               className="cursor-pointer"
             >
-              <LogOut />
-              {t("userMenu.logOut")}
+              <LogOut className="text-red-700" />
+              <span className="text-red-800">{t("userMenu.logOut")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

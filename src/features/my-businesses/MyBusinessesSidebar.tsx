@@ -1,3 +1,4 @@
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +18,7 @@ import {
   Bell,
   BriefcaseBusiness,
   Calendar,
+  Languages,
   Settings,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -87,23 +89,36 @@ export function MyBusinessesSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{t("navigation.dashboard")}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {isBusinessChoosed &&
-                menuItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      onClick={() => handleSectionClick(item.section)}
-                      isActive={searchParams.get("section") === item.section}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
+          {isBusinessChoosed && (
+            <>
+              <SidebarGroupLabel>{t("navigation.dashboard")}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        onClick={() => handleSectionClick(item.section)}
+                        isActive={searchParams.get("section") === item.section}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </>
+          )}
+
+          <div className="mt-auto pt-4">
+            <SidebarGroupLabel className="flex items-center gap-2 px-2 mb-2">
+              <Languages className="h-4 w-4" />
+              {t("navigation.language")}
+            </SidebarGroupLabel>
+            <div className="px-2">
+              <LanguageSwitcher className="w-full" style={{ height: "auto" }} />
+            </div>
+          </div>
         </SidebarGroup>
       </SidebarContent>
 
