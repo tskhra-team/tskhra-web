@@ -19,13 +19,13 @@ export default function BlurVerifiedUser({
       <div className="blur-sm pointer-events-none select-none">{children}</div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center space-y-4 bg-background/80 backdrop-blur-sm p-8 rounded-lg">
+        <div className="text-center space-y-4 bg-white border border-[#ebebeb] rounded-lg p-8 shadow-sm">
           <div className="flex justify-center">
-            <div className="p-4 bg-linear-to-br from-green-700 to-green-800 rounded-full shadow-lg">
-              <Check className="w-12 h-12 text-white" />
+            <div className="p-4 bg-emerald-50/50 rounded-full">
+              <Check className="w-12 h-12 text-emerald-600" />
             </div>
           </div>
-          <p className="text-3xl font-semibold text-green-700">
+          <p className="text-2xl font-medium text-foreground tracking-tight">
             {t("form.alreadyVerified.title")}
           </p>
           <p className="text-muted-foreground">
