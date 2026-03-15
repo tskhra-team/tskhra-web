@@ -27,7 +27,7 @@ export default function ProfileSidebar({
   onSectionChange,
   profile,
 }: ProfileSidebarProps) {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation(["profile", "common"]);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -73,7 +73,7 @@ export default function ProfileSidebar({
             {verificationStatus ? (
               <span className="inline-flex items-center gap-1 bg-linear-to-r from-emerald-500 to-emerald-600 text-white px-3 py-1 text-xs rounded-full font-medium mb-4">
                 <Check className="w-3 h-3" />
-                Verified
+                {t("infoTab.verified")}
               </span>
             ) : (
               <Button
@@ -92,7 +92,7 @@ export default function ProfileSidebar({
               className="w-full hover:border-indigo-400 hover:text-indigo-700 transition-all"
             >
               <LayoutDashboard className="w-4 h-4 mr-2" />
-              Dashboard
+              {t("common:auth.dashboard")}
             </Button>
           </div>
         </div>

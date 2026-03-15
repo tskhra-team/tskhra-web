@@ -5,6 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import type { ProfileType } from "@/types";
+import { useAuth } from "@/context/useAuth";
 
 type ProfileMobileNavProps = {
   currentSection: string;
@@ -19,8 +20,9 @@ export default function ProfileMobileNav({
   onClose,
   profile,
 }: ProfileMobileNavProps) {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation(["profile", "common"]);
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const verificationStatus = profile?.status;
   const isFullnameExist = profile?.firstName && profile?.lastName;
@@ -37,8 +39,8 @@ export default function ProfileMobileNav({
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    navigate("/login");
+    navigate("/");
+    logout();
     onClose();
   };
 
@@ -61,7 +63,7 @@ export default function ProfileMobileNav({
             {verificationStatus && (
               <span className="inline-flex items-center gap-1 bg-linear-to-r from-emerald-500 to-emerald-600 text-white px-2 py-0.5 text-xs rounded-full font-medium mt-1">
                 <Check className="w-3 h-3" />
-                Verified
+                {t("infoTab.verified")}
               </span>
             )}
           </div>
@@ -76,7 +78,7 @@ export default function ProfileMobileNav({
           className="w-full hover:border-indigo-400 hover:text-indigo-700 transition-all"
         >
           <LayoutDashboard className="w-4 h-4 mr-2" />
-          Dashboard
+          {t("common:navigation.dashboard")}
         </Button>
       </div>
 
