@@ -110,7 +110,7 @@ export default function ProfileSettings({
     handleSubmit,
     control,
     reset,
-    setValue,
+
     formState: { errors },
   } = form;
 
@@ -181,26 +181,22 @@ export default function ProfileSettings({
 
       setPreviewAvatar(URL.createObjectURL(compressedFile));
 
-      if (!isEditMode || profile?.status) {
-        uploadAvatar(
-          { avatar: compressedFile },
-          {
-            onSuccess: () => {
-              toast.success("Avatar successfully updated!", {
-                position: "top-center",
-              });
-              refetch();
-              queryClient.invalidateQueries({ queryKey: ["getUser"] });
-            },
-            onError: () => {
-              toast.error("Avatar didn't update");
-              setPreviewAvatar(null);
-            },
+      uploadAvatar(
+        { avatar: compressedFile },
+        {
+          onSuccess: () => {
+            toast.success("Avatar successfully updated!", {
+              position: "top-center",
+            });
+            refetch();
+            queryClient.invalidateQueries({ queryKey: ["getUser"] });
           },
-        );
-      } else {
-        setValue("avatarFile", compressedFile, { shouldValidate: true });
-      }
+          onError: () => {
+            toast.error("Avatar didn't update");
+            setPreviewAvatar(null);
+          },
+        },
+      );
     } catch (error) {
       toast.error("Error compressing image", { position: "top-center" });
     }
@@ -214,26 +210,9 @@ export default function ProfileSettings({
   };
 
   const onSubmit = (data: ProfileFormData) => {
-    const { avatarFile, ...profileData } = data;
-
-    updateProfile(profileData, {
+    updateProfile(data, {
       onSuccess: () => {
-        if (avatarFile) {
-          uploadAvatar(
-            { avatar: avatarFile },
-            {
-              onSuccess: () => {
-                handleSuccessFinish();
-              },
-              onError: () => {
-                toast.error("Profile is updated, but avatar didn't update");
-                handleSuccessFinish();
-              },
-            },
-          );
-        } else {
-          handleSuccessFinish();
-        }
+        handleSuccessFinish();
       },
       onError: () => {
         toast.error(t("form.messages.updateError"));

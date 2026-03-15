@@ -92,7 +92,7 @@ type ProfileFormData = {
   birthDate: Date;
   phoneCountryCode: string;
   phoneNumber: string;
-  avatarFile?: File | null | undefined; // Optional property for form
+  // avatarFile?: File | null | undefined; // Optional property for form
 };
 
 // For API calls, omit avatarFile since it's uploaded separately
