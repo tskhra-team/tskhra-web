@@ -27,32 +27,31 @@ export default function VerifyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+      <DialogContent className="sm:max-w-md border-[#ebebeb]" showCloseButton={false}>
+        <DialogHeader className="space-y-4">
+          <DialogTitle className="text-xl md:text-2xl font-semibold text-foreground text-center tracking-tight">
+            {t("verifyDialog.title")}
+          </DialogTitle>
+          <DialogDescription className="text-base text-center md:text-lg text-muted-foreground leading-relaxed px-2">
+            {t("verifyDialog.description")}
+          </DialogDescription>
+        </DialogHeader>
+
         <div className="flex flex-col items-center text-center py-4">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl animate-pulse" />
-            <div className="relative p-4 bg-linear-to-br from-red-700 to-red-800 rounded-full shadow-lg">
-              <AlertCircle className="w-12 h-12 text-white" />
+            <div className="p-4 bg-[#f5f5f5] rounded-full mx-auto w-fit">
+              <AlertCircle className="w-12 h-12 text-[#888]" />
             </div>
           </div>
 
-          <DialogHeader className="space-y-4">
-            <DialogTitle className="text-xl md:text-2xl font-bold bg-linear-to-r from-red-700 to-red-800 bg-clip-text text-transparent text-center">
-              {t("verifyDialog.title")}
-            </DialogTitle>
-            <DialogDescription className="text-base text-center md:text-lg text-gray-600 leading-relaxed px-2">
-              {t("verifyDialog.description")}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl w-full">
+          <div className="mt-6 p-4 bg-[#fafafa] border border-[#ebebeb] rounded-lg w-full">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+              <ShieldCheck className="w-5 h-5 text-[#888] mt-0.5 shrink-0" />
               <div className="text-left">
-                <p className="text-sm font-semibold text-blue-900 mb-1">
+                <p className="text-sm font-semibold text-foreground mb-1">
                   {t("verifyDialog.whyTitle")}
                 </p>
-                <p className="text-xs text-blue-700">
+                <p className="text-xs text-muted-foreground">
                   {t("verifyDialog.whyDescription")}
                 </p>
               </div>
@@ -63,7 +62,7 @@ export default function VerifyDialog({
             <DialogClose asChild>
               <Button
                 variant="outline"
-                className="w-full sm:w-auto border-gray-300 hover:bg-gray-50"
+                className="w-full sm:w-auto"
               >
                 {t("verifyDialog.close")}
               </Button>
@@ -74,7 +73,7 @@ export default function VerifyDialog({
                 navigate("/verification");
                 onOpenChange(false);
               }}
-              className="w-full sm:w-auto bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="w-full sm:w-auto"
             >
               <ShieldCheck className="w-4 h-4" />
               {t("verifyDialog.goToVerification")}

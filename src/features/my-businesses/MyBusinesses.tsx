@@ -1,3 +1,5 @@
+import BusinessPicker from "@/features/my-businesses/BusinessPicker";
+import BusinessPickerSkeleton from "@/features/my-businesses/BusinessPickerSkeleton";
 import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarProvider";
 import useGetAllBookings from "@/features/my-businesses/Calendar/hooks/useGetAllBookings";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
@@ -47,7 +49,7 @@ export default function MyBusinesses() {
 
   const { fullBookings } = useGetAllBookings(businessId);
 
-  const { data: businesses } = useGetMyBusinesses();
+  const { data: businesses, isLoading } = useGetMyBusinesses();
 
   // Получаем текущий бизнес по businessId
   const currentBusiness = useMemo(() => {
@@ -55,7 +57,7 @@ export default function MyBusinesses() {
     return businesses.find((business) => business.businessId === businessId);
   }, [businessId, businesses]);
 
-  // Объединяем workTimes и restTimes в нужный формат
+  // Cpmbine workTimes and restTimes to needed format
   const schedule = useMemo(() => {
     return combineSchedule(currentBusiness);
   }, [currentBusiness]);
@@ -96,11 +98,14 @@ export default function MyBusinesses() {
       case "services":
         return <MyServices businessId={businessId} />;
       default:
-        return (
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{t("pages.default.title")}</h1>
-            <p className="text-muted-foreground">
-              {t("pages.default.description")}
+        return businesses?.length ? (
+          <BusinessPicker businesses={businesses} isLoading={isLoading} />
+        ) : isLoading ? (
+          <BusinessPickerSkeleton />
+        ) : (
+          <div className="flex items-center text-center justify-center h-full">
+            <p className="text-2xl font-semibold text-muted-foreground">
+              {t("businessPicker.noBusiness")}
             </p>
           </div>
         );

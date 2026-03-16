@@ -5,7 +5,8 @@
     "calendar": "Calendar",
     "manage": "Manage",
     "services": "Services",
-    "notification": "Notification"
+    "notification": "Notification",
+    "language": "Language"
   },
   "userMenu": {
     "profile": "Profile",
@@ -111,5 +112,10 @@
       "title": "My Businesses",
       "description": "Manage your businesses, calendar and notifications!"
     }
+  },
+  "businessPicker": {
+    "title": "My Businesses",
+    "subtitle": "Select a business to manage",
+    "noBusiness": "You don't have businesses yet"
   }
 }

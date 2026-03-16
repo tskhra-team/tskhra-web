@@ -10,7 +10,7 @@ const deleteAvatar = async () => {
 };
 
 const useDeleteAvatar = () => {
-  return useMutation<Response, AxiosError<ErrorResponse>>({
+  return useMutation<void, AxiosError<ErrorResponse>>({
     mutationFn: deleteAvatar,
   });
 };
