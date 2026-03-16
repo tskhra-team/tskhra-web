@@ -4,7 +4,7 @@ import * as yup from "yup";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const createServiceSchema = (t: TFunction) => {
-  return yup.object().shape({
+  return yup.object({
     name: yup
       .string()
       .required(t("booking:validation.serviceNameRequired"))
@@ -59,7 +59,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       return ALLOWED_FILE_TYPES.includes(value.type);
     });
 
-  const workTimesSchema = yup.object().shape({
+  const workTimesSchema = yup.object({
     weekDay: yup.string().required(t("booking:validation.weekDayRequired")),
     startTime: yup
       .number()
@@ -102,7 +102,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     facebookUrl: yup.string().optional(),
   });
 
-  return yup.object().shape({
+  return yup.object({
     businessName: yup
       .string()
       .required(t("booking:validation.businessNameRequired"))
@@ -111,14 +111,19 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     callType: yup
       .mixed<"OUTCALL" | "ONSITE" | "BOTH">()
       .oneOf(["OUTCALL", "ONSITE", "BOTH"])
-      .required(t("booking:validation.callTypeRequired")),
+      .required(t("booking:validation.callTypeRequired"))
+      .default(null),
     city: yup.string().required(t("booking:validation.cityRequired")),
-    addressDetails: yup.string().when("callType", {
-      is: (val: string) => val !== "OUTCALL",
-      then: (schema) =>
-        schema.required(t("booking:validation.addressRequired")),
-      otherwise: (schema) => schema.optional(),
-    }),
+    addressDetails: yup
+      .string()
+      .when("callType", {
+        is: (val: string) => val !== "OUTCALL",
+        then: (schema) =>
+          schema.required(t("booking:validation.addressRequired")),
+        otherwise: (schema) => schema.default(""),
+      })
+      .notRequired()
+      .default(null),
     description: yup
       .string()
       .required(t("booking:validation.descriptionRequired"))
@@ -135,9 +140,9 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .of(workTimesSchema)
       .min(1, t("booking:validation.workTimesMin"))
       .required(),
-    restTimes: yup.array().of(workTimesSchema).optional(),
+    restTimes: yup.array().of(workTimesSchema).optional().default(null),
     info: infoSchema.required(),
-    images: yup.object().shape({
+    images: yup.object({
       businessPhoto: yup
         .array()
         .of(fileValidation.required())
@@ -156,7 +161,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
 
 // Schema for Step 2 - Services
 export const createServicesFormSchema = (t: TFunction) => {
-  return yup.object().shape({
+  return yup.object({
     services: yup
       .array()
       .of(createServiceSchema(t))
@@ -190,19 +195,9 @@ export type ImagesType = {
   galleryPhoto: File[];
 };
 
-export type IndividualBusinessFormData = {
-  businessName: string;
-  callType: "OUTCALL" | "ONSITE" | "BOTH";
-  city: string;
-  addressDetails: string;
-  description: string;
-  mainCategory: string;
-  subCategory: string;
-  workTimes: WorkTimeType[];
-  restTimes?: WorkTimeType[];
-  info: InfoType;
-  images: ImagesType;
-};
+export type IndividualBusinessFormData = yup.InferType<
+  ReturnType<typeof createIndividualBusinessSchema>
+>;
 
 export type ServicesFormData = {
   services: ServiceType[];
