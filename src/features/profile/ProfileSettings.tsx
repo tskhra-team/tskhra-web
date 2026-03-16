@@ -16,16 +16,18 @@ import {
 } from "@/components/ui/select";
 import { useModal } from "@/context/ModalContext";
 import AvatarCropperModal from "@/features/profile/AvatarCropperModal";
+import useDeleteAvatar from "@/features/profile/hooks/useDeleteAvatar";
+import useGetProfile from "@/features/profile/hooks/useGetProfile";
+import useUnVerify from "@/features/profile/hooks/useUnVerify";
+import useUpdateProfile from "@/features/profile/hooks/useUpdateProfile";
+import useVerify from "@/features/profile/hooks/useVerify";
 import {
+  MAX_FILE_SIZE,
   profileSchema,
+  SUPPORTED_FORMATS,
   type ProfileFormData,
 } from "@/features/profile/profileSchema";
-import useDeleteAvatar from "@/features/profile/useDeleteAvatar";
-import useGetProfile from "@/features/profile/useGetProfile";
-import useUnVerify from "@/features/profile/useUnVerify";
-import useUpdateProfile from "@/features/profile/useUpdateProfile";
-import useUploadAvatar from "@/features/profile/useUploadAvatar";
-import useVerify from "@/features/profile/useVerify";
+import useUploadAvatar from "@/features/profile/hooks/useUploadAvatar";
 import VerifyDialog from "@/features/profile/VerifyDialog";
 import queryClient from "@/query/queryClient";
 import type { ProfileType } from "@/types";
@@ -136,7 +138,6 @@ export default function ProfileSettings({
       const file = e.target.files[0];
 
       // Validate file size (4MB max)
-      const MAX_FILE_SIZE = 5 * 1024 * 1024;
       if (file.size > MAX_FILE_SIZE) {
         toast.error("File size can't be more than 5MB", {
           position: "top-center",
@@ -145,13 +146,6 @@ export default function ProfileSettings({
         return;
       }
 
-      // Validate file format
-      const SUPPORTED_FORMATS = [
-        "image/jpg",
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-      ];
       if (!SUPPORTED_FORMATS.includes(file.type)) {
         toast.error("Unsupported file format. Please use JPG, PNG, or WEBP", {
           position: "top-center",

@@ -5,7 +5,7 @@ import {
   InfoTabSkeleton,
   ProfileFormSkeleton,
 } from "@/features/profile/LoadingSkeletons";
-import useGetProfile from "@/features/profile/useGetProfile";
+import useGetProfile from "@/features/profile/hooks/useGetProfile";
 import { Menu } from "lucide-react";
 import { lazy, Suspense, useState } from "react";
 

@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Building2 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import useGetProfile from "@/features/profile/useGetProfile";
+import useGetProfile from "@/features/profile/hooks/useGetProfile";
 import VerifyDialog from "@/features/profile/VerifyDialog";
 import { scrollToTop } from "@/utils";
+import { Building2 } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function AddBusinessTab() {
   const navigate = useNavigate();
