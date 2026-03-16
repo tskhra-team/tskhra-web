@@ -7,7 +7,12 @@ export default function HomeNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (location.pathname === "/create-business" || location.pathname === "/my-bookings") {
+  if (
+    location.pathname === "/create-business" ||
+    location.pathname === "/my-bookings" ||
+    location.pathname === "/profile" ||
+    location.pathname === "/verification"
+  ) {
     return null;
   }
 

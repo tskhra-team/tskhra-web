@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useUpdateProfile from "@/features/profile/useUpdateProfile";
-import useVerify from "@/features/profile/useVerify";
+import useUpdateProfile from "@/features/profile/hooks/useUpdateProfile";
+import useVerify from "@/features/profile/hooks/useVerify";
 import LivenessCamera from "@/features/verification/LivenessCamera";
 import useKYC from "@/features/verification/useKYC";
 import queryClient from "@/query/queryClient";

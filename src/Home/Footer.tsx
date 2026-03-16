@@ -35,7 +35,10 @@ function Footer() {
     ],
   };
 
-  if (location.pathname.includes("/my-businesses")) {
+  if (
+    location.pathname.includes("/my-businesses") ||
+    location.pathname.includes("/profile")
+  ) {
     return null;
   }
 
@@ -62,9 +65,9 @@ function Footer() {
               <h3 className="text-white font-bold text-lg mb-4">{category}</h3>
               <ul className="space-y-2">
                 {links.map((link, index) => (
-                  <li key={index} className="" >
-                    <Link 
-                    to='/'
+                  <li key={index} className="">
+                    <Link
+                      to="/"
                       onClick={link.func}
                       className="text-slate-400 hover:text-white transition-colors cursor-pointer justify-start"
                     >

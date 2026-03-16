@@ -1,7 +1,7 @@
 import { privateInstance } from "@/api";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import type { ErrorResponse } from "react-router-dom";
+import type { ErrorResponse } from "@/types";
 
 type VerifyType = {
   status: boolean;

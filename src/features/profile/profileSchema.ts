@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const SUPPORTED_FORMATS = [
+export const MAX_FILE_SIZE = 5 * 1024 * 1024;
+export const SUPPORTED_FORMATS = [
   "image/jpg",
   "image/jpeg",
   "image/png",
@@ -92,11 +92,10 @@ type ProfileFormData = {
   birthDate: Date;
   phoneCountryCode: string;
   phoneNumber: string;
-  avatarFile?: File | null | undefined; // Optional property for form
 };
 
 // For API calls, omit avatarFile since it's uploaded separately
-type ProfileUpdateData = Omit<ProfileFormData, "avatarFile">;
+type ProfileUpdateData = ProfileFormData;
 
 type AvatarTypeData = yup.InferType<typeof AvatarType>;
 

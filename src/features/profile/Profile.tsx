@@ -1,139 +1,118 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   HistoryTabSkeleton,
   InfoTabSkeleton,
   ProfileFormSkeleton,
 } from "@/features/profile/LoadingSkeletons";
-import useGetProfile from "@/features/profile/useGetProfile";
-import { History, Settings, UserCircle } from "lucide-react";
-import { lazy, Suspense } from "react";
+import useGetProfile from "@/features/profile/hooks/useGetProfile";
+import { Menu } from "lucide-react";
+import { lazy, Suspense, useState } from "react";
 
+import ProfileMobileNav from "@/features/profile/ProfileMobileNav";
+import ProfileSidebar from "@/features/profile/ProfileSidebar";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
 // Lazy load tab components for better performance
-const InfoTab = lazy(() => import("@/features/profile/InfoTab"));
+const ProfileSettings = lazy(
+  () => import("@/features/profile/ProfileSettings"),
+);
 const HistoryTab = lazy(() => import("@/features/profile/HistoryTab"));
-const ProfileForm = lazy(() => import("@/features/profile/ProfileForm"));
+const FavoritesTab = lazy(() => import("@/features/profile/FavoritesTab"));
+const AddBusinessTab = lazy(() => import("@/features/profile/AddBusinessTab"));
+const SecurityTab = lazy(() => import("@/features/profile/SecurityTab"));
 
-// Memoize Avatar to prevent unnecessary re-renders
 export default function Profile() {
   const { data: profile } = useGetProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation("profile");
-  const tab = searchParams.get("section") || "info";
-  const verificationStatus = profile?.status;
-  const isFullnameExist = profile?.firstName && profile?.lastName;
-  const fullName = isFullnameExist
-    ? profile?.firstName + " " + profile?.lastName
-    : profile?.userName;
+  const tab = searchParams.get("section") || "profile";
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  const tabs = [
-    { value: "info", label: t("tabs.info"), icon: UserCircle },
-    { value: "history", label: t("tabs.history"), icon: History },
-    { value: "settings", label: t("tabs.settings"), icon: Settings },
-  ];
-
-  const tabNames = {
-    history: t("tabs.history"),
-    info: t("tabs.info"),
-    settings: t("tabs.settings"),
+  const handleSectionChange = (section: string) => {
+    setSearchParams({ section });
   };
 
   return (
-    <main className="px-4 sm:px-8 md:px-12 lg:px-20 py-6 md:py-10 ">
-      <div className="flex flex-col justify-between md:flex-row gap-4 md:gap-5 items-start md:items-center mb-6 md:mb-8">
-        <div
-          className={`flex gap-4 items-center transition-all duration-500 ease-in-out ${
-            tab !== "settings"
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-4 pointer-events-none absolute"
-          }`}
-        >
-          <Avatar className="h-20 w-20">
-            <AvatarImage src={profile?.avatar} alt={fullName} />
-            <AvatarFallback className="text-4xl">
-              {fullName?.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col flex-1">
-            <p className="text-xl md:text-2xl font-semibold">{fullName}</p>
-            <p className="text-sm md:text-base text-gray-600">
-              {t("profileHeader.status")}:{" "}
-              {verificationStatus
-                ? t("infoTab.verified")
-                : t("infoTab.notVerified")}
-            </p>
-            <p className="text-xs md:text-sm text-gray-500">
-              {profile?.userEmail}
-            </p>
+    <main className="min-h-screen bg-background">
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex">
+        {/* Sidebar */}
+        <ProfileSidebar
+          currentSection={tab}
+          onSectionChange={handleSectionChange}
+          profile={profile}
+        />
+
+        {/* Content Area */}
+        <div className="flex-1 lg:ml-70">
+          {/* Tab Content */}
+          <div className="p-8 lg:p-12">
+            <Suspense fallback={<ProfileFormSkeleton />}>
+              {tab === "profile" && <ProfileSettings profile={profile} />}
+            </Suspense>
+            <Suspense fallback={<HistoryTabSkeleton />}>
+              {tab === "history" && <HistoryTab />}
+            </Suspense>
+            <Suspense fallback={<InfoTabSkeleton />}>
+              {tab === "favorites" && <FavoritesTab />}
+            </Suspense>
+            <Suspense fallback={<InfoTabSkeleton />}>
+              {tab === "add-business" && <AddBusinessTab />}
+            </Suspense>
+            <Suspense fallback={<InfoTabSkeleton />}>
+              {tab === "security" && <SecurityTab />}
+            </Suspense>
           </div>
         </div>
-        <p
-          className={`text-xl uppercase sm:text-xl md:text-xl lg:text-3xl font-bold transition-all duration-500 ${
-            tab === "settings" ? "md:ml-auto md:pl-0" : "md:pl-8 lg:pl-20"
-          }`}
-        >
-          {tabNames[tab as keyof typeof tabNames]}
-        </p>
       </div>
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
-        <Tabs
-          value={tab}
-          orientation="vertical"
-          onValueChange={(value) => {
-            setSearchParams((params) => {
-              params.set("section", value);
-              return params;
-            });
-          }}
-          className="w-full flex flex-col lg:flex-row"
-        >
-          <div>
-            <TabsList className="flex flex-col items-start w-full lg:w-80 mb-4 lg:mb-0 lg:self-start ">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="w-full justify-start p-4 text-md gap-3"
-                  >
-                    <Icon className="w-5 h-5" />
-                    {tab.label}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
+
+      {/* Mobile Layout */}
+      <div className="lg:hidden">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-20 backdrop-blur-md bg-background/95 border-b border-slate-200">
+          <div className="flex items-center gap-4 p-4">
+            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-70">
+                <ProfileMobileNav
+                  currentSection={tab}
+                  onSectionChange={handleSectionChange}
+                  onClose={() => setIsMobileNavOpen(false)}
+                  profile={profile}
+                />
+              </SheetContent>
+            </Sheet>
+
+            <h1 className="text-lg font-semibold text-slate-900 tracking-tight">
+              {t("tabs.profile")}
+            </h1>
           </div>
+        </div>
 
-          {/*====== Info Tab ===== */}
-          <TabsContent value="info" className="flex-1">
-            <Suspense fallback={<InfoTabSkeleton />}>
-              <InfoTab
-                profile={profile}
-                isFullnameExist={isFullnameExist}
-                fullName={fullName}
-                verificationStatus={verificationStatus}
-              />
-            </Suspense>
-          </TabsContent>
-
-          {/* =====History Tab===== */}
-          <TabsContent value="history" className="flex-1">
-            <Suspense fallback={<HistoryTabSkeleton />}>
-              <HistoryTab />
-            </Suspense>
-          </TabsContent>
-
-          {/* =====ProfileForm Tab===== */}
-          <TabsContent value="settings" className="flex-1">
-            <Suspense fallback={<ProfileFormSkeleton />}>
-              <ProfileForm />
-            </Suspense>
-          </TabsContent>
-        </Tabs>
+        {/* Content */}
+        <div className="p-4">
+          <Suspense fallback={<ProfileFormSkeleton />}>
+            {tab === "profile" && <ProfileSettings profile={profile} />}
+          </Suspense>
+          <Suspense fallback={<HistoryTabSkeleton />}>
+            {tab === "history" && <HistoryTab />}
+          </Suspense>
+          <Suspense fallback={<InfoTabSkeleton />}>
+            {tab === "favorites" && <FavoritesTab />}
+          </Suspense>
+          <Suspense fallback={<InfoTabSkeleton />}>
+            {tab === "add-business" && <AddBusinessTab />}
+          </Suspense>
+          <Suspense fallback={<InfoTabSkeleton />}>
+            {tab === "security" && <SecurityTab />}
+          </Suspense>
+        </div>
       </div>
     </main>
   );

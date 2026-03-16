@@ -1,11 +1,17 @@
 {
   "tabs": {
+    "profile": "Profile",
     "info": "Personal Information",
     "history": "History",
     "settings": "Account Settings",
-    "paymentMethods": "Payment Methods"
+    "favorites": "Favorites",
+    "paymentMethods": "Payment Methods",
+    "addBusiness": "Add Business",
+    "security": "Security"
   },
   "infoTab": {
+    "personalInfo": "Personal Information",
+    "contactInfo": "Contact Information",
     "username": "Username",
     "email": "Email",
     "fullName": "Full Name",
@@ -79,5 +85,33 @@
     "whyDescription": "Verification ensures security and quality on our platform.",
     "close": "Close",
     "goToVerification": "Go to Verification"
+  },
+  "favorites": {
+    "noFavoritesTitle": "No Favorites Yet",
+    "noFavoritesDescription": "Start saving your favorite products, services, and bookings.",
+    "exploreServices": "Explore Services"
+  },
+  "addBusiness": {
+    "title": "Add Your Business",
+    "description": "Start providing services or selling products to customers",
+    "button": "Create Business"
+  },
+  "security": {
+    "title": "Account Security",
+    "changePassword": {
+      "title": "Change Password",
+      "description": "Update your password to keep your account secure",
+      "button": "Change Password"
+    },
+    "changeEmail": {
+      "title": "Change Email",
+      "description": "Update your email address",
+      "button": "Change Email"
+    },
+    "deleteAccount": {
+      "title": "Delete Account",
+      "description": "Permanently delete your account and all data",
+      "button": "Delete Account"
+    }
   }
 }
