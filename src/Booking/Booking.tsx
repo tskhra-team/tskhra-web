@@ -45,16 +45,16 @@ export default function Booking() {
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-red-400/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 py-8 lg:py-12 max-w-400 mx-auto">
+      <div className="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 py-8 lg:py-12 container mx-auto">
         {/* Categories Sidebar */}
-        <div className={`w-full lg:w-72 xl:w-80 lg:shrink-0 relative z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
-          <div className="sticky top-8">
+        <div className={`w-full lg:w-64 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
+          <div className="overflow-visible">
             <CategoriesLayout platform="booking" />
           </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 w-full max-w-5xl mx-auto lg:mx-0 relative z-0" ref={catalogRef}>
+        <div className="flex-1 w-full lg:max-w-none mx-auto lg:mx-0 relative z-0 min-w-0" ref={catalogRef}>
           {/* Show Categories Button - only visible on mobile when categories are hidden */}
           {hideCategoriesOnMobile && (
             <Button

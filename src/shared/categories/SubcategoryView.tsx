@@ -44,7 +44,7 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
       {subcategories.map((subcategory, index) => {
         const translationKey = categoryNameToKey[subcategory.name];
         const displayName = translationKey ? t(translationKey) : subcategory.name;
@@ -55,7 +55,7 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
           <div
             key={subcategory.name}
             onClick={() => handleSubcategoryClick(subcategory.name)}
-            className="group relative rounded-2xl bg-white p-4 sm:p-5 transition-all duration-500 ease-out flex flex-col text-left cursor-pointer hover:shadow-2xl animate-in fade-in slide-in-from-bottom-2 border overflow-hidden"
+            className="group relative rounded-2xl bg-white px-2 py-2 sm:px-3 sm:py-3 min-h-28 transition-all duration-500 ease-out flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-2xl animate-in fade-in slide-in-from-bottom-2 border overflow-hidden"
             style={{
               borderColor: isActive ? colors.active.icon : 'rgba(255, 255, 255, 0.4)',
               backgroundColor: isActive ? colors.active.background : 'rgba(255, 255, 255, 0.98)',
@@ -104,45 +104,47 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
                 animation: 'shimmer 2s ease-in-out infinite'
               }}
             />
-            {subcategory.imageUrl && (
-              <div className="relative mb-3 sm:mb-4 flex-1 overflow-hidden rounded-xl shadow-lg">
-                <div
-                  className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 z-10"
-                />
-                <img
-                  src={subcategory.imageUrl}
-                  alt={displayName}
-                  loading="lazy"
-                  width={300}
-                  height={200}
-                  className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-2 brightness-95 group-hover:brightness-110"
-                />
-              </div>
-            )}
-            {subcategory.iconUrl && !subcategory.imageUrl && (
-              <div className="relative mb-3 sm:mb-4 flex-1 flex items-center justify-center rounded-xl bg-linear-to-br from-gray-50 to-gray-100 p-6 transition-all duration-700 ease-out group-hover:from-white group-hover:to-gray-50 shadow-inner">
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500"
-                  style={{
-                    background: `radial-gradient(circle, ${colors.active.icon} 0%, transparent 70%)`
-                  }}
-                />
-                <img
-                  src={subcategory.iconUrl}
-                  alt=""
-                  loading="lazy"
-                  width={64}
-                  height={64}
-                  className="h-12 w-12 sm:h-16 sm:w-16 transition-all duration-700 group-hover:scale-125 group-hover:rotate-12 relative z-10 drop-shadow-md"
-                />
-              </div>
-            )}
-            <h4
-              className="text-xs sm:text-sm font-semibold transition-all duration-300 relative z-10 tracking-wide"
-              style={{ color: isActive ? colors.active.text : colors.inactive.text }}
-            >
-              {displayName}
-            </h4>
+            <div className="flex flex-col items-center gap-1.5">
+              {subcategory.imageUrl && (
+                <div className="relative w-10 h-10 sm:w-12 sm:h-12 overflow-hidden rounded-xl shadow-lg shrink-0">
+                  <div
+                    className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 z-10"
+                  />
+                  <img
+                    src={subcategory.imageUrl}
+                    alt={displayName}
+                    loading="lazy"
+                    width={80}
+                    height={80}
+                    className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-110 brightness-95 group-hover:brightness-110"
+                  />
+                </div>
+              )}
+              {subcategory.iconUrl && !subcategory.imageUrl && (
+                <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-linear-to-br from-gray-50 to-gray-100 transition-all duration-700 ease-out group-hover:from-white group-hover:to-gray-50 shadow-inner shrink-0">
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500"
+                    style={{
+                      background: `radial-gradient(circle, ${colors.active.icon} 0%, transparent 70%)`
+                    }}
+                  />
+                  <img
+                    src={subcategory.iconUrl}
+                    alt=""
+                    loading="lazy"
+                    width={32}
+                    height={32}
+                    className="h-6 w-6 sm:h-8 sm:w-8 transition-all duration-700 group-hover:scale-110 relative z-10 drop-shadow-md"
+                  />
+                </div>
+              )}
+              <h4
+                className="text-[10px] sm:text-[11px] lg:text-xs font-semibold transition-all duration-300 relative z-10 leading-tight break-normal whitespace-normal w-full"
+                style={{ color: isActive ? colors.active.text : colors.inactive.text }}
+              >
+                {displayName}
+              </h4>
+            </div>
             {/* Bottom accent bar */}
             <div
               className="absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-all duration-500"
