@@ -52,10 +52,9 @@ export default function IndividualBusinessForm() {
     setValue,
     formState: { errors },
   } = useForm<IndividualBusinessFormData>({
-    resolver: yupResolver(createIndividualBusinessSchema(t)) as any,
+    resolver: yupResolver(createIndividualBusinessSchema(t)),
     defaultValues: {
       businessName: "",
-      callType: undefined,
       city: "",
       addressDetails: "",
       description: "",
@@ -66,7 +65,6 @@ export default function IndividualBusinessForm() {
       mainCategory: "",
       subCategory: "",
       workTimes: [],
-      restTimes: [],
       info: {
         phoneNumber: "",
         facebookUrl: "",
@@ -80,63 +78,75 @@ export default function IndividualBusinessForm() {
 
   const onSubmit = (data: IndividualBusinessFormData) => {
     // Show loading modal
-    showModal("pending", t("modal:titles.uploadingPhotos"), t("modal:messages.pleaseWait"));
+    showModal(
+      "pending",
+      t("modal:titles.creatingBusiness"),
+      t("modal:messages.pleaseWait"),
+    );
 
-    // Step 1: Upload photos
-    const allPhotos = [
-      ...data.images.businessPhoto,
-      ...data.images.galleryPhoto,
-    ];
+    // Step 1: Create business
+    const businessData = {
+      businessName: data.businessName,
+      callType: data.callType,
+      city: data.city,
+      addressDetails: data.addressDetails,
+      description: data.description,
+      mainCategory: data.mainCategory,
+      subCategory: data.subCategory,
+      workTimes: data.workTimes,
+      restTimes: data.restTimes,
+      info: data.info,
+    };
 
-    uploadPhotos(allPhotos, {
-      onSuccess: (photoResult) => {
-        // Update modal for creating business
-        showModal("pending", t("modal:titles.creatingBusiness"), t("modal:messages.almostDone"));
+    createBusiness(businessData as any, {
+      onSuccess: (result) => {
+        // Step 2: Save businessId to localStorage
+        const businessId = result.businessId;
+        localStorage.setItem("businessId", businessId);
 
-        // Step 2: Create business with photo IDs
-        const businessData = {
-          businessName: data.businessName,
-          callType: data.callType,
-          city: data.city,
-          addressDetails: data.addressDetails,
-          description: data.description,
-          mainCategory: data.mainCategory,
-          subCategory: data.subCategory,
-          workTimes: data.workTimes,
-          restTimes: data.restTimes,
-          info: data.info,
-          mainPhotoId: photoResult.mainPhotoId,
-          galleryPhotoIds: photoResult.galleryPhotoIds,
-        };
+        // Update modal for uploading photos
+        showModal(
+          "pending",
+          t("modal:titles.uploadingPhotos"),
+          t("modal:messages.almostDone"),
+        );
 
-        createBusiness(businessData as any, {
-          onSuccess: (result) => {
-            // Step 3: Save businessId to localStorage and navigate to step 2
-            closeModal();
-            localStorage.setItem("businessId", result.businessId);
-            showModal(
-              "success",
-              t("modal:titles.congratulations"),
-              t("modal:messages.businessCreatedSuccess"),
-              t("modal:buttons.addServices"),
-              () => {
-                navigate(
-                  "/create-business?business=booking&type=individual&step=2",
-                );
-                scrollToTop();
-              },
-            );
+        // Step 3: Upload photos with businessId
+        const allPhotos = [
+          ...data.images.businessPhoto,
+          ...data.images.galleryPhoto,
+        ];
+
+        uploadPhotos(
+          { data: allPhotos, businessId },
+          {
+            onSuccess: () => {
+              // Step 4: Show success and navigate
+              closeModal();
+              showModal(
+                "success",
+                t("modal:titles.congratulations"),
+                t("modal:messages.businessCreatedSuccess"),
+                t("modal:buttons.addServices"),
+                () => {
+                  navigate(
+                    "/create-business?business=booking&type=individual&step=2",
+                  );
+                  scrollToTop();
+                },
+              );
+            },
+            onError: () => {
+              closeModal();
+              showModal(
+                "error",
+                t("modal:titles.somethingWentWrong"),
+                t("booking:messages.error"),
+                t("modal:buttons.tryAgain"),
+              );
+            },
           },
-          onError: () => {
-            closeModal();
-            showModal(
-              "error",
-              t("modal:titles.somethingWentWrong"),
-              t("booking:messages.error"),
-              t("modal:buttons.tryAgain"),
-            );
-          },
-        });
+        );
       },
       onError: () => {
         closeModal();
