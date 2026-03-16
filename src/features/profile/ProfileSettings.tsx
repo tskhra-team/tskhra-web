@@ -54,12 +54,16 @@ import { toast } from "sonner";
 
 type ProfileSettingsProps = {
   profile: ProfileType | undefined;
+  isEditMode: boolean;
+  onSetIsEditMode: (value: boolean) => void;
 };
 
 export default function ProfileSettings({
   profile: _initialProfile,
+  isEditMode,
+  onSetIsEditMode,
 }: ProfileSettingsProps) {
-  const [isEditMode, setIsEditMode] = useState(false);
+  // const [isEditMode, onSetIsEditMode] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: profile, refetch } = useGetProfile();
@@ -197,7 +201,7 @@ export default function ProfileSettings({
   };
 
   const handleSuccessFinish = () => {
-    setIsEditMode(false);
+    onSetIsEditMode(false);
     refetch();
     queryClient.invalidateQueries({ queryKey: ["getUser"] });
     toast.success(t("form.messages.updateSuccess"), { position: "top-center" });
@@ -324,7 +328,7 @@ export default function ProfileSettings({
             ) : !isEditMode ? (
               <Button
                 type="button"
-                onClick={() => setIsEditMode(true)}
+                onClick={() => onSetIsEditMode(true)}
                 variant="outline"
                 className="hover:bg-slate-50 hover:border-indigo-400"
               >
@@ -338,7 +342,7 @@ export default function ProfileSettings({
                   variant="outline"
                   className="hover:bg-slate-50"
                   onClick={() => {
-                    setIsEditMode(false);
+                    onSetIsEditMode(false);
                     reset();
                     setPreviewAvatar(null);
                   }}

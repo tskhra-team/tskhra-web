@@ -29,10 +29,37 @@ export default function Profile() {
   const { t } = useTranslation("profile");
   const tab = searchParams.get("section") || "profile";
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleSectionChange = (section: string) => {
     setSearchParams({ section });
   };
+
+  const tabContent = (
+    <>
+      <Suspense fallback={<ProfileFormSkeleton />}>
+        {tab === "profile" && (
+          <ProfileSettings
+            profile={profile}
+            isEditMode={isEditMode}
+            onSetIsEditMode={setIsEditMode}
+          />
+        )}
+      </Suspense>
+      <Suspense fallback={<HistoryTabSkeleton />}>
+        {tab === "history" && <HistoryTab />}
+      </Suspense>
+      <Suspense fallback={<InfoTabSkeleton />}>
+        {tab === "favorites" && <FavoritesTab />}
+      </Suspense>
+      <Suspense fallback={<InfoTabSkeleton />}>
+        {tab === "add-business" && <AddBusinessTab />}
+      </Suspense>
+      <Suspense fallback={<InfoTabSkeleton />}>
+        {tab === "security" && <SecurityTab />}
+      </Suspense>
+    </>
+  );
 
   return (
     <main className="min-h-screen bg-background">
@@ -48,23 +75,7 @@ export default function Profile() {
         {/* Content Area */}
         <div className="flex-1 lg:ml-70">
           {/* Tab Content */}
-          <div className="p-8 lg:p-12">
-            <Suspense fallback={<ProfileFormSkeleton />}>
-              {tab === "profile" && <ProfileSettings profile={profile} />}
-            </Suspense>
-            <Suspense fallback={<HistoryTabSkeleton />}>
-              {tab === "history" && <HistoryTab />}
-            </Suspense>
-            <Suspense fallback={<InfoTabSkeleton />}>
-              {tab === "favorites" && <FavoritesTab />}
-            </Suspense>
-            <Suspense fallback={<InfoTabSkeleton />}>
-              {tab === "add-business" && <AddBusinessTab />}
-            </Suspense>
-            <Suspense fallback={<InfoTabSkeleton />}>
-              {tab === "security" && <SecurityTab />}
-            </Suspense>
-          </div>
+          <div className="p-8 lg:p-12">{tabContent}</div>
         </div>
       </div>
 
@@ -96,23 +107,7 @@ export default function Profile() {
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <Suspense fallback={<ProfileFormSkeleton />}>
-            {tab === "profile" && <ProfileSettings profile={profile} />}
-          </Suspense>
-          <Suspense fallback={<HistoryTabSkeleton />}>
-            {tab === "history" && <HistoryTab />}
-          </Suspense>
-          <Suspense fallback={<InfoTabSkeleton />}>
-            {tab === "favorites" && <FavoritesTab />}
-          </Suspense>
-          <Suspense fallback={<InfoTabSkeleton />}>
-            {tab === "add-business" && <AddBusinessTab />}
-          </Suspense>
-          <Suspense fallback={<InfoTabSkeleton />}>
-            {tab === "security" && <SecurityTab />}
-          </Suspense>
-        </div>
+        <div className="p-4">{tabContent}</div>
       </div>
     </main>
   );
