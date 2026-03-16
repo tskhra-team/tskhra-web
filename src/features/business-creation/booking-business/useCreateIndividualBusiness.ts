@@ -32,8 +32,6 @@ type CreateBusinessRequest = {
     instagramUrl?: string;
     facebookUrl?: string;
   };
-  mainPhotoId: string;
-  galleryPhotoIds: string[];
 };
 
 const createIndividualBusiness = async (data: CreateBusinessRequest) => {

@@ -7,22 +7,28 @@ interface UploadPhotoResponse {
   id: string;
 }
 
-interface UploadBusinessPhotosResult {
-  mainPhotoId: string;
-  galleryPhotoIds: string[];
+interface UploadPhotoRequest {
+  data: File[];
+  businessId: string;
 }
 
-const uploadBusinessPhotos = async (
-  data: File[],
-): Promise<UploadBusinessPhotosResult> => {
-  const uploadPromises = data.map(async (file) => {
+const uploadBusinessPhotos = async ({
+  data,
+  businessId,
+}: UploadPhotoRequest): Promise<string[]> => {
+  const uploadPromises = data.map(async (file, index) => {
     const formData = new FormData();
     formData.append("file", file);
 
+    const isMainPhoto = index === 0;
+
     const response = await privateInstance.post<UploadPhotoResponse>(
-      "/business/images",
+      `business/${businessId}/images`,
       formData,
       {
+        params: {
+          isMain: isMainPhoto,
+        },
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -34,18 +40,11 @@ const uploadBusinessPhotos = async (
 
   const photoIds = await Promise.all(uploadPromises);
 
-  return {
-    mainPhotoId: photoIds[0],
-    galleryPhotoIds: photoIds.slice(1),
-  };
+  return photoIds;
 };
 
 const useUploadBusinessPhotos = () => {
-  return useMutation<
-    UploadBusinessPhotosResult,
-    AxiosError<ErrorResponse>,
-    File[]
-  >({
+  return useMutation<string[], AxiosError<ErrorResponse>, UploadPhotoRequest>({
     mutationFn: uploadBusinessPhotos,
     mutationKey: ["uploaded-photos"],
   });
