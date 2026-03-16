@@ -140,7 +140,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .of(workTimesSchema)
       .min(1, t("booking:validation.workTimesMin"))
       .required(),
-    restTimes: yup.array().of(workTimesSchema).optional().default(null),
+    restTimes: yup.array().of(workTimesSchema).optional().default([]),
     info: infoSchema.required(),
     images: yup.object({
       businessPhoto: yup
