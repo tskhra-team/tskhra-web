@@ -20,6 +20,7 @@ import useDeleteAvatar from "@/features/profile/hooks/useDeleteAvatar";
 import useGetProfile from "@/features/profile/hooks/useGetProfile";
 import useUnVerify from "@/features/profile/hooks/useUnVerify";
 import useUpdateProfile from "@/features/profile/hooks/useUpdateProfile";
+import useUploadAvatar from "@/features/profile/hooks/useUploadAvatar";
 import useVerify from "@/features/profile/hooks/useVerify";
 import {
   MAX_FILE_SIZE,
@@ -27,7 +28,6 @@ import {
   SUPPORTED_FORMATS,
   type ProfileFormData,
 } from "@/features/profile/profileSchema";
-import useUploadAvatar from "@/features/profile/hooks/useUploadAvatar";
 import VerifyDialog from "@/features/profile/VerifyDialog";
 import queryClient from "@/query/queryClient";
 import type { ProfileType } from "@/types";
@@ -122,7 +122,7 @@ export default function ProfileSettings({
       reset({
         firstName: profile.firstName ?? "",
         lastName: profile.lastName ?? "",
-        gender: profile.gender as "MALE" | "FEMALE" | "OTHER" | undefined,
+        gender: profile.gender as "MALE" | "FEMALE" | "",
         birthDate: profile.birthDate
           ? new Date(profile.birthDate)
           : new Date(new Date().getFullYear() - 16, 11),
@@ -437,9 +437,6 @@ export default function ProfileSettings({
                         </SelectItem>
                         <SelectItem value="MALE">
                           {t("form.gender.male")}
-                        </SelectItem>
-                        <SelectItem value="OTHER">
-                          {t("form.gender.other")}
                         </SelectItem>
                       </SelectContent>
                     </Select>

@@ -45,7 +45,7 @@ const profileSchema = yup.object({
 
   gender: yup
     .string()
-    .oneOf(["MALE", "FEMALE", "OTHER", ""], "Please select a valid gender")
+    .oneOf(["MALE", "FEMALE", ""], "Please select a valid gender")
     .default(""),
 
   birthDate: yup
@@ -88,7 +88,7 @@ const profileSchema = yup.object({
 type ProfileFormData = {
   firstName: string;
   lastName: string;
-  gender: "" | "MALE" | "FEMALE" | "OTHER";
+  gender: "" | "MALE" | "FEMALE";
   birthDate: Date;
   phoneCountryCode: string;
   phoneNumber: string;

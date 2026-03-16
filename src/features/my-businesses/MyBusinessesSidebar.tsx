@@ -24,24 +24,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
-// const teams = [
-//   {
-//     name: "Acme Inc",
-//     logo: GalleryVerticalEnd,
-//     plan: "Enterprise",
-//   },
-//   {
-//     name: "Acme Corp.",
-//     logo: AudioWaveform,
-//     plan: "Startup",
-//   },
-//   {
-//     name: "Evil Corp.",
-//     logo: Command,
-//     plan: "Free",
-//   },
-// ];
-
 export function MyBusinessesSidebar() {
   const { t } = useTranslation("dashboard");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -92,15 +74,16 @@ export function MyBusinessesSidebar() {
           {isBusinessChoosed && (
             <>
               <SidebarGroupLabel>{t("navigation.dashboard")}</SidebarGroupLabel>
-              <SidebarGroupContent>
+              <SidebarGroupContent className="mb-5">
                 <SidebarMenu>
                   {menuItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         onClick={() => handleSectionClick(item.section)}
                         isActive={searchParams.get("section") === item.section}
+                        className="h-10 text-base cursor-pointer"
                       >
-                        <item.icon className="h-4 w-4" />
+                        <item.icon className="h-5 w-5" />
                         <span>{item.title}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
