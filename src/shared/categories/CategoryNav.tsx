@@ -20,7 +20,7 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
   const [, setSearchParams] = useSearchParams();
 
   return (
-    <nav className="w-full lg:w-64 rounded-2xl border p-4">
+    <nav className="w-full lg:w-64 rounded-2xl border p-4 overflow-visible">
       <ul className="space-y-1">
         {categories.map((category, index) => {
           const translationKey = categoryNameToKey[category.name];
