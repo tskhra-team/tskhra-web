@@ -47,8 +47,8 @@ export default function Booking() {
 
       <div className="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 py-8 lg:py-12 container mx-auto">
         {/* Categories Sidebar */}
-        <div className={`w-full lg:w-64 xl:w-72 lg:shrink-0 relative z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
-          <div className="sticky top-8">
+        <div className={`w-full lg:w-64 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
+          <div className="overflow-visible">
             <CategoriesLayout platform="booking" />
           </div>
         </div>
