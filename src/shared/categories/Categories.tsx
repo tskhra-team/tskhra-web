@@ -127,7 +127,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       {/* Desktop subcategory panel - hidden on mobile */}
       {activeCategory && hoverEnabled && (
         <div
-          className="hidden lg:block absolute left-full ml-6 min-w-175 max-h-96 overflow-y-auto rounded-3xl border-2 p-8 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.4)] xl:min-w-250 animate-in fade-in slide-in-from-left-6 duration-400 backdrop-blur-md"
+          className="hidden lg:block absolute left-full ml-4 min-w-125 max-w-150 xl:min-w-150 xl:max-w-175 max-h-96 overflow-y-auto rounded-3xl border-2 p-6 xl:p-8 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.4)] animate-in fade-in slide-in-from-left-6 duration-400 backdrop-blur-md"
           style={{
             background: `linear-gradient(145deg, ${colors.subcategoryPanel.background}f5 0%, ${colors.subcategoryPanel.background}e8 50%, ${colors.subcategoryPanel.background}dd 100%)`,
             borderColor: 'rgba(255, 255, 255, 0.25)',
