@@ -1,10 +1,10 @@
 import BusinessCatalog from "@/Booking/BusinessCatalog";
-import CategoriesLayout from "@/shared/categories/Categories";
-import Slider from "./../shared/slider/slider";
-import { useRef, useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import CategoriesLayout from "@/shared/categories/Categories";
 import { Filter } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import Slider from "./../shared/slider/slider";
 
 export default function Booking() {
   const catalogRef = useRef<HTMLDivElement>(null);
@@ -45,31 +45,36 @@ export default function Booking() {
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-red-400/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 py-8 lg:py-12 container mx-auto">
-        {/* Categories Sidebar */}
-        <div className={`w-full lg:w-64 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
-          <div className="overflow-visible">
-            <CategoriesLayout platform="booking" />
+      <div className="relative z-10">
+        {/* Hero Section with Categories and Slider */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-16 px-4 sm:px-4 lg:px-0 pt-0 lg:pt-12 pb-8 container mx-auto">
+          {/* Categories Sidebar */}
+          <div className={`w-full lg:w-60 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
+            <div className="w-full" >
+              <CategoriesLayout platform="booking" />
+            </div>
+          </div>
+
+          {/* Slider Area */}
+          <div className="flex-1 w-full max-w-full lg:max-w-2xl xl:max-w-none mx-auto lg:mx-0 relative z-0 min-w-0 overflow-hidden">
+            {/* Show Categories Button - only visible on mobile when categories are hidden */}
+            {hideCategoriesOnMobile && (
+              <Button
+                onClick={() => setHideCategoriesOnMobile(false)}
+                className="mb-4 lg:hidden flex items-center gap-2"
+                variant="outline"
+              >
+                <Filter className="w-4 h-4" />
+                Show Categories
+              </Button>
+            )}
+
+            <Slider />
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 w-full lg:max-w-none mx-auto lg:mx-0 relative z-0 min-w-0" ref={catalogRef}>
-          {/* Show Categories Button - only visible on mobile when categories are hidden */}
-          {hideCategoriesOnMobile && (
-            <Button
-              onClick={() => setHideCategoriesOnMobile(false)}
-              className="mb-4 lg:hidden flex items-center gap-2"
-              variant="outline"
-            >
-              <Filter className="w-4 h-4" />
-              Show Categories
-            </Button>
-          )}
-
-          <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/60 p-6 sm:p-8 lg:p-10 mb-8">
-            <Slider />
-          </div>
+        {/* Full-width Catalog Section */}
+        <div className="px-4 sm:px-6 lg:px-0 pb-8 container mx-auto" ref={catalogRef}>
           <BusinessCatalog />
         </div>
       </div>

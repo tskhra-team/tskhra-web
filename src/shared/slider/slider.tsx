@@ -99,16 +99,16 @@ function BannerSlider() {
         }
       `}</style>
 
-      <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/40 backdrop-blur-sm">
+      <div className="relative rounded-3xl overflow-hidden">
         <Slider {...settings}>
           {banners.map((banner, index) => (
-            <div key={banner.id} className="relative w-full overflow-hidden focus:outline-none">
+            <div key={banner.id} className="relative w-full overflow-hidden focus:outline-none rounded-3xl">
               <div className="relative aspect-video sm:aspect-21/9">
                 <img
                   src={banner.image}
                   alt={`E-Commerce Banner ${index + 1}`}
                   loading={index === 0 ? "eager" : "lazy"}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-3xl"
                 />
 
                 {/* Subtle gradient overlay for depth */}
@@ -118,12 +118,6 @@ function BannerSlider() {
           ))}
         </Slider>
       </div>
-
-      {/* Corner accents */}
-      <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-blue-400/50 rounded-tl-2xl pointer-events-none" />
-      <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-blue-400/50 rounded-tr-2xl pointer-events-none" />
-      <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-orange-400/50 rounded-bl-2xl pointer-events-none" />
-      <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-orange-400/50 rounded-br-2xl pointer-events-none" />
     </div>
   );
 }

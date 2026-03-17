@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 import { categoryNameToKey } from "./categoryTranslations";
@@ -18,14 +19,20 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
   const { t } = useTranslation("categories");
   const colors = getPlatformColors(platform);
   const [, setSearchParams] = useSearchParams();
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const INITIAL_DISPLAY_COUNT = 9;
+  const hasMoreCategories = categories.length > INITIAL_DISPLAY_COUNT;
+  const displayedCategories = isExpanded ? categories : categories.slice(0, INITIAL_DISPLAY_COUNT);
 
   return (
-    <nav className="w-full lg:w-64 rounded-2xl border p-4 overflow-visible">
+    <nav className="w-full lg:w-64 rounded-2xl border p-4">
       <ul className="space-y-1">
-        {categories.map((category, index) => {
+        {displayedCategories.map((category) => {
+          const originalIndex = categories.findIndex(c => c.name === category.name);
           const translationKey = categoryNameToKey[category.name];
           const displayName = translationKey ? t(translationKey) : category.name;
-          const isActive = index === activeIndex;
+          const isActive = originalIndex === activeIndex;
 
           const categorySlug = category.name.toLowerCase().replace(/\s+/g, '-');
           const categoryUrl = platform ? `/${platform}/category/${categorySlug}` : '#';
@@ -35,13 +42,13 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
               {/* Desktop: Hover to show dropdown, Click to navigate */}
               <Link
                 to={categoryUrl}
-                onMouseEnter={() => onSelect(index)}
+                onMouseEnter={() => onSelect(originalIndex)}
                 onClick={(e) => {
                   e.preventDefault();
 
                   if (window.innerWidth < 1024) {
                     // On mobile, toggle accordion
-                    onSelect(isActive ? null : index);
+                    onSelect(isActive ? null : originalIndex);
                   } else {
                     // On desktop, filter by category in the catalog
                     setSearchParams({ category: categorySlug });
@@ -100,6 +107,24 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
           );
         })}
       </ul>
+
+      {/* Show More/Less Button */}
+      {hasMoreCategories && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full mt-3 py-2 flex items-center justify-center text-sm font-medium rounded-lg transition-all duration-200 hover:bg-gray-100"
+          style={{ color: colors.inactive.text }}
+        >
+          <svg
+            className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      )}
     </nav>
   );
 }

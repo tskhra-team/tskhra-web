@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronDown, Facebook, Instagram, Phone } from "lucide-react";
+import { ChevronDown, Facebook, Instagram, Phone, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { BusinessInfo } from "@/Booking/types/booking.types";
@@ -13,6 +13,17 @@ export default function ContactInformationCard({
 }: ContactInformationCardProps) {
   const { t } = useTranslation("booking");
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyPhoneNumber = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (info.phoneNumber) {
+      await navigator.clipboard.writeText(info.phoneNumber);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   if (!info.phoneNumber && !info.facebookUrl && !info.instagramUrl) {
     return null;
@@ -49,15 +60,28 @@ export default function ContactInformationCard({
         {showContactInfo && (
           <div className="space-y-2 mt-4 pt-4 border-t">
             {info.phoneNumber && (
-              <a
-                href={`tel:${info.phoneNumber}`}
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-300 group"
-              >
-                <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Phone className="w-4 h-4 text-primary" />
-                </div>
-                <span className="text-sm font-medium">{info.phoneNumber}</span>
-              </a>
+              <div className="flex items-center gap-2 p-3 rounded-xl hover:bg-primary/5 transition-all duration-300 group">
+                <a
+                  href={`tel:${info.phoneNumber}`}
+                  className="flex items-center gap-3 flex-1 hover:text-primary transition-colors"
+                >
+                  <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                    <Phone className="w-4 h-4 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium">{info.phoneNumber}</span>
+                </a>
+                <button
+                  onClick={copyPhoneNumber}
+                  className="p-2 rounded-lg hover:bg-primary/10 transition-all duration-200 group/copy"
+                  title={copied ? "Copied!" : "Copy phone number"}
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-muted-foreground group-hover/copy:text-primary" />
+                  )}
+                </button>
+              </div>
             )}
 
             {info.facebookUrl && (
