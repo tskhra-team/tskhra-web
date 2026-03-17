@@ -131,11 +131,15 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   }
 
   return (
-    <div className="p-6 space-y-6 ">
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">{t("dashboard:notifications.title")}</h2>
-        <span className="px-3 py-1 bg-muted text-muted-foreground text-sm font-semibold rounded-full">
-          {t("dashboard:notifications.pending", { count: notifications.length })}
+        <h2 className="sm:text-3xl font-bold tracking-tight">
+          {t("dashboard:notifications.title")}
+        </h2>
+        <span className="px-3 py-1 bg-muted text-muted-foreground text-xs  font-semibold rounded-full">
+          {t("dashboard:notifications.pending", {
+            count: notifications.length,
+          })}
         </span>
       </div>
 
@@ -148,12 +152,16 @@ export default function Notifications({ businessId }: MyNotificationProps) {
             <CardContent className="p-4 flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-0.5">{t("dashboard:notifications.labels.id")}</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">
+                    {t("dashboard:notifications.labels.id")}
+                  </p>
                   <p className="font-medium text-sm">{notification.id}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-muted-foreground mb-0.5">{t("dashboard:notifications.labels.date")}</p>
+                  <p className="text-xs text-muted-foreground mb-0.5">
+                    {t("dashboard:notifications.labels.date")}
+                  </p>
                   <p className="font-medium text-sm">{notification.date}</p>
                 </div>
 

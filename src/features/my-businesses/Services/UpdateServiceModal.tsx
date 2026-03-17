@@ -78,7 +78,7 @@ export default function UpdateServiceModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white relative rounded-2xl shadow-2xl p-8 w-180 max-w-[90vw] flex flex-col animate-in zoom-in-95 duration-200 border border-gray-100">
+      <div className="bg-white relative rounded-2xl shadow-2xl p-8 w-180 max-w-[90vw] flex flex-col animate-in zoom-in-95 duration-200 border border-gray-100 h-auto">
         <X
           onClick={() => onShowUpdateModal(false)}
           className="cursor-pointer top-0 right-0 h-5 w-5 absolute m-5"
@@ -88,10 +88,15 @@ export default function UpdateServiceModal({
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-5 mt-10 justify-start"
         >
-          <div className="flex gap-7">
+          <div className="flex lg:gap-7 lg:flex-row flex-col gap-6">
             <div className="flex flex-col w-full gap-2">
               <Label>{t("dashboard:services.form.serviceName")}</Label>
-              <Input placeholder={t("dashboard:services.form.serviceNamePlaceholder")} {...register("name")} />
+              <Input
+                placeholder={t(
+                  "dashboard:services.form.serviceNamePlaceholder",
+                )}
+                {...register("name")}
+              />
               {errors.name && (
                 <span className="text-red-500 text-sm">
                   {errors.name.message}
@@ -130,7 +135,10 @@ export default function UpdateServiceModal({
 
           <div className="flex flex-col gap-2">
             <Label>{t("dashboard:services.form.description")}</Label>
-            <Input placeholder={t("dashboard:services.form.descriptionPlaceholder")} {...register("description")} />
+            <Input
+              placeholder={t("dashboard:services.form.descriptionPlaceholder")}
+              {...register("description")}
+            />
             {errors.description && (
               <span className="text-red-500 text-sm">
                 {errors.description.message}

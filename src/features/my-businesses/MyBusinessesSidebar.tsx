@@ -99,7 +99,10 @@ export function MyBusinessesSidebar() {
               {t("navigation.language")}
             </SidebarGroupLabel>
             <div className="px-2">
-              <LanguageSwitcher className="w-full" style={{ height: "auto" }} />
+              <LanguageSwitcher
+                className="w-full border cursor-pointer"
+                style={{ height: "30px" }}
+              />
             </div>
           </div>
         </SidebarGroup>

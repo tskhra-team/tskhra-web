@@ -124,6 +124,8 @@ export default function WorkingSchedule({
 
     if (!workDay || !restDay) return null;
 
+    if (workDay.startTime === 0 && workDay.endTime === 0) return null;
+
     if (
       restDay.startTime < workDay.startTime ||
       restDay.endTime > workDay.endTime
@@ -133,6 +135,20 @@ export default function WorkingSchedule({
 
     if (restDay.startTime >= restDay.endTime) {
       return t("schedule.errors.restStartBeforeEnd");
+    }
+
+    return null;
+  };
+
+  const validateWorkTime = (dayKey: string) => {
+    const workDay = workTimes.find((t) => t.weekDay === dayKey);
+
+    if (!workDay) return null;
+
+    if ((workDay.startTime || workDay.endTime) === 0) return null;
+
+    if (workDay.startTime >= workDay.endTime) {
+      return t("schedule.errors.sameDayOnly");
     }
 
     return null;
@@ -155,6 +171,7 @@ export default function WorkingSchedule({
 
         const restErrors = getRestTimeError(dayCode);
         const validationError = validateRestTime(dayCode);
+        const workValidationError = validateWorkTime(dayCode);
 
         return (
           <div
@@ -222,6 +239,12 @@ export default function WorkingSchedule({
                   </div>
                 )}
               </div>
+
+              {workValidationError && (
+                <p className="text-xs text-red-500 font-bold pl-4">
+                  {workValidationError}
+                </p>
+              )}
 
               {dayErrors?.startTime && (
                 <p className="text-xs text-red-500 font-bold pl-4">
