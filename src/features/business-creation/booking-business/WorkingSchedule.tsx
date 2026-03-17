@@ -124,6 +124,9 @@ export default function WorkingSchedule({
 
     if (!workDay || !restDay) return null;
 
+    if (workDay.endTime === 0 && workDay.startTime > workDay.endTime)
+      return null;
+
     if (workDay.startTime === 0 && workDay.endTime === 0) return null;
 
     if (
@@ -146,6 +149,8 @@ export default function WorkingSchedule({
     if (!workDay) return null;
 
     if ((workDay.startTime || workDay.endTime) === 0) return null;
+    if (workDay.endTime === 0 && workDay.startTime > workDay.endTime)
+      return null;
 
     if (workDay.startTime >= workDay.endTime) {
       return t("schedule.errors.sameDayOnly");

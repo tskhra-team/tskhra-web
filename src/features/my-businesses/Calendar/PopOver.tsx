@@ -17,7 +17,7 @@ export default function PopOver({
   const { t } = useTranslation("dashboard");
   return (
     <div
-      className="absolute z-20 bg-white rounded-xl shadow-2xl border border-slate-200 p-5 w-80 animate-in fade-in zoom-in duration-200"
+      className="popover-content absolute z-20 bg-white rounded-xl shadow-2xl border border-slate-200 p-5 w-80 animate-in fade-in zoom-in duration-200"
       style={{
         top: `${popoverPos.top}px`,
         left: `${popoverPos.left}px`,
