@@ -1,8 +1,8 @@
 import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import useGetAllBookingBusinesses from "@/Booking/useGetAllBookingBusinesses";
+import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
-import { SmartImage } from "@/components/SmartImage";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { MapPin } from "lucide-react";
@@ -85,7 +85,7 @@ export default function BusinessCatalog() {
 
   if (isError) {
     return (
-      <div className="container mx-auto px-2 py-8">
+      <div>
         <div className="flex flex-col items-center justify-center min-h-100 gap-4">
           <p className="text-destructive text-lg">
             {t("catalog.errorLoading")}
@@ -99,8 +99,8 @@ export default function BusinessCatalog() {
   }
 
   return (
-    <div className="container mx-auto px-2 py-8" data-catalog>
-      <div className="mb-8">
+    <div data-catalog>
+      <div className="mb-8 mt-10 lg:mt-20">
         <h1 className="text-3xl font-bold mb-2">{t("catalog.title")}</h1>
         <p className="text-muted-foreground">{t("catalog.subtitle")}</p>
 

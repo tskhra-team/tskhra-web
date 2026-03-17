@@ -98,7 +98,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   return (
     <div
-      className="relative left-1 sm:left-2 lg:left-10 z-50"
+      className="relative left-1 sm:left-2  z-50"
       onMouseLeave={() => {
         if (hoverEnabled) {
           // Delay closing to allow mouse to move to subcategory panel
