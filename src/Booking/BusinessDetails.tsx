@@ -1,19 +1,19 @@
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
-import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
-import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
-import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
-import { getAvailableDays, getAllTimeslotsWithAvailability } from "@/Booking/utils/businessDetailsUtils";
+import BookingDialog from "@/Booking/components/BookingDialog";
+import BookNowCard from "@/Booking/components/BookNowCard";
+import BusinessDescription from "@/Booking/components/BusinessDescription";
+import BusinessGallery from "@/Booking/components/BusinessGallery";
+import BusinessHeader from "@/Booking/components/BusinessHeader";
+import ContactInformationCard from "@/Booking/components/ContactInformationCard";
+import LocationCard from "@/Booking/components/LocationCard";
+import ServicesList from "@/Booking/components/ServicesList";
+import WorkingHoursCard from "@/Booking/components/WorkingHoursCard";
 import { useBookingDialog } from "@/Booking/hooks/useBookingDialog";
 import { useImageGallery } from "@/Booking/hooks/useImageGallery";
-import BusinessHeader from "@/Booking/components/BusinessHeader";
-import BusinessGallery from "@/Booking/components/BusinessGallery";
-import BusinessDescription from "@/Booking/components/BusinessDescription";
-import ServicesList from "@/Booking/components/ServicesList";
-import BookNowCard from "@/Booking/components/BookNowCard";
-import ContactInformationCard from "@/Booking/components/ContactInformationCard";
-import WorkingHoursCard from "@/Booking/components/WorkingHoursCard";
-import LocationCard from "@/Booking/components/LocationCard";
-import BookingDialog from "@/Booking/components/BookingDialog";
+import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
+import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
+import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
+import { getAllTimeslotsWithAvailability, getAvailableDays } from "@/Booking/utils/businessDetailsUtils";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -163,6 +163,27 @@ export default function BusinessDetails() {
 
             <BusinessDescription description={business.description} />
 
+            {/* Mobile-only: Show contact info, working hours, location and book now before services */}
+            <div className="lg:hidden space-y-6">
+              
+              <BookNowCard
+                businessName={business.businessName}
+                onBookNowClick={scrollToServices}
+              />
+              <ContactInformationCard info={business.info} />
+
+              <WorkingHoursCard
+                workTimes={business.workTimes}
+                restTimes={business.restTimes}
+              />
+
+              <LocationCard
+                addressDetail={business.addressDetail}
+                city={business.city}
+              />
+
+            </div>
+
             <ServicesList
               ref={servicesRef}
               services={services}
@@ -171,8 +192,8 @@ export default function BusinessDetails() {
             />
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6 lg:sticky lg:top-8 h-fit">
+          {/* Sidebar - Desktop only */}
+          <div className="hidden lg:block space-y-6 lg:sticky lg:top-8 h-fit">
             <BookNowCard
               businessName={business.businessName}
               onBookNowClick={scrollToServices}
