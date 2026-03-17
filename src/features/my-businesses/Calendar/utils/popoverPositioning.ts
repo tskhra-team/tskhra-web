@@ -11,11 +11,13 @@ interface CalculatePopoverPositionParams {
 const POPOVER_WIDTH = 320;
 const POPOVER_ESTIMATED_HEIGHT = 230;
 const GAP = 12;
+const MOBILE_BREAKPOINT = 768;
 
 /**
  * Calculate optimal popover position based on event click
  * Ensures popover stays within container bounds
  * Adapts positioning based on calendar view type (day/week)
+ * On mobile, centers the popover on screen
  */
 export const calculatePopoverPosition = ({
   clickInfo,
@@ -24,6 +26,17 @@ export const calculatePopoverPosition = ({
 }: CalculatePopoverPositionParams): PopoverPosition => {
   let top = 0;
   let left = 0;
+
+  // Mobile: Center the popover
+  if (window.innerWidth < MOBILE_BREAKPOINT) {
+    left = (containerRect.width - POPOVER_WIDTH) / 2;
+    if (left < GAP) left = GAP;
+
+    top = (containerRect.height - POPOVER_ESTIMATED_HEIGHT) / 2;
+    if (top < GAP) top = GAP;
+
+    return { top, left };
+  }
 
   if (clickInfo.view.type === "timeGridDay") {
     // Day view: Position above/below event (vertical stacking)

@@ -125,7 +125,8 @@
     "endTimeNegative": "End time cannot be negative",
     "endTimeMax": "End time cannot exceed 24 hours",
     "endTimeInterval": "End time must be in 5-minute intervals",
-    "phoneNumberFormat": "Not valid phone number"
+    "phoneNumberFormat": "Not valid phone number",
+    "phoneNumberRequiered": "Phone number is requiered"
   },
   "messages": {
     "successPublished": "Service successfully published!",

@@ -138,7 +138,9 @@
       "service": "Service",
       "customer": "Customer",
       "startTime": "Start Time",
-      "duration": "Duration"
+      "duration": "Duration",
+      "m": "m",
+      "h": "h"
     },
     "buttons": {
       "reject": "Reject",

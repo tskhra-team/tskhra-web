@@ -116,6 +116,37 @@ export const CalendarWrapper = ({
     }
   }, [i18n.language]);
 
+  // Close popover when clicking outside
+  useEffect(() => {
+    if (!selectedBooking) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Don't close if clicking on popover itself
+      if (target.closest('.popover-content')) return;
+
+      // Don't close if clicking on a calendar event (it will switch to that event)
+      if (target.closest('.fc-event')) return;
+
+      // Close popover for any other click
+      closePopover();
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [selectedBooking, closePopover]);
+
+  // Apply backgroundColor to events (needed for month view with custom eventContent)
+  const eventDidMount = (info: any) => {
+    const bgColor = info.event.backgroundColor;
+    if (bgColor && info.el) {
+      info.el.style.backgroundColor = bgColor;
+      info.el.style.borderColor = info.event.borderColor || bgColor;
+      info.el.style.color = "white";
+    }
+  };
+
   return (
     <div className="relative h-175 p-4" ref={containerRef}>
       <FullCalendar
@@ -149,6 +180,7 @@ export const CalendarWrapper = ({
         slotMaxTime={maxTime}
         expandRows={true}
         eventContent={CalendarEventContent}
+        eventDidMount={eventDidMount}
         nowIndicator={true}
         slotLabelFormat={{
           hour: "2-digit",
@@ -163,10 +195,6 @@ export const CalendarWrapper = ({
         eventClassNames="cursor-pointer hover:brightness-95 transition-all shadow-sm rounded-md border-l-4"
         eventClick={handleEventClick}
       />
-
-      {selectedBooking && (
-        <div className="absolute inset-0 z-10" onClick={closePopover} />
-      )}
 
       {selectedBooking && (
         <PopOver

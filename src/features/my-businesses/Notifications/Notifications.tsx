@@ -105,9 +105,9 @@ export default function Notifications({ businessId }: MyNotificationProps) {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
-      return `${hours}h ${mins}m`;
+      return `${hours}h ${mins + t("dashboard:labels.m")}`;
     }
-    return `${mins}m`;
+    return `${mins + t("dashboard:notifications.labels.m")}`;
   };
 
   if (isLoading) {

@@ -1,3 +1,8 @@
+import type {
+  AvailableDay,
+  Service,
+  TimeSlot,
+} from "@/Booking/types/booking.types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Calendar, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { Service, AvailableDay, TimeSlot } from "@/Booking/types/booking.types";
 
 type BookingDialogProps = {
   open: boolean;
@@ -93,14 +97,16 @@ export default function BookingDialog({
               {availableDays.map((day) => (
                 <button
                   key={day.dateString}
-                  onClick={() => day.isAvailable && onDateSelect(day.dateString)}
+                  onClick={() =>
+                    day.isAvailable && onDateSelect(day.dateString)
+                  }
                   disabled={!day.isAvailable}
                   className={`p-3 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-1 ${
                     selectedDate === day.dateString
                       ? "border-primary bg-primary/10 text-primary"
                       : day.isAvailable
-                      ? "border-border hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
-                      : "border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                        ? "border-border hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                        : "border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                   }`}
                 >
                   <span className="text-xs text-muted-foreground">
@@ -137,14 +143,16 @@ export default function BookingDialog({
                   {availableTimeSlots.map((slot) => (
                     <button
                       key={slot.time}
-                      onClick={() => slot.isAvailable && onTimeSelect(slot.time)}
+                      onClick={() =>
+                        slot.isAvailable && onTimeSelect(slot.time)
+                      }
                       disabled={!slot.isAvailable}
                       className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
                         selectedTime === slot.time
                           ? "border-primary bg-primary/10 text-primary"
                           : slot.isAvailable
-                          ? "border-border hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
-                          : "border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                            ? "border-border hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                            : "border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50"
                       }`}
                     >
                       {slot.time}
@@ -164,19 +172,23 @@ export default function BookingDialog({
                 className="w-full h-12 text-base font-semibold bg-[#ff6439] hover:bg-[#100b2e] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                 size="lg"
                 style={{
-                  transition: 'all 0.5s ease-out',
-                  boxShadow: '0 4px 14px -2px rgba(255, 100, 57, 0.3)'
+                  transition: "all 0.5s ease-out",
+                  boxShadow: "0 4px 14px -2px rgba(255, 100, 57, 0.3)",
                 }}
                 onMouseEnter={(e) => {
                   if (!isBooking) {
-                    e.currentTarget.style.transform = 'scale(1.05) translateY(-4px) rotate(0.5deg)';
-                    e.currentTarget.style.boxShadow = '0 20px 50px -10px rgba(255, 100, 57, 0.6)';
+                    e.currentTarget.style.transform =
+                      "scale(1.05) translateY(-4px) rotate(0.5deg)";
+                    e.currentTarget.style.boxShadow =
+                      "0 20px 50px -10px rgba(255, 100, 57, 0.6)";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isBooking) {
-                    e.currentTarget.style.transform = 'scale(1) translateY(0) rotate(0deg)';
-                    e.currentTarget.style.boxShadow = '0 4px 14px -2px rgba(255, 100, 57, 0.3)';
+                    e.currentTarget.style.transform =
+                      "scale(1) translateY(0) rotate(0deg)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 14px -2px rgba(255, 100, 57, 0.3)";
                   }
                 }}
               >
@@ -184,7 +196,8 @@ export default function BookingDialog({
                 <div
                   className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
+                    background:
+                      "linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)",
                   }}
                 />
                 {isBooking ? (
