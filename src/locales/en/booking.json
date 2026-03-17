@@ -154,7 +154,8 @@
     },
     "errors": {
       "restWithinWork": "Rest time must be within working hours",
-      "restStartBeforeEnd": "Rest start must be before end"
+      "restStartBeforeEnd": "Rest start must be before end",
+      "sameDayOnly": "Working hours must be within the same day"
     }
   },
   "catalog": {

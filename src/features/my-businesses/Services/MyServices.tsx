@@ -142,10 +142,10 @@ export default function MyServices({ businessId }: MyServicesProps) {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">
+        <h2 className="sm:text-3xl font-bold tracking-tight">
           {t("dashboard:services.title")}
         </h2>
-        <span className="px-3 py-1 bg-muted text-muted-foreground text-sm font-semibold rounded-full">
+        <span className="px-3 py-1 bg-muted text-muted-foreground text-xs font-semibold rounded-full">
           {t("dashboard:services.count", { count: services?.length || 0 })}
         </span>
       </div>
@@ -161,7 +161,7 @@ export default function MyServices({ businessId }: MyServicesProps) {
         {services?.map((service) => (
           <Card key={service.id} className="flex flex-col">
             <CardHeader>
-              <CardTitle className="line-clamp-1 pb-2">
+              <CardTitle className="line-clamp-1 pb-1 leading-snug">
                 {service.name.length > 18
                   ? service.name.slice(0, 17) + "..."
                   : service.name}
@@ -184,7 +184,9 @@ export default function MyServices({ businessId }: MyServicesProps) {
                   <span className="text-muted-foreground">
                     {t("dashboard:services.labels.duration")}
                   </span>
-                  <span className="font-semibold">{service.duration} min</span>
+                  <span className="font-semibold">
+                    {service.duration} {t("dashboard:calendar.popover.min")}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">

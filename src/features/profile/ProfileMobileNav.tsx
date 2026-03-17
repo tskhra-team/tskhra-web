@@ -1,11 +1,20 @@
-import { UserCircle, History, Heart, LayoutDashboard, Check, Building2, Shield, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import type { ProfileType } from "@/types";
 import { useAuth } from "@/context/useAuth";
+import { cn } from "@/lib/utils";
+import type { ProfileType } from "@/types";
+import {
+  Building2,
+  Check,
+  Heart,
+  History,
+  LayoutDashboard,
+  LogOut,
+  Shield,
+  UserCircle,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 type ProfileMobileNavProps = {
   currentSection: string;
@@ -78,7 +87,7 @@ export default function ProfileMobileNav({
           className="w-full hover:border-indigo-400 hover:text-indigo-700 transition-all"
         >
           <LayoutDashboard className="w-4 h-4 mr-2" />
-          {t("common:navigation.dashboard")}
+          {t("common:auth.dashboard")}
         </Button>
       </div>
 
@@ -96,7 +105,7 @@ export default function ProfileMobileNav({
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 min-h-12",
               currentSection === item.value
                 ? "bg-linear-to-r from-indigo-600 to-indigo-700 text-white shadow-md"
-                : "text-slate-600 active:bg-slate-50 active:text-indigo-700"
+                : "text-slate-600 active:bg-slate-50 active:text-indigo-700",
             )}
           >
             <Icon className="w-5 h-5" />
@@ -112,7 +121,7 @@ export default function ProfileMobileNav({
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-600 active:bg-rose-50 active:text-rose-700 transition-all min-h-12"
         >
           <LogOut className="w-5 h-5" />
-          <span>Log Out</span>
+          <span> {t("common:auth.singOut")}</span>
         </button>
       </div>
     </nav>

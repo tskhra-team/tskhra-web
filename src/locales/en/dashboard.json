@@ -24,7 +24,8 @@
     "legend": {
       "currentDay": "CURRENT DAY",
       "restTime": "REST TIME",
-      "notWorkingPeriod": "NOT WORKING PERIOD"
+      "notWorkingPeriod": "NOT WORKING PERIOD",
+      "experience": "*We recommend using the desktop version for a better experience."
     },
     "title": "My Schedule",
     "buttons": {
@@ -43,7 +44,20 @@
       "sat": "Sat"
     },
     "months": {
-      "short": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      "short": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ],
       "full": {
         "0": "January",
         "1": "February",
