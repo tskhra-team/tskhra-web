@@ -70,7 +70,7 @@ export default function ProfileMobileNav({
             </h3>
             <p className="text-sm text-slate-500">@{profile?.userName}</p>
             {verificationStatus && (
-              <span className="inline-flex items-center gap-1 bg-linear-to-r from-emerald-500 to-emerald-600 text-white px-2 py-0.5 text-xs rounded-full font-medium mt-1">
+              <span className="inline-flex items-center gap-1 bg-linear-to-r from-emerald-700 to-emerald-800 text-white px-2 py-0.5 text-xs rounded-full font-medium mt-1">
                 <Check className="w-3 h-3" />
                 {t("infoTab.verified")}
               </span>

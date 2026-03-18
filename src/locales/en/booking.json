@@ -27,6 +27,7 @@
   },
   "form": {
     "businessName": "Your personal business name",
+    "businessNameEN": "Your personal business name (in english)",
     "subName": "Basic information about your business",
     "enterName": "Enter your business name",
     "callTypeLabel": "How do you plan to serve customers?",
@@ -41,10 +42,12 @@
     "subLocation": "Where can clients find you",
     "city": "City",
     "address": "Address",
+    "addressEN": "Address (in english)",
     "addressPlaceholder": "Enter address",
     "description": "Detailed description",
     "subDescription": "Describe your services and what makes your business unique",
     "descriptionPlaceholder": "Describe your service in detail",
+    "descriptionPlaceholderEN": "Describe your service in detail (in english)",
     "photos": "Photos",
     "photosSub": "Showcase your business with high-quality images",
     "mainImageSub": "This will be the main photo displayed for users",
@@ -60,12 +63,14 @@
     "scheduleHelp": "Choose working days and hours. Rest time is optional.",
     "services": "Services",
     "serviceName": "Service name",
+    "serviceNameEN": "Service name (in english)",
     "serviceNamePlaceholder": "e.g.: Hair cut",
     "price": "Price (₾)",
     "pricePlaceholder": "0.00",
     "duration": "Duration (minutes)",
     "durationPlaceholder": "30",
     "serviceDescription": "Description (optional)",
+    "serviceDescriptionEN": "Description in english (optional)",
     "serviceDescriptionPlaceholder": "Service description",
     "addService": "Add service",
     "addServiceSub": "Create a new service for your business",
@@ -150,8 +155,8 @@
       "restEnd": "End"
     },
     "buttons": {
-      "addRest": "+ Add rest",
-      "removeRest": "− Remove rest"
+      "addRest": "Add rest",
+      "removeRest": "Remove rest"
     },
     "errors": {
       "restWithinWork": "Rest time must be within working hours",

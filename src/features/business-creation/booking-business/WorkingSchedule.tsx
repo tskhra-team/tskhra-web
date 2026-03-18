@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Clock, Coffee, Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type WorkTimeType } from "./IndividualBusinessSchema";
 
@@ -181,146 +182,185 @@ export default function WorkingSchedule({
         return (
           <div
             key={dayCode}
-            className="border rounded-lg overflow-hidden bg-card"
+            className="border rounded-xl overflow-hidden bg-card transition-all duration-200 hover:shadow-sm"
           >
-            <div className="flex flex-col gap-2 p-4">
-              <div className="flex items-center gap-4">
+            <div className="p-4 md:p-5 space-y-3">
+              {/* Day Header */}
+              <div className="flex flex-col md:flex-row md:items-center gap-3">
                 <Button
                   type="button"
                   variant={isEnabled ? "default" : "outline"}
                   onClick={() => toggleDay(dayCode)}
-                  className="w-36 font-medium"
+                  className={`font-semibold h-17 md:shrink-0 ${
+                    isEnabled ? "w-full md:w-40" : "w-full"
+                  }`}
                 >
                   {t(`schedule.days.${dayCode}`)}
                 </Button>
 
                 {isEnabled && daySchedule && (
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        {t("schedule.labels.start")}
-                      </Label>
-                      <Input
-                        type="time"
-                        lang="en-GB"
-                        value={minutesToTime(daySchedule.startTime)}
-                        onChange={(e) =>
-                          updateWorkTime(dayCode, "startTime", e.target.value)
-                        }
-                        step="300"
-                        className={`w-32 ${dayErrors?.startTime ? "border-red-500" : ""}`}
-                      />
+                  <div className="flex flex-col md:flex-row md:items-center gap-3 flex-1">
+                    {/* Work Time Section */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                      <div className="flex items-center gap-2 flex-1 bg-background rounded-lg p-3 border">
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0 hidden sm:block" />
+                        <div className="flex items-center gap-2 flex-1">
+                          <Input
+                            type="time"
+                            lang="en-GB"
+                            value={minutesToTime(daySchedule.startTime)}
+                            onChange={(e) =>
+                              updateWorkTime(
+                                dayCode,
+                                "startTime",
+                                e.target.value,
+                              )
+                            }
+                            step="300"
+                            className={`flex-1 text-sm font-medium ${
+                              dayErrors?.startTime ? "border-red-500" : ""
+                            }`}
+                          />
+                          <span className="text-muted-foreground font-medium">
+                            —
+                          </span>
+                          <Input
+                            type="time"
+                            lang="en-GB"
+                            value={minutesToTime(daySchedule.endTime)}
+                            onChange={(e) =>
+                              updateWorkTime(dayCode, "endTime", e.target.value)
+                            }
+                            step="300"
+                            className={`flex-1 text-sm font-medium ${
+                              dayErrors?.endTime ? "border-red-500" : ""
+                            }`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Rest Time Toggle Button */}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleRestTime(dayCode)}
+                        className="whitespace-nowrap"
+                      >
+                        {hasRestTime ? (
+                          <>
+                            <X className="w-4 h-4 mr-1 inline" />
+                            {t("schedule.buttons.removeRest")}
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-4 h-4 mr-1 inline" />
+                            {t("schedule.buttons.addRest")}
+                          </>
+                        )}
+                      </Button>
                     </div>
-
-                    <span className="text-muted-foreground">—</span>
-
-                    <div className="flex items-center gap-2">
-                      <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        {t("schedule.labels.end")}
-                      </Label>
-                      <Input
-                        type="time"
-                        lang="en-GB"
-                        value={minutesToTime(daySchedule.endTime)}
-                        onChange={(e) =>
-                          updateWorkTime(dayCode, "endTime", e.target.value)
-                        }
-                        step="300"
-                        className={`w-32 ${dayErrors?.endTime ? "border-red-500" : ""}`}
-                      />
-                    </div>
-
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleRestTime(dayCode)}
-                      className="ml-auto text-xs cursor-pointer"
-                    >
-                      {hasRestTime
-                        ? t("schedule.buttons.removeRest")
-                        : t("schedule.buttons.addRest")}
-                    </Button>
                   </div>
                 )}
               </div>
 
-              {workValidationError && (
-                <p className="text-xs text-red-500 font-bold pl-4">
-                  {workValidationError}
-                </p>
-              )}
-
-              {dayErrors?.startTime && (
-                <p className="text-xs text-red-500 font-bold pl-4">
-                  {dayErrors.startTime.message}
-                </p>
-              )}
-              {dayErrors?.endTime && (
-                <p className="text-xs text-red-500 pl-4">
-                  {dayErrors.endTime.message}
-                </p>
-              )}
-            </div>
-
-            {isEnabled && hasRestTime && restDaySchedule && (
-              <div className="px-4 pb-4 pt-0">
-                <div className="bg-muted/50 rounded-md p-3 space-y-2">
-                  <Label className="text-xs font-semibold text-muted-foreground">
-                    {t("schedule.labels.restTime")}
-                  </Label>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 flex-1">
-                      <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        {t("schedule.labels.restStart")}
-                      </Label>
-                      <Input
-                        type="time"
-                        lang="en-GB"
-                        value={minutesToTime(restDaySchedule.startTime)}
-                        onChange={(e) =>
-                          updateRestTime(dayCode, "startTime", e.target.value)
-                        }
-                        step="300"
-                        className={`w-32 ${restErrors?.startTime || validationError ? "border-red-500" : ""}`}
-                      />
-                    </div>
-
-                    <span className="text-muted-foreground">—</span>
-
-                    <div className="flex items-center gap-2 flex-1">
-                      <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                        {t("schedule.labels.restEnd")}
-                      </Label>
-                      <Input
-                        type="time"
-                        lang="en-GB"
-                        value={minutesToTime(restDaySchedule.endTime)}
-                        onChange={(e) =>
-                          updateRestTime(dayCode, "endTime", e.target.value)
-                        }
-                        step="300"
-                        className={`w-32 ${restErrors?.endTime || validationError ? "border-red-500" : ""}`}
-                      />
-                    </div>
-                  </div>
-
-                  {validationError && (
-                    <p className="text-xs text-red-500">{validationError}</p>
-                  )}
-                  {restErrors?.startTime && (
-                    <p className="text-xs text-red-500">
-                      {restErrors.startTime.message}
+              {/* Work Time Errors */}
+              {(workValidationError ||
+                dayErrors?.startTime ||
+                dayErrors?.endTime) && (
+                <div className="space-y-1 pl-1">
+                  {workValidationError && (
+                    <p className="text-xs text-red-600 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                      {workValidationError}
                     </p>
                   )}
-                  {restErrors?.endTime && (
-                    <p className="text-xs text-red-500">
-                      {restErrors.endTime.message}
+                  {dayErrors?.startTime && (
+                    <p className="text-xs text-red-600 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                      {dayErrors.startTime.message}
+                    </p>
+                  )}
+                  {dayErrors?.endTime && (
+                    <p className="text-xs text-red-600 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                      {dayErrors.endTime.message}
                     </p>
                   )}
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Rest Time Section */}
+              {isEnabled && hasRestTime && restDaySchedule && (
+                <div className="bg-muted/50 rounded-lg p-4 border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Coffee className="w-4 h-4 text-muted-foreground hidden sm:block" />
+                    <Label className="text-sm font-semibold">
+                      {t("schedule.labels.restTime")}
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="time"
+                      lang="en-GB"
+                      value={minutesToTime(restDaySchedule.startTime)}
+                      onChange={(e) =>
+                        updateRestTime(dayCode, "startTime", e.target.value)
+                      }
+                      step="300"
+                      className={`flex-1 text-sm font-medium ${
+                        restErrors?.startTime || validationError
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    <span className="text-muted-foreground font-medium">
+                      —
+                    </span>
+                    <Input
+                      type="time"
+                      lang="en-GB"
+                      value={minutesToTime(restDaySchedule.endTime)}
+                      onChange={(e) =>
+                        updateRestTime(dayCode, "endTime", e.target.value)
+                      }
+                      step="300"
+                      className={`flex-1 text-sm font-medium ${
+                        restErrors?.endTime || validationError
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                  </div>
+
+                  {/* Rest Time Errors */}
+                  {(validationError ||
+                    restErrors?.startTime ||
+                    restErrors?.endTime) && (
+                    <div className="mt-3 space-y-1">
+                      {validationError && (
+                        <p className="text-xs text-red-600 font-semibold flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                          {validationError}
+                        </p>
+                      )}
+                      {restErrors?.startTime && (
+                        <p className="text-xs text-red-600 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                          {restErrors.startTime.message}
+                        </p>
+                      )}
+                      {restErrors?.endTime && (
+                        <p className="text-xs text-red-600 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                          {restErrors.endTime.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         );
       })}

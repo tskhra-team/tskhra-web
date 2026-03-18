@@ -88,7 +88,7 @@ export default function UpdateServiceModal({
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-5 mt-10 justify-start"
         >
-          <div className="flex lg:gap-7 lg:flex-row flex-col gap-6">
+          <div className="flex flex-col gap-4 md:flex-row md:gap-7">
             <div className="flex flex-col w-full gap-2">
               <Label>{t("dashboard:services.form.serviceName")}</Label>
               <Input
