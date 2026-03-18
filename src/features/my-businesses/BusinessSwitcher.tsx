@@ -21,13 +21,13 @@ import {
 import useGetMyBusinesses, {
   type MyBusinessResponse,
 } from "@/features/my-businesses/useGetMyBusinesses";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
   const { t } = useTranslation("dashboard");
   const { isMobile } = useSidebar();
-  const [activeBusiness, setActiveBusiness] = React.useState<
+  const [activeBusiness, setActiveBusiness] = useState<
     MyBusinessResponse | string
   >(t("businessSwitcher.selectBusiness"));
   const [searchParams, setSearchParams] = useSearchParams();
@@ -66,6 +66,8 @@ function BusinessSwitcherComponent() {
           setActiveBusiness(filtered);
         }
       }
+    } else if (!businessId) {
+      setActiveBusiness(t("businessSwitcher.selectBusiness"));
     }
   }, [businessId, businesses, businessIds, searchParams, setSearchParams]);
 
