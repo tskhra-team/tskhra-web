@@ -4,6 +4,7 @@ import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarPro
 import useGetAllBookings from "@/features/my-businesses/Calendar/hooks/useGetAllBookings";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
+import Manage from "@/features/my-businesses/Manage/Manage";
 import Notifications from "@/features/my-businesses/Notifications/Notifications";
 import MyServices from "@/features/my-businesses/Services/MyServices";
 import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
@@ -84,15 +85,7 @@ export default function MyBusinesses() {
           </>
         );
       case "manage":
-        return (
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{t("pages.manage.title")}</h1>
-            <p className="text-muted-foreground">
-              {t("pages.manage.description")}
-            </p>
-            {/* Management content will go here */}
-          </div>
-        );
+        return <Manage currentBusiness={currentBusiness} />;
       case "notification":
         return <Notifications businessId={businessId} />;
       case "services":
