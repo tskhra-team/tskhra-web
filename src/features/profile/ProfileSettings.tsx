@@ -82,6 +82,7 @@ export default function ProfileSettings({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
 
   const verificationStatus = profile?.status;
   // const isFullnameExist = profile?.firstName && profile?.lastName;
@@ -158,6 +159,7 @@ export default function ProfileSettings({
         return;
       }
 
+      setOriginalFile(file);
       const reader = new FileReader();
       reader.addEventListener("load", () => {
         setImageSrc(reader.result?.toString() || null);
@@ -175,7 +177,23 @@ export default function ProfileSettings({
         useWebWorker: true,
       };
 
-      const compressedFile = await imageCompression(croppedFile, options);
+      const compressedBlob = await imageCompression(croppedFile, options);
+
+      // Get file extension from original file name
+      const originalName = originalFile?.name || "avatar.jpg";
+      const extension = originalName.split(".").pop() || "jpg";
+      const nameWithoutExt =
+        originalName.substring(0, originalName.lastIndexOf(".")) || "avatar";
+
+      // Create new file with original name pattern and compressed blob type
+      const compressedFile = new File(
+        [compressedBlob],
+        `${nameWithoutExt}.${extension}`,
+        {
+          type: compressedBlob.type,
+          lastModified: Date.now(),
+        },
+      );
 
       setPreviewAvatar(URL.createObjectURL(compressedFile));
 
@@ -190,7 +208,7 @@ export default function ProfileSettings({
             queryClient.invalidateQueries({ queryKey: ["getUser"] });
           },
           onError: () => {
-            toast.error("Avatar didn't update");
+            toast.error("Avatar didn't update", { position: "top-center" });
             setPreviewAvatar(null);
           },
         },
