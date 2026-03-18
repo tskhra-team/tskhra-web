@@ -96,7 +96,11 @@ export default function ServiceForm() {
       return;
     }
 
-    showModal("pending", t("modal:titles.addingServices"), t("modal:messages.pleaseWait"));
+    showModal(
+      "pending",
+      t("modal:titles.addingServices"),
+      t("modal:messages.pleaseWait"),
+    );
 
     createBusinessService(
       { businessId, services: data.services },
@@ -118,7 +122,11 @@ export default function ServiceForm() {
         },
         onError: () => {
           closeModal();
-          showModal("error", t("modal:titles.error"), t("booking:messages.error"));
+          showModal(
+            "error",
+            t("modal:titles.error"),
+            t("booking:messages.error"),
+          );
         },
       },
     );
@@ -140,10 +148,23 @@ export default function ServiceForm() {
           </p>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2.5">
               <Label className="text-sm font-medium">
                 {t("booking:form.serviceName")}
+              </Label>
+              <Input
+                value={newService.name}
+                onChange={(e) =>
+                  setNewService({ ...newService, name: e.target.value })
+                }
+                placeholder={t("booking:form.serviceNamePlaceholder")}
+                className="h-11 transition-all"
+              />
+            </div>
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.serviceNameEN")} DEMO
               </Label>
               <Input
                 value={newService.name}
@@ -195,6 +216,19 @@ export default function ServiceForm() {
           <div className="space-y-2.5">
             <Label className="text-sm font-medium">
               {t("booking:form.serviceDescription")}
+            </Label>
+            <Input
+              value={newService.description}
+              onChange={(e) =>
+                setNewService({ ...newService, description: e.target.value })
+              }
+              placeholder={t("booking:form.serviceDescriptionPlaceholder")}
+              className="h-11 transition-all"
+            />
+          </div>
+          <div className="space-y-2.5">
+            <Label className="text-sm font-medium">
+              {t("booking:form.serviceDescriptionEN")} DEMO
             </Label>
             <Input
               value={newService.description}

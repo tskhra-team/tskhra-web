@@ -81,10 +81,15 @@ export default function CreateServiceModal({
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-5 mt-10 justify-start"
         >
-          <div className="flex gap-7">
+          <div className="flex flex-col gap-4 md:flex-row md:gap-7">
             <div className="flex flex-col w-full gap-2">
               <Label>{t("dashboard:services.form.serviceName")}</Label>
-              <Input placeholder={t("dashboard:services.form.serviceNamePlaceholder")} {...register("name")} />
+              <Input
+                placeholder={t(
+                  "dashboard:services.form.serviceNamePlaceholder",
+                )}
+                {...register("name")}
+              />
               {errors.name && (
                 <span className="text-red-500 text-sm">
                   {errors.name.message}
@@ -123,7 +128,10 @@ export default function CreateServiceModal({
 
           <div className="flex flex-col gap-2">
             <Label>{t("dashboard:services.form.description")}</Label>
-            <Input placeholder={t("dashboard:services.form.descriptionPlaceholder")} {...register("description")} />
+            <Input
+              placeholder={t("dashboard:services.form.descriptionPlaceholder")}
+              {...register("description")}
+            />
             {errors.description && (
               <span className="text-red-500 text-sm">
                 {errors.description.message}
