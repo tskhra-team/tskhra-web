@@ -201,6 +201,16 @@ export default function IndividualBusinessForm() {
             )}
           </div>
 
+          <div className="space-y-2.5">
+            <Label className="text-sm font-medium">
+              {t("booking:form.businessNameEN")} DEMO
+            </Label>
+            <Input
+              placeholder={t("booking:form.enterName")}
+              className="h-11 transition-all"
+            />
+          </div>
+
           <div className="space-y-3">
             <Label className="text-sm font-medium">
               {t("booking:form.callTypeLabel")}
@@ -209,7 +219,7 @@ export default function IndividualBusinessForm() {
               name="callType"
               control={control}
               render={({ field }) => (
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-col md:flex-row">
                   <Button
                     type="button"
                     variant={field.value === "OUTCALL" ? "default" : "outline"}
@@ -257,8 +267,8 @@ export default function IndividualBusinessForm() {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2.5">
+          <div className="flex flex-col md:justify-between md:flex-row gap-3 ">
+            <div className="space-y-2.5 w-full">
               <Label className="text-sm font-medium">
                 {t("booking:form.city")}
               </Label>
@@ -289,7 +299,7 @@ export default function IndividualBusinessForm() {
                 </p>
               )}
             </div>
-            <div className="space-y-2.5">
+            <div className="space-y-2.5 w-full">
               <Label className="text-sm font-medium">
                 {t("booking:form.address")}
               </Label>
@@ -305,6 +315,17 @@ export default function IndividualBusinessForm() {
                 </p>
               )}
             </div>
+
+            <div className="space-y-2.5 w-full">
+              <Label className="text-sm font-medium">
+                {t("booking:form.addressEN")} DEMO
+              </Label>
+              <Input
+                disabled={callType === "OUTCALL"}
+                placeholder={t("booking:form.addressPlaceholder")}
+                className="h-11 transition-all"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -319,18 +340,28 @@ export default function IndividualBusinessForm() {
             {t("booking:form.subDescription")}
           </p>
         </CardHeader>
-        <CardContent className="space-y-2.5">
-          <textarea
-            {...register("description")}
-            placeholder={t("booking:form.descriptionPlaceholder")}
-            rows={6}
-            className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
-          />
-          {errors.description && (
-            <p className="text-xs text-red-500 font-medium">
-              {errors.description.message}
-            </p>
-          )}
+        <CardContent className="flex flex-col gap-10">
+          <div>
+            <textarea
+              {...register("description")}
+              placeholder={t("booking:form.descriptionPlaceholder")}
+              rows={6}
+              className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+            />
+            {errors.description && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <textarea
+              placeholder={`${t("booking:form.descriptionPlaceholderEN")} DEMO`}
+              rows={6}
+              className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+            />
+          </div>
         </CardContent>
       </Card>
 

@@ -21,7 +21,8 @@ import {
 import useGetMyBusinesses, {
   type MyBusinessResponse,
 } from "@/features/my-businesses/useGetMyBusinesses";
-import { Link, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
   const { t } = useTranslation("dashboard");
@@ -32,6 +33,7 @@ function BusinessSwitcherComponent() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: businesses } = useGetMyBusinesses();
   const businessId = searchParams.get("businessId");
+  const navigate = useNavigate();
 
   const handleBusinessSelect = React.useCallback(
     (business: MyBusinessResponse) => {
@@ -43,12 +45,12 @@ function BusinessSwitcherComponent() {
     [searchParams, setSearchParams],
   );
 
-  const businessIds = React.useMemo(
+  const businessIds = useMemo(
     () => businesses?.map((b) => b.businessId) ?? [],
     [businesses],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (businessId && businesses && businesses.length > 0) {
       const isMineBusiness = businessIds.includes(businessId);
 
@@ -133,16 +135,17 @@ function BusinessSwitcherComponent() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
+
+            <DropdownMenuItem
+              className="gap-2 p-2 cursor-pointer"
+              onClick={() => {
+                navigate("/create-business");
+              }}
+            >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <Plus className="size-4" />
               </div>
-              <Link
-                to="/create-business"
-                className="text-muted-foreground font-medium"
-              >
-                {t("businessSwitcher.addBusiness")}
-              </Link>
+              {t("businessSwitcher.addBusiness")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
