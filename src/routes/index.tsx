@@ -69,7 +69,7 @@ export const routes = [
         ),
       },
       {
-        path: "/business/:id",
+        path: "/booking/business/:id",
         element: (
           <Suspense fallback={<BusinessDetailsSkeleton />}>
             <BusinessDetailsPage />

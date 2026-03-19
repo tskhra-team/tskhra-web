@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Calendar, Clock, AlertCircle, User, Wallet, CheckCircle, XCircle, HourglassIcon, ArrowLeft } from "lucide-react";
 import useGetMyBookings, { type UserBooking, type BookingStatus } from "@/Booking/useGetMyBookings";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { PaginationControls } from "@/shared/pagination/Pagination";
+import { scrollToTop } from "@/utils";
 import { useState } from "react";
 
 const BookingCard = ({ booking }: { booking: UserBooking }) => {
@@ -164,11 +166,27 @@ const BookingCard = ({ booking }: { booking: UserBooking }) => {
 export default function MyBookingsPage() {
   const { t } = useTranslation("booking");
   const navigate = useNavigate();
-  const { data: bookings, isLoading, isError, refetch } = useGetMyBookings();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedFilter, setSelectedFilter] = useState<BookingStatus | "ALL">("ALL");
 
+  const page = parseInt(searchParams.get('page') || '0', 10);
+  const size = 12;
+
+  const { data: allBookings, isLoading, isError, refetch } = useGetMyBookings();
+
+  // Handle filter change and reset pagination
+  const handleFilterChange = (filter: BookingStatus | "ALL") => {
+    setSelectedFilter(filter);
+    // Reset to page 0 when filter changes
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '0');
+    setSearchParams(params);
+  };
+
+  const bookings = allBookings || [];
+
   // Sort bookings by date (most recent first), then by time
-  const sortedBookings = bookings?.slice().sort((a, b) => {
+  const sortedBookings = bookings.slice().sort((a, b) => {
     // Compare dates (descending - most recent first)
     const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
     if (dateCompare !== 0) return dateCompare;
@@ -178,15 +196,21 @@ export default function MyBookingsPage() {
   });
 
   // Filter bookings based on selected status
-  const filteredBookings = sortedBookings?.filter((booking) => {
+  const filteredBookings = sortedBookings.filter((booking) => {
     if (selectedFilter === "ALL") return true;
     return booking.status === selectedFilter;
   });
 
-  // Count bookings by status
+  // Client-side pagination of filtered results
+  const totalFilteredPages = Math.ceil(filteredBookings.length / size);
+  const startIndex = page * size;
+  const endIndex = startIndex + size;
+  const paginatedBookings = filteredBookings.slice(startIndex, endIndex);
+
+  // Count bookings by status (from all bookings, not just current page)
   const getStatusCount = (status: BookingStatus | "ALL") => {
-    if (status === "ALL") return bookings?.length || 0;
-    return bookings?.filter((b) => b.status === status).length || 0;
+    if (status === "ALL") return bookings.length;
+    return bookings.filter((b) => b.status === status).length;
   };
 
   const filterOptions: Array<{ value: BookingStatus | "ALL"; label: string }> = [
@@ -252,7 +276,7 @@ export default function MyBookingsPage() {
         </div>
 
         {/* Filters */}
-        {bookings && bookings.length > 0 && (
+        {bookings.length > 0 && (
           <div className="mb-6 bg-card/50 backdrop-blur-sm rounded-2xl shadow-lg border border-border/50 p-5">
             <div className="flex flex-wrap gap-2">
               {filterOptions.map((option) => {
@@ -261,7 +285,7 @@ export default function MyBookingsPage() {
                 return (
                   <button
                     key={option.value}
-                    onClick={() => setSelectedFilter(option.value)}
+                    onClick={() => handleFilterChange(option.value)}
                     className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 ${
                       isActive
                         ? "bg-[#ff6439] text-white shadow-md"
@@ -286,7 +310,7 @@ export default function MyBookingsPage() {
         )}
 
         {/* Bookings List */}
-        {!bookings || bookings.length === 0 ? (
+        {bookings.length === 0 ? (
           <div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-lg border border-border/50 p-12 text-center">
             <Calendar className="w-20 h-20 text-muted-foreground mx-auto mb-6 opacity-50" />
             <h2 className="text-2xl font-bold text-foreground mb-3">
@@ -307,7 +331,7 @@ export default function MyBookingsPage() {
               </Button>
             </Link>
           </div>
-        ) : filteredBookings && filteredBookings.length === 0 ? (
+        ) : filteredBookings.length === 0 ? (
           <div className="bg-card/50 backdrop-blur-sm rounded-2xl shadow-lg border border-border/50 p-12 text-center">
             <AlertCircle className="w-20 h-20 text-muted-foreground mx-auto mb-6 opacity-50" />
             <h2 className="text-2xl font-bold text-foreground mb-3">
@@ -317,7 +341,7 @@ export default function MyBookingsPage() {
               {t("myBookings.filters.noResultsDescription")}
             </p>
             <Button
-              onClick={() => setSelectedFilter("ALL")}
+              onClick={() => handleFilterChange("ALL")}
               variant="outline"
               size="lg"
               className="border-2"
@@ -326,11 +350,29 @@ export default function MyBookingsPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBookings?.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedBookings?.map((booking) => (
+                <BookingCard key={booking.id} booking={booking} />
+              ))}
+            </div>
+
+            {/* Pagination - show when there's more than one page */}
+            {totalFilteredPages > 1 && (
+              <div className="mt-8">
+                <PaginationControls
+                  currentPage={page}
+                  totalPages={totalFilteredPages}
+                  onPageChange={(newPage) => {
+                    const params = new URLSearchParams(searchParams);
+                    params.set('page', String(newPage));
+                    setSearchParams(params);
+                    scrollToTop();
+                  }}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

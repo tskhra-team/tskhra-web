@@ -75,7 +75,7 @@ export default function BusinessCatalog() {
 
   const handkleClick = (id: string) => {
     scrollToTop();
-    navigate(`/business/${id}`);
+    navigate(`/booking/business/${id}`);
   };
 
   // Show skeleton on initial load or when refetching without data
