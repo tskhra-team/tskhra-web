@@ -125,19 +125,15 @@ export default function WorkingSchedule({
 
     if (!workDay || !restDay) return null;
 
-    if (workDay.endTime === 0 && workDay.startTime > workDay.endTime)
-      return null;
+    const workStartTime = workDay.startTime;
+    const workEndTime = workDay.endTime === 0 ? 1440 : workDay.endTime;
+    const restEndTime = restDay.endTime === 0 ? 1440 : restDay.endTime;
 
-    if (workDay.startTime === 0 && workDay.endTime === 0) return null;
-
-    if (
-      restDay.startTime < workDay.startTime ||
-      restDay.endTime > workDay.endTime
-    ) {
+    if (restDay.startTime < workStartTime || restEndTime > workEndTime) {
       return t("schedule.errors.restWithinWork");
     }
 
-    if (restDay.startTime >= restDay.endTime) {
+    if (restDay.startTime >= restEndTime) {
       return t("schedule.errors.restStartBeforeEnd");
     }
 
@@ -149,11 +145,11 @@ export default function WorkingSchedule({
 
     if (!workDay) return null;
 
-    if ((workDay.startTime || workDay.endTime) === 0) return null;
-    if (workDay.endTime === 0 && workDay.startTime > workDay.endTime)
-      return null;
+    if (workDay.startTime === 0 && workDay.endTime === 0) return null;
 
-    if (workDay.startTime >= workDay.endTime) {
+    const workEndTime = workDay.endTime === 0 ? 1440 : workDay.endTime;
+
+    if (workDay.startTime >= workEndTime) {
       return t("schedule.errors.sameDayOnly");
     }
 
@@ -314,9 +310,7 @@ export default function WorkingSchedule({
                           : ""
                       }`}
                     />
-                    <span className="text-muted-foreground font-medium">
-                      —
-                    </span>
+                    <span className="text-muted-foreground font-medium">—</span>
                     <Input
                       type="time"
                       lang="en-GB"

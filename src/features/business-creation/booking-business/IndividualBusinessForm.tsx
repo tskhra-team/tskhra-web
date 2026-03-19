@@ -93,8 +93,14 @@ export default function IndividualBusinessForm() {
       description: data.description,
       mainCategory: data.mainCategory,
       subCategory: data.subCategory,
-      workTimes: data.workTimes,
-      restTimes: data.restTimes,
+      workTimes: data.workTimes.map((t) => ({
+        ...t,
+        endTime: t.endTime === 0 ? 1440 : t.endTime,
+      })),
+      restTimes: data.restTimes?.map((t) => ({
+        ...t,
+        endTime: t.endTime === 0 ? 1440 : t.endTime,
+      })),
       info: data.info,
     };
 
