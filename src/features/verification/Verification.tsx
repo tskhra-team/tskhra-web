@@ -729,7 +729,6 @@
 //   );
 // }
 
-import Loader from "@/components/Loader";
 import { useModal } from "@/context/ModalContext";
 import useGetSumSubToken from "@/features/verification/useGetSumSubToken";
 import SumsubWebSdk from "@sumsub/websdk-react";
@@ -755,33 +754,35 @@ const SumsubWidget = () => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   if (!data?.token) {
     return null;
   }
 
   return (
-    <SumsubWebSdk
-      className="w-full h-full"
-      accessToken={data.token}
-      expirationHandler={accessTokenExpirationHandler}
-      config={{
-        lang: "en",
-      }}
-      options={{
-        addViewportTag: false,
-        adaptIframeHeight: true,
-      }}
-      onMessage={(type: string, payload: any) => {
-        console.log("Событие Sumsub:", type, payload);
-      }}
-      onError={(error: any) => {
-        console.error("Ошибка Sumsub:", error);
-      }}
-    />
+    <div className="min-h-screen w-full bg-[#1b1b1f]">
+      <SumsubWebSdk
+        className="w-full h-full"
+        accessToken={data.token}
+        expirationHandler={accessTokenExpirationHandler}
+        config={{
+          lang: "en",
+        }}
+        options={{
+          addViewportTag: false,
+          adaptIframeHeight: true,
+        }}
+        onMessage={(type: string, payload: any) => {
+          console.log("Событие Sumsub:", type, payload);
+        }}
+        onError={(error: any) => {
+          console.error("Ошибка Sumsub:", error);
+        }}
+      />
+    </div>
   );
 };
 

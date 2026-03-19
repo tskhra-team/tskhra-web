@@ -98,7 +98,9 @@ export const routes = [
       {
         path: "/verification",
         element: (
-          <Suspense fallback={<Loader />}>
+          <Suspense
+            fallback={<div className="h-screen w-full bg-[#1B1B1F]"></div>}
+          >
             <VerificationPage />
           </Suspense>
         ),
