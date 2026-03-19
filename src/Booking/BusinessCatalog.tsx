@@ -99,7 +99,7 @@ export default function BusinessCatalog() {
   }
 
   return (
-    <div data-catalog>
+    <div data-catalog className="lg:px-16 xl:px-0">
       <div className="mb-8 mt-10 lg:mt-20">
         <h1 className="text-3xl font-bold mb-2">{t("catalog.title")}</h1>
         <p className="text-muted-foreground">{t("catalog.subtitle")}</p>
