@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Calendar, Clock, AlertCircle, User, Wallet, CheckCircle, XCircle, HourglassIcon, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, AlertCircle, User, Wallet, CheckCircle, XCircle, HourglassIcon, ArrowLeft, X } from "lucide-react";
 import useGetMyBookings, { type UserBooking, type BookingStatus } from "@/Booking/useGetMyBookings";
+import useCancelBooking from "@/Booking/useCancelBooking";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +10,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
 import { useState } from "react";
+import { useModal } from "@/context/ModalContext";
+import queryClient from "@/query/queryClient";
 
-const BookingCard = ({ booking }: { booking: UserBooking }) => {
+const BookingCard = ({ booking, onCancel }: { booking: UserBooking; onCancel?: (bookingId: string) => void }) => {
   const { t } = useTranslation("booking");
 
   // Convert startTime (minutes from midnight) to HH:MM format
@@ -158,6 +161,21 @@ const BookingCard = ({ booking }: { booking: UserBooking }) => {
             </div>
           </div>
         </div>
+
+        {/* Cancel Button - Only show for non-cancelled/completed bookings */}
+        {onCancel && booking.status !== "CANCELLED" && booking.status !== "COMPLETED" && (
+          <div className="pt-4 border-t border-border/30 mt-2">
+            <Button
+              onClick={() => onCancel(booking.id)}
+              variant="outline"
+              size="sm"
+              className="w-full h-9 gap-1.5 text-xs border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+              {t("myBookings.card.cancel")}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -173,6 +191,8 @@ export default function MyBookingsPage() {
   const size = 12;
 
   const { data: allBookings, isLoading, isError, refetch } = useGetMyBookings();
+  const { mutate: cancelBooking } = useCancelBooking();
+  const { showModal } = useModal();
 
   // Handle filter change and reset pagination
   const handleFilterChange = (filter: BookingStatus | "ALL") => {
@@ -181,6 +201,44 @@ export default function MyBookingsPage() {
     const params = new URLSearchParams(searchParams);
     params.set('page', '0');
     setSearchParams(params);
+  };
+
+  // Handle cancel booking
+  const handleCancel = (bookingId: string) => {
+    showModal(
+      "warning",
+      t("myBookings.modal.cancelTitle"),
+      t("myBookings.modal.cancelMessage"),
+      t("myBookings.modal.close"),
+      () => {},
+      t("myBookings.modal.confirmCancel"),
+      () => {
+        cancelBooking(
+          { bookingId },
+          {
+            onSuccess: () => {
+              showModal(
+                "success",
+                t("myBookings.modal.successTitle"),
+                t("myBookings.modal.cancelSuccess"),
+              );
+
+              queryClient.invalidateQueries({
+                queryKey: ["myBookings"],
+              });
+            },
+
+            onError: () => {
+              showModal(
+                "error",
+                t("myBookings.modal.errorTitle"),
+                t("myBookings.modal.cancelError"),
+              );
+            },
+          },
+        );
+      },
+    );
   };
 
   const bookings = allBookings || [];
@@ -218,7 +276,6 @@ export default function MyBookingsPage() {
     { value: "SCHEDULED", label: t("myBookings.status.SCHEDULED") },
     { value: "AWAITING", label: t("myBookings.status.AWAITING") },
     { value: "COMPLETED", label: t("myBookings.status.COMPLETED") },
-    { value: "CANCELLED", label: t("myBookings.status.CANCELLED") },
   ];
 
   if (isLoading) {
@@ -286,7 +343,7 @@ export default function MyBookingsPage() {
                   <button
                     key={option.value}
                     onClick={() => handleFilterChange(option.value)}
-                    className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 ${
+                    className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                       isActive
                         ? "bg-[#ff6439] text-white shadow-md"
                         : "bg-background/80 text-foreground hover:bg-muted border border-border/50"
@@ -353,7 +410,7 @@ export default function MyBookingsPage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedBookings?.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} />
+                <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />
               ))}
             </div>
 
