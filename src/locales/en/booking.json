@@ -203,11 +203,27 @@
       "time": "Time",
       "duration": "Duration",
       "price": "Price",
-      "minutes": "min"
+      "minutes": "min",
+      "cancel": "Cancel Booking"
+    },
+    "modal": {
+      "cancelTitle": "Cancel Booking",
+      "cancelMessage": "Are you sure you want to cancel this booking?",
+      "close": "Close",
+      "confirmCancel": "Yes, Cancel",
+      "successTitle": "Success",
+      "cancelSuccess": "Booking cancelled successfully!",
+      "errorTitle": "Error",
+      "cancelError": "Failed to cancel booking. Please try again."
     },
     "loading": "Loading your bookings...",
     "error": "Failed to load bookings",
-    "retry": "Retry"
+    "retry": "Retry",
+    "promo": {
+      "title": "Plan your next appointment with ease",
+      "description": "Our platform offers exclusive and automated scheduling with the best services.",
+      "button": "New Booking"
+    }
   },
   "businessDetails": {
     "breadcrumb": {
