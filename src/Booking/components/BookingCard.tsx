@@ -75,97 +75,86 @@ export const BookingCard = ({ booking, onCancel }: BookingCardProps) => {
   };
 
   const statusStyle = getStatusStyle(booking.status);
-  const StatusIcon = statusStyle.icon;
 
   return (
-    <Card className={`group overflow-hidden transition-all duration-300 hover:shadow-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm ${statusStyle.borderColor}`}>
-      <CardHeader className="pb-4 bg-card/30 border-b border-border/30">
-        <div className="flex justify-between items-start">
-          <div className="flex-1 pr-4">
+    <Card className={`group overflow-hidden transition-all duration-300 hover:shadow-md rounded-2xl border border-border/40 bg-white flex flex-col ${statusStyle.borderColor}`}>
+      <CardHeader className="pb-3 pt-4 px-5">
+        <div className="flex justify-between items-start gap-3 mb-3">
+          <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-foreground mb-1 wrap-break-word leading-tight">
               {booking.serviceName}
             </h3>
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-muted-foreground/80">
               <User className="w-3.5 h-3.5" />
-              <p className="text-sm font-medium">{booking.userName}</p>
+              <p className="text-xs">{booking.userName}</p>
             </div>
           </div>
-          <Badge className={`${statusStyle.badge} px-3 py-1.5 font-semibold flex items-center gap-1.5 shrink-0`}>
-            <StatusIcon className="w-3.5 h-3.5" />
+          <Badge className={`${statusStyle.badge} px-3.5 py-1.5 font-medium flex items-center gap-1.5 shrink-0 rounded-full text-xs`}>
             {t(`myBookings.status.${booking.status}`)}
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-5 pb-5">
-        <div className="grid grid-cols-2 gap-4">
+      <CardContent className="pt-0 pb-5 px-5 flex flex-col grow">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
           {/* Date */}
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-muted/50">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-            </div>
+          <div className="flex items-start gap-2">
+            <Calendar className="w-4 h-4 text-muted-foreground/60 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground mb-0.5">
+              <p className="text-xs text-muted-foreground/70 mb-0.5">
                 {t("myBookings.card.date")}
               </p>
-              <p className="text-sm font-semibold text-foreground truncate">
+              <p className="text-sm font-medium text-foreground truncate">
                 {booking.date}
               </p>
             </div>
           </div>
 
           {/* Time */}
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-muted/50">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-            </div>
+          <div className="flex items-start gap-2">
+            <Clock className="w-4 h-4 text-muted-foreground/60 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground mb-0.5">
+              <p className="text-xs text-muted-foreground/70 mb-0.5">
                 {t("myBookings.card.time")}
               </p>
-              <p className="text-sm font-semibold text-foreground truncate">
+              <p className="text-sm font-medium text-foreground truncate">
                 {formatTime(booking.startTime)}
               </p>
             </div>
           </div>
 
           {/* Duration */}
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-muted/50">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-            </div>
+          <div className="flex items-start gap-2">
+            <Clock className="w-4 h-4 text-muted-foreground/60 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground mb-0.5">
+              <p className="text-xs text-muted-foreground/70 mb-0.5">
                 {t("myBookings.card.duration")}
               </p>
-              <p className="text-sm font-semibold text-foreground truncate">
+              <p className="text-sm font-medium text-foreground truncate">
                 {formatDuration(booking.duration)}
               </p>
             </div>
           </div>
 
           {/* Price */}
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-muted/50">
-              <Wallet className="w-4 h-4 text-muted-foreground" />
-            </div>
+          <div className="flex items-start gap-2">
+            <Wallet className="w-4 h-4 text-muted-foreground/60 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground mb-0.5">
+              <p className="text-xs text-muted-foreground/70 mb-0.5">
                 {t("myBookings.card.price")}
               </p>
-              <p className="text-sm font-semibold text-primary truncate">₾{booking.price}</p>
+              <p className="text-sm font-semibold text-[#ff6439] truncate">₾{booking.price}</p>
             </div>
           </div>
         </div>
 
         {/* Cancel Button - Only show for non-cancelled/completed bookings */}
         {onCancel && booking.status !== "CANCELLED" && booking.status !== "COMPLETED" && (
-          <div className="pt-4 border-t border-border/30 mt-2">
+          <div className="pt-4 mt-auto">
             <Button
               onClick={() => onCancel(booking.id)}
               variant="outline"
-              size="sm"
-              className="w-full h-9 gap-1.5 text-xs border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 cursor-pointer"
+              className="w-full h-10 gap-2 text-sm font-medium border border-red-200/80 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 cursor-pointer rounded-full transition-all"
             >
               <X className="w-3.5 h-3.5" />
               {t("myBookings.card.cancel")}

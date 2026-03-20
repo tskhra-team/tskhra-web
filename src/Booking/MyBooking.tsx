@@ -150,7 +150,7 @@ export const MyBooking = () => {
         {/* Header */}
         <div className="mb-8">
           <Button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/booking')}
             variant="ghost"
             className="mb-4 hover:bg-muted/50 -ml-2"
           >
@@ -166,7 +166,7 @@ export const MyBooking = () => {
         {/* Filters */}
         {bookings.length > 0 && (
           <div className="mb-6 bg-card/50 backdrop-blur-sm rounded-2xl shadow-lg border border-border/50 p-5">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 justify-center">
               {filterOptions.map((option) => {
                 const count = getStatusCount(option.value);
                 const isActive = selectedFilter === option.value;
@@ -174,7 +174,7 @@ export const MyBooking = () => {
                   <button
                     key={option.value}
                     onClick={() => handleFilterChange(option.value)}
-                    className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                    className={`px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                       isActive
                         ? "bg-[#ff6439] text-white shadow-md"
                         : "bg-background/80 text-foreground hover:bg-muted border border-border/50"
@@ -186,7 +186,7 @@ export const MyBooking = () => {
                         isActive
                           ? "bg-white/20 text-white border-white/30"
                           : "bg-muted text-muted-foreground border-border"
-                      } font-bold px-2 py-0.5`}
+                      } font-bold px-2 py-0.5 rounded-full hover:bg-muted hover:text-muted-foreground`}
                     >
                       {count}
                     </Badge>
@@ -243,6 +243,34 @@ export const MyBooking = () => {
               {paginatedBookings?.map((booking) => (
                 <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />
               ))}
+            </div>
+
+            {/* Promotional Banner */}
+            <div className="mt-8 bg-linear-to-br from-[#a84632] to-[#8b3a28] rounded-3xl p-8 relative overflow-hidden shadow-lg">
+              {/* Decorative checkmark icon */}
+              <div className="absolute top-6 right-6 opacity-20">
+                <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center border-4 border-white/20">
+                  <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="relative z-10 max-w-xl">
+                <h2 className="text-2xl font-bold text-white mb-3">
+                  {t("myBookings.promo.title")}
+                </h2>
+                <p className="text-white/90 text-sm mb-6 leading-relaxed">
+                  {t("myBookings.promo.description")}
+                </p>
+                <Link to="/booking" onClick={scrollToTop}>
+                  <Button
+                    className="bg-white text-[#a84632] hover:bg-white/90 font-semibold rounded-full px-6 py-2 h-11 transition-all shadow-md hover:shadow-lg"
+                  >
+                    {t("myBookings.promo.button")}
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             {/* Pagination - show when there's more than one page */}
