@@ -107,7 +107,6 @@ export const MyBooking = () => {
     { value: "ALL", label: t("myBookings.filters.all") },
     { value: "SCHEDULED", label: t("myBookings.status.SCHEDULED") },
     { value: "AWAITING", label: t("myBookings.status.AWAITING") },
-    { value: "COMPLETED", label: t("myBookings.status.COMPLETED") },
   ];
 
   if (isLoading) {
