@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/context/ModalContext";
 import useGetProfile from "@/features/profile/hooks/useGetProfile";
-import VerifyDialog from "@/features/profile/VerifyDialog";
 import { scrollToTop } from "@/utils";
 import { Building2 } from "lucide-react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -11,11 +10,21 @@ export default function AddBusinessTab() {
   const navigate = useNavigate();
   const { t } = useTranslation("profile");
   const { data: profile } = useGetProfile();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { showModal } = useModal();
 
   const handleAddBusiness = () => {
     if (!profile?.status) {
-      setIsDialogOpen(true);
+      showModal(
+        "error",
+        "You aren't verified!",
+        "To create a business you need to verify",
+        "Close",
+        () => {},
+        "Go to verifications",
+        () => {
+          window.open("/verification", "_blank");
+        },
+      );
     } else {
       scrollToTop();
       navigate("/create-business");
@@ -45,8 +54,6 @@ export default function AddBusinessTab() {
           </Button>
         </div>
       </div>
-
-      <VerifyDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
     </>
   );
 }
