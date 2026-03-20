@@ -82,6 +82,11 @@
         "AWAITING": "მოლოდინში",
         "COMPLETED": "დასრულებული",
         "CANCELLED": "გაუქმებული"
+      },
+      "actions": {
+        "approve": "დასტური",
+        "reject": "უარყოფა",
+        "cancel": "გაუქმება"
       }
     }
   },

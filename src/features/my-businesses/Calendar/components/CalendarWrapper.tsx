@@ -1,9 +1,15 @@
+import { useModal } from "@/context/ModalContext";
 import PopOver from "@/features/my-businesses/Calendar/PopOver";
+import useCancelBooking from "@/features/my-businesses/Calendar/hooks/useCancelBooking";
+import useApproveBooking from "@/features/my-businesses/Notifications/hooks/useApproveBooking";
+import useRejectBooking from "@/features/my-businesses/Notifications/hooks/useRejectBooking";
+import queryClient from "@/query/queryClient";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { useCalendarData } from "../hooks/useCalendarData";
 import { useCalendarResize } from "../hooks/useCalendarResize";
 import { useEventPopover } from "../hooks/useEventPopover";
@@ -21,83 +27,199 @@ export const CalendarWrapper = ({
 }: MyCalendarProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<any>(null);
-  const { t, i18n } = useTranslation("dashboard");
+  const { t, i18n } = useTranslation(["dashboard", "modal"]);
 
-  // Transform data for FullCalendar
   const { minTime, maxTime, businessHours, events } = useCalendarData({
     schedule,
     bookings,
   });
 
-  // Manage popover state and interactions
   const { selectedBooking, popoverPos, handleEventClick, closePopover } =
     useEventPopover({
       bookings,
       containerRef,
     });
 
-  // Handle container resize
   useCalendarResize(containerRef);
 
-  // Custom day header rendering
+  const { mutate: approveBooking, isPending: isApproving } =
+    useApproveBooking();
+  const { mutate: rejectBooking, isPending: isRejecting } = useRejectBooking();
+  const { mutate: cancelBooking, isPending: isCancelling } = useCancelBooking();
+  const { showModal } = useModal();
+
+  const handleApprove = (bookingId: string) => {
+    showModal(
+      "warning",
+      t("modal:titles.approveBooking"),
+      t("modal:messages.confirmApproveBooking"),
+      t("modal:buttons.close"),
+      () => {},
+      t("modal:buttons.approve"),
+      () => {
+        approveBooking(
+          { bookingId },
+          {
+            onSuccess: () => {
+              toast.success(t("modal:messages.bookingApprovedSuccess"), {
+                position: "top-center",
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["getScheduledBookings"],
+              });
+              queryClient.invalidateQueries({ queryKey: ["getNotifications"] });
+              closePopover();
+            },
+            onError: () => {
+              toast.error(t("modal:messages.cantApproveSuccess"), {
+                position: "top-center",
+              });
+            },
+          },
+        );
+      },
+    );
+  };
+
+  const handleReject = (bookingId: string) => {
+    showModal(
+      "warning",
+      t("modal:titles.rejectBooking"),
+      t("modal:messages.confirmRejectBooking"),
+      t("modal:buttons.close"),
+      () => {},
+      t("modal:buttons.reject"),
+      () => {
+        rejectBooking(
+          { bookingId },
+          {
+            onSuccess: () => {
+              toast.success(t("modal:messages.bookingRejectedSuccess"), {
+                position: "top-center",
+              });
+              queryClient.invalidateQueries({ queryKey: ["getNotifications"] });
+              queryClient.invalidateQueries({
+                queryKey: ["getScheduledBookings"],
+              });
+              closePopover();
+            },
+            onError: () => {
+              toast.error(t("modal:messages.cantRejectSuccess"), {
+                position: "top-center",
+              });
+            },
+          },
+        );
+      },
+    );
+  };
+
+  const handleCancel = (bookingId: string) => {
+    showModal(
+      "warning",
+      t("modal:titles.cancelBooking"),
+      t("modal:messages.confirmCancelBooking"),
+      t("modal:buttons.close"),
+      () => {},
+      t("modal:buttons.cancel"),
+      () => {
+        cancelBooking(
+          { bookingId },
+          {
+            onSuccess: () => {
+              toast.success(t("modal:messages.bookingCancelSuccess"), {
+                position: "top-center",
+              });
+              queryClient.invalidateQueries({ queryKey: ["getNotifications"] });
+              queryClient.invalidateQueries({
+                queryKey: ["getScheduledBookings"],
+              });
+              closePopover();
+            },
+            onError: () => {
+              toast.error(t("modal:messages.cantCancelBooking"), {
+                position: "top-center",
+              });
+            },
+          },
+        );
+      },
+    );
+  };
+
   const dayHeaderContent = (args: any) => {
     const dayMap: { [key: number]: string } = {
-      0: t("calendar.days.sun"),
-      1: t("calendar.days.mon"),
-      2: t("calendar.days.tue"),
-      3: t("calendar.days.wed"),
-      4: t("calendar.days.thu"),
-      5: t("calendar.days.fri"),
-      6: t("calendar.days.sat"),
+      0: "sun",
+      1: "mon",
+      2: "tue",
+      3: "wed",
+      4: "thu",
+      5: "fri",
+      6: "sat",
     };
-    const dayName = dayMap[args.date.getDay()];
+    const dayName = t(`calendar.days.${dayMap[args.date.getDay()]}`);
 
-    // Show only day name in month view, with date in week/day views
     if (args.view.type === "dayGridMonth") {
       return dayName;
     }
 
-    const date = args.date.getDate();
-    const month = args.date.getMonth() + 1;
-    return `${dayName}: ${date}/${month}`;
+    const formattedDate = new Intl.DateTimeFormat(i18n.language, {
+      day: "2-digit",
+      month: "2-digit",
+    }).format(args.date);
+
+    return `${dayName}: ${formattedDate}`;
   };
 
-  // Get month name from translations
+  useEffect(() => {
+    if (!selectedBooking) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest(".popover-content")) return;
+      if (target.closest(".fc-event")) return;
+      closePopover();
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [selectedBooking, closePopover]);
+
   const getMonthName = (monthIndex: number) => {
     return t(`calendar.months.full.${monthIndex}`);
   };
 
-  // Custom title formatting
   const updateTitle = (view: any, titleEl: HTMLElement) => {
     const start = view.currentStart;
-    const end = view.currentEnd;
+    const end = new Date(view.currentEnd.getTime() - 1);
+
+    const startMonth = getMonthName(start.getMonth());
+    const startYear = start.getFullYear();
+    const startDay = start.getDate();
+
+    const endMonth = getMonthName(end.getMonth());
+    const endYear = end.getFullYear();
+    const endDay = end.getDate();
+
+    let customTitle = "";
 
     if (view.type === "dayGridMonth") {
-      // Month view: "March 2026"
-      titleEl.textContent = `${getMonthName(start.getMonth())} ${start.getFullYear()}`;
+      customTitle = `${startMonth} ${startYear}`;
     } else if (view.type === "timeGridWeek") {
-      // Week view: "March 10 - 16, 2026"
-      const startDay = start.getDate();
-      const endDate = new Date(end);
-      endDate.setDate(endDate.getDate() - 1);
-      const endDay = endDate.getDate();
-      const month = getMonthName(start.getMonth());
-      const year = start.getFullYear();
-      titleEl.textContent = `${month} ${startDay} - ${endDay}, ${year}`;
+      if (startMonth === endMonth) {
+        customTitle = `${startDay} - ${endDay} ${startMonth} ${startYear}`;
+      } else if (startYear === endYear) {
+        customTitle = `${startDay} ${startMonth} - ${endDay} ${endMonth} ${startYear}`;
+      } else {
+        customTitle = `${startDay} ${startMonth} ${startYear} - ${endDay} ${endMonth} ${endYear}`;
+      }
     } else {
-      // Day view: "March 16, 2026"
-      const day = start.getDate();
-      const month = getMonthName(start.getMonth());
-      const year = start.getFullYear();
-      titleEl.textContent = `${month} ${day}, ${year}`;
+      customTitle = `${startDay} ${startMonth} ${startYear}`;
     }
-  };
 
-  const viewDidMount = (info: any) => {
-    const titleEl = info.el.querySelector(".fc-toolbar-title");
-    if (titleEl) {
-      updateTitle(info.view, titleEl);
-    }
+    titleEl.setAttribute("data-custom-title", customTitle);
+
+    titleEl.classList.add("custom-fc-title");
   };
 
   const datesSet = (info: any) => {
@@ -107,53 +229,32 @@ export const CalendarWrapper = ({
     }
   };
 
-  // Update title on language change
   useEffect(() => {
     const titleEl = containerRef.current?.querySelector(".fc-toolbar-title");
     const calendarApi = calendarRef.current?.getApi();
     if (titleEl && calendarApi) {
       updateTitle(calendarApi.view, titleEl as HTMLElement);
     }
-  }, [i18n.language]);
-
-  // Close popover when clicking outside
-  useEffect(() => {
-    if (!selectedBooking) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      // Don't close if clicking on popover itself
-      if (target.closest('.popover-content')) return;
-
-      // Don't close if clicking on a calendar event (it will switch to that event)
-      if (target.closest('.fc-event')) return;
-
-      // Close popover for any other click
-      closePopover();
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [selectedBooking, closePopover]);
-
-  // Apply backgroundColor to events (needed for month view with custom eventContent)
-  const eventDidMount = (info: any) => {
-    const bgColor = info.event.backgroundColor;
-    if (bgColor && info.el) {
-      info.el.style.backgroundColor = bgColor;
-      info.el.style.borderColor = info.event.borderColor || bgColor;
-      info.el.style.color = "white";
-    }
-  };
+  }, [i18n.language, t]);
 
   return (
     <div className="relative h-175 p-4" ref={containerRef}>
+      <style>{`
+        .custom-fc-title {
+          font-size: 0 !important;
+        }
+        .custom-fc-title::after {
+          content: attr(data-custom-title); 
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: inherit;
+        }
+      `}</style>
+      {/* this style added to hide default calendar title */}
       <FullCalendar
+        datesSet={datesSet}
         ref={calendarRef}
-        key={i18n.language}
         plugins={[dayGridPlugin, timeGridPlugin]}
-        locale="ka"
         initialView="timeGridWeek"
         headerToolbar={{
           left: "prev,next today",
@@ -167,8 +268,6 @@ export const CalendarWrapper = ({
           day: t("calendar.buttons.day"),
         }}
         dayHeaderContent={dayHeaderContent}
-        viewDidMount={viewDidMount}
-        datesSet={datesSet}
         firstDay={1}
         allDaySlot={false}
         businessHours={businessHours}
@@ -178,9 +277,9 @@ export const CalendarWrapper = ({
         height="100%"
         slotMinTime={minTime}
         slotMaxTime={maxTime}
+        eventDisplay="block"
         expandRows={true}
         eventContent={CalendarEventContent}
-        eventDidMount={eventDidMount}
         nowIndicator={true}
         slotLabelFormat={{
           hour: "2-digit",
@@ -202,6 +301,13 @@ export const CalendarWrapper = ({
           closePopover={closePopover}
           minutesToTime={minutesToTime}
           selectedBooking={selectedBooking}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onCancel={handleCancel}
+          isPending={isApproving || isRejecting || isCancelling}
+          isApproving={isApproving}
+          isRejecting={isRejecting}
+          isCancelling={isCancelling}
         />
       )}
     </div>

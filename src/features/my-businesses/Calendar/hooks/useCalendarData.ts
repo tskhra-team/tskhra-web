@@ -65,14 +65,14 @@ export const useCalendarData = ({
         });
       }
     });
-
     // Add bookings as regular events
-    bookings.forEach((booking, index) => {
-      const dateStr = booking.date instanceof Date
-        ? booking.date.toISOString().split("T")[0]
-        : new Date(booking.date).toISOString().split("T")[0];
+    bookings.forEach((booking) => {
+      const dateStr =
+        booking.date instanceof Date
+          ? booking.date.toISOString().split("T")[0]
+          : new Date(booking.date).toISOString().split("T")[0];
       allEvents.push({
-        id: `booking-${index}`,
+        id: booking.id,
         title: `${booking.serviceName}: ${booking.userName}`,
         start: `${dateStr}T${minutesToTime(booking.startTime)}:00`,
         end: `${dateStr}T${minutesToTime(booking.startTime + booking.duration)}:00`,
