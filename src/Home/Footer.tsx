@@ -37,7 +37,8 @@ function Footer() {
 
   if (
     location.pathname.includes("/my-businesses") ||
-    location.pathname.includes("/profile")
+    location.pathname.includes("/profile") ||
+    location.pathname.includes("/verification")
   ) {
     return null;
   }

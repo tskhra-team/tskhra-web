@@ -22,8 +22,9 @@
     "updatingService": "Updating service",
     "addingService": "Adding service",
     "deleteAvatar": "Delete avatar",
-    "approveBooking": "Approve this booking",
-    "rejectBooking": "Reject this booking"
+    "approveBooking": "Approve this booking?",
+    "rejectBooking": "Reject this booking?",
+    "cancelBooking": "Cancel this booking?"
   },
   "messages": {
     "pleaseWait": "Please wait",
@@ -56,7 +57,9 @@
     "cantApproveBooking": "We can't approve this booking please try again!",
     "confirmRejectBooking": "Are you sure you want to reject this booking?",
     "bookingRejectedSuccess": "You successfully reject this booking!",
-    "cantRejectBooking": "We can't reject this booking please try again!"
+    "cantRejectBooking": "We can't reject this booking please try again!",
+    "confirmCancelBooking": "Are you sure you want to cancel this booking?",
+    "bookingCancelSuccess": "Booking was successfully canceled!"
   },
   "buttons": {
     "close": "Close",

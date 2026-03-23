@@ -82,6 +82,11 @@
         "AWAITING": "Awaiting",
         "COMPLETED": "Completed",
         "CANCELLED": "Cancelled"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "cancel": "Cancel"
       }
     }
   },

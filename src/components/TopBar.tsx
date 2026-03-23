@@ -15,11 +15,13 @@ import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
 import { LayoutDashboard, LogOut, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
 
 export default function TopBar() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isVerification = pathname === "/verification";
   const { t } = useTranslation("common");
   const { isAuthenticated, logout, login, register } = useAuth();
   const { data: user } = useGetUser(isAuthenticated);
@@ -42,11 +44,13 @@ export default function TopBar() {
   };
 
   return (
-    <div className="w-full h-16 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b border-slate-200/60 shadow-sm sticky top-0 z-50">
-      <Logo />
+    <div
+      className={`w-full h-16 flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b shadow-sm sticky top-0 z-50 backdrop-blur-xl ${isVerification ? "bg-[#1b1b1f] border-white/10" : "bg-white/80 border-slate-200/60"}`}
+    >
+      <Logo color={isVerification ? "white" : "black"} />
       <SearchBar />
       <div className="flex gap-2 sm:gap-3 lg:gap-4 items-center justify-end">
-        <LanguageSwitcher />
+        {!isVerification && <LanguageSwitcher />}
         {isAuthenticated ? (
           <WithAxiosUser>
             <DropdownMenu>

@@ -22,8 +22,9 @@
     "updatingService": "სერვისის განახლება",
     "addingService": "სერვისის დამატება",
     "deleteAvatar": "ავატარის წაშლა",
-    "approveBooking": "დაჯავშნის დადასტურება",
-    "rejectBooking": "დაჯავშნის უარყოფა"
+    "approveBooking": "ამ ჯავშნის დადასტურება?",
+    "rejectBooking": "ამ ჯავშნის უარყოფა?",
+    "cancelBooking": "ამ ჯავშნის გაუქმება?"
   },
   "messages": {
     "pleaseWait": "გთხოვთ დაელოდოთ",
@@ -56,14 +57,16 @@
     "cantApproveBooking": "ვერ ვადასტურებთ ამ დაჯავშნას, გთხოვთ სცადეთ ხელახლა!",
     "confirmRejectBooking": "დარწმუნებული ხართ, რომ გსურთ ამ დაჯავშნის უარყოფა?",
     "bookingRejectedSuccess": "თქვენ წარმატებით უარყავით ეს დაჯავშნა!",
-    "cantRejectBooking": "ვერ ვუარვყოფთ ამ დაჯავშნას, გთხოვთ სცადეთ ხელახლა!"
+    "cantRejectBooking": "ვერ ვუარვყოფთ ამ დაჯავშნას, გთხოვთ სცადეთ ხელახლა!",
+    "confirmCancelBooking": "დარწმუნებული ხართ, რომ გსურთ ამ დაჯავშნის გაუქმება?",
+    "bookingCancelSuccess": "ჯავშანი წარმატებულად გაუქმდა!"
   },
   "buttons": {
     "close": "დახურვა",
     "ok": "კარგი",
     "yes": "დიახ",
     "no": "არა",
-    "cancel": "დახურვა",
+    "cancel": "გაუქმება",
     "confirm": "დადასტურება",
     "delete": "წაშლა",
     "login": "შესვლა",
