@@ -332,13 +332,13 @@ export default function ProfileSettings({
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
               <User className="w-5 h-5 text-indigo-600" />
-              Personal & Contact Information
+              {t("infoTab.personalInfo")}
             </h3>
 
             {profile?.status ? (
               <div className="flex items-center gap-2 text-sm text-slate-600 bg-indigo-50 border border-indigo-200 rounded-lg px-4 py-2">
                 <ShieldCheck className="w-5 h-5 text-indigo-600" />
-                <span>Verified users cannot change their data</span>
+                <span>{t("form.alreadyVerified")}</span>
               </div>
             ) : !isEditMode ? (
               <Button
@@ -681,7 +681,7 @@ export default function ProfileSettings({
                 <Button
                   type="button"
                   onClick={() => {
-                    window.open("/verification", "_blank");
+                    navigate("/verification");
                   }}
                   className="bg-linear-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white shadow-md"
                 >
@@ -705,7 +705,7 @@ export default function ProfileSettings({
                     () => {},
                     "Go to verifications",
                     () => {
-                      window.open("/verification", "_blank");
+                      navigate("/verification");
                     },
                   );
                 } else {

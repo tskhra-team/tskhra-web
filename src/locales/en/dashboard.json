@@ -144,8 +144,8 @@
       "customer": "Customer",
       "startTime": "Start Time",
       "duration": "Duration",
-      "m": "m",
-      "h": "h"
+      "h": "h",
+      "m": "m"
     },
     "buttons": {
       "reject": "Reject",
