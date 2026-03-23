@@ -1,5 +1,6 @@
 import { useModal } from "@/context/ModalContext";
 import useGetSumSubToken from "@/features/verification/useGetSumSubToken";
+import queryClient from "@/query/queryClient";
 import SumsubWebSdk from "@sumsub/websdk-react";
 import { useEffect } from "react";
 
@@ -45,11 +46,16 @@ const SumsubWidget = () => {
           adaptIframeHeight: true,
         }}
         onMessage={(type: string, payload: any) => {
-          console.log("Событие Sumsub:", type, payload);
+          if (
+            type === "idCheck.onApplicantStatusChanged" &&
+            payload?.reviewStatus === "completed"
+          ) {
+            queryClient.invalidateQueries({ queryKey: ["getProfile"] });
+          }
         }}
-        onError={(error: any) => {
-          console.error("Ошибка Sumsub:", error);
-        }}
+        // onError={(error: any) => {
+        //   console.error("Sumsub error:", error);
+        // }}
       />
     </div>
   );
