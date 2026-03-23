@@ -25,7 +25,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "booking"]);
   const { isMobile } = useSidebar();
   const [activeBusiness, setActiveBusiness] = useState<
     MyBusinessResponse | string
@@ -102,7 +102,9 @@ function BusinessSwitcherComponent() {
                       {activeBusiness.businessName}
                     </span>
                     <span className="truncate text-xs">
-                      {activeBusiness.callType.toLowerCase()}
+                      {t(
+                        `booking:businessDetails.callType.${activeBusiness.callType.toLowerCase()}`,
+                      )}
                     </span>
                   </div>
                 </>

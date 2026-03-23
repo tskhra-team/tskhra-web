@@ -197,9 +197,9 @@ export default function WorkingSchedule({
                 {isEnabled && daySchedule && (
                   <div className="flex flex-col md:flex-row md:items-center gap-3 flex-1">
                     {/* Work Time Section */}
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                    <div className="flex flex-col md:flex-row md:items-center gap-2 flex-1">
                       <div className="flex items-center gap-2 flex-1 bg-background rounded-lg p-3 border">
-                        <Clock className="w-4 h-4 text-muted-foreground shrink-0 hidden sm:block" />
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0 hidden md:block" />
                         <div className="flex items-center gap-2 flex-1">
                           <Input
                             type="time"
@@ -241,16 +241,17 @@ export default function WorkingSchedule({
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleRestTime(dayCode)}
-                        className="whitespace-nowrap"
+                        className="shrink-0 h-17.5 cursor-pointer"
                       >
                         {hasRestTime ? (
                           <>
                             <X className="w-4 h-4 mr-1 inline" />
+
                             {t("schedule.buttons.removeRest")}
                           </>
                         ) : (
                           <>
-                            <Plus className="w-4 h-4 mr-1 inline" />
+                            <Plus className="w-4 h-4 mr-1 inline " />
                             {t("schedule.buttons.addRest")}
                           </>
                         )}
