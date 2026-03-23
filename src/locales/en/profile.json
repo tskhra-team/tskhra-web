@@ -20,7 +20,7 @@
     "verified": "Verified",
     "notVerified": "Not Verified",
     "active": "Active",
-    "goToVerification": "Become a verified user!",
+    "goToVerification": "Go to Verification!",
     "addBusinessButton": "Add Your Business!",
     "becomeBookingProvider": {
       "title": "Create Booking Service!",
@@ -73,10 +73,7 @@
       "unverifySuccess": "Unverified successfully",
       "unverifyError": "An error occurred, please try again"
     },
-    "alreadyVerified": {
-      "title": "You are a verified user!",
-      "description": "*a verified user can't change his data :("
-    }
+    "alreadyVerified": "Verified users cannot change their data"
   },
   "verifyDialog": {
     "title": "You are not verified!",

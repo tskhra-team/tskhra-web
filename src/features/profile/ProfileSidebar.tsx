@@ -79,9 +79,9 @@ export default function ProfileSidebar({
               <Button
                 variant="link"
                 className="inline-flex items-center gap-1 text-slate-500 px-3 py-1 text-xs mb-4 cursor-pointer"
-                onClick={() => window.open("/verification", "_blank")}
+                onClick={() => navigate("/verification")}
               >
-                Become a verified user!
+                {t("infoTab.goToVerification")}
               </Button>
             )}
 

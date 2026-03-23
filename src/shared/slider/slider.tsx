@@ -2,25 +2,22 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
-import slide1 from "@/assets/img/tskhrabooking.png";
-import slide2 from "@/assets/img/tskhraecommerce.png";
-import slide3 from "@/assets/img/tskhratrade.png";
-
+const BANNER_BASE_URL = "http://10.227.164.247:9000/ui-assets";
 
 export const banners = [
   {
     id: 1,
-    image: slide1,
+    image: `${BANNER_BASE_URL}/TSKHRA.GE.png`,
     // title: "აირჩიე ადგილი. დაგეგმე დრო."
   },
   {
     id: 2,
-    image: slide2,
+    image: `${BANNER_BASE_URL}/TSKHRA.GEecommerce.png`,
     // title: "რაც გინდა — აქ არის."
   },
   {
     id: 3,
-    image: slide3,
+    image: `${BANNER_BASE_URL}/TSKHRA.GEtrade.png`,
     // title: "გაცვლა ახალ შესაძლებლობად."
   },
 ];
