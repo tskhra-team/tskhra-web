@@ -38,8 +38,7 @@ export const useEventPopover = ({
       // Ignore clicks on background events (rest times)
       if (clickInfo.event.extendedProps.price === undefined) return;
 
-      const bookingIndex = parseInt(clickInfo.event.id.replace("booking-", ""));
-      const booking = bookings[bookingIndex];
+      const booking = bookings.find((b) => b.id === clickInfo.event.id) ?? null;
 
       if (containerRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();

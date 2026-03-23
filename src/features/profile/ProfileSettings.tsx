@@ -28,7 +28,6 @@ import {
   SUPPORTED_FORMATS,
   type ProfileFormData,
 } from "@/features/profile/profileSchema";
-import VerifyDialog from "@/features/profile/VerifyDialog";
 import queryClient from "@/query/queryClient";
 import type { ProfileType } from "@/types";
 import { scrollToTop } from "@/utils";
@@ -63,9 +62,7 @@ export default function ProfileSettings({
   isEditMode,
   onSetIsEditMode,
 }: ProfileSettingsProps) {
-  // const [isEditMode, onSetIsEditMode] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: profile, refetch } = useGetProfile();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const [timeZone, setTimeZone] = useState<string>();
@@ -684,8 +681,7 @@ export default function ProfileSettings({
                 <Button
                   type="button"
                   onClick={() => {
-                    scrollToTop();
-                    navigate("/verification");
+                    window.open("/verification", "_blank");
                   }}
                   className="bg-linear-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white shadow-md"
                 >
@@ -701,7 +697,17 @@ export default function ProfileSettings({
               className="w-full p-6 hover:bg-slate-50 hover:border-indigo-400 transition-all duration-200"
               onClick={() => {
                 if (!verificationStatus) {
-                  setIsDialogOpen(true);
+                  showModal(
+                    "error",
+                    "You aren't verified!",
+                    "To create a business you need to verify",
+                    "Close",
+                    () => {},
+                    "Go to verifications",
+                    () => {
+                      window.open("/verification", "_blank");
+                    },
+                  );
                 } else {
                   scrollToTop();
                   navigate("/create-business");
@@ -771,8 +777,6 @@ export default function ProfileSettings({
           </div>
         </section>
       </form>
-
-      <VerifyDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
     </>
   );
 }

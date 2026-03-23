@@ -178,7 +178,7 @@ export default function IndividualBusinessForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-5xl mx-auto space-y-6 pb-16 px-4"
+      className="max-w-6xl mx-auto space-y-6 pb-16 px-4"
     >
       {/* Basic Information Card */}
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">

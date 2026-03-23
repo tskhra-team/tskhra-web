@@ -6,6 +6,13 @@ interface PopOverProps {
   selectedBooking: Booking;
   closePopover: () => void;
   minutesToTime: (minutes: number) => string;
+  onApprove: (bookingId: string) => void;
+  onReject: (bookingId: string) => void;
+  onCancel: (bookingId: string) => void;
+  isPending: boolean;
+  isApproving: boolean;
+  isRejecting: boolean;
+  isCancelling: boolean;
 }
 
 export default function PopOver({
@@ -13,8 +20,16 @@ export default function PopOver({
   selectedBooking,
   closePopover,
   minutesToTime,
+  onApprove,
+  onReject,
+  onCancel,
+  isPending,
+  isApproving,
+  isRejecting,
+  isCancelling,
 }: PopOverProps) {
   const { t } = useTranslation("dashboard");
+
   return (
     <div
       className="popover-content absolute z-20 bg-white rounded-xl shadow-2xl border border-slate-200 p-5 w-80 animate-in fade-in zoom-in duration-200"
@@ -117,6 +132,35 @@ export default function PopOver({
             {t(`calendar.popover.status.${selectedBooking.status}`)}
           </span>
         </div>
+
+        {selectedBooking.status === "AWAITING" ? (
+          <div className="pt-3 flex gap-2">
+            <button
+              disabled={isPending}
+              onClick={() => onApprove(selectedBooking.id)}
+              className="flex-1 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-sm font-semibold transition-colors"
+            >
+              {isApproving ? "..." : t("calendar.popover.actions.approve")}
+            </button>
+            <button
+              disabled={isPending}
+              onClick={() => onReject(selectedBooking.id)}
+              className="flex-1 py-2 rounded-lg bg-rose-700 hover:bg-rose-800 disabled:opacity-50 text-white text-sm font-semibold transition-colors"
+            >
+              {isRejecting ? "..." : t("calendar.popover.actions.reject")}
+            </button>
+          </div>
+        ) : (
+          <div className="pt-3">
+            <button
+              disabled={isPending}
+              onClick={() => onCancel(selectedBooking.id)}
+              className="w-full py-2 rounded-lg border border-rose-300 hover:bg-rose-50 disabled:opacity-50 text-rose-600 text-sm font-semibold transition-colors"
+            >
+              {isCancelling ? "..." : t("calendar.popover.actions.cancel")}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
