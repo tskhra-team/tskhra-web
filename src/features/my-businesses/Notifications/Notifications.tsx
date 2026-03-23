@@ -200,12 +200,12 @@ export default function Notifications({ businessId }: MyNotificationProps) {
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2 border-t border-border/50">
+              <div className="flex gap-2 pt-2 border-t border-border/50 md:flex-col flex-row md:h-20">
                 <Button
                   onClick={() => handleReject(notification.id)}
                   variant="outline"
                   size="sm"
-                  className="flex-1 h-9 gap-1.5 text-xs"
+                  className="flex-1 h-9 gap-1.5 text-xs "
                 >
                   <X className="w-3.5 h-3.5" />
                   {t("dashboard:notifications.buttons.reject")}

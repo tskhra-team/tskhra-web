@@ -152,6 +152,10 @@
       "approve": "Approve"
     }
   },
+  "manage": {
+    "deleteBtn": "Delete",
+    "deleteBusiness": "Delete Business:"
+  },
   "pages": {
     "chart": {
       "title": "Chart",

@@ -152,6 +152,10 @@
       "approve": "დასტური"
     }
   },
+  "manage": {
+    "deleteBtn": "წაშლა",
+    "deleteBusiness": "ბიზნესის წაშლა:"
+  },
   "pages": {
     "chart": {
       "title": "დიაგრამა",

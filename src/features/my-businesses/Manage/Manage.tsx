@@ -3,6 +3,7 @@ import { useModal } from "@/context/ModalContext";
 import useDeleteBusiness from "@/features/my-businesses/Manage/useDeleteBusiness";
 import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
 import queryClient from "@/query/queryClient";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 type ManageBusinessProps = {
@@ -13,17 +14,18 @@ export default function Manage({ currentBusiness }: ManageBusinessProps) {
   const { mutate: deleteBusiness } = useDeleteBusiness();
   const { showModal } = useModal();
   const navigate = useNavigate();
+  const { t } = useTranslation(["dashboard", "modal"]);
 
   const handleClick = (businessId: string | undefined) => {
     if (!businessId) return;
 
     showModal(
       "warning",
-      `Delete ${currentBusiness?.businessName}`,
-      "Are you sure you want to delete this business",
-      "Close",
+      `${t("manage.deleteBusiness")} ${currentBusiness?.businessName}`,
+      t("modal:messages.deleteBusinessWarn"),
+      t("modal:buttons.close"),
       () => {},
-      "Delete",
+      t("modal:buttons.delete"),
       () => {
         deleteBusiness(businessId, {
           onSuccess: () => {
@@ -33,8 +35,8 @@ export default function Manage({ currentBusiness }: ManageBusinessProps) {
 
             showModal(
               "success",
-              "Success",
-              "This business was successfully delete",
+              t("modal:titles.successful"),
+              t("modal:messages.deleteBusinessSuccess"),
             );
 
             navigate("/my-businesses");
@@ -51,13 +53,14 @@ export default function Manage({ currentBusiness }: ManageBusinessProps) {
     );
   };
   return (
-    <div>
-      Delete this business {currentBusiness?.businessName}?
+    <div className=" flex gap-8 justify-center items-center mt-10">
+      {t("manage.deleteBusiness")} {currentBusiness?.businessName}?
       <Button
-        className="text-red-700"
+        variant="ghost"
+        className="text-red-700 cursor-pointer"
         onClick={() => handleClick(currentBusiness?.businessId)}
       >
-        Delete
+        {t("manage.deleteBtn")}
       </Button>
     </div>
   );
