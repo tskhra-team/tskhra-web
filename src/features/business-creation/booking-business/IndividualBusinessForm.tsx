@@ -19,6 +19,7 @@ import useGetCitites from "@/shared/api/useGetCities";
 import useGetMainBookingCategories from "@/shared/api/useGetMainBookingCategories";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import { scrollToTop } from "@/utils";
+import { getStatusConfig } from "@/utils/errorHandling";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -154,14 +155,10 @@ export default function IndividualBusinessForm() {
           },
         );
       },
-      onError: () => {
+      onError: (error) => {
         closeModal();
-        showModal(
-          "error",
-          t("modal:titles.somethingWentWrong"),
-          t("booking:messages.error"),
-          t("modal:buttons.tryAgain"),
-        );
+        const config = getStatusConfig(error.response?.data.statusCode, t);
+        showModal("error", config.title, config.message);
       },
     });
   };
