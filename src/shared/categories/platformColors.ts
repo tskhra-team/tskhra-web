@@ -25,7 +25,7 @@ export const platformColors: Record<Platform, PlatformColors> = {
     },
     inactive: {
       text: "#6B7280", // Neutral gray for inactive text
-      icon: "#9CA3AF", // Light gray for inactive icons
+      icon: "#D1D5DB", // Lighter gray for inactive icons
       hover: "#F3F4F6", // Subtle gray hover
     },
     subcategoryPanel: {
@@ -40,7 +40,7 @@ export const platformColors: Record<Platform, PlatformColors> = {
     },
     inactive: {
       text: "#6B7280", // Neutral gray for inactive text
-      icon: "#9CA3AF", // Light gray for inactive icons
+      icon: "#D1D5DB", // Lighter gray for inactive icons
       hover: "#F3F4F6", // Subtle gray hover
     },
     subcategoryPanel: {
@@ -55,7 +55,7 @@ export const platformColors: Record<Platform, PlatformColors> = {
     },
     inactive: {
       text: "#6B7280", // Neutral gray for inactive text
-      icon: "#9CA3AF", // Light gray for inactive icons
+      icon: "#D1D5DB", // Lighter gray for inactive icons
       hover: "#F3F4F6", // Subtle gray hover
     },
     subcategoryPanel: {

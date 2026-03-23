@@ -1,5 +1,8 @@
 import type { CategoryItem, Platform } from "./types";
 import { getCategoryIcon } from "./categoryIconMapping";
+import { getCategoryIconFilename } from "./categoryIconFileMapping";
+
+const ICON_BASE_URL = "http://10.227.164.247:9000/ui-assets";
 
 /**
  * Transform API category data to CategoryItem structure
@@ -15,10 +18,12 @@ export function transformApiCategories(
 ): CategoryItem[] {
   return mainCategories.map((categoryName) => {
     const childCategoryNames = subCategories[categoryName] || [];
+    const iconFilename = getCategoryIconFilename(categoryName);
 
     return {
       name: categoryName,
       icon: getCategoryIcon(categoryName, platform),
+      iconUrl: iconFilename ? `${ICON_BASE_URL}/${iconFilename}` : undefined,
       platforms: [platform],
       childItems: childCategoryNames.map((subCategoryName) => ({
         name: subCategoryName,

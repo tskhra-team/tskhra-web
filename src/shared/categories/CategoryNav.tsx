@@ -80,12 +80,21 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                 onMouseOut={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 <span className="flex items-center gap-3 cursor-pointer">
-                  {category.icon && (
+                  {category.iconUrl ? (
+                    <img
+                      src={category.iconUrl}
+                      alt=""
+                      className="w-5 h-5 transition-all duration-200 object-contain"
+                      style={{
+                        opacity: isActive ? 1 : 0.5
+                      }}
+                    />
+                  ) : category.icon ? (
                     <category.icon
                       className="w-5 h-5 transition-colors duration-200"
                       style={{ color: isActive ? colors.active.icon : colors.inactive.icon }}
                     />
-                  )}
+                  ) : null}
                   {displayName}
                 </span>
                 <svg
