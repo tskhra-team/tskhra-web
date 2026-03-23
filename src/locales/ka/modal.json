@@ -24,7 +24,8 @@
     "deleteAvatar": "ავატარის წაშლა",
     "approveBooking": "ამ ჯავშნის დადასტურება?",
     "rejectBooking": "ამ ჯავშნის უარყოფა?",
-    "cancelBooking": "ამ ჯავშნის გაუქმება?"
+    "cancelBooking": "ამ ჯავშნის გაუქმება?",
+    "businessQuantity": "5-ზე მეტ ბიზნესს ვერ შექმნით!"
   },
   "messages": {
     "pleaseWait": "გთხოვთ დაელოდოთ",
@@ -59,7 +60,8 @@
     "bookingRejectedSuccess": "თქვენ წარმატებით უარყავით ეს დაჯავშნა!",
     "cantRejectBooking": "ვერ ვუარვყოფთ ამ დაჯავშნას, გთხოვთ სცადეთ ხელახლა!",
     "confirmCancelBooking": "დარწმუნებული ხართ, რომ გსურთ ამ დაჯავშნის გაუქმება?",
-    "bookingCancelSuccess": "ჯავშანი წარმატებულად გაუქმდა!"
+    "bookingCancelSuccess": "ჯავშანი წარმატებულად გაუქმდა!",
+    "businessLimits": "ბიზნესების ლიმიტი ამოიწურა. თქვენ შეგიძლიათ მარტო 5 ბიზნესის შექმნა"
   },
   "buttons": {
     "close": "დახურვა",

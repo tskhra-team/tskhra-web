@@ -132,7 +132,7 @@ const GlobalModal: React.FC = () => {
     warning: "text-yellow-800 border-yellow-800",
   };
 
-  const shortenedText = title.length > 30 ? title.slice(0, 30) + "..." : title;
+  const shortenedText = title.length > 40 ? title.slice(0, 40) + "..." : title;
 
   return (
     <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">

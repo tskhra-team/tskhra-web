@@ -24,7 +24,8 @@
     "deleteAvatar": "Delete avatar",
     "approveBooking": "Approve this booking?",
     "rejectBooking": "Reject this booking?",
-    "cancelBooking": "Cancel this booking?"
+    "cancelBooking": "Cancel this booking?",
+    "businessQuantity": "You can't create more than 5 busiensses!"
   },
   "messages": {
     "pleaseWait": "Please wait",
@@ -59,7 +60,8 @@
     "bookingRejectedSuccess": "You successfully reject this booking!",
     "cantRejectBooking": "We can't reject this booking please try again!",
     "confirmCancelBooking": "Are you sure you want to cancel this booking?",
-    "bookingCancelSuccess": "Booking was successfully canceled!"
+    "bookingCancelSuccess": "Booking was successfully canceled!",
+    "businessLimits": "Business limits has been reached. You can only have 5 busiensses"
   },
   "buttons": {
     "close": "Close",
