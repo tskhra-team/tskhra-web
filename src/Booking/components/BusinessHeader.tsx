@@ -64,7 +64,7 @@ export default function BusinessHeader({
       {/* Business Header */}
       <div className="mb-8">
         <div className="flex items-start justify-between gap-4 mb-3">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text break-all overflow-hidden flex-1 min-w-0">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text break-all flex-1 min-w-0">
             {businessName}
           </h1>
           <div className="shrink-0">
