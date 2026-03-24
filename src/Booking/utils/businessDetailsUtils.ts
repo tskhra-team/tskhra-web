@@ -80,7 +80,9 @@ export const getAllTimeslotsWithAvailability = (
   if (!selectedDate || !workTimes) return [];
 
   // Get the day of week for the selected date (0 = Sunday, 1 = Monday, etc.)
-  const date = new Date(selectedDate);
+  // Parse date as local time to avoid timezone issues
+  const [year, month, day] = selectedDate.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
 
   // Find working hours for this day
@@ -97,12 +99,13 @@ export const getAllTimeslotsWithAvailability = (
     return rtDay === dayOfWeek;
   });
 
-  // Generate all possible time slots (every 10 minutes)
-  const allSlots = generateTimeSlots(540, 1260, 10); // 09:00 to 21:00, 10-min intervals
+  // Generate all possible time slots based on actual working hours (every 10 minutes)
+  const allSlots = generateTimeSlots(workTime.startTime, workTime.endTime, 10);
 
   // Convert API available timeslots to strings for comparison
+  const hasAPIData = availableTimeslotsFromAPI && availableTimeslotsFromAPI.length > 0;
   const availableTimesSet = new Set(
-    availableTimeslotsFromAPI ? convertTimeslotsToStrings(availableTimeslotsFromAPI) : []
+    hasAPIData ? convertTimeslotsToStrings(availableTimeslotsFromAPI) : []
   );
 
   // Filter and map slots to include availability status
@@ -126,7 +129,7 @@ export const getAllTimeslotsWithAvailability = (
 
       // If we have API data, use it to determine availability
       // If no API data, assume all slots within working hours are available
-      const isAvailable = availableTimeslotsFromAPI
+      const isAvailable = hasAPIData
         ? availableTimesSet.has(slot)
         : true;
 
@@ -183,7 +186,9 @@ export const getAvailableTimeSlots = (
   if (!selectedDate || !workTimes) return [];
 
   // Get the day of week for the selected date (0 = Sunday, 1 = Monday, etc.)
-  const date = new Date(selectedDate);
+  // Parse date as local time to avoid timezone issues
+  const [year, month, day] = selectedDate.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
 
   // Find working hours for this day
@@ -200,8 +205,8 @@ export const getAvailableTimeSlots = (
     return rtDay === dayOfWeek;
   });
 
-  // Generate all possible time slots (every 10 minutes)
-  const slots = generateTimeSlots(540, 1260, 10); // 09:00 to 21:00, 10-min intervals
+  // Generate all possible time slots based on actual working hours (every 10 minutes)
+  const slots = generateTimeSlots(workTime.startTime, workTime.endTime, 10);
 
   // Filter slots based on working hours and rest times
   const availableSlots = slots.filter((slot) => {
