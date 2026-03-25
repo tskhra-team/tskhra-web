@@ -11,10 +11,13 @@ type IndividualBusinessResponseData = {
 
 type CreateBusinessRequest = {
   businessName: string;
+  businessNameKa: string;
   callType: "OUTCALL" | "ONSITE" | "BOTH";
-  city: string;
-  address: string;
+  cityId: number;
+  addressDetails: string | null;
+  addressDetailsKa: string | null;
   description: string;
+  descriptionKa: string;
   mainCategory: string;
   subCategory: string;
   workTimes: Array<{

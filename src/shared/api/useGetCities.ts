@@ -3,16 +3,21 @@ import type { ErrorResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-const getCities = async () => {
-  const response = await publicInstance.get("/cities");
+type CityResponse = {
+  id: number;
+  name: string;
+};
+
+const getCities = async (lang: string) => {
+  const response = await publicInstance.get("/cities", { params: { lang } });
 
   return response.data;
 };
 
-const useGetCitites = () => {
-  return useQuery<Array<string>, AxiosError<ErrorResponse>>({
-    queryFn: getCities,
-    queryKey: ["getCities"],
+const useGetCitites = (lang: string) => {
+  return useQuery<CityResponse[], AxiosError<ErrorResponse>>({
+    queryFn: () => getCities(lang),
+    queryKey: ["getCities", lang],
     staleTime: 100 * 60 * 1000,
   });
 };

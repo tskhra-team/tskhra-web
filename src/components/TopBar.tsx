@@ -64,26 +64,29 @@ export default function TopBar() {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-42 mt-2 p-3">
                 <DropdownMenuLabel>{t("auth.myProfile")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => navigate("/profile")}
-                  className="cursor-pointer"
+                  className="cursor-pointer h-10"
                 >
                   <User className="mr-2 h-4 w-4" />
                   <span>{t("auth.profile")}</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/my-businesses")}
-                  className="cursor-pointer"
-                >
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  <span>{t("auth.dashboard")}</span>
-                </DropdownMenuItem>
+                {user?.isVerified && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/my-businesses")}
+                    className="cursor-pointer h-10"
+                  >
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>{t("auth.dashboard")}</span>
+                  </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="cursor-pointer text-red-600 focus:text-red-600"
+                  className="cursor-pointer text-red-600 focus:text-red-600 h-10"
                 >
                   <LogOut className="mr-2 h-4 w-4 text-red-600" />
                   <span>{t("auth.singOut")}</span>

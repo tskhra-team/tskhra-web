@@ -102,33 +102,65 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     facebookUrl: yup.string().optional(),
   });
 
+  const businessNameSchemaKa = yup
+    .string()
+    .required(t("booking:validation.businessNameRequiredKa"))
+    .min(2, t("booking:validation.businessNameMin"))
+    .max(40, t("booking:validation.businessNameMax"));
+
+  const businessNameSchema = yup
+    .string()
+    .required(t("booking:validation.businessNameRequired"))
+    .min(2, t("booking:validation.businessNameMin"))
+    .max(40, t("booking:validation.businessNameMax"));
+
+  const addressDetailsSchemaKa = yup
+    .string()
+    .when("callType", {
+      is: (val: string) => val !== "OUTCALL",
+      then: (schema) =>
+        schema.required(t("booking:validation.addressRequiredKa")),
+      otherwise: (schema) => schema.default(""),
+    })
+    .notRequired()
+    .default(null);
+
+  const addressDetailsSchema = yup
+    .string()
+    .when("callType", {
+      is: (val: string) => val !== "OUTCALL",
+      then: (schema) =>
+        schema.required(t("booking:validation.addressRequired")),
+      otherwise: (schema) => schema.default(""),
+    })
+    .notRequired()
+    .default(null);
+
+  const descriptionSchemaKa = yup
+    .string()
+    .required(t("booking:validation.descriptionRequiredKa"))
+    .min(10, t("booking:validation.descriptionMin"))
+    .max(250, t("booking:validation.descriptionMax"));
+
+  const descriptionSchema = yup
+    .string()
+    .required(t("booking:validation.descriptionRequired"))
+    .min(10, t("booking:validation.descriptionMin"))
+    .max(250, t("booking:validation.descriptionMax"));
+
   return yup.object({
-    businessName: yup
-      .string()
-      .required(t("booking:validation.businessNameRequired"))
-      .min(2, t("booking:validation.businessNameMin"))
-      .max(40, t("booking:validation.businessNameMax")),
+    businessNameKa: businessNameSchemaKa,
+    businessName: businessNameSchema,
     callType: yup
       .mixed<"OUTCALL" | "ONSITE" | "BOTH">()
       .oneOf(["OUTCALL", "ONSITE", "BOTH"])
       .required(t("booking:validation.callTypeRequired"))
       .default(null),
     city: yup.string().required(t("booking:validation.cityRequired")),
-    addressDetails: yup
-      .string()
-      .when("callType", {
-        is: (val: string) => val !== "OUTCALL",
-        then: (schema) =>
-          schema.required(t("booking:validation.addressRequired")),
-        otherwise: (schema) => schema.default(""),
-      })
-      .notRequired()
-      .default(null),
-    description: yup
-      .string()
-      .required(t("booking:validation.descriptionRequired"))
-      .min(10, t("booking:validation.descriptionMin"))
-      .max(250, t("booking:validation.descriptionMax")),
+    addressDetailsKa: addressDetailsSchemaKa,
+    addressDetails: addressDetailsSchema,
+    descriptionKa: descriptionSchemaKa,
+    description: descriptionSchema,
     mainCategory: yup
       .string()
       .required(t("booking:validation.mainCategoryRequired")),
