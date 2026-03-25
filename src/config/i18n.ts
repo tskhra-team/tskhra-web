@@ -60,6 +60,8 @@ i18n
     },
     fallbackLng: "en", // Fallback language
     defaultNS: "common", // Default namespace
+    supportedLngs: ["en", "ka"],
+    load: "languageOnly",
     debug: false, // Set to true for development debugging
 
     interpolation: {
