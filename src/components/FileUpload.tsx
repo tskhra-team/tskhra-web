@@ -15,7 +15,6 @@ const ALLOWED_FILE_TYPES = [
   "image/jpg",
   "image/png",
   "image/webp",
-  "image/avif",
 ];
 
 export default function FileUpload({
@@ -54,7 +53,7 @@ export default function FileUpload({
       // Check file type
       if (!ALLOWED_FILE_TYPES.includes(file.type)) {
         toast.error(
-          `File "${file.name}" has invalid type. Only JPEG, PNG and WebP images are allowed`,
+          `File "${file.name}" has invalid type. Only JPG, JPEG, PNG and WebP images are allowed`,
           {
             position: "top-center",
           },

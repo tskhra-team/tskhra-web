@@ -5,6 +5,7 @@
     "congratulations": "გილოცავთ!",
     "somethingWentWrong": "რაღაც არასწორად წავიდა",
     "notAuthorized": "თქვენ არ ხართ ავტორიზებული",
+    "notVerified": "არ ხართ ვერიფიცირებული!",
     "missingInformation": "ინფორმაცია არასრულია",
     "bookingConfirmed": "დაჯავშნა დადასტურდა",
     "bookingFailed": "დაჯავშნა ვერ მოხერხდა",
@@ -63,7 +64,9 @@
     "bookingCancelSuccess": "ჯავშანი წარმატებულად გაუქმდა!",
     "businessLimits": "ბიზნესების ლიმიტი ამოიწურა. თქვენ შეგიძლიათ მარტო 5 ბიზნესის შექმნა",
     "deleteBusinessWarn": "დარწმუნებული ხართ რომ ამ ბიზნესის წაშლა გინდათ?",
-    "deleteBusinessSuccess": "ბიზნესი წარმატებულად წაიშალა"
+    "deleteBusinessSuccess": "ბიზნესი წარმატებულად წაიშალა",
+    "goToDashboardError": "დეშბორდზე გადასასვლელად ვერიფიცირებული უნდა იყოთ",
+    "createBusinessError": "ბიზნესის შესაქმნელად ვერიფიცირებული უნდა იყოთ"
   },
   "buttons": {
     "close": "დახურვა",
@@ -82,6 +85,7 @@
     "continue": "გაგრძელება",
     "yesDelete": "დიახ, წაშალე",
     "approve": "დადასტურება",
-    "reject": "უარყოფა"
+    "reject": "უარყოფა",
+    "goToVerify": "ვერიფიკაციაზე გადასვლა"
   }
 }

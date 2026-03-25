@@ -699,11 +699,11 @@ export default function ProfileSettings({
                 if (!verificationStatus) {
                   showModal(
                     "error",
-                    "You aren't verified!",
-                    "To create a business you need to verify",
-                    "Close",
+                    t("modal:titles.notVerified"),
+                    t("modal:messages.createBusinessError"),
+                    t("modal:buttons.close"),
                     () => {},
-                    "Go to verifications",
+                    t("modal:buttons.goToVerify"),
                     () => {
                       navigate("/verification");
                     },

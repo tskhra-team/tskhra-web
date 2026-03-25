@@ -32,12 +32,15 @@ import WorkingSchedule from "./WorkingSchedule";
 export default function IndividualBusinessForm() {
   const { t } = useTranslation(["booking", "modal"]);
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   const { mutate: createBusiness, isPending: isCreating } =
     useCreateIndividualBusiness();
   const { mutate: uploadPhotos, isPending: isUploading } =
     useUploadBusinessPhotos();
-  const { data: cities, isLoading: isLoadingCities } = useGetCitites();
+  const { data: cities, isLoading: isLoadingCities } = useGetCitites(
+    i18n.language.toUpperCase(),
+  );
   const { data: categories, isLoading: isLoadingCategories } =
     useGetMainBookingCategories();
   const { data: subCategories, isLoading: isLoadingSubCategories } =
@@ -55,9 +58,12 @@ export default function IndividualBusinessForm() {
   } = useForm<IndividualBusinessFormData>({
     resolver: yupResolver(createIndividualBusinessSchema(t)),
     defaultValues: {
+      businessNameKa: "",
       businessName: "",
       city: "",
+      addressDetailsKa: "",
       addressDetails: "",
+      descriptionKa: "",
       description: "",
       images: {
         businessPhoto: [],
@@ -88,10 +94,13 @@ export default function IndividualBusinessForm() {
     // Step 1: Create business
     const businessData = {
       businessName: data.businessName,
+      businessNameKa: data.businessNameKa,
       callType: data.callType,
-      city: data.city,
+      cityId: Number(data.city),
       addressDetails: data.addressDetails,
+      addressDetailsKa: data.addressDetailsKa,
       description: data.description,
+      descriptionKa: data.descriptionKa,
       mainCategory: data.mainCategory,
       subCategory: data.subCategory,
       workTimes: data.workTimes.map((t) => ({
@@ -105,7 +114,7 @@ export default function IndividualBusinessForm() {
       info: data.info,
     };
 
-    createBusiness(businessData as any, {
+    createBusiness(businessData, {
       onSuccess: (result) => {
         // Step 2: Save businessId to localStorage
         const businessId = result.businessId;
@@ -172,6 +181,8 @@ export default function IndividualBusinessForm() {
     return <ServiceFormSkeleton />;
   }
 
+  console.log(errors);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -181,7 +192,7 @@ export default function IndividualBusinessForm() {
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-6 space-y-1">
           <CardTitle className="text-2xl font-semibold tracking-tight">
-            {t("booking:form.businessName")}
+            {t("booking:form.businesHeader")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             {t("booking:form.subName")}
@@ -193,6 +204,22 @@ export default function IndividualBusinessForm() {
               {t("booking:form.businessName")}
             </Label>
             <Input
+              {...register("businessNameKa")}
+              placeholder={t("booking:form.enterName")}
+              className="h-11 transition-all"
+            />
+            {errors.businessNameKa && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.businessNameKa.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2.5">
+            <Label className="text-sm font-medium">
+              {t("booking:form.businessNameEN")}
+            </Label>
+            <Input
               {...register("businessName")}
               placeholder={t("booking:form.enterName")}
               className="h-11 transition-all"
@@ -202,16 +229,6 @@ export default function IndividualBusinessForm() {
                 {errors.businessName.message}
               </p>
             )}
-          </div>
-
-          <div className="space-y-2.5">
-            <Label className="text-sm font-medium">
-              {t("booking:form.businessNameEN")} DEMO
-            </Label>
-            <Input
-              placeholder={t("booking:form.enterName")}
-              className="h-11 transition-all"
-            />
           </div>
 
           <div className="space-y-3">
@@ -288,8 +305,8 @@ export default function IndividualBusinessForm() {
                     </SelectTrigger>
                     <SelectContent>
                       {cities?.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
+                        <SelectItem key={city.id} value={String(city.id)}>
+                          {city.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -307,6 +324,23 @@ export default function IndividualBusinessForm() {
                 {t("booking:form.address")}
               </Label>
               <Input
+                {...register("addressDetailsKa")}
+                disabled={callType === "OUTCALL"}
+                placeholder={t("booking:form.addressPlaceholder")}
+                className="h-11 transition-all"
+              />
+              {errors.addressDetailsKa && callType !== "OUTCALL" && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.addressDetailsKa.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2.5 w-full">
+              <Label className="text-sm font-medium">
+                {t("booking:form.addressEN")}
+              </Label>
+              <Input
                 {...register("addressDetails")}
                 disabled={callType === "OUTCALL"}
                 placeholder={t("booking:form.addressPlaceholder")}
@@ -317,17 +351,6 @@ export default function IndividualBusinessForm() {
                   {errors.addressDetails.message}
                 </p>
               )}
-            </div>
-
-            <div className="space-y-2.5 w-full">
-              <Label className="text-sm font-medium">
-                {t("booking:form.addressEN")} DEMO
-              </Label>
-              <Input
-                disabled={callType === "OUTCALL"}
-                placeholder={t("booking:form.addressPlaceholder")}
-                className="h-11 transition-all"
-              />
             </div>
           </div>
         </CardContent>
@@ -346,8 +369,22 @@ export default function IndividualBusinessForm() {
         <CardContent className="flex flex-col gap-10">
           <div>
             <textarea
-              {...register("description")}
+              {...register("descriptionKa")}
               placeholder={t("booking:form.descriptionPlaceholder")}
+              rows={6}
+              className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+            />
+            {errors.descriptionKa && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.descriptionKa.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <textarea
+              {...register("description")}
+              placeholder={`${t("booking:form.descriptionPlaceholderEN")}`}
               rows={6}
               className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
             />
@@ -356,14 +393,6 @@ export default function IndividualBusinessForm() {
                 {errors.description.message}
               </p>
             )}
-          </div>
-
-          <div>
-            <textarea
-              placeholder={`${t("booking:form.descriptionPlaceholderEN")} DEMO`}
-              rows={6}
-              className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
-            />
           </div>
         </CardContent>
       </Card>
