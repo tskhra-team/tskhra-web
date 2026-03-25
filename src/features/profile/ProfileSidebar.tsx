@@ -127,7 +127,9 @@ export default function ProfileSidebar({
             className="w-full flex items-center gap-3 px-4 py-3 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-all cursor-pointer"
           >
             <LogOut className="w-5 h-5" />
-            <span className="text-sm font-medium">Log Out</span>
+            <span className="text-sm font-medium">
+              {t("common:auth.singOut")}
+            </span>
           </Button>
         </div>
       </div>
