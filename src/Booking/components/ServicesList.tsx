@@ -45,13 +45,13 @@ const ServicesList = forwardRef<HTMLDivElement, ServicesListProps>(
                         : "hover:bg-primary/5 hover:border-primary/30 hover:shadow-md cursor-pointer"
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className={`font-semibold text-lg transition-colors ${
+                    <div className="flex justify-between items-start gap-3 mb-2">
+                      <h3 className={`font-semibold text-lg transition-colors min-w-0 wrap-break-word ${
                         isInactive ? "text-muted-foreground" : "group-hover:text-primary"
                       }`}>
                         {service.name}
                       </h3>
-                      <div className="text-right">
+                      <div className="text-right shrink-0">
                         <p className={`text-xl font-bold ${
                           isInactive ? "text-muted-foreground" : "text-primary"
                         }`}>
@@ -66,7 +66,7 @@ const ServicesList = forwardRef<HTMLDivElement, ServicesListProps>(
                       </div>
                     </div>
                     {service.description && (
-                      <p className="text-sm text-muted-foreground leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed break-all">
                         {service.description}
                       </p>
                     )}
