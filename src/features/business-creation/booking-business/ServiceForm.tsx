@@ -25,9 +25,11 @@ export default function ServiceForm() {
 
   const [newService, setNewService] = useState({
     name: "",
+    nameEn: "",
     price: 0,
     duration: 0,
     description: "",
+    descriptionEn: "",
   });
   const [serviceError, setServiceError] = useState("");
 
@@ -62,7 +64,14 @@ export default function ServiceForm() {
         },
       ]);
 
-      setNewService({ name: "", price: 0, duration: 0, description: "" });
+      setNewService({
+        name: "",
+        nameEn: "",
+        price: 0,
+        duration: 0,
+        description: "",
+        descriptionEn: "",
+      });
     } catch (error: any) {
       if (error.errors && error.errors.length > 0) {
         setServiceError(error.errors[0]);
@@ -164,10 +173,10 @@ export default function ServiceForm() {
             </div>
             <div className="space-y-2.5">
               <Label className="text-sm font-medium">
-                {t("booking:form.serviceNameEN")} DEMO
+                {t("booking:form.serviceNameEN")}
               </Label>
               <Input
-                value={newService.name}
+                value={newService.nameEn}
                 onChange={(e) =>
                   setNewService({ ...newService, name: e.target.value })
                 }
@@ -228,10 +237,10 @@ export default function ServiceForm() {
           </div>
           <div className="space-y-2.5">
             <Label className="text-sm font-medium">
-              {t("booking:form.serviceDescriptionEN")} DEMO
+              {t("booking:form.serviceDescriptionEN")}
             </Label>
             <Input
-              value={newService.description}
+              value={newService.descriptionEn}
               onChange={(e) =>
                 setNewService({ ...newService, description: e.target.value })
               }

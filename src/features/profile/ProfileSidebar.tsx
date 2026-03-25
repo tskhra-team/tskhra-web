@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useModal } from "@/context/ModalContext";
 import { useAuth } from "@/context/useAuth";
 import { cn } from "@/lib/utils";
 import type { ProfileType } from "@/types";
@@ -27,9 +28,10 @@ export default function ProfileSidebar({
   onSectionChange,
   profile,
 }: ProfileSidebarProps) {
-  const { t } = useTranslation(["profile", "common"]);
+  const { t } = useTranslation(["profile", "common", "modal"]);
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { showModal } = useModal();
 
   const verificationStatus = profile?.status;
   const isFullnameExist = profile?.firstName && profile?.lastName;
@@ -88,7 +90,23 @@ export default function ProfileSidebar({
             {/* Dashboard Button */}
             <Button
               variant="outline"
-              onClick={() => navigate("/my-businesses")}
+              onClick={() => {
+                if (!profile?.status) {
+                  showModal(
+                    "error",
+                    t("modal:titles.notVerified"),
+                    t("modal:messages.goToDashboardError"),
+                    t("modal:buttons.close"),
+                    () => {},
+                    t("modal:buttons.goToVerify"),
+                    () => {
+                      navigate("/verification");
+                    },
+                  );
+                } else {
+                  navigate("/my-businesses");
+                }
+              }}
               className="w-full hover:border-indigo-400 hover:text-indigo-700 transition-all"
             >
               <LayoutDashboard className="w-4 h-4 mr-2" />

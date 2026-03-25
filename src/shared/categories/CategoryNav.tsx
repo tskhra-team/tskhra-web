@@ -15,7 +15,14 @@ interface CategoryNavProps {
   onCategoryClick?: () => void;
 }
 
-export default function CategoryNav({ categories, activeIndex, onSelect, categoryDisplayName, platform, onCategoryClick }: CategoryNavProps) {
+export default function CategoryNav({
+  categories,
+  activeIndex,
+  onSelect,
+  categoryDisplayName,
+  platform,
+  onCategoryClick,
+}: CategoryNavProps) {
   const { t } = useTranslation("categories");
   const colors = getPlatformColors(platform);
   const [, setSearchParams] = useSearchParams();
@@ -23,19 +30,27 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
 
   const INITIAL_DISPLAY_COUNT = 9;
   const hasMoreCategories = categories.length > INITIAL_DISPLAY_COUNT;
-  const displayedCategories = isExpanded ? categories : categories.slice(0, INITIAL_DISPLAY_COUNT);
+  const displayedCategories = isExpanded
+    ? categories
+    : categories.slice(0, INITIAL_DISPLAY_COUNT);
 
   return (
     <nav className="w-full lg:w-64 rounded-2xl border p-4">
       <ul className="space-y-1">
         {displayedCategories.map((category) => {
-          const originalIndex = categories.findIndex(c => c.name === category.name);
+          const originalIndex = categories.findIndex(
+            (c) => c.name === category.name,
+          );
           const translationKey = categoryNameToKey[category.name];
-          const displayName = translationKey ? t(translationKey) : category.name;
+          const displayName = translationKey
+            ? t(translationKey)
+            : category.name;
           const isActive = originalIndex === activeIndex;
 
-          const categorySlug = category.name.toLowerCase().replace(/\s+/g, '-');
-          const categoryUrl = platform ? `/${platform}/category/${categorySlug}` : '#';
+          const categorySlug = category.name.toLowerCase().replace(/\s+/g, "-");
+          const categoryUrl = platform
+            ? `/${platform}/category/${categorySlug}`
+            : "#";
 
           return (
             <li key={category.name} className="lg:block ">
@@ -58,9 +73,13 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                     }
                     // Scroll to catalog
                     setTimeout(() => {
-                      const catalogElement = document.querySelector('[data-catalog]');
+                      const catalogElement =
+                        document.querySelector("[data-catalog]");
                       if (catalogElement) {
-                        catalogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        catalogElement.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
                       }
                     }, 100);
                   }
@@ -76,8 +95,15 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                         color: colors.inactive.text,
                       }
                 }
-                onMouseOver={(e) => !isActive && (e.currentTarget.style.backgroundColor = colors.inactive.hover)}
-                onMouseOut={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'transparent')}
+                onMouseOver={(e) =>
+                  !isActive &&
+                  (e.currentTarget.style.backgroundColor =
+                    colors.inactive.hover)
+                }
+                onMouseOut={(e) =>
+                  !isActive &&
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
               >
                 <span className="flex items-center gap-3 cursor-pointer">
                   {category.iconUrl ? (
@@ -86,30 +112,45 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
                       alt=""
                       className="w-5 h-5 transition-all duration-200 object-contain"
                       style={{
-                        opacity: isActive ? 1 : 0.5
+                        opacity: isActive ? 1 : 0.5,
                       }}
                     />
                   ) : category.icon ? (
                     <category.icon
                       className="w-5 h-5 transition-colors duration-200"
-                      style={{ color: isActive ? colors.active.icon : colors.inactive.icon }}
+                      style={{
+                        color: isActive
+                          ? colors.active.icon
+                          : colors.inactive.icon,
+                      }}
                     />
                   ) : null}
                   {displayName}
                 </span>
                 <svg
-                  className={`lg:hidden w-5 h-5 transition-transform duration-200 ease-in-out ${isActive ? 'rotate-180' : ''}`}
+                  className={`lg:hidden w-5 h-5 transition-transform duration-200 ease-in-out ${isActive ? "rotate-180" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </Link>
               {isActive && category.childItems && (
                 <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-                  <h3 className="mb-4 text-sm font-semibold">{categoryDisplayName}</h3>
-                  <SubcategoryView subcategories={category.childItems} platform={platform} categorySlug={categorySlug} />
+                  <h3 className="mb-4 text-sm font-semibold">
+                    {categoryDisplayName}
+                  </h3>
+                  <SubcategoryView
+                    subcategories={category.childItems}
+                    platform={platform}
+                    categorySlug={categorySlug}
+                  />
                 </div>
               )}
             </li>
@@ -125,12 +166,17 @@ export default function CategoryNav({ categories, activeIndex, onSelect, categor
           style={{ color: colors.inactive.text }}
         >
           <svg
-            className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       )}

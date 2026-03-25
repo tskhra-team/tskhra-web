@@ -56,7 +56,7 @@ function Logo({ color = "black" }: { color?: string }) {
     <>
       {/* Desktop version - horizontal on hover */}
       <div
-        className="font-bold text-2xl relative overflow-hidden hidden md:inline-block"
+        className="font-bold text-2xl relative overflow-hidden hidden xl:inline-block"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => scrollToTop()}
@@ -85,7 +85,7 @@ function Logo({ color = "black" }: { color?: string }) {
       </div>
 
       {/* Mobile version - dropdown */}
-      <div ref={logoRef} className="relative md:hidden">
+      <div ref={logoRef} className="relative xl:hidden">
         <div className="flex items-center gap-2">
           <Link
             to={activeService.path}
