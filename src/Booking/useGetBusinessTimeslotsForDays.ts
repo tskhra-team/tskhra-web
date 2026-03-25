@@ -1,7 +1,5 @@
 import { publicInstance } from "@/api";
-import type { ErrorResponse } from "@/types";
 import { useQueries } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
 
 const getBusinessTimeslots = async (
   businessId: string,
