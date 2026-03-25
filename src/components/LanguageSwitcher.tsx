@@ -12,12 +12,14 @@ export default function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { i18n } = useTranslation();
 
+  const currentLanguage = i18n.resolvedLanguage || i18n.language;
+
   const toggleLanguage = () => {
-    const newLang = i18n.language === "en" ? "ka" : "en";
+    const newLang = currentLanguage === "en" ? "ka" : "en";
     i18n.changeLanguage(newLang);
   };
 
-  const currentLang = i18n.language === "en" ? "EN" : "KA";
+  const currentLangLabel = currentLanguage === "en" ? "EN" : "ქარ";
 
   return (
     <button
@@ -33,9 +35,9 @@ export default function LanguageSwitcher({
         "rounded-md",
         className,
       )}
-      aria-label={`Switch to ${i18n.language === "en" ? "Georgian" : "English"}`}
+      aria-label={`Switch to ${currentLanguage === "en" ? "Georgian" : "English"}`}
     >
-      {currentLang}
+      {currentLangLabel}
     </button>
   );
 }

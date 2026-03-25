@@ -21,28 +21,27 @@ import {
 import useGetMyBusinesses, {
   type MyBusinessResponse,
 } from "@/features/my-businesses/useGetMyBusinesses";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
   const { t } = useTranslation(["dashboard", "booking"]);
   const { isMobile } = useSidebar();
-  const [activeBusiness, setActiveBusiness] = useState<
-    MyBusinessResponse | string
-  >(t("businessSwitcher.selectBusiness"));
+  const [activeBusiness, setActiveBusiness] =
+    useState<MyBusinessResponse | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: businesses } = useGetMyBusinesses();
   const businessId = searchParams.get("businessId");
   const navigate = useNavigate();
 
-  const handleBusinessSelect = React.useCallback(
+  const handleBusinessSelect = useCallback(
     (business: MyBusinessResponse) => {
       setActiveBusiness(business);
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set("businessId", business.businessId);
-      setSearchParams(newParams);
+      navigate(
+        `/my-businesses?businessId=${business.businessId}&section=chart`,
+      );
     },
-    [searchParams, setSearchParams],
+    [navigate],
   );
 
   const businessIds = useMemo(
@@ -67,13 +66,9 @@ function BusinessSwitcherComponent() {
         }
       }
     } else if (!businessId) {
-      setActiveBusiness(t("businessSwitcher.selectBusiness"));
+      setActiveBusiness(null);
     }
   }, [businessId, businesses, businessIds, searchParams, setSearchParams]);
-
-  if (!activeBusiness) {
-    return null;
-  }
 
   return (
     <SidebarMenu>
@@ -84,9 +79,11 @@ function BusinessSwitcherComponent() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              {typeof activeBusiness !== "object" ? (
+              {!activeBusiness ? (
                 <div className="grid flex-1 text-left text-lg leading-tight">
-                  <span className="truncate font-medium">{activeBusiness}</span>
+                  <span className="truncate font-medium">
+                    {t("businessSwitcher.selectBusiness")}
+                  </span>
                 </div>
               ) : (
                 <>

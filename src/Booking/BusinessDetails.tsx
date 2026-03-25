@@ -13,6 +13,7 @@ import { useImageGallery } from "@/Booking/hooks/useImageGallery";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
+import useGetBusinessTimeslotsForDays from "@/Booking/useGetBusinessTimeslotsForDays";
 import { getAllTimeslotsWithAvailability, getAvailableDays } from "@/Booking/utils/businessDetailsUtils";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
@@ -67,6 +68,24 @@ export default function BusinessDetails() {
   );
 
   const availableDays = getAvailableDays(business?.workTimes);
+
+  // Fetch timeslots for all working days to check which days have available slots
+  const serviceId = selectedService?.id ? String(selectedService.id) : null;
+  const workingDayDates = availableDays
+    .filter((day) => day.isAvailable)
+    .map((day) => day.dateString);
+
+  const { unavailableDates } = useGetBusinessTimeslotsForDays(
+    id || "",
+    serviceId,
+    workingDayDates,
+  );
+
+  // Mark days with no available timeslots as disabled
+  const enrichedAvailableDays = availableDays.map((day) => ({
+    ...day,
+    isAvailable: day.isAvailable && !unavailableDates.has(day.dateString),
+  }));
 
   // Generate all timeslots with availability status based on API data and business hours
   const availableTimeSlots = getAllTimeslotsWithAvailability(
@@ -219,7 +238,7 @@ export default function BusinessDetails() {
           selectedService={selectedService}
           selectedDate={selectedDate}
           selectedTime={selectedTime}
-          availableDays={availableDays}
+          availableDays={enrichedAvailableDays}
           availableTimeSlots={availableTimeSlots}
           timeslotsLoading={timeslotsLoading}
           isBooking={isBooking}

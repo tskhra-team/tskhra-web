@@ -71,7 +71,7 @@ export const getAllTimeslotsWithAvailability = (
     startTime: number;
     endTime: number;
   }>,
-  restTimes?: Array<{
+  _restTimes?: Array<{
     weekDay: string | number;
     startTime: number;
     endTime: number;
@@ -93,54 +93,18 @@ export const getAllTimeslotsWithAvailability = (
 
   if (!workTime) return []; // Business is closed this day
 
-  // Find rest times for this day
-  const restTime = restTimes?.find((rt) => {
-    const rtDay = dayNameToDayNumber(rt.weekDay);
-    return rtDay === dayOfWeek;
-  });
+  // If no timeslots from API, return empty
+  if (!availableTimeslotsFromAPI || availableTimeslotsFromAPI.length === 0) {
+    return [];
+  }
 
-  // Generate all possible time slots based on actual working hours (every 10 minutes)
-  const allSlots = generateTimeSlots(workTime.startTime, workTime.endTime, 10);
+  // Use only the time slots returned by the API
+  const apiSlots = convertTimeslotsToStrings(availableTimeslotsFromAPI);
 
-  // Convert API available timeslots to strings for comparison
-  const hasAPIData = availableTimeslotsFromAPI && availableTimeslotsFromAPI.length > 0;
-  const availableTimesSet = new Set(
-    hasAPIData ? convertTimeslotsToStrings(availableTimeslotsFromAPI) : []
-  );
-
-  // Filter and map slots to include availability status
-  const timeslotsWithAvailability = allSlots
-    .map((slot) => {
-      const slotMinutes = timeToMinutes(slot);
-
-      // Check if slot is within working hours
-      const isWithinWorkingHours =
-        slotMinutes >= workTime.startTime && slotMinutes < workTime.endTime;
-
-      // Check if slot is during rest time
-      const isDuringRestTime = restTime
-        ? slotMinutes >= restTime.startTime && slotMinutes < restTime.endTime
-        : false;
-
-      // If not within working hours or during rest time, skip this slot entirely
-      if (!isWithinWorkingHours || isDuringRestTime) {
-        return null;
-      }
-
-      // If we have API data, use it to determine availability
-      // If no API data, assume all slots within working hours are available
-      const isAvailable = hasAPIData
-        ? availableTimesSet.has(slot)
-        : true;
-
-      return {
-        time: slot,
-        isAvailable,
-      };
-    })
-    .filter((slot): slot is { time: string; isAvailable: boolean } => slot !== null);
-
-  return timeslotsWithAvailability;
+  return apiSlots.map((time) => ({
+    time,
+    isAvailable: true,
+  }));
 };
 
 // Helper function to convert day name to day number (0 = Sunday, 1 = Monday, etc.)
