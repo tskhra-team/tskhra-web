@@ -4,18 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import type { ErrorResponse } from "react-router-dom";
 
-const getScheduledBookings = async (businessId: string) => {
+const getScheduledBookings = async (businessId: string, lang: string) => {
   const response = await privateInstance.get(
     `business/${businessId}/bookings/scheduled`,
+    { params: { lang } },
   );
 
   return response.data;
 };
 
-const useGetScheduledBookings = (businessId: string) => {
+const useGetScheduledBookings = (businessId: string, lang: string) => {
   return useQuery<ScheduledResponse[], AxiosError<ErrorResponse>>({
-    queryFn: () => getScheduledBookings(businessId),
-    queryKey: ["getScheduledBookings", businessId],
+    queryFn: () => getScheduledBookings(businessId, lang),
+    queryKey: ["getScheduledBookings", businessId, lang],
     enabled: !!businessId,
   });
 };

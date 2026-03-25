@@ -25,12 +25,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function BusinessSwitcherComponent() {
-  const { t } = useTranslation(["dashboard", "booking"]);
+  const { t, i18n } = useTranslation(["dashboard", "booking"]);
   const { isMobile } = useSidebar();
   const [activeBusiness, setActiveBusiness] =
     useState<MyBusinessResponse | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data: businesses } = useGetMyBusinesses();
+  const { data: businesses } = useGetMyBusinesses(i18n.language.toUpperCase());
   const businessId = searchParams.get("businessId");
   const navigate = useNavigate();
 

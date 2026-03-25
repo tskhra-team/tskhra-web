@@ -29,16 +29,18 @@ export type MyBusinessResponse = {
   ];
 };
 
-const getMyBusinesses = async () => {
-  const response = await privateInstance.get("/business/me");
+const getMyBusinesses = async (lang: string) => {
+  const response = await privateInstance.get("/business/me", {
+    params: { lang },
+  });
 
   return response.data;
 };
 
-const useGetMyBusinesses = () => {
+const useGetMyBusinesses = (lang: string) => {
   return useQuery<MyBusinessResponse[], AxiosError<ErrorResponse>>({
-    queryFn: getMyBusinesses,
-    queryKey: ["getMyBusinesses"],
+    queryFn: () => getMyBusinesses(lang),
+    queryKey: ["getMyBusinesses", lang],
     staleTime: 10 * 60 * 1000,
   });
 };
