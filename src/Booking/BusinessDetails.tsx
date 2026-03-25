@@ -14,7 +14,10 @@ import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServic
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
 import useGetBusinessTimeslotsForDays from "@/Booking/useGetBusinessTimeslotsForDays";
-import { getAllTimeslotsWithAvailability, getAvailableDays } from "@/Booking/utils/businessDetailsUtils";
+import {
+  getAllTimeslotsWithAvailability,
+  getAvailableDays,
+} from "@/Booking/utils/businessDetailsUtils";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,7 +26,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function BusinessDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation("booking");
+  const { t, i18n } = useTranslation("booking");
   const servicesRef = useRef<HTMLDivElement>(null);
 
   // Fetch business data from API (only if id exists)
@@ -33,11 +36,11 @@ export default function BusinessDetails() {
     isFetching,
     isError,
     error,
-  } = useGetBookingSingleBusiness(id || "", !!id);
+  } = useGetBookingSingleBusiness(id || "", !!id, i18n.language.toUpperCase());
 
   // Fetch services for this business
   const { data: services, isLoading: servicesLoading } =
-    useGetBookingBusinessServices(id || "", !!id);
+    useGetBookingBusinessServices(id || "", !!id, i18n.language.toUpperCase());
 
   // Custom hooks for state management
   const {
@@ -60,12 +63,13 @@ export default function BusinessDetails() {
   const { currentImageIndex, handleImageClick } = useImageGallery(allImages);
 
   // Fetch timeslots from API when service and date are selected
-  const { data: timeslotsData, isLoading: timeslotsLoading } = useGetBusinessTimeslots(
-    id || "",
-    selectedDate,
-    selectedService?.id ? String(selectedService.id) : null,
-    !!id && !!selectedDate && !!selectedService?.id,
-  );
+  const { data: timeslotsData, isLoading: timeslotsLoading } =
+    useGetBusinessTimeslots(
+      id || "",
+      selectedDate,
+      selectedService?.id ? String(selectedService.id) : null,
+      !!id && !!selectedDate && !!selectedService?.id,
+    );
 
   const availableDays = getAvailableDays(business?.workTimes);
 
@@ -184,7 +188,6 @@ export default function BusinessDetails() {
 
             {/* Mobile-only: Show contact info, working hours, location and book now before services */}
             <div className="lg:hidden space-y-6">
-              
               <BookNowCard
                 businessName={business.businessName}
                 onBookNowClick={scrollToServices}
@@ -200,7 +203,6 @@ export default function BusinessDetails() {
                 addressDetail={business.addressDetail}
                 city={business.city}
               />
-
             </div>
 
             <ServicesList

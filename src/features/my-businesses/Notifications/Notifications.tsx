@@ -16,8 +16,11 @@ interface MyNotificationProps {
 
 export default function Notifications({ businessId }: MyNotificationProps) {
   if (!businessId) return;
-  const { t } = useTranslation(["dashboard", "modal"]);
-  const { data: notifications, isLoading } = useGetNotifications(businessId);
+  const { t, i18n } = useTranslation(["dashboard", "modal"]);
+  const { data: notifications, isLoading } = useGetNotifications(
+    businessId,
+    i18n.language.toUpperCase(),
+  );
   const { mutate: rejectBooking } = useRejectBooking();
   const { mutate: approveBooking } = useApproveBooking();
 

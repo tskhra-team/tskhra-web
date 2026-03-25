@@ -1,28 +1,37 @@
-import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Calendar, AlertCircle, ArrowLeft } from "lucide-react";
-import useGetMyBookings, { type BookingStatus } from "@/Booking/useGetMyBookings";
 import useCancelBooking from "@/Booking/useCancelBooking";
+import useGetMyBookings, {
+  type BookingStatus,
+} from "@/Booking/useGetMyBookings";
 import Loader from "@/components/Loader";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PaginationControls } from "@/shared/pagination/Pagination";
-import { scrollToTop } from "@/utils";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/ModalContext";
 import queryClient from "@/query/queryClient";
+import { PaginationControls } from "@/shared/pagination/Pagination";
+import { scrollToTop } from "@/utils";
+import { AlertCircle, ArrowLeft, Calendar } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { BookingCard } from "./components/BookingCard";
 
 export const MyBooking = () => {
-  const { t } = useTranslation("booking");
+  const { t, i18n } = useTranslation("booking");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedFilter, setSelectedFilter] = useState<BookingStatus | "ALL">("ALL");
+  const [selectedFilter, setSelectedFilter] = useState<BookingStatus | "ALL">(
+    "ALL",
+  );
 
-  const page = parseInt(searchParams.get('page') || '0', 10);
+  const page = parseInt(searchParams.get("page") || "0", 10);
   const size = 12;
 
-  const { data: allBookings, isLoading, isError, refetch } = useGetMyBookings();
+  const {
+    data: allBookings,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetMyBookings(i18n.language.toUpperCase());
   const { mutate: cancelBooking } = useCancelBooking();
   const { showModal } = useModal();
 
@@ -31,7 +40,7 @@ export const MyBooking = () => {
     setSelectedFilter(filter);
     // Reset to page 0 when filter changes
     const params = new URLSearchParams(searchParams);
-    params.set('page', '0');
+    params.set("page", "0");
     setSearchParams(params);
   };
 
@@ -103,11 +112,12 @@ export const MyBooking = () => {
     return bookings.filter((b) => b.status === status).length;
   };
 
-  const filterOptions: Array<{ value: BookingStatus | "ALL"; label: string }> = [
-    { value: "ALL", label: t("myBookings.filters.all") },
-    { value: "SCHEDULED", label: t("myBookings.status.SCHEDULED") },
-    { value: "AWAITING", label: t("myBookings.status.AWAITING") },
-  ];
+  const filterOptions: Array<{ value: BookingStatus | "ALL"; label: string }> =
+    [
+      { value: "ALL", label: t("myBookings.filters.all") },
+      { value: "SCHEDULED", label: t("myBookings.status.SCHEDULED") },
+      { value: "AWAITING", label: t("myBookings.status.AWAITING") },
+    ];
 
   if (isLoading) {
     return (
@@ -150,7 +160,7 @@ export const MyBooking = () => {
         {/* Header */}
         <div className="mb-8">
           <Button
-            onClick={() => navigate('/booking')}
+            onClick={() => navigate("/booking")}
             variant="ghost"
             className="mb-4 hover:bg-muted/50 -ml-2"
           >
@@ -212,7 +222,7 @@ export const MyBooking = () => {
                 size="lg"
                 className="bg-[#ff6439] hover:bg-[#100b2e] text-white rounded-xl h-12 font-semibold transition-all duration-300"
                 style={{
-                  boxShadow: '0 4px 14px -2px rgba(255, 100, 57, 0.3)'
+                  boxShadow: "0 4px 14px -2px rgba(255, 100, 57, 0.3)",
                 }}
               >
                 {t("myBookings.empty.browseServices")}
@@ -241,7 +251,11 @@ export const MyBooking = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedBookings?.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />
+                <BookingCard
+                  key={booking.id}
+                  booking={booking}
+                  onCancel={handleCancel}
+                />
               ))}
             </div>
 
@@ -250,8 +264,18 @@ export const MyBooking = () => {
               {/* Decorative checkmark icon */}
               <div className="absolute top-6 right-6 opacity-20">
                 <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center border-4 border-white/20">
-                  <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-12 h-12 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -264,9 +288,7 @@ export const MyBooking = () => {
                   {t("myBookings.promo.description")}
                 </p>
                 <Link to="/booking" onClick={scrollToTop}>
-                  <Button
-                    className="bg-white text-[#a84632] hover:bg-white/90 font-semibold rounded-full px-6 py-2 h-11 transition-all shadow-md hover:shadow-lg"
-                  >
+                  <Button className="bg-white text-[#a84632] hover:bg-white/90 font-semibold rounded-full px-6 py-2 h-11 transition-all shadow-md hover:shadow-lg">
                     {t("myBookings.promo.button")}
                   </Button>
                 </Link>
@@ -281,7 +303,7 @@ export const MyBooking = () => {
                   totalPages={totalFilteredPages}
                   onPageChange={(newPage) => {
                     const params = new URLSearchParams(searchParams);
-                    params.set('page', String(newPage));
+                    params.set("page", String(newPage));
                     setSearchParams(params);
                     scrollToTop();
                   }}

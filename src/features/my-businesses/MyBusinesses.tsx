@@ -43,14 +43,16 @@ const combineSchedule = (
 };
 
 export default function MyBusinesses() {
-  const { t } = useTranslation("dashboard");
+  const { t, i18n } = useTranslation("dashboard");
   const [searchParams] = useSearchParams();
   const section = searchParams.get("section");
   const businessId = searchParams.get("businessId");
 
   const { fullBookings } = useGetAllBookings(businessId);
 
-  const { data: businesses, isLoading } = useGetMyBusinesses();
+  const { data: businesses, isLoading } = useGetMyBusinesses(
+    i18n.language.toUpperCase(),
+  );
 
   // Получаем текущий бизнес по businessId
   const currentBusiness = useMemo(() => {

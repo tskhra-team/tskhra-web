@@ -13,8 +13,8 @@ export default function Booking() {
 
   // Scroll to catalog when category/subcategory is selected on mobile
   useEffect(() => {
-    const categoryParam = searchParams.get('category');
-    const subcategoryParam = searchParams.get('subcategory');
+    const categoryParam = searchParams.get("category");
+    const subcategoryParam = searchParams.get("subcategory");
 
     if (categoryParam || subcategoryParam) {
       // Check if we're on mobile (< 1024px which is the lg breakpoint)
@@ -49,8 +49,10 @@ export default function Booking() {
         {/* Hero Section with Categories and Slider */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-16 px-4 sm:px-4 lg:px-0 pt-0 lg:pt-12 pb-8 container mx-auto">
           {/* Categories Sidebar */}
-          <div className={`w-full lg:w-60 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? 'hidden lg:block' : ''}`}>
-            <div className="w-full" >
+          <div
+            className={`w-full lg:w-60 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? "hidden lg:block" : ""}`}
+          >
+            <div className="w-full">
               <CategoriesLayout platform="booking" />
             </div>
           </div>
@@ -74,7 +76,10 @@ export default function Booking() {
         </div>
 
         {/* Full-width Catalog Section */}
-        <div className="px-4 sm:px-6 lg:px-0 pb-8 container mx-auto" ref={catalogRef}>
+        <div
+          className="px-4 sm:px-6 lg:px-0 pb-8 container mx-auto"
+          ref={catalogRef}
+        >
           <BusinessCatalog />
         </div>
       </div>
