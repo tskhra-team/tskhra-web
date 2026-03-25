@@ -37,11 +37,14 @@ function BusinessSwitcherComponent() {
   const handleBusinessSelect = useCallback(
     (business: MyBusinessResponse) => {
       setActiveBusiness(business);
-      navigate(
-        `/my-businesses?businessId=${business.businessId}&section=chart`,
-      );
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("businessId", business.businessId);
+      if (!newParams.get("section")) {
+        newParams.set("section", "chart");
+      }
+      navigate(`/my-businesses?${newParams.toString()}`);
     },
-    [navigate],
+    [navigate, searchParams],
   );
 
   const businessIds = useMemo(
