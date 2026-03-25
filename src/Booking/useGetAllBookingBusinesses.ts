@@ -28,26 +28,29 @@ type PaginatedBusinessesResponse = {
   empty: boolean;
 };
 
-const getAllBookingBusinesses = async (): Promise<BusinessType[]> => {
+const getAllBookingBusinesses = async (
+  lang: string,
+): Promise<BusinessType[]> => {
   // First, get the first page to know how many total pages we have
   const firstPageResponse =
     await publicInstance.get<PaginatedBusinessesResponse>("/business", {
       params: {
+        lang,
         page: 0,
         size: 100, // Use larger page size to minimize requests
       },
     });
 
   const totalPages = firstPageResponse.data.totalPages;
-  let allBusinesses = [...firstPageResponse.data.content];
+  let allBusinesses = [...firstPageResponse.data.content]; // If there are more pages, fetch them all
 
-  // If there are more pages, fetch them all
   if (totalPages > 1) {
     const pagePromises = [];
     for (let page = 1; page < totalPages; page++) {
       pagePromises.push(
         publicInstance.get<PaginatedBusinessesResponse>("/business", {
           params: {
+            lang,
             page,
             size: 100,
           },
@@ -64,10 +67,10 @@ const getAllBookingBusinesses = async (): Promise<BusinessType[]> => {
   return allBusinesses;
 };
 
-const useGetAllBookingBusinesses = (enabled = true) => {
+const useGetAllBookingBusinesses = (enabled = true, lang: string) => {
   return useQuery<BusinessType[], AxiosError<ErrorResponse>>({
-    queryKey: ["all-businesses"],
-    queryFn: getAllBookingBusinesses,
+    queryKey: ["all-businesses", lang],
+    queryFn: () => getAllBookingBusinesses(lang),
     staleTime: 5 * 60 * 1000,
     enabled,
   });

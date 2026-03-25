@@ -4,12 +4,21 @@ import * as yup from "yup";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const createServiceSchema = (t: TFunction) => {
+  const ServiceNameSchemaKa = yup
+    .string()
+    .required(t("booking:validation.serviceNameRequiredKa"))
+    .min(2, t("booking:validation.serviceNameMinChars"))
+    .max(40, t("booking:validation.serviceNameMax"));
+
+  const ServiceNameSchema = yup
+    .string()
+    .required(t("booking:validation.serviceNameRequired"))
+    .min(2, t("booking:validation.serviceNameMinChars"))
+    .max(40, t("booking:validation.serviceNameMax"));
+
   return yup.object({
-    name: yup
-      .string()
-      .required(t("booking:validation.serviceNameRequired"))
-      .min(2, t("booking:validation.serviceNameMinChars"))
-      .max(40, t("booking:validation.serviceNameMax")),
+    nameKa: ServiceNameSchemaKa,
+    name: ServiceNameSchema,
     price: yup
       .number()
       .required(t("booking:validation.servicePriceRequired"))
@@ -31,11 +40,41 @@ export const createServiceSchema = (t: TFunction) => {
           return value % 5 === 0;
         },
       ),
+    descriptionKa: yup
+      .string()
+      .max(70, t("booking:validation.serviceDescriptionMax"))
+      .optional(),
     description: yup
       .string()
       .max(70, t("booking:validation.serviceDescriptionMax"))
       .optional(),
-  });
+  })
+  .test(
+    "description-both-or-none",
+    "",
+    function (value) {
+      const { description, descriptionKa } = value as {
+        description?: string;
+        descriptionKa?: string;
+      };
+      const hasEn = !!description;
+      const hasKa = !!descriptionKa;
+
+      if (hasEn && !hasKa) {
+        return this.createError({
+          path: "descriptionKa",
+          message: t("booking:validation.serviceDescriptionKaRequired"),
+        });
+      }
+      if (hasKa && !hasEn) {
+        return this.createError({
+          path: "description",
+          message: t("booking:validation.serviceDescriptionRequired"),
+        });
+      }
+      return true;
+    },
+  );
 };
 
 // Schema for Step 1 - Business Information
@@ -211,9 +250,11 @@ export type InfoType = {
 
 export type ServiceType = {
   name: string;
+  nameKa: string;
   price: number;
   duration: number;
   description?: string;
+  descriptionKa?: string;
 };
 
 export type WorkTimeType = {

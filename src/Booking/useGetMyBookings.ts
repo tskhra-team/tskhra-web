@@ -3,7 +3,12 @@ import type { ErrorResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-export type BookingStatus = "AWAITING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "SCHEDULED";
+export type BookingStatus =
+  | "AWAITING"
+  | "CONFIRMED"
+  | "CANCELLED"
+  | "COMPLETED"
+  | "SCHEDULED";
 
 export type UserBooking = {
   id: string;
@@ -28,14 +33,16 @@ type PaginatedBookingsResponse = {
   empty: boolean;
 };
 
-const getMyBookings = async (): Promise<UserBooking[]> => {
+const getMyBookings = async (lang: string): Promise<UserBooking[]> => {
   // Fetch first page to get total pages
-  const firstPageResponse = await privateInstance.get<PaginatedBookingsResponse>("/bookings/me", {
-    params: {
-      page: 0,
-      size: 100, // Use larger page size to minimize requests
-    },
-  });
+  const firstPageResponse =
+    await privateInstance.get<PaginatedBookingsResponse>("/bookings/me", {
+      params: {
+        lang,
+        page: 0,
+        size: 100, // Use larger page size to minimize requests
+      },
+    });
 
   const totalPages = firstPageResponse.data.totalPages;
   let allBookings = [...firstPageResponse.data.content];
@@ -47,6 +54,7 @@ const getMyBookings = async (): Promise<UserBooking[]> => {
       pagePromises.push(
         privateInstance.get<PaginatedBookingsResponse>("/bookings/me", {
           params: {
+            lang,
             page,
             size: 100,
           },
@@ -63,10 +71,10 @@ const getMyBookings = async (): Promise<UserBooking[]> => {
   return allBookings;
 };
 
-const useGetMyBookings = () => {
+const useGetMyBookings = (lang: string) => {
   return useQuery<UserBooking[], AxiosError<ErrorResponse>>({
-    queryKey: ["myBookings"],
-    queryFn: getMyBookings,
+    queryKey: ["myBookings", lang],
+    queryFn: () => getMyBookings(lang),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };

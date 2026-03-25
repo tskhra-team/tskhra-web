@@ -27,8 +27,11 @@ interface MyServicesProps {
 export default function MyServices({ businessId }: MyServicesProps) {
   if (!businessId) return;
 
-  const { t } = useTranslation(["dashboard", "modal"]);
-  const { data: services, isLoading } = useGetMyServices(businessId);
+  const { t, i18n } = useTranslation(["dashboard", "modal"]);
+  const { data: services, isLoading } = useGetMyServices(
+    businessId,
+    i18n.language.toUpperCase(),
+  );
   const { showModal } = useModal();
   const { mutate: deleteService } = useDeleteService();
   const { mutate: updateStatus } = useUpdateStatus();

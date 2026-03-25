@@ -24,12 +24,12 @@ export default function ServiceForm() {
   const { showModal, closeModal } = useModal();
 
   const [newService, setNewService] = useState({
+    nameKa: "",
     name: "",
-    nameEn: "",
     price: 0,
     duration: 0,
     description: "",
-    descriptionEn: "",
+    descriptionKa: "",
   });
   const [serviceError, setServiceError] = useState("");
 
@@ -58,19 +58,21 @@ export default function ServiceForm() {
         ...currentServices,
         {
           name: newService.name,
+          nameKa: newService.nameKa,
           price: newService.price,
           duration: newService.duration,
           description: newService.description,
+          descriptionKa: newService.descriptionKa,
         },
       ]);
 
       setNewService({
         name: "",
-        nameEn: "",
+        nameKa: "",
         price: 0,
         duration: 0,
         description: "",
-        descriptionEn: "",
+        descriptionKa: "",
       });
     } catch (error: any) {
       if (error.errors && error.errors.length > 0) {
@@ -163,9 +165,9 @@ export default function ServiceForm() {
                 {t("booking:form.serviceName")}
               </Label>
               <Input
-                value={newService.name}
+                value={newService.nameKa}
                 onChange={(e) =>
-                  setNewService({ ...newService, name: e.target.value })
+                  setNewService({ ...newService, nameKa: e.target.value })
                 }
                 placeholder={t("booking:form.serviceNamePlaceholder")}
                 className="h-11 transition-all"
@@ -176,7 +178,7 @@ export default function ServiceForm() {
                 {t("booking:form.serviceNameEN")}
               </Label>
               <Input
-                value={newService.nameEn}
+                value={newService.name}
                 onChange={(e) =>
                   setNewService({ ...newService, name: e.target.value })
                 }
@@ -227,9 +229,9 @@ export default function ServiceForm() {
               {t("booking:form.serviceDescription")}
             </Label>
             <Input
-              value={newService.description}
+              value={newService.descriptionKa}
               onChange={(e) =>
-                setNewService({ ...newService, description: e.target.value })
+                setNewService({ ...newService, descriptionKa: e.target.value })
               }
               placeholder={t("booking:form.serviceDescriptionPlaceholder")}
               className="h-11 transition-all"
@@ -240,7 +242,7 @@ export default function ServiceForm() {
               {t("booking:form.serviceDescriptionEN")}
             </Label>
             <Input
-              value={newService.descriptionEn}
+              value={newService.description}
               onChange={(e) =>
                 setNewService({ ...newService, description: e.target.value })
               }
@@ -284,7 +286,9 @@ export default function ServiceForm() {
                   className="group flex items-start justify-between p-5 border border-border/50 rounded-lg bg-background/50 hover:border-border hover:shadow-md transition-all"
                 >
                   <div className="flex-1 space-y-1.5">
-                    <p className="font-semibold text-base">{service.name}</p>
+                    <p className="font-semibold text-base">
+                      {service.nameKa} ({service.name})
+                    </p>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <span className="font-medium text-primary">
                         {service.price} ₾
@@ -296,7 +300,7 @@ export default function ServiceForm() {
                     </div>
                     {service.description && (
                       <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                        {service.description}
+                        {service.descriptionKa} ({service.description})
                       </p>
                     )}
                   </div>

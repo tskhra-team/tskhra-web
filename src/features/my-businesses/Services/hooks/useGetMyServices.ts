@@ -12,18 +12,19 @@ export type ServiceResponse = {
   status: string;
 };
 
-const getMyServices = async (businessId: string) => {
+const getMyServices = async (businessId: string, lang: string) => {
   const response = await privateInstance.get<ServiceResponse[]>(
     `/business/${businessId}/services`,
+    { params: { lang } },
   );
 
   return response.data;
 };
 
-const useGetMyServices = (businessId: string) => {
+const useGetMyServices = (businessId: string, lang: string) => {
   return useQuery<ServiceResponse[], AxiosError<ErrorResponse>>({
-    queryFn: () => getMyServices(businessId),
-    queryKey: ["getMyServices", businessId],
+    queryFn: () => getMyServices(businessId, lang),
+    queryKey: ["getMyServices", businessId, lang],
     staleTime: 10 * 60 * 1000,
     enabled: !!businessId,
   });
