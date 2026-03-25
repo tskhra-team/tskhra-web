@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Calendar, Clock } from "lucide-react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 type BookingDialogProps = {
@@ -44,12 +45,20 @@ export default function BookingDialog({
   onConfirm,
 }: BookingDialogProps) {
   const { t } = useTranslation("booking");
+  const confirmRef = useRef<HTMLDivElement>(null);
+
+  const handleTimeSelect = (time: string) => {
+    onTimeSelect(time);
+    setTimeout(() => {
+      confirmRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 100);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">
+          <DialogTitle className="text-2xl wrap-break-word">
             {t("businessDetails.booking.dialogTitle", {
               serviceName: selectedService?.name,
             })}
@@ -61,19 +70,19 @@ export default function BookingDialog({
 
         <div className="space-y-6 mt-4">
           {/* Service Summary */}
-          <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-            <div className="flex justify-between items-start">
-              <div>
-                <h4 className="font-semibold text-lg">
+          <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 overflow-hidden">
+            <div className="flex justify-between items-start gap-3">
+              <div className="min-w-0">
+                <h4 className="font-semibold text-lg wrap-break-word">
                   {selectedService?.name}
                 </h4>
                 {selectedService?.description && (
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1 break-all">
                     {selectedService.description}
                   </p>
                 )}
               </div>
-              <div className="text-right">
+              <div className="text-right shrink-0">
                 <p className="text-xl font-bold text-primary">
                   ₾{selectedService?.price}
                 </p>
@@ -144,7 +153,7 @@ export default function BookingDialog({
                     <button
                       key={slot.time}
                       onClick={() =>
-                        slot.isAvailable && onTimeSelect(slot.time)
+                        slot.isAvailable && handleTimeSelect(slot.time)
                       }
                       disabled={!slot.isAvailable}
                       className={`p-3 rounded-lg border-2 transition-all duration-200 font-medium ${
@@ -165,7 +174,7 @@ export default function BookingDialog({
 
           {/* Confirm Button */}
           {selectedDate && selectedTime && (
-            <div className="animate-in fade-in-50 duration-300 pt-4 border-t">
+            <div ref={confirmRef} className="animate-in fade-in-50 duration-300 pt-4 border-t">
               <Button
                 onClick={onConfirm}
                 disabled={isBooking}
