@@ -107,7 +107,7 @@ export default function ProfileSidebar({
                   navigate("/my-businesses");
                 }
               }}
-              className="w-full hover:border-indigo-400 hover:text-indigo-700 transition-all"
+              className="w-full hover:border-indigo-400 hover:text-indigo-700 transition-all cursor-pointer"
             >
               <LayoutDashboard className="w-4 h-4 mr-2" />
               {t("common:auth.dashboard")}
@@ -124,7 +124,7 @@ export default function ProfileSidebar({
                 key={item.value}
                 onClick={() => onSectionChange(item.value)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer",
                   currentSection === item.value
                     ? "bg-linear-to-r from-indigo-600 to-indigo-700 text-white shadow-md"
                     : "text-slate-600 hover:bg-slate-50 hover:text-indigo-700",
