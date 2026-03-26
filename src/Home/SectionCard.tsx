@@ -82,7 +82,7 @@ export default function SectionCard({
               text-white font-bold rounded-2xl shadow-xl
               hover:shadow-2xl hover:scale-105 hover:-translate-y-1
               transition-all duration-300 ease-out
-              relative overflow-hidden
+              relative overflow-hidden cursor-pointer
             `}
           >
             <span className="relative z-10 flex items-center gap-2">

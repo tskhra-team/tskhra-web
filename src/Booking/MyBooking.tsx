@@ -162,7 +162,7 @@ export const MyBooking = () => {
           <Button
             onClick={() => navigate("/booking")}
             variant="ghost"
-            className="mb-4 hover:bg-muted/50 -ml-2"
+            className="mb-4 hover:bg-muted/50 -ml-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t("myBookings.back")}

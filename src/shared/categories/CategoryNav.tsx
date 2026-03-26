@@ -35,7 +35,7 @@ export default function CategoryNav({
     : categories.slice(0, INITIAL_DISPLAY_COUNT);
 
   return (
-    <nav className="w-full lg:w-64 rounded-2xl border p-4">
+    <nav className="w-full xl:w-64 rounded-2xl border p-4">
       <ul className="space-y-1">
         {displayedCategories.map((category) => {
           const originalIndex = categories.findIndex(
@@ -53,7 +53,7 @@ export default function CategoryNav({
             : "#";
 
           return (
-            <li key={category.name} className="lg:block ">
+            <li key={category.name} className="xl:block ">
               {/* Desktop: Hover to show dropdown, Click to navigate */}
               <Link
                 to={categoryUrl}
@@ -61,7 +61,7 @@ export default function CategoryNav({
                 onClick={(e) => {
                   e.preventDefault();
 
-                  if (window.innerWidth < 1024) {
+                  if (window.innerWidth < 1280) {
                     // On mobile, toggle accordion
                     onSelect(isActive ? null : originalIndex);
                   } else {
@@ -128,7 +128,7 @@ export default function CategoryNav({
                   {displayName}
                 </span>
                 <svg
-                  className={`lg:hidden w-5 h-5 transition-transform duration-200 ease-in-out ${isActive ? "rotate-180" : ""}`}
+                  className={`xl:hidden w-5 h-5 transition-transform duration-200 ease-in-out ${isActive ? "rotate-180" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -142,7 +142,7 @@ export default function CategoryNav({
                 </svg>
               </Link>
               {isActive && category.childItems && (
-                <div className="lg:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="xl:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
                   <h3 className="mb-4 text-sm font-semibold">
                     {categoryDisplayName}
                   </h3>

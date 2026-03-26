@@ -61,7 +61,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const handleSelectCategory = (
     index: number | null,
   ) => {
-    const isMobile = window.innerWidth < 1024;
+    const isMobile = window.innerWidth < 1280;
 
     if (isMobile) {
       // On mobile, just toggle accordion - don't set search params yet
@@ -127,7 +127,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
       {/* Desktop subcategory panel - hidden on mobile */}
       {activeCategory && hoverEnabled && (
         <div
-          className="hidden lg:block absolute left-full ml-2 min-w-175 max-w-200 xl:min-w-200 xl:max-w-225 rounded-3xl border-2 p-6 xl:p-8 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.4)] animate-in fade-in slide-in-from-left-6 duration-400 backdrop-blur-md"
+          className="hidden xl:block absolute left-full ml-2 min-w-175 max-w-200 xl:min-w-200 xl:max-w-225 rounded-3xl border-2 p-6 xl:p-8 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.4)] animate-in fade-in slide-in-from-left-6 duration-400 backdrop-blur-md"
           style={{
             background: `linear-gradient(145deg, ${colors.subcategoryPanel.background}f5 0%, ${colors.subcategoryPanel.background}e8 50%, ${colors.subcategoryPanel.background}dd 100%)`,
             borderColor: 'rgba(255, 255, 255, 0.25)',

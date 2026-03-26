@@ -84,6 +84,7 @@
     "goToVerification": "ვერიფიკაციაზე გადასვლა"
   },
   "favorites": {
+    "title": "ჩემი რჩეულები",
     "noFavoritesTitle": "რჩეულები ჯერ არ გაქვთ",
     "noFavoritesDescription": "დაიწყეთ თქვენი რჩეული პროდუქტების, სერვისებისა და ჯავშნების შენახვა.",
     "exploreServices": "სერვისების დათვალიერება"

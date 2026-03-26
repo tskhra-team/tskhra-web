@@ -84,6 +84,7 @@
     "goToVerification": "Go to Verification"
   },
   "favorites": {
+    "title": "My Favorites",
     "noFavoritesTitle": "No Favorites Yet",
     "noFavoritesDescription": "Start saving your favorite products, services, and bookings.",
     "exploreServices": "Explore Services"
