@@ -7,52 +7,58 @@ export const createServiceSchema = (t: TFunction) => {
   const ServiceNameSchemaKa = yup
     .string()
     .required(t("booking:validation.serviceNameRequiredKa"))
+    .matches(
+      /^\S+(?: \S+)*$/,
+      "Double spaces or leading/trailing spaces are not allowed",
+    )
     .min(2, t("booking:validation.serviceNameMinChars"))
     .max(40, t("booking:validation.serviceNameMax"));
 
   const ServiceNameSchema = yup
     .string()
     .required(t("booking:validation.serviceNameRequired"))
+    .matches(
+      /^\S+(?: \S+)*$/,
+      "Double spaces or leading/trailing spaces are not allowed",
+    )
     .min(2, t("booking:validation.serviceNameMinChars"))
     .max(40, t("booking:validation.serviceNameMax"));
 
-  return yup.object({
-    nameKa: ServiceNameSchemaKa,
-    name: ServiceNameSchema,
-    price: yup
-      .number()
-      .required(t("booking:validation.servicePriceRequired"))
-      .typeError(t("booking:validation.servicePriceRequired"))
-      .positive(t("booking:validation.servicePricePositiveError"))
-      .max(1000000, t("booking:validation.servicePriceMax")),
-    duration: yup
-      .number()
-      .required(t("booking:validation.serviceDurationRequired"))
-      .typeError(t("booking:validation.serviceDurationRequired"))
-      .positive(t("booking:validation.serviceDurationPositive"))
-      .max(1440, t("booking:validation.serviceDurationMax"))
-      .test(
-        "is-multiple-of-5",
-        t("booking:validation.serviceDurationInterval"),
-        (value) => {
-          if (value === undefined || value === null || isNaN(value))
-            return false;
-          return value % 5 === 0;
-        },
-      ),
-    descriptionKa: yup
-      .string()
-      .max(70, t("booking:validation.serviceDescriptionMax"))
-      .optional(),
-    description: yup
-      .string()
-      .max(70, t("booking:validation.serviceDescriptionMax"))
-      .optional(),
-  })
-  .test(
-    "description-both-or-none",
-    "",
-    function (value) {
+  return yup
+    .object({
+      nameKa: ServiceNameSchemaKa,
+      name: ServiceNameSchema,
+      price: yup
+        .number()
+        .required(t("booking:validation.servicePriceRequired"))
+        .typeError(t("booking:validation.servicePriceRequired"))
+        .positive(t("booking:validation.servicePricePositiveError"))
+        .max(1000000, t("booking:validation.servicePriceMax")),
+      duration: yup
+        .number()
+        .required(t("booking:validation.serviceDurationRequired"))
+        .typeError(t("booking:validation.serviceDurationRequired"))
+        .positive(t("booking:validation.serviceDurationPositive"))
+        .max(1440, t("booking:validation.serviceDurationMax"))
+        .test(
+          "is-multiple-of-5",
+          t("booking:validation.serviceDurationInterval"),
+          (value) => {
+            if (value === undefined || value === null || isNaN(value))
+              return false;
+            return value % 5 === 0;
+          },
+        ),
+      descriptionKa: yup
+        .string()
+        .max(70, t("booking:validation.serviceDescriptionMax"))
+        .optional(),
+      description: yup
+        .string()
+        .max(70, t("booking:validation.serviceDescriptionMax"))
+        .optional(),
+    })
+    .test("description-both-or-none", "", function (value) {
       const { description, descriptionKa } = value as {
         description?: string;
         descriptionKa?: string;
@@ -73,8 +79,7 @@ export const createServiceSchema = (t: TFunction) => {
         });
       }
       return true;
-    },
-  );
+    });
 };
 
 // Schema for Step 1 - Business Information
@@ -84,7 +89,6 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     "image/jpg",
     "image/png",
     "image/webp",
-    "image/avif",
   ];
 
   const fileValidation = yup
