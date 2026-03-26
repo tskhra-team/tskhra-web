@@ -253,6 +253,14 @@ export const CalendarWrapper = ({
       {/* this style added to hide default calendar title */}
       <FullCalendar
         datesSet={datesSet}
+        buttonHints={{
+          prev: " ",
+          next: " ",
+          today: " ",
+          dayGridMonth: " ",
+          timeGridWeek: " ",
+          timeGridDay: " ",
+        }}
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin]}
         initialView="timeGridWeek"
