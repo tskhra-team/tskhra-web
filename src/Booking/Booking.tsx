@@ -18,7 +18,7 @@ export default function Booking() {
 
     if (categoryParam || subcategoryParam) {
       // Check if we're on mobile (< 1024px which is the lg breakpoint)
-      const isMobile = window.innerWidth < 1024;
+      const isMobile = window.innerWidth < 1280;
 
       if (isMobile) {
         setHideCategoriesOnMobile(true);
@@ -47,10 +47,10 @@ export default function Booking() {
 
       <div className="relative z-10">
         {/* Hero Section with Categories and Slider */}
-        <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-16 px-4 sm:px-4 lg:px-0 pt-0 lg:pt-12 pb-8 container mx-auto">
+        <div className="flex flex-col xl:flex-row xl:items-center gap-6 xl:gap-16 px-4 sm:px-4 xl:px-0 pt-0 xl:pt-12 pb-8 container mx-auto">
           {/* Categories Sidebar */}
           <div
-            className={`w-full lg:w-60 xl:w-72 lg:shrink-0 z-50 ${hideCategoriesOnMobile ? "hidden lg:block" : ""}`}
+            className={`w-full xl:w-72 xl:shrink-0 z-50 ${hideCategoriesOnMobile ? "hidden xl:block" : ""}`}
           >
             <div className="w-full">
               <CategoriesLayout platform="booking" />
@@ -58,12 +58,12 @@ export default function Booking() {
           </div>
 
           {/* Slider Area */}
-          <div className="flex-1 w-full max-w-full lg:max-w-2xl xl:max-w-none mx-auto lg:mx-0 relative z-0 min-w-0 overflow-hidden">
+          <div className="flex-1 w-full max-w-full xl:max-w-none mx-auto xl:mx-0 relative z-0 min-w-0 overflow-hidden">
             {/* Show Categories Button - only visible on mobile when categories are hidden */}
             {hideCategoriesOnMobile && (
               <Button
                 onClick={() => setHideCategoriesOnMobile(false)}
-                className="mb-4 lg:hidden flex items-center gap-2"
+                className="mb-4 xl:hidden flex items-center gap-2"
                 variant="outline"
               >
                 <Filter className="w-4 h-4" />
@@ -77,7 +77,7 @@ export default function Booking() {
 
         {/* Full-width Catalog Section */}
         <div
-          className="px-4 sm:px-6 lg:px-0 pb-8 container mx-auto"
+          className="px-4 sm:px-6 xl:px-0 pb-8 container mx-auto"
           ref={catalogRef}
         >
           <BusinessCatalog />
