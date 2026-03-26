@@ -10,6 +10,7 @@ export type UserType = {
   userEmail: string;
   isVerified: boolean;
   avatar: string | undefined;
+  favoriteBusinesses: number[];
 };
 
 const getUser = async () => {
