@@ -271,6 +271,10 @@
       "facebook": "ფეისბუქი",
       "instagram": "ინსტაგრამი"
     },
+    "favorite": {
+      "add": "რჩეულებში დამატება",
+      "remove": "რჩეულებიდან წაშლა"
+    },
     "booking": {
       "dialogTitle": "დაჯავშნა {{serviceName}}",
       "dialogDescription": "აირჩიეთ თარიღი და დრო თქვენი ვიზიტისთვის",

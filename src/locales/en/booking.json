@@ -271,6 +271,10 @@
       "facebook": "Facebook",
       "instagram": "Instagram"
     },
+    "favorite": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites"
+    },
     "booking": {
       "dialogTitle": "Book {{serviceName}}",
       "dialogDescription": "Select a date and time for your appointment",

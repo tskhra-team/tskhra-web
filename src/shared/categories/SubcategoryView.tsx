@@ -43,7 +43,7 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
     }
 
     // Scroll to catalog on desktop (on mobile it's handled in Booking.tsx)
-    if (window.innerWidth >= 1024) {
+    if (window.innerWidth >= 1280) {
       setTimeout(() => {
         const catalogElement = document.querySelector('[data-catalog]');
         if (catalogElement) {
@@ -53,12 +53,12 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
     }
   };
 
-  const gridCols = level === 0 ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-2 lg:grid-cols-2";
+  const gridCols = level === 0 ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-3" : "grid-cols-2 md:grid-cols-2 xl:grid-cols-2";
   const hasChildren = (item: CategoryItem) => item.childItems && item.childItems.length > 0;
 
   return (
     <div className="space-y-4">
-      <div className={`grid ${gridCols} gap-2 sm:gap-3 lg:gap-4`}>
+      <div className={`grid ${gridCols} gap-2 sm:gap-3 xl:gap-4`}>
         {subcategories.map((subcategory, index) => {
           const translationKey = categoryNameToKey[subcategory.name];
           const displayName = translationKey ? t(translationKey) : subcategory.name;
@@ -156,7 +156,7 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
                   )}
                   <div className="flex items-center gap-1">
                     <h4
-                      className="text-[10px] sm:text-[11px] lg:text-xs font-semibold transition-all duration-300 relative z-10 leading-tight break-normal whitespace-normal"
+                      className="text-[10px] sm:text-[11px] xl:text-xs font-semibold transition-all duration-300 relative z-10 leading-tight break-normal whitespace-normal"
                       style={{ color: isActive || isExpanded ? colors.active.text : colors.inactive.text }}
                     >
                       {displayName}
