@@ -53,7 +53,7 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
     }
   };
 
-  const gridCols = level === 0 ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-3" : "grid-cols-2 md:grid-cols-2 xl:grid-cols-2";
+  const gridCols = level === 0 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "grid-cols-1 sm:grid-cols-2";
   const hasChildren = (item: CategoryItem) => item.childItems && item.childItems.length > 0;
 
   return (
@@ -77,15 +77,14 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
                   backgroundColor: isActive || isExpanded ? colors.active.background : 'rgba(255, 255, 255, 0.98)',
                   animationDelay: `${index * 40}ms`,
                   animationFillMode: 'backwards',
-                  transform: isActive || isExpanded ? 'scale(1.02) translateY(-2px)' : 'scale(1) translateY(0)',
-                  boxShadow: isActive || isExpanded ? '0 10px 40px -10px rgba(0,0,0,0.3)' : '0 2px 8px -2px rgba(0,0,0,0.1)'
+                  boxShadow: isActive || isExpanded ? '0 4px 16px -4px rgba(0,0,0,0.2)' : '0 1px 4px -1px rgba(0,0,0,0.08)'
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive && !isExpanded) {
                     e.currentTarget.style.backgroundColor = colors.active.background;
                     e.currentTarget.style.borderColor = colors.active.icon;
-                    e.currentTarget.style.transform = 'scale(1.08) translateY(-8px) rotate(1deg)';
-                    e.currentTarget.style.boxShadow = '0 20px 50px -10px rgba(0,0,0,0.4)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 24px -6px rgba(0,0,0,0.2)';
                     const heading = e.currentTarget.querySelector('h4');
                     if (heading instanceof HTMLElement) {
                       heading.style.color = colors.active.text;
@@ -96,8 +95,8 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
                   if (!isActive && !isExpanded) {
                     e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
                     e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)';
-                    e.currentTarget.style.transform = 'scale(1) translateY(0) rotate(0deg)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px -2px rgba(0,0,0,0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 1px 4px -1px rgba(0,0,0,0.08)';
                     const heading = e.currentTarget.querySelector('h4');
                     if (heading instanceof HTMLElement) {
                       heading.style.color = colors.inactive.text;
@@ -183,16 +182,26 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
                 />
               </div>
 
-              {/* Nested subcategories */}
-              {isExpanded && hasSubItems && (
-                <div className="ml-2 sm:ml-4 pl-2 sm:pl-4 border-l-2 animate-in fade-in slide-in-from-top-2 duration-300" style={{ borderColor: colors.active.icon }}>
-                  <SubcategoryView
-                    subcategories={subcategory.childItems}
-                    platform={platform}
-                    categorySlug={categorySlug}
-                    onSubcategorySelect={onSubcategorySelect}
-                    level={level + 1}
-                  />
+              {/* Nested subcategories with smooth height animation */}
+              {hasSubItems && (
+                <div
+                  className="overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out grid"
+                  style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+                >
+                  <div className="min-h-0">
+                    <div
+                      className="ml-2 sm:ml-4 pl-2 sm:pl-4 mt-2 border-l-2"
+                      style={{ borderColor: colors.active.icon }}
+                    >
+                      <SubcategoryView
+                        subcategories={subcategory.childItems}
+                        platform={platform}
+                        categorySlug={categorySlug}
+                        onSubcategorySelect={onSubcategorySelect}
+                        level={level + 1}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
