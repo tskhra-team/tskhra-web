@@ -122,6 +122,15 @@
   }
 }
 
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Calendar Styles */
 .fc .fc-button-primary {
   @apply bg-blue-400 border-none rounded-md px-4 py-2 font-medium capitalize;
