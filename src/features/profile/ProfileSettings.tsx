@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { useModal } from "@/context/ModalContext";
 import AvatarCropperModal from "@/features/profile/AvatarCropperModal";
 import useDeleteAvatar from "@/features/profile/hooks/useDeleteAvatar";
@@ -38,7 +39,6 @@ import {
   Building2,
   Calendar as CalendarIcon,
   Check,
-  Loader,
   Pencil,
   ShieldCheck,
   User,
@@ -270,7 +270,7 @@ export default function ProfileSettings({
                   className="absolute bottom-0 right-0 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-full p-2 hover:from-indigo-700 hover:to-indigo-800 shadow-md transition-all duration-200"
                 >
                   {isUploading ? (
-                    <Loader className="w-4 h-4" />
+                    <Spinner className="w-4 h-4" />
                   ) : (
                     <Pencil className="w-4 h-4" />
                   )}

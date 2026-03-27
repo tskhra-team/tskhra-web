@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { mockCategories } from "./mockData";
 import type { CategoryItem, Platform } from "./types";
-import useGetMainBookingCategories from "@/shared/api/useGetMainBookingCategories";
-import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
-import { transformApiCategories } from "./transformApiCategories";
+import useGetSubBookingCategories, { type Category } from "@/shared/api/useGetSubBookingCategories";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { getCategoryIcon } from "./categoryIconMapping";
 
 function filterByPlatform(items: CategoryItem[], platform: Platform): CategoryItem[] {
   return items
@@ -13,6 +13,21 @@ function filterByPlatform(items: CategoryItem[], platform: Platform): CategoryIt
       ...x,
       childItems: x.childItems ? filterByPlatform(x.childItems, platform) : [],
     }));
+}
+
+function transformCategories(categories: Category[], platform: Platform): CategoryItem[] {
+  return categories.map((cat) => ({
+    name: cat.name,
+    icon: getCategoryIcon(cat.name, platform),
+    iconUrl: cat.iconUrl || undefined,
+    platforms: [platform],
+    childItems: cat.subcategories.map((sub) => ({
+      name: sub.name,
+      icon: getCategoryIcon(sub.name, platform),
+      iconUrl: sub.iconUrl || undefined,
+      platforms: [platform],
+    })),
+  }));
 }
 
 // Mock function that simulates API call (used for ecommerce and swapping temporarily)
@@ -25,20 +40,21 @@ async function fetchMockCategories(): Promise<CategoryItem[]> {
 export function useCategories(platform: Platform) {
   // For booking platform, use real API data
   if (platform === "booking") {
-    const { data: mainCategories, isLoading: isLoadingMain, error: errorMain } = useGetMainBookingCategories();
-    const { data: subCategories, isLoading: isLoadingSub, error: errorSub } = useGetSubBookingCategories();
+    const { i18n } = useTranslation();
+    const lang = i18n.language?.toUpperCase() || "KA";
+    const { data: categories, isLoading, error } = useGetSubBookingCategories(lang);
 
     const transformedData = useMemo(() => {
-      if (mainCategories && subCategories) {
-        return transformApiCategories(mainCategories, subCategories, platform);
+      if (categories) {
+        return transformCategories(categories, platform);
       }
       return [];
-    }, [mainCategories, subCategories, platform]);
+    }, [categories, platform]);
 
     return {
       data: transformedData,
-      isLoading: isLoadingMain || isLoadingSub,
-      error: errorMain || errorSub,
+      isLoading,
+      error,
     };
   }
 

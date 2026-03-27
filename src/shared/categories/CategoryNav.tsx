@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 import { categoryNameToKey } from "./categoryTranslations";
@@ -26,26 +26,66 @@ export default function CategoryNav({
   const { t } = useTranslation("categories");
   const colors = getPlatformColors(platform);
   const [, setSearchParams] = useSearchParams();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const scrollRef = useRef<HTMLUListElement>(null);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
 
-  const INITIAL_DISPLAY_COUNT = 9;
-  const hasMoreCategories = categories.length > INITIAL_DISPLAY_COUNT;
-  const displayedCategories = isExpanded
-    ? categories
-    : categories.slice(0, INITIAL_DISPLAY_COUNT);
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollUp(el.scrollTop > 0);
+    setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+  }, [categories, checkScroll]);
+
+  const scroll = (direction: "up" | "down") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollAmount = 200;
+    el.scrollBy({
+      top: direction === "down" ? scrollAmount : -scrollAmount,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <nav className="w-full xl:w-64 rounded-2xl border p-4">
-      <ul className="space-y-1">
-        {displayedCategories.map((category) => {
-          const originalIndex = categories.findIndex(
-            (c) => c.name === category.name,
-          );
+      {/* Scroll Up Arrow */}
+      <button
+        onClick={() => scroll("up")}
+        className={`w-full py-2 flex items-center justify-center text-sm font-medium rounded-lg transition-all duration-200 hover:bg-gray-100 cursor-pointer ${canScrollUp ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        style={{ color: colors.inactive.text }}
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      </button>
+
+      <ul
+        ref={scrollRef}
+        onScroll={checkScroll}
+        className="space-y-1 overflow-y-auto scrollbar-hide"
+        style={{ maxHeight: "468px" }}
+      >
+        {categories.map((category, index) => {
           const translationKey = categoryNameToKey[category.name];
           const displayName = translationKey
             ? t(translationKey)
             : category.name;
-          const isActive = originalIndex === activeIndex;
+          const isActive = index === activeIndex;
 
           const categorySlug = category.name.toLowerCase().replace(/\s+/g, "-");
           const categoryUrl = platform
@@ -57,13 +97,13 @@ export default function CategoryNav({
               {/* Desktop: Hover to show dropdown, Click to navigate */}
               <Link
                 to={categoryUrl}
-                onMouseEnter={() => onSelect(originalIndex)}
+                onMouseEnter={() => onSelect(index)}
                 onClick={(e) => {
                   e.preventDefault();
 
                   if (window.innerWidth < 1280) {
                     // On mobile, toggle accordion
-                    onSelect(isActive ? null : originalIndex);
+                    onSelect(isActive ? null : index);
                   } else {
                     // On desktop, filter by category in the catalog
                     setSearchParams({ category: categorySlug });
@@ -84,7 +124,7 @@ export default function CategoryNav({
                     }, 100);
                   }
                 }}
-                className="w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between"
+                className={`w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ease-in-out flex items-center justify-between ${isActive ? "shadow-sm" : ""}`}
                 style={
                   isActive
                     ? {
@@ -141,16 +181,29 @@ export default function CategoryNav({
                   />
                 </svg>
               </Link>
-              {isActive && category.childItems && (
-                <div className="xl:hidden mt-2 p-4 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-                  <h3 className="mb-4 text-sm font-semibold">
-                    {categoryDisplayName}
-                  </h3>
-                  <SubcategoryView
-                    subcategories={category.childItems}
-                    platform={platform}
-                    categorySlug={categorySlug}
-                  />
+              {/* Accordion content with smooth height animation */}
+              {category.childItems && (
+                <div
+                  className="xl:hidden overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out grid"
+                  style={{
+                    gridTemplateRows: isActive ? "1fr" : "0fr",
+                  }}
+                >
+                  <div className="min-h-0">
+                    <div className="mt-2 p-4 bg-gray-50 rounded-xl">
+                      <h3
+                        className="mb-4 text-sm font-semibold"
+                        style={{ color: colors.active.text }}
+                      >
+                        {categoryDisplayName}
+                      </h3>
+                      <SubcategoryView
+                        subcategories={category.childItems}
+                        platform={platform}
+                        categorySlug={categorySlug}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </li>
@@ -158,28 +211,26 @@ export default function CategoryNav({
         })}
       </ul>
 
-      {/* Show More/Less Button */}
-      {hasMoreCategories && (
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-3 py-2 flex items-center justify-center text-sm font-medium rounded-lg transition-all duration-200 hover:bg-gray-100"
-          style={{ color: colors.inactive.text }}
+      {/* Scroll Down Arrow */}
+      <button
+        onClick={() => scroll("down")}
+        className={`w-full py-2 flex items-center justify-center text-sm font-medium rounded-lg transition-all duration-200 hover:bg-gray-100 cursor-pointer ${canScrollDown ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        style={{ color: colors.inactive.text }}
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <svg
-            className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-      )}
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
     </nav>
   );
 }

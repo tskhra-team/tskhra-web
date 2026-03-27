@@ -29,53 +29,61 @@ import verificationKA from "../locales/ka/verification.json";
 i18n
   .use(LanguageDetector) // Detect browser language
   .use(initReactI18next) // React bindings
-  .init({
-    resources: {
-      en: {
-        common: commonEN,
-        home: homeEN,
-        auth: authEN,
-        booking: bookingEN,
-        dashboard: dashboardEN,
-        ecommerce: ecommerceEN,
-        swapping: swappingEN,
-        categories: categoriesEN,
-        profile: profileEN,
-        verification: verificationEN,
-        modal: modalEN,
+  .init(
+    {
+      resources: {
+        en: {
+          common: commonEN,
+          home: homeEN,
+          auth: authEN,
+          booking: bookingEN,
+          dashboard: dashboardEN,
+          ecommerce: ecommerceEN,
+          swapping: swappingEN,
+          categories: categoriesEN,
+          profile: profileEN,
+          verification: verificationEN,
+          modal: modalEN,
+        },
+        ka: {
+          common: commonKA,
+          home: homeKA,
+          auth: authKA,
+          booking: bookingKA,
+          dashboard: dashboardKA,
+          ecommerce: ecommerceKA,
+          swapping: swappingKA,
+          categories: categoriesKA,
+          profile: profileKA,
+          verification: verificationKA,
+          modal: modalGE,
+        },
       },
-      ka: {
-        common: commonKA,
-        home: homeKA,
-        auth: authKA,
-        booking: bookingKA,
-        dashboard: dashboardKA,
-        ecommerce: ecommerceKA,
-        swapping: swappingKA,
-        categories: categoriesKA,
-        profile: profileKA,
-        verification: verificationKA,
-        modal: modalGE,
-      },
-    },
-    fallbackLng: "en", // Fallback language
-    defaultNS: "common", // Default namespace
-    supportedLngs: ["en", "ka"],
-    load: "languageOnly",
-    debug: false, // Set to true for development debugging
+      fallbackLng: "en", // Fallback language
+      defaultNS: "common", // Default namespace
+      supportedLngs: ["en", "ka"],
+      load: "languageOnly",
+      debug: false, // Set to true for development debugging
 
-    interpolation: {
-      escapeValue: false, // React already escapes
-    },
+      interpolation: {
+        escapeValue: false, // React already escapes
+      },
 
-    detection: {
-      order: ["cookie", "navigator"], // Check cookie first, then browser
-      caches: ["cookie"], // Store in cookie
-      cookieOptions: {
-        path: "/",
-        sameSite: "strict",
+      detection: {
+        order: ["cookie", "navigator"], // Check cookie first, then browser
+        caches: ["cookie"], // Store in cookie
+        cookieOptions: {
+          path: "/",
+          sameSite: "strict",
+        },
       },
     },
-  });
+    () => {
+      if (i18n.language && i18n.language.includes("-")) {
+        const cleanLng = i18n.language.split("-")[0];
+        i18n.changeLanguage(cleanLng);
+      }
+    },
+  );
 
 export default i18n;
