@@ -10,7 +10,7 @@ type IndividualBusinessResponseData = {
 };
 
 type CreateBusinessRequest = {
-  businessName: string;
+  businessName: string | undefined;
   businessNameKa: string;
   callType: "OUTCALL" | "ONSITE" | "BOTH";
   cityId: number;
@@ -19,7 +19,7 @@ type CreateBusinessRequest = {
   description: string;
   descriptionKa: string;
   mainCategory: string;
-  subCategory: string;
+  subcategoryId: number;
   workTimes: Array<{
     weekDay: string;
     startTime: number;

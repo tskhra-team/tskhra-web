@@ -13,11 +13,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import useCreateBusinessService from "./useCreateBusinessService";
 
 export default function ServiceForm() {
   const { t } = useTranslation(["booking", "modal"]);
+  const [searchParams] = useSearchParams();
+  const isEnglish = searchParams.get("isEnglish") === "true";
   const navigate = useNavigate();
   const { mutate: createBusinessService, isPending } =
     useCreateBusinessService();
@@ -39,7 +41,7 @@ export default function ServiceForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(createServicesFormSchema(t)) as any,
+    resolver: yupResolver(createServicesFormSchema(t, isEnglish)),
     defaultValues: {
       services: [] as ServiceType[],
     },
@@ -51,7 +53,9 @@ export default function ServiceForm() {
     setServiceError("");
 
     try {
-      await createServiceSchema(t).validate(newService, { abortEarly: false });
+      await createServiceSchema(t, isEnglish).validate(newService, {
+        abortEarly: false,
+      });
 
       const currentServices = services || [];
       setValue("services", [
@@ -173,19 +177,23 @@ export default function ServiceForm() {
                 className="h-11 transition-all"
               />
             </div>
-            <div className="space-y-2.5">
-              <Label className="text-sm font-medium">
-                {t("booking:form.serviceNameEN")}
-              </Label>
-              <Input
-                value={newService.name}
-                onChange={(e) =>
-                  setNewService({ ...newService, name: e.target.value })
-                }
-                placeholder={t("booking:form.serviceNamePlaceholder")}
-                className="h-11 transition-all"
-              />
-            </div>
+
+            {isEnglish && (
+              <div className="space-y-2.5">
+                <Label className="text-sm font-medium">
+                  {t("booking:form.serviceNameEN")}
+                </Label>
+                <Input
+                  value={newService.name}
+                  onChange={(e) =>
+                    setNewService({ ...newService, name: e.target.value })
+                  }
+                  placeholder={t("booking:form.serviceNamePlaceholder")}
+                  className="h-11 transition-all"
+                />
+              </div>
+            )}
+
             <div className="space-y-2.5">
               <Label className="text-sm font-medium">
                 {t("booking:form.price")}
@@ -237,19 +245,22 @@ export default function ServiceForm() {
               className="h-11 transition-all"
             />
           </div>
-          <div className="space-y-2.5">
-            <Label className="text-sm font-medium">
-              {t("booking:form.serviceDescriptionEN")}
-            </Label>
-            <Input
-              value={newService.description}
-              onChange={(e) =>
-                setNewService({ ...newService, description: e.target.value })
-              }
-              placeholder={t("booking:form.serviceDescriptionPlaceholder")}
-              className="h-11 transition-all"
-            />
-          </div>
+
+          {isEnglish && (
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.serviceDescriptionEN")}
+              </Label>
+              <Input
+                value={newService.description}
+                onChange={(e) =>
+                  setNewService({ ...newService, description: e.target.value })
+                }
+                placeholder={t("booking:form.serviceDescriptionPlaceholder")}
+                className="h-11 transition-all"
+              />
+            </div>
+          )}
           <Button
             type="button"
             onClick={addService}
@@ -287,7 +298,8 @@ export default function ServiceForm() {
                 >
                   <div className="flex-1 space-y-1.5">
                     <p className="font-semibold text-base">
-                      {service.nameKa} ({service.name})
+                      {service.nameKa}
+                      {isEnglish && ` (${service.name})`}
                     </p>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <span className="font-medium text-primary">
@@ -300,7 +312,8 @@ export default function ServiceForm() {
                     </div>
                     {service.description && (
                       <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                        {service.descriptionKa} ({service.description})
+                        {service.descriptionKa}
+                        {isEnglish && ` (${service.description})`}
                       </p>
                     )}
                   </div>
