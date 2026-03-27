@@ -27,7 +27,9 @@
   },
   "form": {
     "businesHeader": "Start creating your Individual Business",
-    "businessName": "Your personal business name (in georgian)",
+    "addEnglish": "Add English?",
+    "addEnglishDesc": "We suggest including both languages to make your business accessible to everyone.",
+    "businessName": "Your personal business name",
     "businessNameEN": "Your personal business name (in english)",
     "subName": "Basic information about your business",
     "enterName": "Enter your business name",
@@ -138,7 +140,13 @@
     "endTimeMax": "End time cannot exceed 24 hours",
     "endTimeInterval": "End time must be in 5-minute intervals",
     "phoneNumberFormat": "Not valid phone number",
-    "phoneNumberRequiered": "Phone number is requiered"
+    "phoneNumberRequiered": "Phone number is requiered",
+    "fileTypeInvalid": "File type is invalid",
+    "noDoubleSpaceName": "In service name (english) double spaces are not allowed",
+    "noDoubleSpaceNameKa": "In service name double spaces are not allowed",
+    "noDoubleSpaceDesc": "In service description double spaces are not allowed",
+    "maxDecimals": "In price max 2 decimal places allowed",
+    "serviceDuration": "Service duration must be a whole number"
   },
   "messages": {
     "successPublished": "Service successfully published!",

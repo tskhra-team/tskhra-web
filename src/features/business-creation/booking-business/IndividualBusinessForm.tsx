@@ -1,6 +1,11 @@
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,17 +15,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useModal } from "@/context/ModalContext";
 import {
   createIndividualBusinessSchema,
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import useGetCitites from "@/shared/api/useGetCities";
-import useGetMainBookingCategories from "@/shared/api/useGetMainBookingCategories";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import { scrollToTop } from "@/utils";
 import { getStatusConfig } from "@/utils/errorHandling";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { CircleAlert, CircleQuestionMark } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -30,9 +36,8 @@ import useUploadBusinessPhotos from "./useUploadBusinessPhotos";
 import WorkingSchedule from "./WorkingSchedule";
 
 export default function IndividualBusinessForm() {
-  const { t } = useTranslation(["booking", "modal"]);
+  const { t, i18n } = useTranslation(["booking", "modal"]);
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
 
   const { mutate: createBusiness, isPending: isCreating } =
     useCreateIndividualBusiness();
@@ -41,10 +46,8 @@ export default function IndividualBusinessForm() {
   const { data: cities, isLoading: isLoadingCities } = useGetCitites(
     i18n.language.toUpperCase(),
   );
-  const { data: categories, isLoading: isLoadingCategories } =
-    useGetMainBookingCategories();
-  const { data: subCategories, isLoading: isLoadingSubCategories } =
-    useGetSubBookingCategories();
+  const { data: categories, isLoading: isLoadingSubCategories } =
+    useGetSubBookingCategories(i18n.language.toUpperCase());
 
   const { showModal, closeModal } = useModal();
 
@@ -60,6 +63,7 @@ export default function IndividualBusinessForm() {
     defaultValues: {
       businessNameKa: "",
       businessName: "",
+      isEnglish: false,
       city: "",
       addressDetailsKa: "",
       addressDetails: "",
@@ -82,9 +86,9 @@ export default function IndividualBusinessForm() {
 
   const callType = watch("callType");
   const mainCategory = watch("mainCategory");
+  const isEnglish = watch("isEnglish");
 
   const onSubmit = (data: IndividualBusinessFormData) => {
-    // Show loading modal
     showModal(
       "pending",
       t("modal:titles.creatingBusiness"),
@@ -102,7 +106,7 @@ export default function IndividualBusinessForm() {
       description: data.description,
       descriptionKa: data.descriptionKa,
       mainCategory: data.mainCategory,
-      subCategory: data.subCategory,
+      subcategoryId: Number(data.subCategory),
       workTimes: data.workTimes.map((t) => ({
         ...t,
         endTime: t.endTime === 0 ? 1440 : t.endTime,
@@ -145,10 +149,10 @@ export default function IndividualBusinessForm() {
                 t("modal:messages.businessCreatedSuccess"),
                 t("modal:buttons.addServices"),
                 () => {
-                  navigate(
-                    "/create-business?business=booking&type=individual&step=2",
-                  );
                   scrollToTop();
+                  navigate(
+                    `/create-business?business=booking&type=individual&step=2&isEnglish=${data.isEnglish}`,
+                  );
                 },
               );
             },
@@ -177,11 +181,13 @@ export default function IndividualBusinessForm() {
     setValue("subCategory", "");
   };
 
-  if (isLoadingCategories || isLoadingSubCategories || isLoadingCities) {
+  if (isLoadingSubCategories || isLoadingCities) {
     return <ServiceFormSkeleton />;
   }
 
-  console.log(errors);
+  const selectedCategory = categories?.find(
+    (cat) => String(cat.id) === mainCategory,
+  );
 
   return (
     <form
@@ -191,8 +197,35 @@ export default function IndividualBusinessForm() {
       {/* Basic Information Card */}
       <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-6 space-y-1">
-          <CardTitle className="text-2xl font-semibold tracking-tight">
+          <CardTitle className="text-2xl font-semibold tracking-tight flex md:flex-row flex-col justify-between text-center">
             {t("booking:form.businesHeader")}
+            <div className="flex items-center justify-center text-center mt-5">
+              <HoverCard openDelay={100} closeDelay={200}>
+                <HoverCardTrigger className="pr-5 flex ">
+                  <Label className="pr-2 ">
+                    {t("booking:form.addEnglish")}
+                  </Label>
+                  <CircleQuestionMark className="h-4 w-4" />
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <CircleAlert className="h-4 w-4 mb-2 font-semibold" />
+                  <span className="font-semibold text-sm">
+                    {t("booking:form.addEnglishDesc")}
+                  </span>
+                </HoverCardContent>
+              </HoverCard>
+              <Controller
+                name="isEnglish"
+                control={control}
+                render={({ field }) => (
+                  <Switch
+                    size="default"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             {t("booking:form.subName")}
@@ -215,21 +248,23 @@ export default function IndividualBusinessForm() {
             )}
           </div>
 
-          <div className="space-y-2.5">
-            <Label className="text-sm font-medium">
-              {t("booking:form.businessNameEN")}
-            </Label>
-            <Input
-              {...register("businessName")}
-              placeholder={t("booking:form.enterName")}
-              className="h-11 transition-all"
-            />
-            {errors.businessName && (
-              <p className="text-xs text-red-500 font-medium">
-                {errors.businessName.message}
-              </p>
-            )}
-          </div>
+          {isEnglish && (
+            <div className="space-y-2.5">
+              <Label className="text-sm font-medium">
+                {t("booking:form.businessNameEN")}
+              </Label>
+              <Input
+                {...register("businessName")}
+                placeholder={t("booking:form.enterName")}
+                className="h-11 transition-all"
+              />
+              {errors.businessName && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.businessName.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-3">
             <Label className="text-sm font-medium">
@@ -336,22 +371,24 @@ export default function IndividualBusinessForm() {
               )}
             </div>
 
-            <div className="space-y-2.5 w-full">
-              <Label className="text-sm font-medium">
-                {t("booking:form.addressEN")}
-              </Label>
-              <Input
-                {...register("addressDetails")}
-                disabled={callType === "OUTCALL"}
-                placeholder={t("booking:form.addressPlaceholder")}
-                className="h-11 transition-all"
-              />
-              {errors.addressDetails && callType !== "OUTCALL" && (
-                <p className="text-xs text-red-500 font-medium">
-                  {errors.addressDetails.message}
-                </p>
-              )}
-            </div>
+            {isEnglish && (
+              <div className="space-y-2.5 w-full">
+                <Label className="text-sm font-medium">
+                  {t("booking:form.addressEN")}
+                </Label>
+                <Input
+                  {...register("addressDetails")}
+                  disabled={callType === "OUTCALL"}
+                  placeholder={t("booking:form.addressPlaceholder")}
+                  className="h-11 transition-all"
+                />
+                {errors.addressDetails && callType !== "OUTCALL" && (
+                  <p className="text-xs text-red-500 font-medium">
+                    {errors.addressDetails.message}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -381,19 +418,21 @@ export default function IndividualBusinessForm() {
             )}
           </div>
 
-          <div>
-            <textarea
-              {...register("description")}
-              placeholder={`${t("booking:form.descriptionPlaceholderEN")}`}
-              rows={6}
-              className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
-            />
-            {errors.description && (
-              <p className="text-xs text-red-500 font-medium">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
+          {isEnglish && (
+            <div>
+              <textarea
+                {...register("description")}
+                placeholder={`${t("booking:form.descriptionPlaceholderEN")}`}
+                rows={6}
+                className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+              />
+              {errors.description && (
+                <p className="text-xs text-red-500 font-medium">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -424,13 +463,19 @@ export default function IndividualBusinessForm() {
                       field.onChange(value);
                     }}
                   >
-                    <SelectTrigger className="w-full h-11 transition-all">
+                    <SelectTrigger
+                      ref={field.ref}
+                      className="w-full h-11 transition-all"
+                    >
                       <SelectValue placeholder={t("booking:form.category")} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
+                        <SelectItem
+                          key={category.id}
+                          value={String(category.id)}
+                        >
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -457,18 +502,23 @@ export default function IndividualBusinessForm() {
                     onValueChange={field.onChange}
                     disabled={!mainCategory}
                   >
-                    <SelectTrigger className="w-full h-11 transition-all">
+                    <SelectTrigger
+                      ref={field.ref}
+                      className="w-full h-11 transition-all"
+                    >
                       <SelectValue
                         placeholder={t("booking:form.subcategory")}
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      {mainCategory &&
-                        subCategories?.[mainCategory]?.map((subcategory) => (
-                          <SelectItem key={subcategory} value={subcategory}>
-                            {subcategory}
-                          </SelectItem>
-                        ))}
+                      {selectedCategory?.subcategories.map((subcategory) => (
+                        <SelectItem
+                          key={subcategory.id}
+                          value={String(subcategory.id)}
+                        >
+                          {subcategory.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}

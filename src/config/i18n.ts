@@ -63,7 +63,7 @@ i18n
       defaultNS: "common", // Default namespace
       supportedLngs: ["en", "ka"],
       load: "languageOnly",
-      debug: true, // Set to true for development debugging
+      debug: false, // Set to true for development debugging
 
       interpolation: {
         escapeValue: false, // React already escapes
