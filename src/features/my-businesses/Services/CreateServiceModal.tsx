@@ -13,10 +13,10 @@ import {
   type ServiceType,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import useCreateBusinessService from "@/features/business-creation/booking-business/useCreateBusinessService";
+import ServiceModalShell from "@/features/my-businesses/Services/ServiceModalShell";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CircleAlert, CircleQuestionMark, X } from "lucide-react";
-import { useEffect } from "react";
+import { CircleAlert, CircleQuestionMark } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -32,13 +32,6 @@ export default function CreateServiceModal({
   const { t } = useTranslation(["dashboard", "booking", "modal"]);
   const { mutate: createBusinessService } = useCreateBusinessService();
   const { showModal } = useModal();
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
 
   const {
     handleSubmit,
@@ -90,150 +83,133 @@ export default function CreateServiceModal({
   const isEnglish = watch("isEnglish");
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={() => onShowCreateModal(false)}
-    >
-      <div
-        className="bg-white relative rounded-2xl shadow-2xl p-8 w-150 max-w-[90vw] flex flex-col animate-in zoom-in-95 duration-200 border border-gray-100 max-h-screen overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+    <ServiceModalShell onClose={() => onShowCreateModal(false)}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-5 mt-5 justify-start"
       >
-        <X
-          onClick={() => onShowCreateModal(false)}
-          className="cursor-pointer top-0 right-0 h-5 w-5 absolute m-5"
-        />
+        <div className="flex items-center justify-end text-center mt-2">
+          <HoverCard openDelay={100} closeDelay={200}>
+            <HoverCardTrigger className="pr-2 md:pr-5 flex">
+              <Label className="pr-2 ">{t("booking:form.addEnglish")}</Label>
+              <CircleQuestionMark className="h-4 w-4" />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <CircleAlert className="h-4 w-4 mb-2 font-semibold" />
+              <span className="font-semibold text-sm">
+                {t("booking:form.addEnglishDesc")}
+              </span>
+            </HoverCardContent>
+          </HoverCard>
+          <Controller
+            name="isEnglish"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                size="default"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className="cursor-pointer"
+              />
+            )}
+          />
+        </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 mt-5 justify-start"
-        >
-          <div className="flex items-center justify-end text-center mt-2">
-            <HoverCard openDelay={100} closeDelay={200}>
-              <HoverCardTrigger className="pr-2 md:pr-5 flex">
-                <Label className="pr-2 ">{t("booking:form.addEnglish")}</Label>
-                <CircleQuestionMark className="h-4 w-4" />
-              </HoverCardTrigger>
-              <HoverCardContent>
-                <CircleAlert className="h-4 w-4 mb-2 font-semibold" />
-                <span className="font-semibold text-sm">
-                  {t("booking:form.addEnglishDesc")}
-                </span>
-              </HoverCardContent>
-            </HoverCard>
-            <Controller
-              name="isEnglish"
-              control={control}
-              render={({ field }) => (
-                <Switch
-                  size="default"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  className="cursor-pointer"
-                />
-              )}
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col w-full gap-2">
+            <Label>{t("dashboard:services.form.serviceName")}</Label>
+            <Input
+              placeholder={t("dashboard:services.form.serviceNamePlaceholder")}
+              {...register("nameKa")}
             />
+            {errors.nameKa && (
+              <span className="text-red-500 text-sm">
+                {errors.nameKa.message}
+              </span>
+            )}
           </div>
-
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col w-full gap-2">
-              <Label>{t("dashboard:services.form.serviceName")}</Label>
+          {isEnglish && (
+            <div className="flex flex-col w-full gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <Label>{t("booking:form.serviceNameEN")}</Label>
               <Input
                 placeholder={t(
                   "dashboard:services.form.serviceNamePlaceholder",
                 )}
-                {...register("nameKa")}
+                {...register("name")}
               />
-              {errors.nameKa && (
+              {errors.name && (
                 <span className="text-red-500 text-sm">
-                  {errors.nameKa.message}
+                  {errors.name.message}
                 </span>
               )}
             </div>
-            {isEnglish && (
-              <div className="flex flex-col w-full gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                <Label>{t("booking:form.serviceNameEN")}</Label>
-                <Input
-                  placeholder={t(
-                    "dashboard:services.form.serviceNamePlaceholder",
-                  )}
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <span className="text-red-500 text-sm">
-                    {errors.name.message}
-                  </span>
-                )}
-              </div>
-            )}
+          )}
 
-            <div className="flex gap-4">
-              <div className="flex flex-col justify-between w-full gap-2">
-                <Label>{t("dashboard:services.form.price")}</Label>
-                <Input
-                  type="number"
-                  placeholder={t("dashboard:services.form.pricePlaceholder")}
-                  step={0.01}
-                  {...register("price")}
-                />
-                {errors.price && (
-                  <span className="text-red-500 text-sm">
-                    {errors.price.message}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col w-full gap-2">
-                <Label>{t("dashboard:services.form.duration")}</Label>
-                <Input
-                  type="number"
-                  placeholder={t("dashboard:services.form.durationPlaceholder")}
-                  step={5}
-                  {...register("duration")}
-                />
-                {errors.duration && (
-                  <span className="text-red-500 text-sm">
-                    {errors.duration.message}
-                  </span>
-                )}
-              </div>
+          <div className="flex gap-4">
+            <div className="flex flex-col justify-between w-full gap-2">
+              <Label>{t("dashboard:services.form.price")}</Label>
+              <Input
+                type="number"
+                placeholder={t("dashboard:services.form.pricePlaceholder")}
+                step={0.01}
+                {...register("price")}
+              />
+              {errors.price && (
+                <span className="text-red-500 text-sm">
+                  {errors.price.message}
+                </span>
+              )}
             </div>
+            <div className="flex flex-col w-full gap-2">
+              <Label>{t("dashboard:services.form.duration")}</Label>
+              <Input
+                type="number"
+                placeholder={t("dashboard:services.form.durationPlaceholder")}
+                step={5}
+                {...register("duration")}
+              />
+              {errors.duration && (
+                <span className="text-red-500 text-sm">
+                  {errors.duration.message}
+                </span>
+              )}
+            </div>
+          </div>
 
-            <div className="flex flex-col gap-2">
-              <Label>{t("dashboard:services.form.description")}</Label>
+          <div className="flex flex-col gap-2">
+            <Label>{t("dashboard:services.form.description")}</Label>
+            <Input
+              placeholder={t("dashboard:services.form.descriptionPlaceholder")}
+              {...register("descriptionKa")}
+            />
+            {errors.descriptionKa && (
+              <span className="text-red-500 text-sm">
+                {errors.descriptionKa.message}
+              </span>
+            )}
+          </div>
+          {isEnglish && (
+            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <Label>{t("booking:form.serviceDescriptionEN")}</Label>
               <Input
                 placeholder={t(
                   "dashboard:services.form.descriptionPlaceholder",
                 )}
-                {...register("descriptionKa")}
+                {...register("description")}
               />
-              {errors.descriptionKa && (
+              {errors.description && (
                 <span className="text-red-500 text-sm">
-                  {errors.descriptionKa.message}
+                  {errors.description.message}
                 </span>
               )}
             </div>
-            {isEnglish && (
-              <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                <Label>{t("booking:form.serviceDescriptionEN")}</Label>
-                <Input
-                  placeholder={t(
-                    "dashboard:services.form.descriptionPlaceholder",
-                  )}
-                  {...register("description")}
-                />
-                {errors.description && (
-                  <span className="text-red-500 text-sm">
-                    {errors.description.message}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
+          )}
+        </div>
 
-          <Button type="submit" className="mt-5 cursor-pointer">
-            {t("dashboard:services.addNewService")}
-          </Button>
-        </form>
-      </div>
-    </div>
+        <Button type="submit" className="mt-5 cursor-pointer">
+          {t("dashboard:services.addNewService")}
+        </Button>
+      </form>
+    </ServiceModalShell>
   );
 }
