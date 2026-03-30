@@ -5,7 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import { scrollToTop } from "@/utils";
-import { MapPin } from "lucide-react";
+import useAddFavorite from "@/Booking/useAddFavorite";
+import useGetFavoriteBusinesses from "@/Booking/useGetFavoriteBusinesses";
+import useRemoveFavorite from "@/Booking/useRemoveFavorite";
+import { useAuth } from "@/context/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
+import { Heart, MapPin } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -14,6 +19,11 @@ export default function BusinessCatalog() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("booking");
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isAuthenticated, login } = useAuth();
+  const queryClient = useQueryClient();
+  const { data: favorites } = useGetFavoriteBusinesses(isAuthenticated);
+  const { mutate: addFavorite, isPending: isAdding } = useAddFavorite();
+  const { mutate: removeFavorite, isPending: isRemoving } = useRemoveFavorite();
   const size = 12;
 
   const categoryFilter = searchParams.get("category");
@@ -91,6 +101,23 @@ export default function BusinessCatalog() {
   const handkleClick = (id: string) => {
     scrollToTop();
     navigate(`/booking/business/${id}`);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent, businessId: string) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    const onSuccess = () => {
+      queryClient.invalidateQueries({ queryKey: ["getUser"] });
+    };
+    const isFav = favorites?.some((id) => String(id) === String(businessId));
+    if (isFav) {
+      removeFavorite({ businessId }, { onSuccess });
+    } else {
+      addFavorite({ businessId }, { onSuccess });
+    }
   };
 
   // Show skeleton on initial load or when refetching without data
@@ -173,6 +200,23 @@ export default function BusinessCatalog() {
                       )}
                     </span>
                   </div>
+
+                  {/* Favorite Heart Icon */}
+                  <button
+                    onClick={(e) => handleToggleFavorite(e, business.businessId)}
+                    disabled={isAdding || isRemoving}
+                    className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/95 backdrop-blur-md shadow-lg border border-white/40 hover:bg-white transition-colors disabled:opacity-50"
+                  >
+                    <Heart
+                      className={`w-5 h-5 transition-colors ${
+                        favorites?.some(
+                          (id) => String(id) === String(business.businessId),
+                        )
+                          ? "fill-rose-500 text-rose-500"
+                          : "text-slate-600 hover:text-rose-500"
+                      }`}
+                    />
+                  </button>
                 </div>
 
                 {/* Content Section */}
