@@ -24,24 +24,52 @@ interface MyServicesProps {
   businessId: string | null;
 }
 
+export interface UpdateBusinessProps {
+  id: string;
+  nameKa: string;
+  name: string | undefined;
+  price: number;
+  duration: number;
+  descriptionKa: string | undefined;
+  description: string | undefined;
+  status: string;
+}
+
 export default function MyServices({ businessId }: MyServicesProps) {
   if (!businessId) return;
 
   const { t, i18n } = useTranslation(["dashboard", "modal"]);
-  const { data: services, isLoading } = useGetMyServices(
-    businessId,
-    i18n.language.toUpperCase(),
-  );
+  const { data: servicesKa, isLoading } = useGetMyServices(businessId, "KA");
+  const { data: servicesEn } = useGetMyServices(businessId, "EN");
+
+  const services = i18n.language === "ka" ? servicesKa : servicesEn;
+
+  const servicesUpdate = servicesKa?.map((service, i) => {
+    return {
+      id: service.id,
+      nameKa: service.name,
+      name: servicesEn?.at(i)?.name,
+      price: service.price,
+      duration: service.duration,
+      descriptionKa: service?.description,
+      description: servicesEn?.at(i)?.description,
+      status: service.status,
+    };
+  });
+
   const { showModal } = useModal();
   const { mutate: deleteService } = useDeleteService();
   const { mutate: updateStatus } = useUpdateStatus();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUdpateModal, setShowUpdateModal] = useState(false);
   const [selectedService, setSelectedService] =
-    useState<ServiceResponse | null>(null);
+    useState<UpdateBusinessProps | null>(null);
 
   const handleUpdate = (service: ServiceResponse) => {
-    setSelectedService(service);
+    const updatingService = servicesUpdate?.find(
+      (serviceUpd) => serviceUpd.id === service.id,
+    );
+    setSelectedService(updatingService ?? null);
     setShowUpdateModal(true);
   };
 
