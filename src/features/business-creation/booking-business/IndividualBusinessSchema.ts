@@ -85,8 +85,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 //   });
 // };
 
-export const createServiceSchema = (t: TFunction, isEnglish = false) => {
-  // Регулярка: строка не должна содержать два пробела подряд
+export const createServiceSchema = (t: TFunction) => {
   const noDoubleSpacesRegex = /^(?!.*\s{2}).*$/;
   const noDoubleSpacesMsgName = t("booking:validation.noDoubleSpaceName");
   const noDoubleSpacesMsgNameKa = t("booking:validation.noDoubleSpaceNameKa");
@@ -94,21 +93,26 @@ export const createServiceSchema = (t: TFunction, isEnglish = false) => {
 
   const ServiceNameSchemaKa = yup
     .string()
-    .trim() // Убирает пробелы в начале и конце. Строка из одних пробелов станет ""
+    .trim()
     .required(t("booking:validation.serviceNameRequiredKa"))
     .matches(noDoubleSpacesRegex, noDoubleSpacesMsgNameKa)
     .min(2, t("booking:validation.serviceNameMinChars"))
     .max(40, t("booking:validation.serviceNameMax"));
 
-  const ServiceNameSchema = isEnglish
-    ? yup
-        .string()
-        .trim()
-        .required(t("booking:validation.serviceNameRequired"))
-        .matches(noDoubleSpacesRegex, noDoubleSpacesMsgName)
-        .min(2, t("booking:validation.serviceNameMinChars"))
-        .max(40, t("booking:validation.serviceNameMax"))
-    : yup.string().optional().default("");
+  const ServiceNameSchema = yup
+    .string()
+    .trim()
+    .default("")
+    .when("isEnglish", {
+      is: true,
+      then: (s) =>
+        s
+          .required(t("booking:validation.serviceNameRequired"))
+          .matches(noDoubleSpacesRegex, noDoubleSpacesMsgName)
+          .min(2, t("booking:validation.serviceNameMinChars"))
+          .max(40, t("booking:validation.serviceNameMax")),
+      otherwise: (s) => s.notRequired(),
+    });
 
   const descriptionSchema = yup
     .string()
@@ -120,63 +124,64 @@ export const createServiceSchema = (t: TFunction, isEnglish = false) => {
     .max(70, t("booking:validation.serviceDescriptionMax"))
     .optional();
 
-  const schema = yup.object({
-    nameKa: ServiceNameSchemaKa,
-    name: ServiceNameSchema,
-    price: yup
-      .number()
-      .required(t("booking:validation.servicePriceRequired"))
-      .typeError(t("booking:validation.servicePriceRequired"))
-      .positive(t("booking:validation.servicePricePositiveError"))
-      .max(1000000, t("booking:validation.servicePriceMax"))
-      .test("max-decimals", t("booking:validation.maxDecimals"), (value) => {
-        if (value === undefined || value === null) return true;
-        return /^\d+(\.\d{1,2})?$/.test(value.toString());
-      }),
-    duration: yup
-      .number()
-      .required(t("booking:validation.serviceDurationRequired"))
-      .typeError(t("booking:validation.serviceDurationRequired"))
-      .positive(t("booking:validation.serviceDurationPositive"))
-      .integer(t("booking:validation.serviceDuration"))
-      .max(1440, t("booking:validation.serviceDurationMax"))
-      .test(
-        "is-multiple-of-5",
-        t("booking:validation.serviceDurationInterval"),
-        (value) => {
-          if (value === undefined || value === null || isNaN(value))
-            return false;
-          return value % 5 === 0;
-        },
-      ),
-    descriptionKa: descriptionSchema,
-    description: descriptionSchema,
-  });
+  return yup
+    .object({
+      isEnglish: yup.boolean().default(false),
+      nameKa: ServiceNameSchemaKa,
+      name: ServiceNameSchema,
+      price: yup
+        .number()
+        .required(t("booking:validation.servicePriceRequired"))
+        .typeError(t("booking:validation.servicePriceRequired"))
+        .positive(t("booking:validation.servicePricePositiveError"))
+        .max(1000000, t("booking:validation.servicePriceMax"))
+        .test("max-decimals", t("booking:validation.maxDecimals"), (value) => {
+          if (value === undefined || value === null) return true;
+          return /^\d+(\.\d{1,2})?$/.test(value.toString());
+        }),
+      duration: yup
+        .number()
+        .required(t("booking:validation.serviceDurationRequired"))
+        .typeError(t("booking:validation.serviceDurationRequired"))
+        .positive(t("booking:validation.serviceDurationPositive"))
+        .integer(t("booking:validation.serviceDuration"))
+        .max(1440, t("booking:validation.serviceDurationMax"))
+        .test(
+          "is-multiple-of-5",
+          t("booking:validation.serviceDurationInterval"),
+          (value) => {
+            if (value === undefined || value === null || isNaN(value))
+              return false;
+            return value % 5 === 0;
+          },
+        ),
+      descriptionKa: descriptionSchema,
+      description: descriptionSchema,
+    })
+    .test("description-both-or-none", "", function (value) {
+      if (!value.isEnglish) return true;
 
-  if (!isEnglish) return schema;
+      const { description, descriptionKa } = value as {
+        description?: string;
+        descriptionKa?: string;
+      };
+      const hasEn = !!description;
+      const hasKa = !!descriptionKa;
 
-  return schema.test("description-both-or-none", "", function (value) {
-    const { description, descriptionKa } = value as {
-      description?: string;
-      descriptionKa?: string;
-    };
-    const hasEn = !!description;
-    const hasKa = !!descriptionKa;
-
-    if (hasEn && !hasKa) {
-      return this.createError({
-        path: "descriptionKa",
-        message: t("booking:validation.serviceDescriptionKaRequired"),
-      });
-    }
-    if (hasKa && !hasEn) {
-      return this.createError({
-        path: "description",
-        message: t("booking:validation.serviceDescriptionRequired"),
-      });
-    }
-    return true;
-  });
+      if (hasEn && !hasKa) {
+        return this.createError({
+          path: "descriptionKa",
+          message: t("booking:validation.serviceDescriptionKaRequired"),
+        });
+      }
+      if (hasKa && !hasEn) {
+        return this.createError({
+          path: "description",
+          message: t("booking:validation.serviceDescriptionRequired"),
+        });
+      }
+      return true;
+    });
 };
 
 // Schema for Step 1 - Business Information
@@ -338,11 +343,11 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
 };
 
 // Schema for Step 2 - Services
-export const createServicesFormSchema = (t: TFunction, isEnglish: boolean) => {
+export const createServicesFormSchema = (t: TFunction) => {
   return yup.object({
     services: yup
       .array()
-      .of(createServiceSchema(t, isEnglish))
+      .of(createServiceSchema(t))
       .min(1, t("booking:validation.servicesMin"))
       .required(),
   });
@@ -356,6 +361,7 @@ export type InfoType = {
 };
 
 export type ServiceType = {
+  isEnglish: boolean;
   name: string;
   nameKa: string;
   price: number;

@@ -27,6 +27,7 @@ import { scrollToTop } from "@/utils";
 import { getStatusConfig } from "@/utils/errorHandling";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { CircleAlert, CircleQuestionMark } from "lucide-react";
+import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +84,29 @@ export default function IndividualBusinessForm() {
       },
     },
   });
+
+  const workTimesRef = useRef<HTMLDivElement>(null);
+  const businessPhotoRef = useRef<HTMLDivElement>(null);
+  const galleryPhotoRef = useRef<HTMLDivElement>(null);
+
+  const onFormError = () => {
+    if (errors.workTimes) {
+      workTimesRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else if (errors.images?.businessPhoto) {
+      businessPhotoRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else if (errors.images?.galleryPhoto) {
+      galleryPhotoRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
 
   const callType = watch("callType");
   const mainCategory = watch("mainCategory");
@@ -191,7 +215,7 @@ export default function IndividualBusinessForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onFormError)}
       className="max-w-6xl mx-auto space-y-6 pb-16 px-4"
     >
       {/* Basic Information Card */}
@@ -544,31 +568,33 @@ export default function IndividualBusinessForm() {
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Controller
-            name="workTimes"
-            control={control}
-            render={({ field: workField }) => (
-              <Controller
-                name="restTimes"
-                control={control}
-                render={({ field: restField }) => (
-                  <WorkingSchedule
-                    workTimes={workField.value || []}
-                    restTimes={restField.value || []}
-                    onWorkTimesChange={workField.onChange}
-                    onRestTimesChange={restField.onChange}
-                    workTimesErrors={errors.workTimes}
-                    restTimesErrors={errors.restTimes}
-                  />
-                )}
-              />
+          <div ref={workTimesRef}>
+            <Controller
+              name="workTimes"
+              control={control}
+              render={({ field: workField }) => (
+                <Controller
+                  name="restTimes"
+                  control={control}
+                  render={({ field: restField }) => (
+                    <WorkingSchedule
+                      workTimes={workField.value || []}
+                      restTimes={restField.value || []}
+                      onWorkTimesChange={workField.onChange}
+                      onRestTimesChange={restField.onChange}
+                      workTimesErrors={errors.workTimes}
+                      restTimesErrors={errors.restTimes}
+                    />
+                  )}
+                />
+              )}
+            />
+            {errors.workTimes && !Array.isArray(errors.workTimes) && (
+              <p className="text-xs text-red-500 font-medium">
+                {errors.workTimes.message as string}
+              </p>
             )}
-          />
-          {errors.workTimes && !Array.isArray(errors.workTimes) && (
-            <p className="text-xs text-red-500 font-medium">
-              {errors.workTimes.message as string}
-            </p>
-          )}
+          </div>
           <p className="text-xs text-muted-foreground">
             {t("booking:form.scheduleHelp")}
           </p>
@@ -595,17 +621,19 @@ export default function IndividualBusinessForm() {
                 {t("booking:form.mainImageSub")}
               </p>
             </div>
-            <Controller
-              name="images.businessPhoto"
-              control={control}
-              render={({ field }) => (
-                <FileUpload
-                  value={field.value}
-                  onChange={field.onChange}
-                  maxFiles={1}
-                />
-              )}
-            />
+            <div ref={businessPhotoRef}>
+              <Controller
+                name="images.businessPhoto"
+                control={control}
+                render={({ field }) => (
+                  <FileUpload
+                    value={field.value}
+                    onChange={field.onChange}
+                    maxFiles={1}
+                  />
+                )}
+              />
+            </div>
             {errors.images?.businessPhoto && (
               <p className="text-xs text-red-500 font-medium">
                 {Array.isArray(errors.images.businessPhoto)
@@ -625,17 +653,19 @@ export default function IndividualBusinessForm() {
                 {t("booking:form.galleryHelp")}
               </p>
             </div>
-            <Controller
-              name="images.galleryPhoto"
-              control={control}
-              render={({ field }) => (
-                <FileUpload
-                  value={field.value}
-                  onChange={field.onChange}
-                  maxFiles={4}
-                />
-              )}
-            />
+            <div ref={galleryPhotoRef}>
+              <Controller
+                name="images.galleryPhoto"
+                control={control}
+                render={({ field }) => (
+                  <FileUpload
+                    value={field.value}
+                    onChange={field.onChange}
+                    maxFiles={4}
+                  />
+                )}
+              />
+            </div>
             {errors.images?.galleryPhoto && (
               <p className="text-xs text-red-500 font-medium">
                 {Array.isArray(errors.images.galleryPhoto)
