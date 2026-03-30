@@ -6,7 +6,7 @@ import type { AxiosError } from "axios";
 
 type ServiceRequest = {
   businessId: string;
-  services: ServiceType[];
+  services: Omit<ServiceType, "isEnglish">[];
 };
 
 type ServiceResponse = {
@@ -18,7 +18,6 @@ const createBusinessService = async ({
   businessId,
   services,
 }: ServiceRequest) => {
-  // Отправляем каждый сервис отдельно
   const servicePromises = services.map((service) =>
     privateInstance.post(`/business/${businessId}/services`, service),
   );

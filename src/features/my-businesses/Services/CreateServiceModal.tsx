@@ -1,16 +1,23 @@
 import { Button } from "@/components/ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useModal } from "@/context/ModalContext";
 import {
   createServiceSchema,
   type ServiceType,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
 import useCreateBusinessService from "@/features/business-creation/booking-business/useCreateBusinessService";
+import ServiceModalShell from "@/features/my-businesses/Services/ServiceModalShell";
 import queryClient from "@/query/queryClient";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { X } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { CircleAlert, CircleQuestionMark } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 interface CreateServiceModalProps {
@@ -29,6 +36,8 @@ export default function CreateServiceModal({
   const {
     handleSubmit,
     register,
+    control,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(createServiceSchema(t)),
@@ -56,7 +65,9 @@ export default function CreateServiceModal({
               },
             );
 
-            queryClient.invalidateQueries({ queryKey: ["getMyServices"] });
+            queryClient.invalidateQueries({
+              queryKey: ["getMyServices", businessId],
+            });
           },
 
           onError: () =>
@@ -69,21 +80,57 @@ export default function CreateServiceModal({
       ));
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white relative rounded-2xl shadow-2xl p-8 w-180 max-w-[90vw] flex flex-col animate-in zoom-in-95 duration-200 border border-gray-100">
-        <X
-          onClick={() => onShowCreateModal(false)}
-          className="cursor-pointer top-0 right-0 h-5 w-5 absolute m-5"
-        />
+  const isEnglish = watch("isEnglish");
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 mt-10 justify-start"
-        >
-          <div className="flex flex-col gap-4 md:flex-row md:gap-7">
-            <div className="flex flex-col w-full gap-2">
-              <Label>{t("dashboard:services.form.serviceName")}</Label>
+  return (
+    <ServiceModalShell onClose={() => onShowCreateModal(false)}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-5 mt-5 justify-start"
+      >
+        <div className="flex items-center justify-end text-center mt-2">
+          <HoverCard openDelay={100} closeDelay={200}>
+            <HoverCardTrigger className="pr-2 md:pr-5 flex">
+              <Label className="pr-2 ">{t("booking:form.addEnglish")}</Label>
+              <CircleQuestionMark className="h-4 w-4" />
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <CircleAlert className="h-4 w-4 mb-2 font-semibold" />
+              <span className="font-semibold text-sm">
+                {t("booking:form.addEnglishDesc")}
+              </span>
+            </HoverCardContent>
+          </HoverCard>
+          <Controller
+            name="isEnglish"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                size="default"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className="cursor-pointer"
+              />
+            )}
+          />
+        </div>
+
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col w-full gap-2">
+            <Label>{t("dashboard:services.form.serviceName")}</Label>
+            <Input
+              placeholder={t("dashboard:services.form.serviceNamePlaceholder")}
+              {...register("nameKa")}
+            />
+            {errors.nameKa && (
+              <span className="text-red-500 text-sm">
+                {errors.nameKa.message}
+              </span>
+            )}
+          </div>
+          {isEnglish && (
+            <div className="flex flex-col w-full gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <Label>{t("booking:form.serviceNameEN")}</Label>
               <Input
                 placeholder={t(
                   "dashboard:services.form.serviceNamePlaceholder",
@@ -96,7 +143,10 @@ export default function CreateServiceModal({
                 </span>
               )}
             </div>
-            <div className="flex flex-col w-full gap-2">
+          )}
+
+          <div className="flex gap-4">
+            <div className="flex flex-col justify-between w-full gap-2">
               <Label>{t("dashboard:services.form.price")}</Label>
               <Input
                 type="number"
@@ -130,20 +180,36 @@ export default function CreateServiceModal({
             <Label>{t("dashboard:services.form.description")}</Label>
             <Input
               placeholder={t("dashboard:services.form.descriptionPlaceholder")}
-              {...register("description")}
+              {...register("descriptionKa")}
             />
-            {errors.description && (
+            {errors.descriptionKa && (
               <span className="text-red-500 text-sm">
-                {errors.description.message}
+                {errors.descriptionKa.message}
               </span>
             )}
           </div>
+          {isEnglish && (
+            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+              <Label>{t("booking:form.serviceDescriptionEN")}</Label>
+              <Input
+                placeholder={t(
+                  "dashboard:services.form.descriptionPlaceholder",
+                )}
+                {...register("description")}
+              />
+              {errors.description && (
+                <span className="text-red-500 text-sm">
+                  {errors.description.message}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
 
-          <Button type="submit" className="mt-5 cursor-pointer">
-            {t("dashboard:services.addNewService")}
-          </Button>
-        </form>
-      </div>
-    </div>
+        <Button type="submit" className="mt-5 cursor-pointer">
+          {t("dashboard:services.addNewService")}
+        </Button>
+      </form>
+    </ServiceModalShell>
   );
 }

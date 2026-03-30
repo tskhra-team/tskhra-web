@@ -27,6 +27,7 @@ export default function ServiceForm() {
 
   const [newService, setNewService] = useState({
     nameKa: "",
+    isEnglish: isEnglish,
     name: "",
     price: 0,
     duration: 0,
@@ -41,7 +42,7 @@ export default function ServiceForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(createServicesFormSchema(t, isEnglish)),
+    resolver: yupResolver(createServicesFormSchema(t)),
     defaultValues: {
       services: [] as ServiceType[],
     },
@@ -53,7 +54,7 @@ export default function ServiceForm() {
     setServiceError("");
 
     try {
-      await createServiceSchema(t, isEnglish).validate(newService, {
+      await createServiceSchema(t).validate(newService, {
         abortEarly: false,
       });
 
@@ -63,6 +64,7 @@ export default function ServiceForm() {
         {
           name: newService.name,
           nameKa: newService.nameKa,
+          isEnglish: newService.isEnglish,
           price: newService.price,
           duration: newService.duration,
           description: newService.description,
@@ -73,6 +75,7 @@ export default function ServiceForm() {
       setNewService({
         name: "",
         nameKa: "",
+        isEnglish: isEnglish,
         price: 0,
         duration: 0,
         description: "",
