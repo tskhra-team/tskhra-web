@@ -29,7 +29,7 @@ export const createServiceSchema = (t: TFunction) => {
           .matches(noDoubleSpacesRegex, noDoubleSpacesMsgName)
           .min(2, t("booking:validation.serviceNameMinChars"))
           .max(40, t("booking:validation.serviceNameMax")),
-      otherwise: (s) => s.notRequired(),
+      otherwise: (s) => s.notRequired().default(""),
     });
 
   const descriptionSchema = yup

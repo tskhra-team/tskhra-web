@@ -47,10 +47,13 @@ export default function UpdateServiceModal({
     defaultValues: {
       isEnglish: service.name === service.nameKa ? false : true,
       nameKa: service.nameKa,
-      name: service.name ?? "",
+      name: service.name === service.nameKa ? "" : (service.name ?? ""),
       price: service.price,
       duration: service.duration,
-      description: service.description,
+      description:
+        service.description === service.descriptionKa
+          ? ""
+          : service.description,
       descriptionKa: service.descriptionKa,
     },
   });
