@@ -125,7 +125,7 @@
     "serviceDurationMax": "სერვისის ხანგრძლივობა არ უნდა აღემატებოდეს 24 საათს",
     "serviceDurationInterval": "სერვისის ხანგრძლივობა 5-ზე ჯერადი უნდა იყოს",
     "serviceDurationPositive": "სერვისის ხანგრძლივობა უნდა იყოს დადებითი რიცხვი",
-    "serviceDescriptionMax": "სერვისის აღწერა არ უნდა აღემატებოდეს 70 სიმბოლოს",
+    "serviceDescriptionMax": "სერვისის აღწერა არ უნდა აღემატებოდეს 100 სიმბოლოს",
     "serviceDescriptionRequired": "ინგლისურად აღწერა აუცილებელია, თუ ქართული აღწერა შევსებულია",
     "serviceDescriptionKaRequired": "ქართულად აღწერა აუცილებელია, თუ ინგლისური აღწერა შევსებულია",
     "weekDayRequired": "კვირის დღე აუცილებელია",
