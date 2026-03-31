@@ -126,7 +126,7 @@ function BusinessSwitcherComponent() {
               <DropdownMenuItem
                 key={business.businessId}
                 onClick={() => handleBusinessSelect(business)}
-                className="gap-2 p-2"
+                className="gap-2 p-2 cursor-pointer"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border overflow-hidden">
                   <img

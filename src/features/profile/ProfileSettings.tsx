@@ -267,12 +267,12 @@ export default function ProfileSettings({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-full p-2 hover:from-indigo-700 hover:to-indigo-800 shadow-md transition-all duration-200"
+                  className="absolute cursor-pointer bottom-0 right-0 bg-linear-to-r from-indigo-600 to-indigo-700 text-white rounded-full p-2 hover:from-indigo-700 hover:to-indigo-800 shadow-md transition-all duration-200"
                 >
                   {isUploading ? (
                     <Spinner className="w-4 h-4" />
                   ) : (
-                    <Pencil className="w-4 h-4" />
+                    <Pencil className="w-4 h-4 " />
                   )}
                 </button>
               </div>
