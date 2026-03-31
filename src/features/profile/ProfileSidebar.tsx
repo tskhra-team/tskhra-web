@@ -1,12 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/ModalContext";
 import { useAuth } from "@/context/useAuth";
 import { cn } from "@/lib/utils";
 import type { ProfileType } from "@/types";
 import {
+  BadgeCheck,
   Building2,
-  Check,
   Heart,
   History,
   LayoutDashboard,
@@ -73,10 +74,10 @@ export default function ProfileSidebar({
 
             {/* Verification Badge */}
             {verificationStatus ? (
-              <span className="inline-flex items-center gap-1 bg-linear-to-r from-emerald-500 to-emerald-600 text-white px-3 py-1 text-xs rounded-full font-medium mb-4">
-                <Check className="w-3 h-3" />
+              <Badge className="mb-5 flex items-center bg-linear-to-r from-emerald-500 to-emerald-600 px-3 py-1 text-xs font-medium text-white shadow-sm">
+                <BadgeCheck className="w-4 h-4 mr-1.5" />
                 {t("infoTab.verified")}
-              </span>
+              </Badge>
             ) : (
               <Button
                 variant="link"
