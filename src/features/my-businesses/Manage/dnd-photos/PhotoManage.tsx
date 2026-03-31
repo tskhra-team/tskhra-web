@@ -98,8 +98,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { mutate: uploadPhotos, isPending: isUploading } =
-    useUploadBusinessPhotos();
+  const { isPending: isUploading } = useUploadBusinessPhotos();
 
   // Синхронизация с props при смене бизнеса
   useEffect(() => {
@@ -190,37 +189,56 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
     setIsEditMode(false);
   };
 
-  const handleSave = () => {
-    if (!currentBusiness?.businessId) return;
+  const handleSave = async () => {
+    toast.warning("Photo saving feature is in developing stage", {
+      position: "top-center",
+    });
 
-    // Collect new files in order: main first, then gallery by index
-    const allPhotos: PhotoItem[] = [];
-    if (mainPhoto) allPhotos.push(mainPhoto);
-    allPhotos.push(...galleryPhotos);
-
-    const newFiles = allPhotos.filter((p) => p.file).map((p) => p.file!);
-
-    if (newFiles.length === 0) {
-      setIsEditMode(false);
-      return;
-    }
-
-    uploadPhotos(
-      { data: newFiles, businessId: currentBusiness.businessId },
-      {
-        onSuccess: () => {
-          toast.success("Photos uploaded successfully", {
-            position: "top-center",
-          });
-          setIsEditMode(false);
-        },
-        onError: () => {
-          toast.error("Failed to upload photos", {
-            position: "top-center",
-          });
-        },
-      },
-    );
+    // if (!currentBusiness?.businessId) return;
+    // // Все фото в порядке: main первый (index 0 → isMain: true в хуке), затем gallery по #
+    // const allPhotos: PhotoItem[] = [];
+    // if (mainPhoto) allPhotos.push(mainPhoto);
+    // allPhotos.push(...galleryPhotos);
+    // if (allPhotos.length === 0) {
+    //   setIsEditMode(false);
+    //   return;
+    // }
+    // try {
+    //   const files: File[] = await Promise.all(
+    //     allPhotos.map(async (photo) => {
+    //       // Новое фото — уже File
+    //       if (photo.file) return photo.file;
+    //       // Существующее фото — скачиваем URL и конвертируем в File
+    //       const response = await fetch(photo.url);
+    //       const blob = await response.blob();
+    //       const fileName =
+    //         photo.url.split("/").pop() || `photo-${photo.id}.jpg`;
+    //       return new File([blob], fileName, {
+    //         type: blob.type || "image/jpeg",
+    //       });
+    //     }),
+    //   );
+    //   uploadPhotos(
+    //     { data: files, businessId: currentBusiness.businessId },
+    //     {
+    //       onSuccess: () => {
+    //         toast.success("Photos saved successfully", {
+    //           position: "top-center",
+    //         });
+    //         setIsEditMode(false);
+    //       },
+    //       onError: () => {
+    //         toast.error("Failed to save photos", {
+    //           position: "top-center",
+    //         });
+    //       },
+    //     },
+    //   );
+    // } catch {
+    //   toast.error("Failed to process photos", {
+    //     position: "top-center",
+    //   });
+    // }
   };
 
   // --- DnD Handlers ---
@@ -307,7 +325,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
               className="gap-2"
             >
               <Pencil className="w-4 h-4" />
-              Change
+              Change Photos
             </Button>
           ) : (
             <>
