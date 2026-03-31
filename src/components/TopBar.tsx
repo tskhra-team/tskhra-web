@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
-import { LayoutDashboard, LogOut, User } from "lucide-react";
+import { Heart, LayoutDashboard, LogOut, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
@@ -51,6 +51,15 @@ export default function TopBar() {
       <SearchBar />
       <div className="flex gap-2 sm:gap-3 lg:gap-4 items-center justify-end">
         {!isVerification && <LanguageSwitcher />}
+        {isAuthenticated && (
+          <button
+            onClick={() => navigate("/profile?section=favorites")}
+            className={`p-2 rounded-full transition-colors cursor-pointer ${isVerification ? "hover:bg-white/10 text-white" : "hover:bg-rose-50 text-slate-600 hover:text-rose-500"}`}
+            title={t("auth.favorites", { defaultValue: "Favorites" })}
+          >
+            <Heart className="w-5 h-5" />
+          </button>
+        )}
         {isAuthenticated ? (
           <WithAxiosUser>
             <DropdownMenu>
