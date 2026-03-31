@@ -146,7 +146,7 @@ export default function CreateServiceModal({
           )}
 
           <div className="flex gap-4">
-            <div className="flex flex-col justify-between w-full gap-2">
+            <div className="flex flex-col justify-between md:justify-start w-full gap-2">
               <Label>{t("dashboard:services.form.price")}</Label>
               <Input
                 type="number"

@@ -125,7 +125,7 @@
     "serviceDurationMax": "Service duration cannot exceed 24 hours",
     "serviceDurationInterval": "Service duration must be in 5-minutes intervals",
     "serviceDurationPositive": "Service duration should be positive number",
-    "serviceDescriptionMax": "Service description can't be more than 70 letters",
+    "serviceDescriptionMax": "Service description can't be more than 100 letters",
     "serviceDescriptionRequired": "Description in English is required if Georgian description is filled",
     "serviceDescriptionKaRequired": "Description in Georgian is required if English description is filled",
     "weekDayRequired": "Week day is required",
