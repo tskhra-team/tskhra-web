@@ -7,11 +7,13 @@ export function SortablePhoto({
   index,
   url,
   onRemove,
+  isEditMode,
 }: {
   id: string;
   index: number;
   url: string;
-  onRemove: () => void;
+  onRemove?: () => void;
+  isEditMode: boolean;
 }) {
   const {
     setNodeRef,
@@ -20,7 +22,7 @@ export function SortablePhoto({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id, disabled: !isEditMode });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -33,13 +35,17 @@ export function SortablePhoto({
       style={style}
       {...attributes}
       {...listeners}
-      className="relative aspect-square cursor-grab active:cursor-grabbing touch-none z-10"
+      className={`relative aspect-square touch-none z-10 ${
+        isEditMode
+          ? "cursor-grab active:cursor-grabbing"
+          : "cursor-default"
+      }`}
     >
       <PhotoCard
         url={url}
         index={index}
         isDragging={isDragging}
-        onRemove={onRemove}
+        onRemove={isEditMode ? onRemove : undefined}
         showBadge
       />
     </div>

@@ -1,11 +1,5 @@
 import PhotoManage from "@/features/my-businesses/Manage/dnd-photos/PhotoManage";
-
-export interface MyBusinessResponse {
-  businessId: string;
-  businessName: string;
-  mainImage?: string;
-  galleryImages?: string[];
-}
+import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusinesses";
 
 interface ManageBusinessProps {
   currentBusiness?: MyBusinessResponse;
