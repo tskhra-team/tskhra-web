@@ -22,12 +22,7 @@ export const PhotoCard = ({
       isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"
     }`}
   >
-    <img
-      src={url}
-      alt=""
-      //   containerClassName="w-full h-full"
-      className="w-full h-full object-cover"
-    />
+    <img src={url} alt="" className="w-full h-full object-cover" />
 
     {onRemove && (
       <button

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check, Pencil, Plus, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import useUploadBusinessPhotos from "@/features/business-creation/booking-business/useUploadBusinessPhotos";
@@ -13,9 +13,10 @@ import {
   PointerSensor,
   TouchSensor,
   closestCenter,
-  defaultDropAnimation,
+  pointerWithin,
   useSensor,
   useSensors,
+  type CollisionDetection,
   type DragEndEvent,
   type DragStartEvent,
   type Modifier,
@@ -40,7 +41,6 @@ const ALLOWED_FILE_TYPES = [
   "image/webp",
 ];
 
-// Модификатор: оверлей сразу центрируется на курсоре, без прыжка из угла
 const snapCenterToCursor: Modifier = ({
   activatorEvent,
   draggingNodeRect,
@@ -100,7 +100,6 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
 
   const { isPending: isUploading } = useUploadBusinessPhotos();
 
-  // Синхронизация с props при смене бизнеса
   useEffect(() => {
     const next = buildPhotosFromBusiness(currentBusiness);
     setMainPhoto(next.main);
@@ -108,7 +107,6 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
     setIsEditMode(false);
   }, [currentBusiness?.businessId]);
 
-  // Сенсоры: pointer + touch
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 8 },
   });
@@ -116,6 +114,19 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
     activationConstraint: { delay: 250, tolerance: 5 },
   });
   const sensors = useSensors(pointerSensor, touchSensor);
+
+  // Dragging main photo (большой элемент) → pointerWithin для точного попадания в gallery
+  // Dragging gallery photo → closestCenter чтобы подхватывало main dropzone
+  const collisionDetection: CollisionDetection = useCallback(
+    (args) => {
+      if (args.active.id === mainPhoto?.id) {
+        const collisions = pointerWithin(args);
+        if (collisions.length > 0) return collisions;
+      }
+      return closestCenter(args);
+    },
+    [mainPhoto?.id],
+  );
 
   // --- Handlers ---
 
@@ -311,12 +322,11 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={collisionDetection}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <div className="mt-10 px-4 md:px-6 max-w-5xl mx-auto">
-        {/* Кнопки управления */}
         <div className="flex justify-end gap-3 mb-6">
           {!isEditMode ? (
             <Button
@@ -361,9 +371,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
           )}
         </div>
 
-        {/* Сетка фото */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {/* ЛЕВАЯ ЧАСТЬ: Главное фото */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase text-slate-400 tracking-[0.2em]">
               Main Visual
@@ -375,7 +383,6 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
             />
           </div>
 
-          {/* ПРАВАЯ ЧАСТЬ: Галерея */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase text-slate-400 tracking-[0.2em]">
               Gallery ({galleryPhotos.length}/4)
@@ -402,7 +409,6 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
         </div>
       </div>
 
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -412,11 +418,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
         className="hidden"
       />
 
-      {/* ОВЕРЛЕЙ: То, что "летает" за курсором */}
-      <DragOverlay
-        dropAnimation={defaultDropAnimation}
-        modifiers={[snapCenterToCursor]}
-      >
+      <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
         {activeId ? (
           <div className="w-32 h-32 md:w-40 md:h-40 shadow-2xl ring-4 ring-emerald-500 rounded-xl overflow-hidden rotate-3 cursor-grabbing opacity-90">
             <img
