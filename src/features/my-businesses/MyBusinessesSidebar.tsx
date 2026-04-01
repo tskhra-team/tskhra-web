@@ -65,7 +65,7 @@ export function MyBusinessesSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b p-4">
+      <SidebarHeader className="border-b p-4 ">
         <BusinessSwitcher />
       </SidebarHeader>
 

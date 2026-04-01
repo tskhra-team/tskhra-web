@@ -202,7 +202,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .oneOf(["OUTCALL", "ONSITE", "BOTH"])
       .required(t("booking:validation.callTypeRequired"))
       .default(null),
-    city: yup.string().required(t("booking:validation.cityRequired")),
+    cityId: yup.string().required(t("booking:validation.cityRequired")),
     addressDetailsKa: yup
       .string()
       .when("callType", {
@@ -233,7 +233,7 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
     mainCategory: yup
       .string()
       .required(t("booking:validation.mainCategoryRequired")),
-    subCategory: yup
+    subCategoryId: yup
       .string()
       .required(t("booking:validation.subCategoryRequired")),
     workTimes: yup
