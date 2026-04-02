@@ -40,17 +40,17 @@ export default function Booking() {
   return (
     <div className="relative min-h-screen bg-linear-to-br from-slate-50 via-orange-50/30 to-red-50/20">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-20 left-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-red-400/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative">
         {/* Hero Section with Categories and Slider */}
         <div className="flex flex-col xl:flex-row xl:items-center gap-6 xl:gap-16 px-4 sm:px-4 xl:px-0 pt-0 xl:pt-12 pb-8 container mx-auto">
           {/* Categories Sidebar */}
           <div
-            className={`w-full xl:w-72 xl:shrink-0 z-50 ${hideCategoriesOnMobile ? "hidden xl:block" : ""}`}
+            className={`w-full xl:w-72 xl:shrink-0 relative z-100 ${hideCategoriesOnMobile ? "hidden xl:block" : ""}`}
           >
             <div className="w-full">
               <CategoriesLayout platform="booking" />
