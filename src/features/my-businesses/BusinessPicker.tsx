@@ -5,6 +5,10 @@ import type { MyBusinessResponse } from "@/features/my-businesses/useGetMyBusine
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import { useState } from "react";
+
 type BusinessPickerProps = {
   businesses: MyBusinessResponse[];
   isLoading: boolean;
@@ -16,13 +20,40 @@ export default function BusinessPicker({
 }: BusinessPickerProps) {
   const navigate = useNavigate();
   const { t } = useTranslation("dashboard");
+  const [isTour, setIsTour] = useState(false);
+  const driverObj = driver({
+    animate: true,
+    showButtons: ["close"],
+    // showProgress: true,
+    steps: [
+      {
+        element: "#business-grid-tour",
+        popover: {
+          title: t("tour.businessGridTitle"),
+          description: t("tour.businessGridDesc"),
+          side: "top",
+          align: "center",
+        },
+      },
+    ],
+  });
 
   if (isLoading) {
     return <BusinessPickerSkeleton />;
   }
 
   const handleBusinessClick = (businessId: string) => {
-    navigate(`/my-businesses?businessId=${businessId}&section=chart`);
+    driverObj.destroy();
+    navigate(`/my-businesses?businessId=${businessId}&section=chart`, {
+      state: {
+        isTour: isTour,
+      },
+    });
+  };
+
+  const startDemonstration = () => {
+    setIsTour(true);
+    driverObj.drive();
   };
 
   return (
@@ -36,10 +67,13 @@ export default function BusinessPicker({
             {t("businessPicker.subtitle")}
           </p>
         </div>
-        <Button>Start Demonstration</Button>
+        <Button onClick={startDemonstration}>{t("tutorial")}</Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div
+        id="business-grid-tour"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
         {businesses.map((business) => (
           <Card
             key={business.businessId}

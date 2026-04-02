@@ -1,0 +1,18 @@
+{
+  "newBookingRequest": "New Booking Request!",
+  "userBookedService": "User {{bookedBy}} booked service: {{serviceName}} at {{date}}",
+  "userBookedServiceNoName": "User {{bookedBy}} booked service at {{date}}",
+  "bookingConfirmed": "Your booking has been confirmed!",
+  "bookingScheduled": "Booking Scheduled!",
+  "bookingScheduledDesc": "Your booking for - {{serviceName}} on {{date}} has been confirmed",
+  "bookingRejected": "Booking Rejected",
+  "bookingRejectedDesc": "Your booking for - {{serviceName}} on {{date}} was rejected",
+  "bookingCancelledByUser": "Booking Cancelled",
+  "bookingCancelledByUserDesc": "{{userName}} cancelled booking for {{serviceName}} on {{date}}",
+  "bookingCancelledByBusiness": "Booking Cancelled by Business",
+  "bookingCancelledByBusinessDesc": "Your booking for - {{serviceName}} on {{date}} was cancelled",
+  "statusChanged": "Status changed to: {{status}}",
+  "statusChangedWithService": "Your booking for {{serviceName}} - status changed to: {{status}}",
+  "statusChangedNoService": "Your booking status changed to: {{status}}",
+  "see": "See"
+}

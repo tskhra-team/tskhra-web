@@ -24,7 +24,7 @@ import useGetMyBusinesses, {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-function BusinessSwitcherComponent() {
+function BusinessSwitcherComponent({ id }: { id: string }) {
   const { t, i18n } = useTranslation(["dashboard", "booking"]);
   const { isMobile } = useSidebar();
   const [activeBusiness, setActiveBusiness] =
@@ -74,7 +74,7 @@ function BusinessSwitcherComponent() {
   }, [businessId, businesses, businessIds, searchParams, setSearchParams]);
 
   return (
-    <SidebarMenu>
+    <SidebarMenu id={id}>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
