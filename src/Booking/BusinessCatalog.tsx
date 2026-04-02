@@ -11,7 +11,7 @@ import useRemoveFavorite from "@/Booking/useRemoveFavorite";
 import { useAuth } from "@/context/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Heart, MapPin } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -24,6 +24,7 @@ export default function BusinessCatalog() {
   const { data: favorites } = useGetFavoriteBusinesses(isAuthenticated);
   const { mutate: addFavorite, isPending: isAdding } = useAddFavorite();
   const { mutate: removeFavorite, isPending: isRemoving } = useRemoveFavorite();
+  const catalogRef = useRef<HTMLDivElement>(null);
   const size = 12;
 
   const categoryFilter = searchParams.get("category");
@@ -141,7 +142,7 @@ export default function BusinessCatalog() {
   }
 
   return (
-    <div data-catalog className="lg:px-16 xl:px-0">
+    <div ref={catalogRef} data-catalog className="lg:px-16 xl:px-0">
       <div className="mb-8 mt-10 lg:mt-20">
         <h1 className="text-3xl font-bold mb-2">{t("catalog.title")}</h1>
         <p className="text-muted-foreground">{t("catalog.subtitle")}</p>
@@ -152,7 +153,7 @@ export default function BusinessCatalog() {
             <Button
               onClick={() => {
                 navigate("/booking");
-                scrollToTop();
+                catalogRef.current?.scrollIntoView({ behavior: "smooth" });
               }}
               variant="outline"
               className="flex items-center gap-2"
@@ -274,7 +275,7 @@ export default function BusinessCatalog() {
               const params = new URLSearchParams(searchParams);
               params.set("page", String(newPage));
               setSearchParams(params);
-              scrollToTop();
+              catalogRef.current?.scrollIntoView({ behavior: "smooth" });
             }}
             previousLabel={t("pagination.previous")}
             nextLabel={t("pagination.next")}
