@@ -1,6 +1,5 @@
 import WithAxiosUser from "@/api/withAxiosUser";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import SearchBar from "@/components/SeacrhBar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,7 +50,7 @@ export default function TopBar() {
       className={`w-full h-16 flex items-center justify-between px-4 sm:px-8 lg:px-16 border-b shadow-sm sticky top-0 z-50 backdrop-blur-xl ${isVerification ? "bg-[#1b1b1f] border-white/10" : "bg-white/80 border-slate-200/60"}`}
     >
       <Logo color={isVerification ? "white" : "black"} />
-      <SearchBar />
+      {/* <SearchBar /> */}
       <div className="flex gap-2 sm:gap-3 lg:gap-4 items-center justify-end">
         {!isVerification && <LanguageSwitcher />}
         {isAuthenticated && (
@@ -62,7 +61,7 @@ export default function TopBar() {
           >
             <Heart className="w-5 h-5" />
             {favoritesCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full leading-none px-1">
+              <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold min-w-4.5 h-4.5 flex items-center justify-center rounded-full leading-none px-1">
                 {favoritesCount}
               </span>
             )}
