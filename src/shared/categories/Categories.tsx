@@ -15,7 +15,9 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const [searchParams] = useSearchParams();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [hoverEnabled, setHoverEnabled] = useState(true);
+  const [panelPosition, setPanelPosition] = useState<{ top?: number; bottom?: number }>({});
   const closeTimeoutRef = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const colors = getPlatformColors(platform);
 
   // Sync activeIndex with URL params
@@ -60,16 +62,28 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   const handleSelectCategory = (
     index: number | null,
+    itemElement?: HTMLElement,
   ) => {
     const isMobile = window.innerWidth < 1280;
 
     if (isMobile) {
-      // On mobile, just toggle accordion - don't set search params yet
       setActiveIndex(index);
     } else {
-      // On desktop, set activeIndex for hover effect only if hover is enabled
       if (hoverEnabled) {
         setActiveIndex(index);
+        if (itemElement && containerRef.current) {
+          const containerRect = containerRef.current.getBoundingClientRect();
+          const itemRect = itemElement.getBoundingClientRect();
+          const relativeTop = itemRect.top - containerRect.top;
+          const itemCenter = relativeTop + itemRect.height / 2;
+
+          if (itemCenter > containerRect.height / 2) {
+            const relativeBottom = containerRect.bottom - itemRect.bottom;
+            setPanelPosition({ bottom: relativeBottom, top: undefined });
+          } else {
+            setPanelPosition({ top: relativeTop, bottom: undefined });
+          }
+        }
       }
     }
   };
@@ -98,6 +112,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
 
   return (
     <div
+      ref={containerRef}
       className="relative left-1 sm:left-2  z-50"
       onMouseLeave={() => {
         if (hoverEnabled) {
@@ -137,9 +152,9 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
               0 2px 4px rgba(255,255,255,0.1) inset
             `,
             zIndex: 9999,
-            ...(activeIndex !== null && activeIndex >= Math.floor(data.length / 2)
-              ? { bottom: `${(data.length - 1 - activeIndex) * 48}px` }
-              : { top: `${(activeIndex || 0) * 48}px` }),
+            ...(panelPosition.top !== undefined
+              ? { top: `${panelPosition.top}px` }
+              : { bottom: `${panelPosition.bottom}px` }),
           }}
           onMouseEnter={() => {
             // Cancel any pending close timeout

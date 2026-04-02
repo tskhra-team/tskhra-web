@@ -9,7 +9,7 @@ import type { CategoryItem, Platform } from "./types";
 interface CategoryNavProps {
   categories: CategoryItem[];
   activeIndex: number | null;
-  onSelect: (index: number | null) => void;
+  onSelect: (index: number | null, itemElement?: HTMLElement) => void;
   categoryDisplayName?: string;
   platform?: Platform;
   onCategoryClick?: () => void;
@@ -97,13 +97,13 @@ export default function CategoryNav({
               {/* Desktop: Hover to show dropdown, Click to navigate */}
               <Link
                 to={categoryUrl}
-                onMouseEnter={() => onSelect(index)}
+                onMouseEnter={(e) => onSelect(index, e.currentTarget)}
                 onClick={(e) => {
                   e.preventDefault();
 
                   if (window.innerWidth < 1280) {
                     // On mobile, toggle accordion
-                    onSelect(isActive ? null : index);
+                    onSelect(isActive ? null : index, e.currentTarget);
                   } else {
                     // On desktop, filter by category in the catalog
                     setSearchParams({ category: categorySlug });

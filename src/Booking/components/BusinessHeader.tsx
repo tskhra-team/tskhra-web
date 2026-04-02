@@ -36,6 +36,11 @@ export default function BusinessHeader({
 
   const handleToggleFavorite = () => {
     if (!isAuthenticated) {
+      localStorage.setItem(
+        "redirectAfterLogin",
+        window.location.pathname + window.location.search,
+      );
+      localStorage.setItem("scrollAfterLogin", String(window.scrollY));
       login();
       return;
     }
@@ -52,7 +57,7 @@ export default function BusinessHeader({
   };
 
   const getCallTypeBadge = () => {
-    switch (callType.toLowerCase()) {
+    switch (callType?.toLowerCase()) {
       case "outcall":
         return (
           <Badge variant="secondary">

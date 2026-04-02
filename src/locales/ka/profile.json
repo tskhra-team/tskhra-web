@@ -87,7 +87,9 @@
     "title": "ჩემი რჩეულები",
     "noFavoritesTitle": "რჩეულები ჯერ არ გაქვთ",
     "noFavoritesDescription": "დაიწყეთ თქვენი რჩეული პროდუქტების, სერვისებისა და ჯავშნების შენახვა.",
-    "exploreServices": "სერვისების დათვალიერება"
+    "exploreServices": "სერვისების დათვალიერება",
+    "previous": "წინა",
+    "next": "შემდეგი"
   },
   "addBusiness": {
     "title": "დაამატე შენი ბიზნესი",

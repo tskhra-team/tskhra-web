@@ -4,15 +4,16 @@ import {
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 type PaginationControlsProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   maxVisiblePages?: number;
+  previousLabel?: string;
+  nextLabel?: string;
 };
 
 export function PaginationControls({
@@ -20,6 +21,8 @@ export function PaginationControls({
   totalPages,
   onPageChange,
   maxVisiblePages = 5,
+  previousLabel = "Previous",
+  nextLabel = "Next",
 }: PaginationControlsProps) {
   if (totalPages <= 1) return null;
 
@@ -87,11 +90,15 @@ export function PaginationControls({
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious
+          <PaginationLink
             href="#"
+            size="default"
             onClick={handlePrevious}
-            className={currentPage === 0 ? "pointer-events-none opacity-50" : ""}
-          />
+            className={`gap-1 px-2.5 sm:pl-2.5 ${currentPage === 0 ? "pointer-events-none opacity-50" : ""}`}
+          >
+            <ChevronLeftIcon className="size-4" />
+            <span className="hidden sm:block">{previousLabel}</span>
+          </PaginationLink>
         </PaginationItem>
 
         {pages.map((page, index) => {
@@ -117,11 +124,15 @@ export function PaginationControls({
         })}
 
         <PaginationItem>
-          <PaginationNext
+          <PaginationLink
             href="#"
+            size="default"
             onClick={handleNext}
-            className={currentPage === totalPages - 1 ? "pointer-events-none opacity-50" : ""}
-          />
+            className={`gap-1 px-2.5 sm:pr-2.5 ${currentPage === totalPages - 1 ? "pointer-events-none opacity-50" : ""}`}
+          >
+            <span className="hidden sm:block">{nextLabel}</span>
+            <ChevronRightIcon className="size-4" />
+          </PaginationLink>
         </PaginationItem>
       </PaginationContent>
     </Pagination>
