@@ -105,9 +105,8 @@ export default function CategoryNav({
                     // On mobile, toggle accordion
                     onSelect(isActive ? null : index, e.currentTarget);
                   } else {
-                    // On desktop, filter by category in the catalog
-                    setSearchParams({ category: categorySlug });
-                    // Close the subcategory panel
+                    // On desktop, filter by category
+                    setSearchParams({ category: String(category.id) });
                     if (onCategoryClick) {
                       onCategoryClick();
                     }
@@ -191,16 +190,33 @@ export default function CategoryNav({
                 >
                   <div className="min-h-0">
                     <div className="mt-2 p-4 bg-gray-50 rounded-xl">
-                      <h3
-                        className="mb-4 text-sm font-semibold"
-                        style={{ color: colors.active.text }}
+                      <button
+                        className="mb-4 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200 cursor-pointer"
+                        style={{ backgroundColor: colors.active.text }}
+                        onClick={() => {
+                          setSearchParams({ category: String(category.id) });
+                          setTimeout(() => {
+                            const catalogElement =
+                              document.querySelector("[data-catalog]");
+                            if (catalogElement) {
+                              catalogElement.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                              });
+                            }
+                          }, 100);
+                        }}
                       >
-                        {categoryDisplayName}
-                      </h3>
+                        <span>{categoryDisplayName}</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
                       <SubcategoryView
                         subcategories={category.childItems}
                         platform={platform}
                         categorySlug={categorySlug}
+                        categoryId={category.id}
                       />
                     </div>
                   </div>

@@ -17,11 +17,13 @@ function filterByPlatform(items: CategoryItem[], platform: Platform): CategoryIt
 
 function transformCategories(categories: Category[], platform: Platform): CategoryItem[] {
   return categories.map((cat) => ({
+    id: cat.id,
     name: cat.name,
     icon: getCategoryIcon(cat.name, platform),
     iconUrl: cat.iconUrl || undefined,
     platforms: [platform],
     childItems: cat.subcategories.map((sub) => ({
+      id: sub.id,
       name: sub.name,
       icon: getCategoryIcon(sub.name, platform),
       iconUrl: sub.iconUrl || undefined,

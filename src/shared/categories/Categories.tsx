@@ -25,7 +25,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
     const categoryParam = searchParams.get("category");
     if (categoryParam && data) {
       const index = data.findIndex(
-        (cat) => cat.name.toLowerCase() === categoryParam.toLowerCase(),
+        (cat) => String(cat.id) === categoryParam,
       );
       if (index !== -1) {
         setActiveIndex(index);
@@ -189,6 +189,7 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
             subcategories={activeCategory?.childItems}
             platform={platform}
             categorySlug={activeCategory?.name.toLowerCase().replace(/\s+/g, '-')}
+            categoryId={activeCategory?.id}
             onSubcategorySelect={handleSubcategorySelected}
           />
         </div>
