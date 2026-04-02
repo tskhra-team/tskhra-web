@@ -105,8 +105,8 @@ export default function CategoryNav({
                     // On mobile, toggle accordion
                     onSelect(isActive ? null : index, e.currentTarget);
                   } else {
-                    // On desktop, filter by category in the catalog
-                    setSearchParams({ category: categorySlug });
+                    // On desktop, filter by category in the catalog (use ID for language-independent matching)
+                    setSearchParams({ category: String(category.id) });
                     // Close the subcategory panel
                     if (onCategoryClick) {
                       onCategoryClick();
@@ -201,6 +201,7 @@ export default function CategoryNav({
                         subcategories={category.childItems}
                         platform={platform}
                         categorySlug={categorySlug}
+                        categoryId={category.id}
                       />
                     </div>
                   </div>

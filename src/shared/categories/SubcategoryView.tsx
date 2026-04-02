@@ -9,11 +9,12 @@ interface SubcategoryViewProps {
   subcategories?: CategoryItem[];
   platform?: Platform;
   categorySlug?: string;
+  categoryId?: number;
   onSubcategorySelect?: () => void;
   level?: number;
 }
 
-export default function SubcategoryView({ subcategories, platform, categorySlug, onSubcategorySelect, level = 0 }: SubcategoryViewProps) {
+export default function SubcategoryView({ subcategories, platform, categorySlug, categoryId, onSubcategorySelect, level = 0 }: SubcategoryViewProps) {
   const { t } = useTranslation("categories");
   const [searchParams, setSearchParams] = useSearchParams();
   const colors = getPlatformColors(platform);
@@ -30,11 +31,10 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
       return;
     }
 
-    // Otherwise, apply filter
-    const subcategorySlug = subcategory.name.toLowerCase().replace(/\s+/g, '-');
+    // Otherwise, apply filter using IDs for language-independent matching
     setSearchParams({
-      category: categorySlug || '',
-      subcategory: subcategorySlug
+      category: String(categoryId || ''),
+      subcategory: String(subcategory.id || '')
     });
 
     // Close the panel on desktop after selection
@@ -62,8 +62,7 @@ export default function SubcategoryView({ subcategories, platform, categorySlug,
         {subcategories.map((subcategory, index) => {
           const translationKey = categoryNameToKey[subcategory.name];
           const displayName = translationKey ? t(translationKey) : subcategory.name;
-          const subcategorySlug = subcategory.name.toLowerCase().replace(/\s+/g, '-');
-          const isActive = searchParams.get('subcategory') === subcategorySlug;
+          const isActive = searchParams.get('subcategory') === String(subcategory.id);
           const isExpanded = expandedSubcategory === subcategory.name;
           const hasSubItems = hasChildren(subcategory);
 

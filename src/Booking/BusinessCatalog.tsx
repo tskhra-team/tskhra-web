@@ -4,6 +4,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { PaginationControls } from "@/shared/pagination/Pagination";
+import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import { scrollToTop } from "@/utils";
 import useAddFavorite from "@/Booking/useAddFavorite";
 import useGetFavoriteBusinesses from "@/Booking/useGetFavoriteBusinesses";
@@ -31,13 +32,18 @@ export default function BusinessCatalog() {
   const subcategoryFilter = searchParams.get("subcategory");
   const page = parseInt(searchParams.get("page") || "0", 10);
 
+  const lang = i18n.language.toUpperCase();
+
   // Always fetch all businesses for client-side pagination
   const {
     data: allBusinessesData,
     isLoading,
     isFetching,
     isError,
-  } = useGetAllBookingBusinesses(true, i18n.language.toUpperCase());
+  } = useGetAllBookingBusinesses(true, lang);
+
+  // Fetch EN categories for filtering (business API returns English names)
+  const { data: categoriesData } = useGetSubBookingCategories("EN");
 
   // Use all businesses as data source
   const businesses = {
@@ -68,22 +74,38 @@ export default function BusinessCatalog() {
       // Reverse to show last added first
       let filtered = [...businesses.content].reverse();
 
-      // Filter by category if selected
-      if (categoryFilter) {
-        filtered = filtered.filter(
-          (business) =>
-            business.category.toLowerCase().replace(/\s+/g, "-") ===
-            categoryFilter,
+      // Filter by main category (using ID to find EN subcategory names)
+      if (categoryFilter && !subcategoryFilter) {
+        const matchedCategory = categoriesData?.find(
+          (cat) => String(cat.id) === categoryFilter,
         );
+
+        if (matchedCategory) {
+          const subNames = matchedCategory.subcategories.map((sub) =>
+            sub.name.toLowerCase(),
+          );
+          filtered = filtered.filter((business) =>
+            subNames.includes(business.subCategory.toLowerCase()),
+          );
+        }
       }
 
-      // Filter by subcategory if selected
+      // Filter by subcategory (using ID to find EN subcategory name)
       if (subcategoryFilter) {
-        filtered = filtered.filter(
-          (business) =>
-            business.subCategory.toLowerCase().replace(/\s+/g, "-") ===
-            subcategoryFilter,
-        );
+        let matchedSubName: string | undefined;
+        categoriesData?.forEach((cat) => {
+          const found = cat.subcategories.find(
+            (sub) => String(sub.id) === subcategoryFilter,
+          );
+          if (found) matchedSubName = found.name.toLowerCase();
+        });
+
+        if (matchedSubName) {
+          filtered = filtered.filter(
+            (business) =>
+              business.subCategory.toLowerCase() === matchedSubName,
+          );
+        }
       }
 
       // Calculate pagination for filtered results
@@ -97,7 +119,7 @@ export default function BusinessCatalog() {
         paginatedBusinesses: paginated,
         totalFilteredPages: totalPages,
       };
-    }, [businesses, categoryFilter, subcategoryFilter, page, size]);
+    }, [businesses, categoryFilter, subcategoryFilter, page, size, categoriesData]);
 
   const handkleClick = (id: string) => {
     scrollToTop();
