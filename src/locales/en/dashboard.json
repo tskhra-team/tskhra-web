@@ -8,6 +8,7 @@
     "notification": "Notification",
     "language": "Language"
   },
+  "tutorial": "Tutorial for Dashboard",
   "userMenu": {
     "profile": "Profile",
     "booking": "Booking",
@@ -154,7 +155,21 @@
   },
   "manage": {
     "deleteBtn": "Delete",
-    "deleteBusiness": "Delete Business:"
+    "deleteBusiness": "Delete Business:",
+    "photoManage": {
+      "changePhotos": "Change Photos",
+      "cancel": "Cancel",
+      "addPhoto": "Add Photo",
+      "saving": "Saving...",
+      "save": "Save",
+      "mainVisual": "Main Visual",
+      "gallery": "Gallery",
+      "maxPhotosWarning": "You can add only 4 photos in gallery",
+      "fileTooLarge": "File \"{{fileName}}\" is too large. Maximum size is 5MB",
+      "invalidFileType": "File \"{{fileName}}\" has an invalid type. Allowed types: JPG, PNG, WEBP",
+      "maxPhotosReached": "Only {{remaining}} photo(s) can be added",
+      "savingInDevelopment": "Photo saving feature is in developing stage"
+    }
   },
   "pages": {
     "chart": {
@@ -174,5 +189,15 @@
     "title": "My Businesses",
     "subtitle": "Select a business to manage",
     "noBusiness": "You don't have businesses yet"
+  },
+  "tour": {
+    "businessGridTitle": "Your Businesses",
+    "businessGridDesc": "Here will be shown all your businesses, click one of card to continue",
+    "sidebarPickerTitle": "Your Businesses Picker",
+    "sidebarPickerDesc": "Here you also can switch between your businesses and add more",
+    "sidebarManageTitle": "Manage Your Business",
+    "sidebarManageDesc": "Here you can manage your business and keep track on them",
+    "sidebarAccountTitle": "Your Account",
+    "sidebarAccountDesc": "Also you can navigate through our website here"
   }
 }

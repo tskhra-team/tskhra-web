@@ -10,9 +10,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { BusinessSwitcher } from "@/features/my-businesses/BusinessSwitcher";
 import { NavUser } from "@/features/my-businesses/NavUser";
+
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 import {
   BarChart3,
   Bell,
@@ -21,13 +25,67 @@ import {
   Languages,
   Settings,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
+
+type LocationState = {
+  isTour?: boolean;
+};
 
 export function MyBusinessesSidebar() {
   const { t } = useTranslation("dashboard");
   const [searchParams, setSearchParams] = useSearchParams();
   const isBusinessChoosed = searchParams.get("businessId");
+  const location = useLocation();
+  const state = location.state as LocationState | null;
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    if (state?.isTour && isMobile) {
+      setOpenMobile(true);
+    }
+  }, [state?.isTour, isMobile, setOpenMobile]);
+
+  useEffect(() => {
+    if (state?.isTour) {
+      const driverObj = driver({
+        animate: true,
+        // showButtons: ["close"],
+        showProgress: true,
+        steps: [
+          {
+            element: "#sidebar-picker",
+            popover: {
+              title: t("tour.sidebarPickerTitle"),
+              description: t("tour.sidebarPickerDesc"),
+              side: "top",
+              align: "center",
+            },
+          },
+          {
+            element: "#sidebar-button-group",
+            popover: {
+              title: t("tour.sidebarManageTitle"),
+              description: t("tour.sidebarManageDesc"),
+              side: "top",
+              align: "center",
+            },
+          },
+          {
+            element: "#footer",
+            popover: {
+              title: t("tour.sidebarAccountTitle"),
+              description: t("tour.sidebarAccountDesc"),
+              side: "top",
+              align: "center",
+            },
+          },
+        ],
+      });
+      driverObj.drive();
+    }
+  }, [state?.isTour]);
 
   const menuItems = [
     {
@@ -65,14 +123,14 @@ export function MyBusinessesSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b p-4">
-        <BusinessSwitcher />
+      <SidebarHeader className="border-b p-4 ">
+        <BusinessSwitcher id="sidebar-picker" />
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
           {isBusinessChoosed && (
-            <>
+            <div id="sidebar-button-group">
               <SidebarGroupLabel>{t("navigation.dashboard")}</SidebarGroupLabel>
               <SidebarGroupContent className="mb-5">
                 <SidebarMenu>
@@ -90,7 +148,7 @@ export function MyBusinessesSidebar() {
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
-            </>
+            </div>
           )}
 
           <div className="mt-auto pt-4">
@@ -109,7 +167,7 @@ export function MyBusinessesSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t p-4">
-        <NavUser />
+        <NavUser id="footer" />
       </SidebarFooter>
     </Sidebar>
   );

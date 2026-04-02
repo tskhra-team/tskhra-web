@@ -53,6 +53,7 @@ const SumsubWidget = () => {
             payload?.reviewStatus === "completed"
           ) {
             queryClient.invalidateQueries({ queryKey: ["getProfile"] });
+            queryClient.invalidateQueries({ queryKey: ["getUser"] });
             setTimeout(() => navigate("/profile"), 1500);
           }
         }}

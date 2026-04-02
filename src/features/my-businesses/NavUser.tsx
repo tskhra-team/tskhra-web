@@ -27,7 +27,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-export function NavUser() {
+export function NavUser({ id }: { id: string }) {
   const { t } = useTranslation("dashboard");
   const { isMobile } = useSidebar();
   const { data: user } = useGetUser();
@@ -39,7 +39,7 @@ export function NavUser() {
       : user?.userName.at(0)?.toUpperCase();
 
   return (
-    <SidebarMenu>
+    <SidebarMenu id={id}>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

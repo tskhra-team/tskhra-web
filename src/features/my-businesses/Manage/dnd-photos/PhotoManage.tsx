@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Check, Pencil, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import useUploadBusinessPhotos from "@/features/business-creation/booking-business/useUploadBusinessPhotos";
@@ -88,6 +89,7 @@ interface ManageBusinessProps {
 }
 
 export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
+  const { t } = useTranslation("dashboard");
   const initial = buildPhotosFromBusiness(currentBusiness);
   const [mainPhoto, setMainPhoto] = useState<PhotoItem | null>(initial.main);
   const [galleryPhotos, setGalleryPhotos] = useState<PhotoItem[]>(
@@ -148,7 +150,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
 
     const remaining = 4 - galleryPhotos.length;
     if (remaining <= 0) {
-      toast.warning("You can add only 4 photos in gallery", {
+      toast.warning(t("manage.photoManage.maxPhotosWarning"), {
         position: "top-center",
       });
       return;
@@ -157,14 +159,14 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
     const validFiles: File[] = [];
     for (const file of Array.from(files)) {
       if (file.size > MAX_FILE_SIZE) {
-        toast.error(`File "${file.name}" is too large. Maximum size is 5MB`, {
+        toast.error(t("manage.photoManage.fileTooLarge", { fileName: file.name }), {
           position: "top-center",
         });
         continue;
       }
       if (!ALLOWED_FILE_TYPES.includes(file.type)) {
         toast.error(
-          `File "${file.name}" has invalid type. Only JPG, PNG and WebP are allowed`,
+          t("manage.photoManage.invalidFileType", { fileName: file.name }),
           { position: "top-center" },
         );
         continue;
@@ -174,7 +176,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
 
     const toAdd = validFiles.slice(0, remaining);
     if (toAdd.length < validFiles.length) {
-      toast.warning(`Only ${remaining} photo(s) can be added`, {
+      toast.warning(t("manage.photoManage.maxPhotosReached", { remaining }), {
         position: "top-center",
       });
     }
@@ -201,7 +203,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
   };
 
   const handleSave = async () => {
-    toast.warning("Photo saving feature is in developing stage", {
+    toast.warning(t("manage.photoManage.savingInDevelopment"), {
       position: "top-center",
     });
 
@@ -335,7 +337,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
               className="gap-2"
             >
               <Pencil className="w-4 h-4" />
-              Change Photos
+              {t("manage.photoManage.changePhotos")}
             </Button>
           ) : (
             <>
@@ -346,7 +348,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
                 className="gap-2"
               >
                 <X className="w-4 h-4" />
-                Cancel
+                {t("manage.photoManage.cancel")}
               </Button>
               {galleryPhotos.length < 4 && (
                 <Button
@@ -356,7 +358,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
                   className="gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Photo
+                  {t("manage.photoManage.addPhoto")}
                 </Button>
               )}
               <Button
@@ -365,7 +367,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
                 className="gap-2 bg-linear-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-700 hover:to-indigo-800"
               >
                 <Check className="w-4 h-4" />
-                {isUploading ? "Saving..." : "Save"}
+                {isUploading ? t("manage.photoManage.saving") : t("manage.photoManage.save")}
               </Button>
             </>
           )}
@@ -374,7 +376,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase text-slate-400 tracking-[0.2em]">
-              Main Visual
+              {t("manage.photoManage.mainVisual")}
             </h3>
             <MainPhotoArea
               mainPhoto={mainPhoto?.url}
@@ -385,7 +387,7 @@ export default function PhotoManage({ currentBusiness }: ManageBusinessProps) {
 
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase text-slate-400 tracking-[0.2em]">
-              Gallery ({galleryPhotos.length}/4)
+              {t("manage.photoManage.gallery")} ({galleryPhotos.length}/4)
             </h3>
 
             <div className="grid grid-cols-2 gap-4">

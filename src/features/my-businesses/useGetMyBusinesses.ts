@@ -11,6 +11,7 @@ export type MyBusinessResponse = {
   mainImage: string;
   galleryImages: [string];
   city: string;
+  description: string;
   addressDetail: string;
   callType: "OUTCALL" | "INSITE" | "BOTH";
   workTimes: [
@@ -27,6 +28,11 @@ export type MyBusinessResponse = {
       endTime: number;
     },
   ];
+  info: {
+    phoneNumber: string;
+    facebookUrl: string;
+    instagramUrl: string;
+  };
 };
 
 const getMyBusinesses = async (lang: string) => {

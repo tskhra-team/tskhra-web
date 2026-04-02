@@ -25,6 +25,7 @@ export default function Notifications({ businessId }: MyNotificationProps) {
   const { mutate: approveBooking } = useApproveBooking();
 
   const { showModal } = useModal();
+  // const clientRef = useWebSocket();
 
   const handleApprove = (bookingId: string) => {
     showModal(
