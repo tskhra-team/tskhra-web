@@ -25,6 +25,9 @@ export default function TopBar() {
   const { t } = useTranslation("common");
   const { isAuthenticated, logout, login, register } = useAuth();
   const { data: user } = useGetUser(isAuthenticated);
+  const favoritesCount = user?.favoriteBusinesses
+    ? new Set(user.favoriteBusinesses).size
+    : 0;
   let fullName = user?.userName;
   if (user?.firstName && user?.lastName) {
     fullName = user?.firstName + " " + user?.lastName;
@@ -54,10 +57,15 @@ export default function TopBar() {
         {isAuthenticated && (
           <button
             onClick={() => navigate("/profile?section=favorites")}
-            className={`p-2 rounded-full transition-colors cursor-pointer ${isVerification ? "hover:bg-white/10 text-white" : "hover:bg-rose-50 text-slate-600 hover:text-rose-500"}`}
+            className={`relative p-2 rounded-full transition-colors cursor-pointer ${isVerification ? "hover:bg-white/10 text-white" : "hover:bg-rose-50 text-slate-600 hover:text-rose-500"}`}
             title={t("auth.favorites", { defaultValue: "Favorites" })}
           >
             <Heart className="w-5 h-5" />
+            {favoritesCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full leading-none px-1">
+                {favoritesCount}
+              </span>
+            )}
           </button>
         )}
         {isAuthenticated ? (
