@@ -11,6 +11,7 @@ import dashboardEN from "../locales/en/dashboard.json";
 import ecommerceEN from "../locales/en/ecommerce.json";
 import homeEN from "../locales/en/home.json";
 import modalEN from "../locales/en/modal.json";
+import notificationsEN from "../locales/en/notifications.json";
 import profileEN from "../locales/en/profile.json";
 import swappingEN from "../locales/en/swapping.json";
 import verificationEN from "../locales/en/verification.json";
@@ -22,6 +23,7 @@ import dashboardKA from "../locales/ka/dashboard.json";
 import ecommerceKA from "../locales/ka/ecommerce.json";
 import homeKA from "../locales/ka/home.json";
 import modalGE from "../locales/ka/modal.json";
+import notificationsKA from "../locales/ka/notifications.json";
 import profileKA from "../locales/ka/profile.json";
 import swappingKA from "../locales/ka/swapping.json";
 import verificationKA from "../locales/ka/verification.json";
@@ -44,6 +46,7 @@ i18n
           profile: profileEN,
           verification: verificationEN,
           modal: modalEN,
+          notifications: notificationsEN,
         },
         ka: {
           common: commonKA,
@@ -57,6 +60,7 @@ i18n
           profile: profileKA,
           verification: verificationKA,
           modal: modalGE,
+          notifications: notificationsKA,
         },
       },
       fallbackLng: "en", // Fallback language

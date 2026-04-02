@@ -65,7 +65,7 @@ export default function IndividualBusinessForm() {
       businessNameKa: "",
       businessName: "",
       isEnglish: false,
-      city: "",
+      cityId: "",
       addressDetailsKa: "",
       addressDetails: "",
       descriptionKa: "",
@@ -75,7 +75,7 @@ export default function IndividualBusinessForm() {
         galleryPhoto: [],
       },
       mainCategory: "",
-      subCategory: "",
+      subCategoryId: "",
       workTimes: [],
       info: {
         phoneNumber: "",
@@ -124,13 +124,13 @@ export default function IndividualBusinessForm() {
       businessName: data.businessName,
       businessNameKa: data.businessNameKa,
       callType: data.callType,
-      cityId: Number(data.city),
+      cityId: Number(data.cityId),
       addressDetails: data.addressDetails,
       addressDetailsKa: data.addressDetailsKa,
       description: data.description,
       descriptionKa: data.descriptionKa,
       mainCategory: data.mainCategory,
-      subcategoryId: Number(data.subCategory),
+      subcategoryId: Number(data.subCategoryId),
       workTimes: data.workTimes.map((t) => ({
         ...t,
         endTime: t.endTime === 0 ? 1440 : t.endTime,
@@ -202,7 +202,7 @@ export default function IndividualBusinessForm() {
 
   const handleCategoryChange = (value: string) => {
     setValue("mainCategory", value);
-    setValue("subCategory", "");
+    setValue("subCategoryId", "");
   };
 
   if (isLoadingSubCategories || isLoadingCities) {
@@ -352,7 +352,7 @@ export default function IndividualBusinessForm() {
                 {t("booking:form.city")}
               </Label>
               <Controller
-                name="city"
+                name="cityId"
                 control={control}
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
@@ -372,9 +372,9 @@ export default function IndividualBusinessForm() {
                   </Select>
                 )}
               />
-              {errors.city && (
+              {errors.cityId && (
                 <p className="text-xs text-red-500 font-medium">
-                  {errors.city.message}
+                  {errors.cityId.message}
                 </p>
               )}
             </div>
@@ -518,7 +518,7 @@ export default function IndividualBusinessForm() {
                 {t("booking:form.subcategory")}
               </Label>
               <Controller
-                name="subCategory"
+                name="subCategoryId"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -547,9 +547,9 @@ export default function IndividualBusinessForm() {
                   </Select>
                 )}
               />
-              {errors.subCategory && (
+              {errors.subCategoryId && (
                 <p className="text-xs text-red-500 font-medium">
-                  {errors.subCategory.message}
+                  {errors.subCategoryId.message}
                 </p>
               )}
             </div>

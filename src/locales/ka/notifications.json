@@ -1,0 +1,18 @@
+{
+  "newBookingRequest": "ახალი ჯავშნის მოთხოვნა!",
+  "userBookedService": "მომხმარებელმა {{bookedBy}} დაჯავშნა სერვისი: {{serviceName}} {{date}}-ზე",
+  "userBookedServiceNoName": "მომხმარებელმა {{bookedBy}} დაჯავშნა სერვისი {{date}}-ზე",
+  "bookingConfirmed": "თქვენი ჯავშანი დადასტურდა!",
+  "bookingScheduled": "ჯავშანი დაგეგმილია!",
+  "bookingScheduledDesc": "თქვენი ჯავშანი სერვისისთვის - {{serviceName}} {{date}}-ზე დადასტურდა",
+  "bookingRejected": "ჯავშანი უარყოფილია",
+  "bookingRejectedDesc": "თქვენი ჯავშანი სერვისისთვის - {{serviceName}} {{date}}-ზე უარყოფილია",
+  "bookingCancelledByUser": "ჯავშანი გაუქმდა",
+  "bookingCancelledByUserDesc": "{{userName}}-მ გააუქმა ჯავშანი სერვისისთვის - {{serviceName}} {{date}}-ზე",
+  "bookingCancelledByBusiness": "ჯავშანი გაუქმდა ბიზნესის მიერ",
+  "bookingCancelledByBusinessDesc": "თქვენი ჯავშანი სერვისისთვის - {{serviceName}} {{date}}-ზე გაუქმდა",
+  "statusChanged": "სტატუსი შეიცვალა: {{status}}",
+  "statusChangedWithService": "თქვენი ჯავშანი სერვისისთვის {{serviceName}} - სტატუსი შეიცვალა: {{status}}",
+  "statusChangedNoService": "თქვენი ჯავშნის სტატუსი შეიცვალა: {{status}}",
+  "see": "ნახვა"
+}

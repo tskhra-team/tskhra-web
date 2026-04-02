@@ -8,6 +8,7 @@
     "notification": "შეტყობინებები",
     "language": "ენა"
   },
+  "tutorial": "ტუტორიალი დეშბორდზე",
   "userMenu": {
     "profile": "პროფილი",
     "booking": "დაჯავშნა",
@@ -154,7 +155,21 @@
   },
   "manage": {
     "deleteBtn": "წაშლა",
-    "deleteBusiness": "ბიზნესის წაშლა:"
+    "deleteBusiness": "ბიზნესის წაშლა:",
+    "photoManage": {
+      "changePhotos": "ფოტოების შეცვლა",
+      "cancel": "გაუქმება",
+      "addPhoto": "ფოტოს დამატება",
+      "saving": "შენახვა...",
+      "save": "შენახვა",
+      "mainVisual": "მთავარი ფოტო",
+      "gallery": "გალერეა",
+      "maxPhotosWarning": "გალერეაში შეგიძლიათ დაამატოთ მხოლოდ 4 ფოტო",
+      "fileTooLarge": "ფაილი \"{{fileName}}\" ძალიან დიდია. მაქსიმალური ზომა არის 5MB",
+      "invalidFileType": "ფაილს \"{{fileName}}\" აქვს არასწორი ტიპი. დასაშვები ტიპები: JPG, PNG, WEBP",
+      "maxPhotosReached": "მხოლოდ {{remaining}} ფოტო(ები) შეიძლება დაემატოს",
+      "savingInDevelopment": "ფოტოების შენახვის ფუნქცია დეველოპინგის სტადიაშია"
+    }
   },
   "pages": {
     "chart": {
@@ -174,5 +189,15 @@
     "title": "ჩემი ბიზნესები",
     "subtitle": "აირჩიეთ ბიზნესი მართვისთვის",
     "noBusiness": "თქვენ ჯერ არ გაქვთ ბიზნესები"
+  },
+  "tour": {
+    "businessGridTitle": "თქვენი ბიზნესები",
+    "businessGridDesc": "აქ გამოჩნდება თქვენი ყველა ბიზნესი, დააჭირეთ ერთ-ერთს გასაგრძელებლად",
+    "sidebarPickerTitle": "ბიზნესების ამომრჩევი",
+    "sidebarPickerDesc": "აქ ასევე შეგიძლიათ შეცვალოთ თქვენს ბიზნესი და დაამატოთ ახალი",
+    "sidebarManageTitle": "მართეთ თქვენი ბიზნესი",
+    "sidebarManageDesc": "აქ შეგიძლიათ მართოთ თქვენი ბიზნესი და თვალყური ადევნოთ მათთ",
+    "sidebarAccountTitle": "თქვენი ანგარიში",
+    "sidebarAccountDesc": "აქედან შეგიძლიათ ნავიგაცია ჩვენს ვებსაიტზე"
   }
 }
