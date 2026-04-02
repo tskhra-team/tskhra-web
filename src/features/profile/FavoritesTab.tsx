@@ -15,7 +15,7 @@ import { useAuth } from "@/context/useAuth";
 import { cn } from "@/lib/utils";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Heart, MapPin, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -90,6 +90,8 @@ export default function FavoritesTab() {
   const { isAuthenticated } = useAuth();
   const { data: favoriteIds, isLoading } =
     useGetFavoriteBusinesses(isAuthenticated);
+  const queryClient = useQueryClient();
+  const { mutate: removeFavorite } = useRemoveFavorite();
   const [currentPage, setCurrentPage] = useState(1);
 
   const lang = i18n.language.split("-")[0].toUpperCase();
@@ -111,6 +113,23 @@ export default function FavoritesTab() {
   const validFavorites = businessQueries
     .filter((q) => q.data?.business)
     .map((q) => q.data!);
+
+  // Clean up stale favorite IDs (deleted businesses) from the backend
+  const cleanedUp = useRef(false);
+  useEffect(() => {
+    if (!allLoaded || cleanedUp.current || !favoriteIds?.length) return;
+    const validIds = new Set(validFavorites.map((f) => f.id));
+    const staleIds = favoriteIds.filter((id) => !validIds.has(id));
+    if (staleIds.length > 0) {
+      cleanedUp.current = true;
+      staleIds.forEach((id) => {
+        removeFavorite(
+          { businessId: String(id) },
+          { onSuccess: () => queryClient.invalidateQueries({ queryKey: ["getUser"] }) },
+        );
+      });
+    }
+  }, [allLoaded, favoriteIds, validFavorites, removeFavorite, queryClient]);
 
   const totalPages = Math.max(
     1,
