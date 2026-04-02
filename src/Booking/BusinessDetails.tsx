@@ -193,7 +193,7 @@ export default function BusinessDetails() {
                 businessName={business.businessName}
                 onBookNowClick={scrollToServices}
               />
-              <ContactInformationCard info={business.info} />
+              {business.info && <ContactInformationCard info={business.info} />}
 
               <WorkingHoursCard
                 workTimes={business.workTimes}
@@ -221,7 +221,7 @@ export default function BusinessDetails() {
               onBookNowClick={scrollToServices}
             />
 
-            <ContactInformationCard info={business.info} />
+            {business.info && <ContactInformationCard info={business.info} />}
 
             <WorkingHoursCard
               workTimes={business.workTimes}
