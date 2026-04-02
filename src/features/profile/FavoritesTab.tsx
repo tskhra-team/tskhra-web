@@ -61,7 +61,7 @@ function FavoriteBusinessCard({
         <button
           onClick={handleRemove}
           disabled={isPending}
-          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors disabled:opacity-50"
+          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors disabled:opacity-50 cursor-pointer"
         >
           <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
         </button>
