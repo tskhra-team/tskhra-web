@@ -96,7 +96,7 @@ export default function FavoritesTab() {
 
   const businessQueries = useQueries({
     queries: (favoriteIds ?? []).map((id) => ({
-      queryKey: ["business", String(id), lang],
+      queryKey: ["favoriteBusiness", String(id), lang],
       queryFn: async () => {
         const response = await publicInstance.get(`/business/${id}`, {
           params: { lang },
