@@ -276,6 +276,8 @@ export default function BusinessCatalog() {
               setSearchParams(params);
               scrollToTop();
             }}
+            previousLabel={t("pagination.previous")}
+            nextLabel={t("pagination.next")}
           />
         </div>
       )}
