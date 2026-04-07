@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { BusinessSwitcher } from "@/features/my-businesses/BusinessSwitcher";
 import { NavUser } from "@/features/my-businesses/NavUser";
+import useGetNotifications from "@/features/my-businesses/Notifications/hooks/useGetNotifications";
 
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -34,12 +35,18 @@ type LocationState = {
 };
 
 export function MyBusinessesSidebar() {
-  const { t } = useTranslation("dashboard");
+  const { t, i18n } = useTranslation("dashboard");
   const [searchParams, setSearchParams] = useSearchParams();
-  const isBusinessChoosed = searchParams.get("businessId");
+  const isBusinessChoosed = searchParams.get("businessId") || undefined;
   const location = useLocation();
   const state = location.state as LocationState | null;
   const { isMobile, setOpenMobile } = useSidebar();
+  const { data: notifications } = useGetNotifications(
+    isBusinessChoosed,
+    i18n.language.toUpperCase(),
+  );
+
+  const notificationsLength = notifications?.length;
 
   useEffect(() => {
     if (state?.isTour && isMobile) {
@@ -139,10 +146,18 @@ export function MyBusinessesSidebar() {
                       <SidebarMenuButton
                         onClick={() => handleSectionClick(item.section)}
                         isActive={searchParams.get("section") === item.section}
-                        className="h-10 text-base cursor-pointer"
+                        className="h-10 text-base cursor-pointer relative"
                       >
                         <item.icon className="h-5 w-5" />
                         <span>{item.title}</span>
+                        {item.section === "notification" &&
+                          (notificationsLength && notificationsLength > 0 ? (
+                            <span className="absolute right-2 bg-red-500 text-white text-[10px] font-bold min-w-5 h-5 flex items-center justify-center rounded-full leading-none px-1">
+                              {notificationsLength > 99
+                                ? "99+"
+                                : notificationsLength}
+                            </span>
+                          ) : null)}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}

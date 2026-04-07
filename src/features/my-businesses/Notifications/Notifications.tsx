@@ -140,6 +140,7 @@ export default function Notifications({ businessId }: MyNotificationProps) {
         <h2 className="sm:text-3xl font-bold tracking-tight">
           {t("dashboard:notifications.title")}
         </h2>
+
         <span className="px-3 py-1 bg-muted text-muted-foreground text-xs  font-semibold rounded-full">
           {t("dashboard:notifications.pending", {
             count: notifications.length,

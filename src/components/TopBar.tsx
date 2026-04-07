@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
 import useGetUser from "@/features/user/useGetUser";
-import { Heart, LayoutDashboard, LogOut, User } from "lucide-react";
+import useGetUserNotifications from "@/features/user/useGetUserNotifications";
+import { Bell, Heart, LayoutDashboard, LogOut, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../shared/Logo";
@@ -23,7 +24,11 @@ export default function TopBar() {
   const isVerification = pathname === "/verification";
   const { t } = useTranslation("common");
   const { isAuthenticated, logout, login, register } = useAuth();
+
   const { data: user } = useGetUser(isAuthenticated);
+  const { data: notificationsCount } = useGetUserNotifications(
+    user?.isVerified,
+  );
   const favoritesCount = user?.favoriteBusinesses
     ? new Set(user.favoriteBusinesses).size
     : 0;
@@ -65,6 +70,20 @@ export default function TopBar() {
                 {favoritesCount}
               </span>
             )}
+          </button>
+        )}
+        {isAuthenticated && user?.isVerified && (
+          <button
+            onClick={() => navigate("/my-businesses")}
+            className={`relative p-2 rounded-full transition-colors cursor-pointer ${isVerification ? "hover:bg-white/10 text-white" : "hover:bg-blue-50 text-slate-600 hover:text-blue-600"}`}
+            title={t("auth.favorites", { defaultValue: "Notifications" })}
+          >
+            <Bell className="w-5 h-5" />
+            {notificationsCount && notificationsCount > 0 ? (
+              <span className="absolute -top-0.5 -right-0.5 bg-blue-500 text-white text-[10px] font-bold min-w-4.5 h-4.5 flex items-center justify-center rounded-full leading-none px-1">
+                {notificationsCount > 99 ? "99+" : notificationsCount}
+              </span>
+            ) : null}
           </button>
         )}
         {isAuthenticated ? (

@@ -2,7 +2,7 @@ import { privateInstance } from "@/api";
 import type { BookingStatus } from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { useSearchParams, type ErrorResponse } from "react-router-dom";
+import { type ErrorResponse } from "react-router-dom";
 
 export type NotificationResponse = {
   id: string;
@@ -15,7 +15,10 @@ export type NotificationResponse = {
   price: number;
 };
 
-const getNotifications = async (businessId: string, lang: string) => {
+const getNotifications = async (
+  businessId: string | undefined,
+  lang: string,
+) => {
   const response = await privateInstance.get<NotificationResponse[]>(
     `/business/${businessId}/bookings/awaiting`,
     { params: { lang } },
@@ -23,17 +26,11 @@ const getNotifications = async (businessId: string, lang: string) => {
   return response.data;
 };
 
-const useGetNotifications = (businessId: string, lang: string) => {
-  const [searchParams] = useSearchParams();
-
-  const refetchInterval =
-    searchParams.get("section") === "notification" ? 10000 : 5 * 60 * 1000;
-
+const useGetNotifications = (businessId: string | undefined, lang: string) => {
   return useQuery<NotificationResponse[], AxiosError<ErrorResponse>>({
     queryFn: () => getNotifications(businessId, lang),
     queryKey: ["getNotifications", businessId, lang],
     enabled: !!businessId,
-    refetchInterval: refetchInterval,
   });
 };
 
