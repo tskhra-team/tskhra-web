@@ -4,9 +4,9 @@ export default function SwappingNavigation() {
   const { t } = useTranslation("swapping");
 
   const navItems = [
-    { name: t("nav.browseItems"), link: "#", color: "#A31621" },
-    { name: t("nav.mySwaps"), link: "#", color: "#FF6439" },
-    { name: t("nav.postItem"), link: "#", color: "#3659FA" },
+    { name: "My Items", link: "#", color: "#A31621" },
+    { name: t("nav.postItem"), link: "#", color: "#FF6439" },
+    { name: t("Offers"), link: "#", color: "#3659FA" },
   ];
 
   return (
