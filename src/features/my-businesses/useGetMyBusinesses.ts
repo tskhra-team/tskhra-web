@@ -33,6 +33,7 @@ export type MyBusinessResponse = {
     facebookUrl: string;
     instagramUrl: string;
   };
+  awaitingBookingCount: number;
 };
 
 const getMyBusinesses = async (lang: string) => {

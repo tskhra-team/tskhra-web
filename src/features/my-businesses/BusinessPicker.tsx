@@ -81,7 +81,15 @@ export default function BusinessPicker({
             onClick={() => handleBusinessClick(business.businessId)}
           >
             <CardContent className="p-0">
-              <div className="aspect-square w-full overflow-hidden bg-muted">
+              <div className="aspect-square w-full overflow-hidden bg-muted relative">
+                {business.awaitingBookingCount ? (
+                  <div className="absolute right-2 bg-red-500 text-white text-[12px]  font-bold min-w-8 h-8 top-2 flex items-center justify-center rounded-full leading-none px-1">
+                    {business.awaitingBookingCount > 99
+                      ? "99+"
+                      : business.awaitingBookingCount}
+                  </div>
+                ) : null}
+
                 <img
                   src={business.mainImage}
                   alt={business.businessName}

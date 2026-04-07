@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   createContext,
   type ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -13,14 +12,11 @@ import {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { playSound, useSound } from "react-sounds";
 import { toast } from "sonner";
 
 interface WebSocketContextType {
   client: Client | null;
-  unreadBusinessCount: number;
-  unreadClientCount: number;
-  resetBusinessCount: () => void;
-  resetClientCount: () => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
@@ -29,13 +25,10 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   const { token } = useAuth();
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
-
+  const { play } = useSound("notification/info");
   const languageRef = useRef(i18n.language);
 
   const [client, setClient] = useState<Client | null>(null);
-
-  const [unreadBusinessCount, setUnreadBusinessCount] = useState(0);
-  const [unreadClientCount, setUnreadClientCount] = useState(0);
 
   useEffect(() => {
     languageRef.current = i18n.language;
@@ -74,6 +67,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
               },
             });
           } catch (error) {
+            play();
             toast(i18n.t("notifications:newBookingRequest"), {
               description: i18n.t("notifications:userBookedServiceNoName", {
                 bookedBy: data.bookedBy,
@@ -88,7 +82,10 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             });
           }
 
-          setUnreadBusinessCount((prev) => prev + 1);
+          play();
+          queryClient.invalidateQueries({
+            queryKey: ["getUserNotifications"],
+          });
           queryClient.invalidateQueries({
             queryKey: ["getNotifications"],
           });
@@ -96,7 +93,6 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
         newClient.subscribe("/user/queue/statuschange", async (message) => {
           const data = JSON.parse(message.body);
-          console.log(data);
           const status = data.newStatus || data.status;
 
           try {
@@ -106,9 +102,9 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
               lang: languageRef.current.toUpperCase(),
             });
 
-            // Разные сообщения в зависимости от статуса
             switch (status) {
               case "CANCELLED_BY_USER":
+                play();
                 toast.warning(i18n.t("notifications:bookingCancelledByUser"), {
                   description: i18n.t(
                     "notifications:bookingCancelledByUserDesc",
@@ -118,16 +114,12 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
                       date: data.date,
                     },
                   ),
-                  //   action: {
-                  //     label: i18n.t("notifications:see"),
-                  //     onClick: () => {
-                  //       window.location.href = `/my-bookings`;
-                  //     },
-                  //   },
                 });
+
                 break;
 
               case "CANCELLED_BY_BUSINESS":
+                play();
                 toast.error(
                   i18n.t("notifications:bookingCancelledByBusiness"),
                   {
@@ -138,47 +130,45 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
                         date: data.date,
                       },
                     ),
-                    // action: {
-                    //   label: i18n.t("notifications:see"),
-                    //   onClick: () => {
-                    //     window.location.href = `/my-bookings`;
-                    //   },
-                    // },
+                    action: {
+                      label: i18n.t("notifications:see"),
+                      onClick: () => {
+                        window.location.href = `/booking/business/${data.businessId}`;
+                      },
+                    },
                   },
                 );
+
                 break;
 
               case "SCHEDULED":
+                playSound("notification/success");
                 toast.success(i18n.t("notifications:bookingScheduled"), {
                   description: i18n.t("notifications:bookingScheduledDesc", {
                     serviceName: serviceData.name,
                     date: data.date,
                   }),
-                  //   action: {
-                  //     label: i18n.t("notifications:see"),
-                  //     onClick: () => {
-                  //       window.location.href = `/my-bookings`;
-                  //     },
-                  //   },
+                  action: {
+                    label: i18n.t("notifications:see"),
+                    onClick: () => {
+                      window.location.href = `/my-bookings`;
+                    },
+                  },
                 });
                 break;
 
               case "REJECTED":
+                playSound("notification/error");
                 toast.error(i18n.t("notifications:bookingRejected"), {
                   description: i18n.t("notifications:bookingRejectedDesc", {
                     serviceName: serviceData.name,
                     date: data.date,
                   }),
-                  //   action: {
-                  //     label: i18n.t("notifications:see"),
-                  //     onClick: () => {
-                  //       window.location.href = `/my-bookings`;
-                  //     },
-                  //   },
                 });
                 break;
 
               default:
+                play();
                 toast.info(i18n.t("notifications:bookingConfirmed"), {
                   description: i18n.t(
                     "notifications:statusChangedWithService",
@@ -187,29 +177,20 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
                       status: status,
                     },
                   ),
-                  //   action: {
-                  //     label: i18n.t("notifications:see"),
-                  //     onClick: () => {
-                  //       window.location.href = `/my-bookings`;
-                  //     },
-                  //   },
                 });
             }
           } catch (error) {
+            play();
             toast.info(i18n.t("notifications:bookingConfirmed"), {
               description: i18n.t("notifications:statusChangedNoService", {
                 status: status,
               }),
-              //   action: {
-              //     label: i18n.t("notifications:see"),
-              //     onClick: () => {
-              //       window.location.href = `/my-bookings`;
-              //     },
-              //   },
             });
           }
 
-          setUnreadClientCount((prev) => prev + 1);
+          queryClient.invalidateQueries({
+            queryKey: ["getUserNotifications"],
+          });
           queryClient.invalidateQueries({
             queryKey: ["getUserNotifications"],
           });
@@ -226,25 +207,11 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     };
   }, [token, queryClient]);
 
-  const resetBusinessCount = useCallback(() => setUnreadBusinessCount(0), []);
-  const resetClientCount = useCallback(() => setUnreadClientCount(0), []);
-
-  // Мемоизируем value объект
   const value = useMemo(
     () => ({
       client,
-      unreadBusinessCount,
-      unreadClientCount,
-      resetBusinessCount,
-      resetClientCount,
     }),
-    [
-      client,
-      unreadBusinessCount,
-      unreadClientCount,
-      resetBusinessCount,
-      resetClientCount,
-    ],
+    [client],
   );
 
   return (
