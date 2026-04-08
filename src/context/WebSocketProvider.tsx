@@ -41,7 +41,8 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     }
 
     const newClient = new Client({
-      brokerURL: `wss://sessile-nettlelike-antoinette.ngrok-free.dev/ws?token=${token}`,
+      // brokerURL: `wss://sessile-nettlelike-antoinette.ngrok-free.dev/ws?token=${token}`,
+      brokerURL: `ws://10.227.164.247:8081/ws?token=${token}`,
       onConnect: () => {
         newClient.subscribe("/user/queue/messages", async (message) => {
           const data = JSON.parse(message.body);

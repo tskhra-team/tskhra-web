@@ -6,7 +6,7 @@ interface FileDropzoneProps {
   handleBoxClick: () => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent) => void;
-  // ИЗМЕНЕНО: принимаем файлы напрямую
+
   handleFileSelect: (files: FileList | null) => void;
 }
 
@@ -44,7 +44,6 @@ export function FileDropzone({
         className="hidden"
         accept="image/*"
         multiple
-        // ИСПРАВЛЕНО: передаем e.target.files
         onChange={(e) => handleFileSelect(e.target.files)}
       />
     </div>

@@ -1,7 +1,7 @@
 {
   "nav": {
-    "browseItems": "Browse Items",
-    "mySwaps": "My Swaps",
+    "myItems": "My Items",
+    "offers": "Offers",
     "postItem": "Post Item"
   }
 }

@@ -10,18 +10,22 @@ import { Navigate } from "react-router-dom";
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
-const SwitchingPage = lazy(() => import("@/pages/SwappingPage"));
+const SwappingPage = lazy(() => import("@/pages/SwappingPage"));
 const CreateBusinessPage = lazy(() => import("@/pages/CreateBusinessPage"));
 const BusinessCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const MyBusinessesPage = lazy(() => import("@/pages/MyBusinessesPage"));
 const BusinessDetailsPage = lazy(() => import("@/pages/BusinessDetailsPage"));
 const MyBookingsPage = lazy(() => import("@/pages/MyBookingsPage"));
+const MyItemsPage = lazy(() => import("@/pages/MyItemsPage"));
+const OffersPage = lazy(() => import("@/pages/OffersPage"));
+const PostItemsPage = lazy(() => import("@/pages/PostItemsPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
 
 import BusinessCatalogSkeleton from "@/Booking/BusinessCatalogSkeleton";
 import BusinessDetailsSkeleton from "@/Booking/BusinessDetailsSkeleton";
+// import MyItemsPage from "@/pages/MyItemsPage";
 
 export const routes = [
   // Main Layout - Public pages with main Header + Footer
@@ -48,7 +52,7 @@ export const routes = [
         path: "/swapping",
         element: (
           <Suspense fallback={<Loader />}>
-            <SwitchingPage />
+            <SwappingPage />
           </Suspense>
         ),
       },
@@ -94,6 +98,40 @@ export const routes = [
             <ProfilePage />
           </Suspense>
         ),
+      },
+      {
+        path: "/swapping",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SwappingPage />
+          </Suspense>
+        ),
+        children: [
+          {
+            path: "my-items",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <MyItemsPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "post-item",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <PostItemsPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "offers",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <OffersPage />
+              </Suspense>
+            ),
+          },
+        ],
       },
       {
         path: "/verification",
