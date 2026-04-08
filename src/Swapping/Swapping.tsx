@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import CategoriesLayout from "@/shared/categories/Categories";
 import { Outlet, useLocation } from "react-router-dom";
 import Slider from "./../shared/slider/slider";
