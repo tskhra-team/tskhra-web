@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import CategoriesLayout from "@/shared/categories/Categories";
 import { Filter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import Slider from "./../shared/slider/slider";
 
 export default function Booking() {
@@ -11,19 +11,20 @@ export default function Booking() {
   const [searchParams] = useSearchParams();
   const [hideCategoriesOnMobile, setHideCategoriesOnMobile] = useState(false);
 
-  // Scroll to catalog when category/subcategory is selected on mobile
+  const location = useLocation();
+
+  // Scroll to catalog when category/subcategory is selected or #catalog hash is present
   useEffect(() => {
     const categoryParam = searchParams.get("category");
     const subcategoryParam = searchParams.get("subcategory");
+    const hasHash = location.hash === "#catalog";
 
-    if (categoryParam || subcategoryParam) {
-      // Check if we're on mobile (< 1024px which is the lg breakpoint)
+    if (hasHash || categoryParam || subcategoryParam) {
       const isMobile = window.innerWidth < 1280;
 
-      if (isMobile) {
-        setHideCategoriesOnMobile(true);
+      if (isMobile || hasHash) {
+        if (isMobile) setHideCategoriesOnMobile(true);
 
-        // Scroll to catalog with a slight delay to ensure rendering
         setTimeout(() => {
           catalogRef.current?.scrollIntoView({
             behavior: "smooth",
@@ -32,10 +33,9 @@ export default function Booking() {
         }, 100);
       }
     } else {
-      // Reset when filters are cleared
       setHideCategoriesOnMobile(false);
     }
-  }, [searchParams]);
+  }, [searchParams, location.hash]);
 
   return (
     <div className="relative min-h-screen bg-linear-to-br from-slate-50 via-orange-50/30 to-red-50/20">
