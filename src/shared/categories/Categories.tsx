@@ -20,10 +20,11 @@ export default function CategoriesLayout({ platform }: { platform: Platform }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const colors = getPlatformColors(platform);
 
-  // Sync activeIndex with URL params
+  // Sync activeIndex with URL params (only on mobile where subcategories show inline)
   useEffect(() => {
     const categoryParam = searchParams.get("category");
-    if (categoryParam && data) {
+    const isMobile = window.innerWidth < 1280;
+    if (categoryParam && data && isMobile) {
       const index = data.findIndex(
         (cat) => String(cat.id) === categoryParam,
       );

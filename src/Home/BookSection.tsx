@@ -1,53 +1,40 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin, Star } from "lucide-react";
+import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import { Calendar, Clock, MapPin, LayoutGrid } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-const features = [
-  {
-    icon: Calendar,
-    title: "Instant Booking",
-    description: "Reserve your spot in seconds with real-time availability",
-  },
-  {
-    icon: Clock,
-    title: "Flexible Scheduling",
-    description: "Choose the perfect time that fits your busy schedule",
-  },
-  {
-    icon: Star,
-    title: "Top-Rated Services",
-    description: "Access verified providers with excellent reviews",
-  },
-  {
-    icon: MapPin,
-    title: "Neart to you",
-    description: "Discover experiences near you",
-  },
+const featureKeys = [
+  { icon: Calendar, key: "easyBooking" },
+  { icon: Clock, key: "realTimeAvailability" },
+  { icon: MapPin, key: "onsiteOutcall" },
+  { icon: LayoutGrid, key: "categories" },
 ];
 
-const categories = [
-  {
-    name: "Restaurants",
-    description: "Fine dining & casual spots",
-    icon: "🍽️",
-    color: "from-orange-500 to-red-500",
-  },
-  {
-    name: "Wellness",
-    description: "Spa & health services",
-    icon: "💆",
-    color: "from-green-500 to-emerald-500",
-  },
-  {
-    name: "Events",
-    description: "Concerts, shows & classes",
-    icon: "🎭",
-    color: "from-purple-500 to-pink-500",
-  },
+const categoryKeys = [
+  { key: "beauty", apiName: "Beauty and Personal Care", icon: "💇", color: "from-pink-500 to-rose-500" },
+  { key: "home", apiName: "Home Services", icon: "🏠", color: "from-blue-500 to-cyan-500" },
+  { key: "auto", apiName: "Auto Services", icon: "🚗", color: "from-slate-600 to-slate-800" },
+  { key: "education", apiName: "Education", icon: "📚", color: "from-green-500 to-emerald-500" },
+  { key: "health", apiName: "Health", icon: "🏥", color: "from-red-400 to-rose-500" },
+  { key: "events", apiName: "Events", icon: "🎉", color: "from-purple-500 to-pink-500" },
 ];
 
 export default function BookSection() {
   const navigate = useNavigate();
+  const { t } = useTranslation("home");
+  const { data: categories } = useGetSubBookingCategories("EN");
+
+  const handleCategoryClick = (apiName: string) => {
+    const matched = categories?.find(
+      (cat) => cat.name.toLowerCase() === apiName.toLowerCase(),
+    );
+    if (matched) {
+      navigate(`/booking?category=${matched.id}#catalog`);
+    } else {
+      navigate("/booking#catalog");
+    }
+  };
 
   return (
     <section
@@ -60,19 +47,18 @@ export default function BookSection() {
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="text-center mb-12 sm:mb-16">
           <div className="inline-block px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-orange-100 text-orange-600 text-xs sm:text-sm font-semibold uppercase tracking-wider mb-3 sm:mb-4">
-            Booking Platform
+            {t("bookSection.badge")}
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight px-4">
-            Book Amazing Experiences
+            {t("bookSection.title")}
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto px-4">
-            Reserve unforgettable moments with ease—from dining to adventures,
-            all in one place
+            {t("bookSection.description")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {features.map((feature, index) => (
+          {featureKeys.map((feature, index) => (
             <div
               key={index}
               className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-orange-100/50 hover:border-orange-300/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
@@ -88,10 +74,10 @@ export default function BookSection() {
               </div>
 
               <h3 className="text-xl font-bold text-slate-900 mb-2">
-                {feature.title}
+                {t(`bookSection.features.${feature.key}.title`)}
               </h3>
               <p className="text-slate-600 leading-relaxed">
-                {feature.description}
+                {t(`bookSection.features.${feature.key}.description`)}
               </p>
 
               <div className="absolute inset-0 bg-linear-to-br from-orange-500/5 to-red-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -101,12 +87,13 @@ export default function BookSection() {
 
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 border-2 border-orange-100/50 shadow-xl mb-12">
           <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 sm:mb-8 text-center">
-            Popular Booking Categories
+            {t("bookSection.categoriesTitle")}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {categories.map((category, index) => (
+            {categoryKeys.map((category, index) => (
               <div
                 key={index}
+                onClick={() => handleCategoryClick(category.apiName)}
                 className="group relative bg-white rounded-xl lg:rounded-2xl p-5 sm:p-6 border-2 border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
               >
                 <div
@@ -118,10 +105,10 @@ export default function BookSection() {
                     {category.icon}
                   </div>
                   <h4 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
-                    {category.name}
+                    {t(`bookSection.categoryList.${category.key}.name`)}
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                    {category.description}
+                    {t(`bookSection.categoryList.${category.key}.description`)}
                   </p>
                 </div>
 
@@ -135,11 +122,11 @@ export default function BookSection() {
 
         <div className="text-center">
           <Button
-            onClick={() => navigate("booking")}
+            onClick={() => navigate("/booking#catalog")}
             className="group/btn px-6 sm:px-8 lg:px-10 py-3 sm:py-4 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white text-sm sm:text-base font-bold rounded-xl lg:rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2">
-              Browse All Experiences
+              {t("bookSection.button")}
               <svg
                 className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-x-1 transition-transform duration-300"
                 fill="none"
