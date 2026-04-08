@@ -2,6 +2,7 @@
   "titles": {
     "uploadingPhotos": "Uploading photos...",
     "creatingBusiness": "Creating business...",
+    "creatingPost": "Creating post...",
     "congratulations": "Congratulations!",
     "somethingWentWrong": "Something went wrong",
     "notAuthorized": "You aren't authorized",
@@ -32,6 +33,7 @@
     "pleaseWait": "Please wait",
     "almostDone": "Almost done",
     "businessCreatedSuccess": "Your business was successfully created, go and add your services!",
+    "postCreatedSuccess": "Your post was successfully published!",
     "pleaseTryAgain": "Please try again",
     "authorizeFirst": "To book a service, you need to be authorized",
     "selectServiceDateTime": "Please select a service, date, and time before booking",
@@ -71,6 +73,7 @@
   "buttons": {
     "close": "Close",
     "ok": "OK",
+    "see": "See",
     "yes": "Yes",
     "no": "No",
     "cancel": "Cancel",

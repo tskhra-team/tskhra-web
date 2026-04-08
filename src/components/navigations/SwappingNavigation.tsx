@@ -24,7 +24,7 @@ export default function SwappingNavigation() {
               className="relative text-slate-700 px-4 sm:px-6 lg:px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold text-sm sm:text-base"
             >
               <span
-                className={`relative z-10 transition-all duration-300 ${isActive ? "scale-105" : "group-hover:scale-105"}`}
+                className={`relative z-10 text-center text-sm md:text-base transition-all duration-300 ${isActive ? "scale-105" : "group-hover:scale-105"}`}
               >
                 {item.name}
               </span>
