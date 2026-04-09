@@ -126,10 +126,10 @@ export default function FeaturedItems() {
           {MOCK_FEATURED.map((item) => (
             <div
               key={item.id}
-              className="group min-w-[220px] sm:min-w-[260px] cursor-pointer snap-start"
+              className="group min-w-55 sm:min-w-65 cursor-pointer snap-start"
             >
               {/* Image */}
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#f5f5f7] mb-3">
+              <div className="relative aspect-3/4 rounded-2xl overflow-hidden bg-[#f5f5f7] mb-3">
                 <img
                   src={item.image}
                   alt={item.name}

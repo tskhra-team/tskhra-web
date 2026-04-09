@@ -86,7 +86,7 @@ function DotGrid() {
       ref={canvasRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="absolute inset-0 w-full h-full z-[1]"
+      className="absolute inset-0 w-full h-full z-1"
     />
   );
 }
@@ -110,8 +110,8 @@ export default function HeroSection() {
 
       {/* Subtle glow accents */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#1a1a4e]/60 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#1e1e50]/40 rounded-full blur-[100px]" />
+        <div className="absolute top-0 right-0 w-125 h-125 bg-[#1a1a4e]/60 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-100 h-100 bg-[#1e1e50]/40 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-14 text-center">

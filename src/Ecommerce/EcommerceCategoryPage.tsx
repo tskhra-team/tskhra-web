@@ -5,7 +5,6 @@ import { getPlatformColors } from "@/shared/categories/platformColors";
 import { useCategories } from "@/shared/categories/useCategories";
 import type { CategoryItem } from "@/shared/categories/types";
 import { ChevronRight } from "lucide-react";
-import EcommerceHeader from "./EcommerceHeader";
 
 export default function EcommerceCategoryPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -37,7 +36,7 @@ export default function EcommerceCategoryPage() {
   if (isLoading) {
     return (
       <>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
           <div className="container mx-auto px-4 py-12">
             <div className="animate-pulse space-y-6">
               <div className="h-8 w-48 bg-slate-200 rounded-lg" />
@@ -56,7 +55,7 @@ export default function EcommerceCategoryPage() {
   if (!category) {
     return (
       <>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-orange-50/20 flex items-center justify-center">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 flex items-center justify-center">
           <div className="text-center space-y-4">
             <h1 className="text-2xl font-bold text-slate-800">
               {t("categoryNotFound", { defaultValue: "Category not found" })}
@@ -78,7 +77,7 @@ export default function EcommerceCategoryPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
         {/* Decorative background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
           <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
