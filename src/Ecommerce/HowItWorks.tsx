@@ -49,7 +49,7 @@ export default function HowItWorks() {
               <h3 className="text-base font-bold text-[#0f0f2d] mb-1.5">
                 {t(`howItWorks.steps.${step.key}.title`)}
               </h3>
-              <p className="text-[#0f0f2d]/50 text-sm leading-relaxed max-w-[260px] mx-auto">
+              <p className="text-[#0f0f2d]/50 text-sm leading-relaxed max-w-65 mx-auto">
                 {t(`howItWorks.steps.${step.key}.description`)}
               </p>
             </div>
