@@ -1,0 +1,229 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
+import { getPlatformColors } from "@/shared/categories/platformColors";
+import { useCategories } from "@/shared/categories/useCategories";
+import type { CategoryItem } from "@/shared/categories/types";
+
+export default function CategoryMegaMenu({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const { data: categories, isLoading } = useCategories("ecommerce");
+  const { t } = useTranslation("categories");
+  const { t: tEcom } = useTranslation("ecommerce");
+  const colors = getPlatformColors("ecommerce");
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const navigate = useNavigate();
+  const closeTimeoutRef = useRef<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Reset active index when menu opens
+  useEffect(() => {
+    if (isOpen) {
+      setActiveIndex(0);
+    }
+  }, [isOpen]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    closeTimeoutRef.current = window.setTimeout(() => {
+      onClose();
+    }, 150);
+  }, [onClose]);
+
+  const handleMouseEnter = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const getCategorySlug = (cat: CategoryItem) =>
+    cat.name.toLowerCase().replace(/\s+/g, "-");
+
+  const handleCategoryClick = (category: CategoryItem) => {
+    navigate(`/ecommerce/category/${getCategorySlug(category)}`);
+    onClose();
+  };
+
+  const handleSubcategoryClick = (
+    category: CategoryItem,
+    subcategory: CategoryItem
+  ) => {
+    navigate(
+      `/ecommerce/category/${getCategorySlug(category)}?sub=${getCategorySlug(subcategory)}`
+    );
+    onClose();
+  };
+
+  if (!isOpen || isLoading || !categories || categories.length === 0) {
+    return null;
+  }
+
+  const activeCategory = categories[activeIndex];
+
+  return (
+    <div
+      ref={menuRef}
+      className="absolute top-full left-0 w-full bg-white border-b border-slate-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] z-50 animate-in fade-in slide-in-from-top-1 duration-200"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="container mx-auto flex min-h-[340px] max-h-[70vh]">
+        {/* Left panel - Main categories */}
+        <div className="w-64 shrink-0 border-r border-slate-100 overflow-y-auto py-2">
+          {categories.map((category, index) => {
+            const translationKey = categoryNameToKey[category.name];
+            const displayName = translationKey
+              ? t(translationKey)
+              : category.name;
+            const isActive = index === activeIndex;
+
+            return (
+              <button
+                key={category.name}
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => handleCategoryClick(category)}
+                className="w-full flex items-center gap-3 px-5 py-3 text-left text-sm font-medium transition-colors duration-150 cursor-pointer"
+                style={{
+                  backgroundColor: isActive
+                    ? colors.active.background
+                    : "transparent",
+                  color: isActive ? colors.active.text : colors.inactive.text,
+                  borderRight: isActive
+                    ? `3px solid ${colors.active.icon}`
+                    : "3px solid transparent",
+                }}
+              >
+                {category.iconUrl ? (
+                  <img
+                    src={category.iconUrl}
+                    alt=""
+                    className="w-5 h-5 object-contain shrink-0"
+                    style={{ opacity: isActive ? 1 : 0.5 }}
+                  />
+                ) : category.icon ? (
+                  <category.icon
+                    className="w-5 h-5 shrink-0"
+                    style={{
+                      color: isActive
+                        ? colors.active.icon
+                        : colors.inactive.icon,
+                    }}
+                  />
+                ) : null}
+                <span className="truncate">{displayName}</span>
+                <svg
+                  className="w-4 h-4 ml-auto shrink-0 opacity-40"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right panel - Subcategories */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeCategory && (
+            <div className="animate-in fade-in duration-200">
+              {/* Category header */}
+              <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+                <h3
+                  className="text-lg font-bold"
+                  style={{ color: colors.active.text }}
+                >
+                  {(() => {
+                    const key = categoryNameToKey[activeCategory.name];
+                    return key ? t(key) : activeCategory.name;
+                  })()}
+                </h3>
+                <button
+                  onClick={() => handleCategoryClick(activeCategory)}
+                  className="text-xs font-medium px-3 py-1.5 rounded-full transition-colors duration-150 hover:opacity-80 cursor-pointer"
+                  style={{
+                    backgroundColor: colors.active.background,
+                    color: colors.active.text,
+                  }}
+                >
+                  {tEcom("categories.viewAll")}
+                </button>
+              </div>
+
+              {/* Subcategories grid */}
+              {activeCategory.childItems &&
+              activeCategory.childItems.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {activeCategory.childItems.map((subcategory) => {
+                    const subKey = categoryNameToKey[subcategory.name];
+                    const subDisplayName = subKey
+                      ? t(subKey)
+                      : subcategory.name;
+
+                    return (
+                      <button
+                        key={subcategory.name}
+                        onClick={() =>
+                          handleSubcategoryClick(activeCategory, subcategory)
+                        }
+                        className="group flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm transition-all duration-200 hover:shadow-md cursor-pointer border border-transparent hover:border-slate-100"
+                        style={{ color: colors.inactive.text }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor =
+                            colors.active.background;
+                          e.currentTarget.style.color = colors.active.text;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = colors.inactive.text;
+                        }}
+                      >
+                        {subcategory.iconUrl ? (
+                          <img
+                            src={subcategory.iconUrl}
+                            alt=""
+                            className="w-5 h-5 object-contain shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                          />
+                        ) : subcategory.icon ? (
+                          <subcategory.icon className="w-4 h-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        ) : null}
+                        <span className="font-medium">{subDisplayName}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400">
+                  {t("noSubcategories", {
+                    defaultValue: "No subcategories available",
+                  })}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
