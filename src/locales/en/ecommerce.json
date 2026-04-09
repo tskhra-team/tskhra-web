@@ -3,5 +3,62 @@
     "products": "Products",
     "categories": "Categories",
     "deals": "Deals"
+  },
+  "hero": {
+    "title": "Find Everything You Need",
+    "subtitle": "Discover thousands of products from trusted sellers. Shop smart, shop safe.",
+    "searchPlaceholder": "Search for products, brands, categories..."
+  },
+  "featured": {
+    "badge": "Featured",
+    "title": "Featured Items",
+    "description": "Hand-picked products recommended just for you",
+    "viewAll": "View All",
+    "price": "Price",
+    "boosted": "Boosted"
+  },
+  "recent": {
+    "badge": "Just In",
+    "title": "Recently Added",
+    "description": "Fresh listings from our marketplace",
+    "viewAll": "View All",
+    "new": "New",
+    "timeAgo": {
+      "minutes": "{{count}}m ago",
+      "hours": "{{count}}h ago",
+      "days": "{{count}}d ago"
+    }
+  },
+  "categories": {
+    "badge": "Browse",
+    "title": "Popular Categories",
+    "description": "Explore our most popular product categories",
+    "items": "items",
+    "viewAll": "View All Categories"
+  },
+  "howItWorks": {
+    "badge": "Simple Process",
+    "title": "How It Works",
+    "description": "Start shopping in three easy steps",
+    "steps": {
+      "browse": {
+        "title": "Browse & Discover",
+        "description": "Explore thousands of products across multiple categories. Use filters and search to find exactly what you need."
+      },
+      "order": {
+        "title": "Place Your Order",
+        "description": "Add items to your cart, choose your preferred payment method, and complete your purchase securely."
+      },
+      "receive": {
+        "title": "Receive & Enjoy",
+        "description": "Track your order in real-time and receive it at your doorstep. Rate your experience to help our community."
+      }
+    }
+  },
+  "stats": {
+    "totalItems": "Total Items",
+    "totalTrades": "Successful Trades",
+    "totalUsers": "Active Users",
+    "satisfaction": "Satisfaction Rate"
   }
 }
