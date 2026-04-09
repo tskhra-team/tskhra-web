@@ -4,6 +4,12 @@ import { Filter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Slider from "./../shared/slider/slider";
+import FeaturedItems from "./FeaturedItems";
+import HeroSection from "./HeroSection";
+import HowItWorks from "./HowItWorks";
+import PopularCategories from "./PopularCategories";
+import RecentlyAdded from "./RecentlyAdded";
+import StatsCounter from "./StatsCounter";
 
 export default function Ecommerce() {
   const catalogRef = useRef<HTMLDivElement>(null);
@@ -42,7 +48,10 @@ export default function Ecommerce() {
       </div>
 
       <div className="relative">
-        {/* Hero Section with Categories and Slider */}
+        {/* Hero Section with Search */}
+        <HeroSection />
+
+        {/* Categories + Slider Section */}
         <div className="flex flex-col xl:flex-row xl:items-center gap-6 xl:gap-16 px-4 sm:px-4 xl:px-0 pt-0 xl:pt-12 pb-8 container mx-auto">
           {/* Categories Sidebar */}
           <div
@@ -71,12 +80,13 @@ export default function Ecommerce() {
           </div>
         </div>
 
-        {/* Content Section */}
-        <div
-          className="px-4 sm:px-6 xl:px-0 pb-8 container mx-auto"
-          ref={catalogRef}
-        >
-          {/* Ecommerce catalog/content goes here */}
+        {/* Content Sections */}
+        <div ref={catalogRef}>
+          <FeaturedItems />
+          <RecentlyAdded />
+          <PopularCategories />
+          <HowItWorks />
+          <StatsCounter />
         </div>
       </div>
     </div>
