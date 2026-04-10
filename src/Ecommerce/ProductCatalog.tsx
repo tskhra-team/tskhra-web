@@ -34,6 +34,7 @@ export interface Product {
   condition: Condition;
   category: Category;
   subcategory: string;
+  boosted?: boolean;
 }
 
 // ── Store badge colors ─────────────────────────────────────────────────
@@ -48,27 +49,27 @@ export const STORE_COLORS: Record<Store, { bg: string; text: string }> = {
 
 export const MOCK_PRODUCTS: Product[] = [
   // ── Electronics ──
-  { id: 1, name: "Samsung Galaxy S24 Ultra", price: 3499, image: "https://picsum.photos/seed/galaxy24/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "Phones & Tablets" },
-  { id: 2, name: "Apple iPhone 15 Pro Max", price: 4299, image: "https://picsum.photos/seed/iphone15/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "Phones & Tablets" },
+  { id: 1, name: "Samsung Galaxy S24 Ultra", price: 3499, image: "https://picsum.photos/seed/galaxy24/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "Phones & Tablets", boosted: true },
+  { id: 2, name: "Apple iPhone 15 Pro Max", price: 4299, image: "https://picsum.photos/seed/iphone15/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "Phones & Tablets", boosted: true },
   { id: 3, name: "iPad Pro 12.9\" M2", price: 3899, image: "https://picsum.photos/seed/ipadpro/400/400", store: "Alta", condition: "Like New", category: "Electronics", subcategory: "Phones & Tablets" },
-  { id: 4, name: "MacBook Air M3", price: 4999, image: "https://picsum.photos/seed/macbookm3/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "Laptops & Computers" },
+  { id: 4, name: "MacBook Air M3", price: 4999, image: "https://picsum.photos/seed/macbookm3/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "Laptops & Computers", boosted: true },
   { id: 5, name: "Kindle Paperwhite 2024", price: 399, image: "https://picsum.photos/seed/kindle24/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "Laptops & Computers" },
   { id: 6, name: "Samsung 55\" OLED TV", price: 3299, image: "https://picsum.photos/seed/oledtv/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "TV & Audio" },
-  { id: 7, name: "Sony WH-1000XM5 Headphones", price: 899, image: "https://picsum.photos/seed/sonyxm5/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "TV & Audio" },
+  { id: 7, name: "Sony WH-1000XM5 Headphones", price: 899, image: "https://picsum.photos/seed/sonyxm5/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "TV & Audio", boosted: true },
   { id: 8, name: "Canon EOS R50 Camera", price: 2199, image: "https://picsum.photos/seed/canonr50/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "Cameras & Photo" },
-  { id: 9, name: "PlayStation 5 Slim", price: 1599, image: "https://picsum.photos/seed/ps5slim/400/400", store: "Informal", condition: "Like New", category: "Electronics", subcategory: "Gaming Consoles" },
+  { id: 9, name: "PlayStation 5 Slim", price: 1599, image: "https://picsum.photos/seed/ps5slim/400/400", store: "Informal", condition: "Like New", category: "Electronics", subcategory: "Gaming Consoles", boosted: true },
   { id: 10, name: "USB-C Charging Hub 7-in-1", price: 89, image: "https://picsum.photos/seed/usbhub/400/400", store: "Informal", condition: "New", category: "Electronics", subcategory: "Accessories" },
   // ── Fashion & Clothing ──
   { id: 11, name: "Levi's 501 Original Jeans", price: 189, image: "https://picsum.photos/seed/levis501/400/400", store: "Informal", condition: "Like New", category: "Fashion & Clothing", subcategory: "Men's Clothing" },
   { id: 12, name: "The North Face Jacket", price: 599, image: "https://picsum.photos/seed/northface/400/400", store: "Informal", condition: "Used", category: "Fashion & Clothing", subcategory: "Men's Clothing" },
-  { id: 13, name: "Zara Oversized Blazer", price: 219, image: "https://picsum.photos/seed/blazer/400/400", store: "Elit", condition: "New", category: "Fashion & Clothing", subcategory: "Women's Clothing" },
+  { id: 13, name: "Zara Oversized Blazer", price: 219, image: "https://picsum.photos/seed/blazer/400/400", store: "Elit", condition: "New", category: "Fashion & Clothing", subcategory: "Women's Clothing", boosted: true },
   { id: 14, name: "H&M Summer Dress", price: 129, image: "https://picsum.photos/seed/dress/400/400", store: "Alta", condition: "New", category: "Fashion & Clothing", subcategory: "Women's Clothing" },
-  { id: 15, name: "Nike Air Max 90", price: 389, image: "https://picsum.photos/seed/airmax90/400/400", store: "Informal", condition: "Like New", category: "Fashion & Clothing", subcategory: "Shoes" },
+  { id: 15, name: "Nike Air Max 90", price: 389, image: "https://picsum.photos/seed/airmax90/400/400", store: "Informal", condition: "Like New", category: "Fashion & Clothing", subcategory: "Shoes", boosted: true },
   { id: 16, name: "Adidas Ultraboost 23", price: 449, image: "https://picsum.photos/seed/ultraboost/400/400", store: "Elit", condition: "New", category: "Fashion & Clothing", subcategory: "Shoes" },
   { id: 17, name: "Leather Crossbody Bag", price: 179, image: "https://picsum.photos/seed/crossbody/400/400", store: "Alta", condition: "New", category: "Fashion & Clothing", subcategory: "Bags & Accessories" },
   // ── Home & Garden ──
   { id: 18, name: "IKEA KALLAX Shelf Unit", price: 199, image: "https://picsum.photos/seed/kallax/400/400", store: "Informal", condition: "Used", category: "Home & Garden", subcategory: "Furniture" },
-  { id: 19, name: "Philips Air Fryer XXL", price: 449, image: "https://picsum.photos/seed/airfryer/400/400", store: "Alta", condition: "New", category: "Home & Garden", subcategory: "Kitchen & Dining" },
+  { id: 19, name: "Philips Air Fryer XXL", price: 449, image: "https://picsum.photos/seed/airfryer/400/400", store: "Alta", condition: "New", category: "Home & Garden", subcategory: "Kitchen & Dining", boosted: true },
   { id: 20, name: "Dyson V15 Vacuum", price: 1899, image: "https://picsum.photos/seed/dysonv15/400/400", store: "Elit", condition: "New", category: "Home & Garden", subcategory: "Home Decor" },
   { id: 21, name: "Bosch Drill Set 18V", price: 349, image: "https://picsum.photos/seed/boschdrill/400/400", store: "Informal", condition: "Like New", category: "Home & Garden", subcategory: "Garden & Outdoor" },
   { id: 22, name: "Cotton Bedding Set King", price: 159, image: "https://picsum.photos/seed/bedding/400/400", store: "Alta", condition: "New", category: "Home & Garden", subcategory: "Bedding & Bath" },
@@ -79,7 +80,7 @@ export const MOCK_PRODUCTS: Product[] = [
   // ── Sports & Outdoors ──
   { id: 26, name: "Wilson Pro Tennis Racket", price: 299, image: "https://picsum.photos/seed/tennisracket/400/400", store: "Alta", condition: "Used", category: "Sports & Outdoors", subcategory: "Sports Equipment" },
   { id: 27, name: "Yoga Mat Premium Cork", price: 89, image: "https://picsum.photos/seed/yogamat/400/400", store: "Informal", condition: "New", category: "Sports & Outdoors", subcategory: "Exercise & Fitness" },
-  { id: 28, name: "Camping Tent 4-Person", price: 379, image: "https://picsum.photos/seed/tent/400/400", store: "Elit", condition: "New", category: "Sports & Outdoors", subcategory: "Camping & Hiking" },
+  { id: 28, name: "Camping Tent 4-Person", price: 379, image: "https://picsum.photos/seed/tent/400/400", store: "Elit", condition: "New", category: "Sports & Outdoors", subcategory: "Camping & Hiking", boosted: true },
   { id: 29, name: "Mountain Bike 29\"", price: 1299, image: "https://picsum.photos/seed/mtbike/400/400", store: "Informal", condition: "Like New", category: "Sports & Outdoors", subcategory: "Cycling" },
   { id: 30, name: "Hiking Backpack 65L", price: 199, image: "https://picsum.photos/seed/hikebag/400/400", store: "Alta", condition: "New", category: "Sports & Outdoors", subcategory: "Outdoor Gear" },
 ];
