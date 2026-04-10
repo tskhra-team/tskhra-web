@@ -10,6 +10,7 @@ import { Navigate } from "react-router-dom";
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
 const EcommerceCategoryPage = lazy(() => import("@/pages/EcommerceCategoryPage"));
+const ProductCatalogPage = lazy(() => import("@/pages/ProductCatalogPage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
 const SwappingPage = lazy(() => import("@/pages/SwappingPage"));
 const CreateBusinessPage = lazy(() => import("@/pages/CreateBusinessPage"));
@@ -54,6 +55,14 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <EcommerceCategoryPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce/catalog",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ProductCatalogPage />
           </Suspense>
         ),
       },
