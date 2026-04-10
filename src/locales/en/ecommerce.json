@@ -55,6 +55,22 @@
       }
     }
   },
+  "search": {
+    "title": "Search Results",
+    "resultsFor": "Results for \"{{query}}\"",
+    "allProducts": "All Products",
+    "resultCount": "{{count}} products found",
+    "sortBy": "Sort by",
+    "sortNewest": "Newest",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortPopular": "Most Popular",
+    "boostedOnly": "Boosted only",
+    "clearAll": "Clear all",
+    "noResults": "No results found",
+    "noResultsHintQuery": "We couldn't find anything for \"{{query}}\". Try different keywords or adjust your filters.",
+    "noResultsHint": "Try adjusting your filters to see more products."
+  },
   "stats": {
     "totalItems": "Total Items",
     "totalTrades": "Successful Trades",
