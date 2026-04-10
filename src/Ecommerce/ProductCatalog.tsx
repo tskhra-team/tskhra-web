@@ -455,7 +455,8 @@ export default function ProductCatalog() {
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                   {paginated.map((product) => (
-                    <div
+                    <Link
+                      to={`/ecommerce/product/${product.id}`}
                       key={product.id}
                       className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
                     >
@@ -495,7 +496,7 @@ export default function ProductCatalog() {
                           {product.price}₾
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
 

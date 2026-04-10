@@ -12,6 +12,7 @@ const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
 const EcommerceCategoryPage = lazy(() => import("@/pages/EcommerceCategoryPage"));
 const ProductCatalogPage = lazy(() => import("@/pages/ProductCatalogPage"));
 const SearchResultsPage = lazy(() => import("@/pages/SearchResultsPage"));
+const ProductDetailPage = lazy(() => import("@/pages/ProductDetailPage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
 const SwappingPage = lazy(() => import("@/pages/SwappingPage"));
 const CreateBusinessPage = lazy(() => import("@/pages/CreateBusinessPage"));
@@ -72,6 +73,14 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <SearchResultsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce/product/:id",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ProductDetailPage />
           </Suspense>
         ),
       },
