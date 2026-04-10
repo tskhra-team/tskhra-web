@@ -4,7 +4,8 @@ import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
 import { getPlatformColors } from "@/shared/categories/platformColors";
 import { useCategories } from "@/shared/categories/useCategories";
 import type { CategoryItem } from "@/shared/categories/types";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowRight } from "lucide-react";
+import { MOCK_PRODUCTS, STORE_COLORS } from "./ProductCatalog";
 
 export default function EcommerceCategoryPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -197,40 +198,110 @@ export default function EcommerceCategoryPage() {
               </div>
             )}
 
-          {/* Placeholder for products listing */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-8 sm:p-12 text-center">
-            <div className="max-w-md mx-auto space-y-4">
-              <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
-                style={{ backgroundColor: colors.active.background }}
-              >
-                {category.icon && (
-                  <category.icon
-                    className="w-7 h-7"
+          {/* Products grid */}
+          {(() => {
+            const categoryProducts = activeSubcategory
+              ? MOCK_PRODUCTS.filter(
+                  (p) => p.subcategory.toLowerCase() === activeSubcategory.name.toLowerCase()
+                )
+              : MOCK_PRODUCTS.filter(
+                  (p) => p.category.toLowerCase() === category.name.toLowerCase()
+                );
+            return categoryProducts.length > 0 ? (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-sm text-slate-500">
+                    {categoryProducts.length}{" "}
+                    {t("productsFound", { defaultValue: "products found" })}
+                  </p>
+                  <Link
+                    to={`/ecommerce/catalog?category=${encodeURIComponent(
+                      categoryProducts[0].category
+                    )}`}
+                    className="hidden sm:flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-80"
                     style={{ color: colors.active.icon }}
-                  />
-                )}
+                  >
+                    {t("viewAllInCatalog", {
+                      defaultValue: "View all in catalog",
+                    })}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {categoryProducts.map((product) => (
+                    <Link
+                      to={`/ecommerce/product/${product.id}`}
+                      key={product.id}
+                      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
+                    >
+                      <div className="relative aspect-square overflow-hidden bg-slate-50">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                        <span
+                          className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[11px] font-bold"
+                          style={{
+                            backgroundColor: STORE_COLORS[product.store].bg,
+                            color: STORE_COLORS[product.store].text,
+                          }}
+                        >
+                          {product.store}
+                        </span>
+                        <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
+                          {product.condition}
+                        </span>
+                      </div>
+                      <div className="p-3">
+                        <h3 className="font-semibold text-slate-900 text-sm truncate">
+                          {product.name}
+                        </h3>
+                        <p className="text-base font-bold text-slate-900 mt-1">
+                          {product.price}₾
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-slate-800">
-                {activeSubcategory
-                  ? getCategoryDisplayName(activeSubcategory)
-                  : categoryName}
-              </h3>
-              <p className="text-sm text-slate-500">
-                {t("productsComingSoon", {
-                  defaultValue:
-                    "Products will appear here once the catalog is connected.",
-                })}
-              </p>
-              <Link
-                to="/ecommerce"
-                className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: colors.active.icon }}
-              >
-                {t("backToShop", { defaultValue: "Back to shop" })}
-              </Link>
-            </div>
-          </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-slate-100 p-8 sm:p-12 text-center">
+                <div className="max-w-md mx-auto space-y-4">
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
+                    style={{ backgroundColor: colors.active.background }}
+                  >
+                    {category.icon && (
+                      <category.icon
+                        className="w-7 h-7"
+                        style={{ color: colors.active.icon }}
+                      />
+                    )}
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-800">
+                    {activeSubcategory
+                      ? getCategoryDisplayName(activeSubcategory)
+                      : categoryName}
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    {t("noProductsYet", {
+                      defaultValue:
+                        "No products in this category yet.",
+                    })}
+                  </p>
+                  <Link
+                    to="/ecommerce/catalog"
+                    className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: colors.active.icon }}
+                  >
+                    {t("browseCatalog", { defaultValue: "Browse full catalog" })}
+                  </Link>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </>

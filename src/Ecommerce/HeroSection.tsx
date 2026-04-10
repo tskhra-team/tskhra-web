@@ -99,7 +99,7 @@ export default function HeroSection() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/ecommerce?search=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/ecommerce/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
