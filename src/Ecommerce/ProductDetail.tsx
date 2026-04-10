@@ -14,7 +14,6 @@ import {
   MOCK_PRODUCTS,
   STORE_COLORS,
   type Store,
-  type Product,
 } from "./ProductCatalog";
 
 // ── Multi-store pricing data ──────────────────────────────────────────

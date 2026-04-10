@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
-  Search,
   SlidersHorizontal,
   X,
   ChevronRight,
