@@ -2,7 +2,8 @@ import type { TFunction } from "i18next";
 import * as yup from "yup";
 
 export const createPostItem = (t: TFunction) => {
-  const ITEM_CONDITIONS = ["new", "good", "fair", "poor"] as const;
+  const ITEM_CONDITIONS = ["NEW", "LIKE_NEW", "USED", "DAMAGED"] as const;
+  const TRADE_RANGE = ["CITY_WIDE", "COUNTRY_WIDE"] as const;
   const ALLOWED_FILE_TYPES = [
     "image/jpeg",
     "image/jpg",
@@ -14,22 +15,14 @@ export const createPostItem = (t: TFunction) => {
 
   const fileValidation = yup
     .mixed<File>()
-    .test(
-      "fileSize",
-      t("swapping:validation.fileSizeTooLarge"),
-      (value) => {
-        if (!value) return true;
-        return value.size <= MAX_FILE_SIZE;
-      },
-    )
-    .test(
-      "fileType",
-      t("swapping:validation.fileTypeInvalid"),
-      (value) => {
-        if (!value) return true;
-        return ALLOWED_FILE_TYPES.includes(value.type);
-      },
-    );
+    .test("fileSize", t("swapping:validation.fileSizeTooLarge"), (value) => {
+      if (!value) return true;
+      return value.size <= MAX_FILE_SIZE;
+    })
+    .test("fileType", t("swapping:validation.fileTypeInvalid"), (value) => {
+      if (!value) return true;
+      return ALLOWED_FILE_TYPES.includes(value.type);
+    });
 
   return yup.object({
     title: yup
@@ -55,6 +48,12 @@ export const createPostItem = (t: TFunction) => {
         return /^\d+(\.\d{1,2})?$/.test(value.toString());
       }),
 
+    cityId: yup.string().required(t("swapping:validation.cityRequired")),
+
+    tradeRange: yup
+      .string()
+      .required(t("swapping:validation.conditionRequired"))
+      .oneOf(TRADE_RANGE, t("swapping:validation.conditionInvalid")),
     categoryId: yup
       .string()
       .required(t("swapping:validation.categoryRequired")),
@@ -73,37 +72,37 @@ export const createPostItem = (t: TFunction) => {
       .min(1, t("swapping:validation.photoMin"))
       .max(5, t("swapping:validation.photoMax")),
 
-    desireCategories: yup
+    desiredCategories: yup
       .array()
       .of(yup.string().required())
       .min(1, t("swapping:validation.desireCatRequired"))
       .required(t("swapping:validation.desireCatRequired")),
 
-    desireMinPrice: yup
-      .number()
-      .typeError(t("swapping:validation.desirePriceRequired"))
-      .required(t("swapping:validation.desirePriceRequired"))
-      .min(1, t("swapping:validation.priceMin"))
-      .max(1000000, t("swapping:validation.priceMax"))
-      .test("max-decimals", t("swapping:validation.maxDecimals"), (value) => {
-        if (value === undefined || value === null) return true;
-        return /^\d+(\.\d{1,2})?$/.test(value.toString());
-      }),
+    // desireMinPrice: yup
+    //   .number()
+    //   .typeError(t("swapping:validation.desirePriceRequired"))
+    //   .required(t("swapping:validation.desirePriceRequired"))
+    //   .min(1, t("swapping:validation.priceMin"))
+    //   .max(1000000, t("swapping:validation.priceMax"))
+    //   .test("max-decimals", t("swapping:validation.maxDecimals"), (value) => {
+    //     if (value === undefined || value === null) return true;
+    //     return /^\d+(\.\d{1,2})?$/.test(value.toString());
+    //   }),
 
-    desireMaxPrice: yup
-      .number()
-      .typeError(t("swapping:validation.desirePriceRequired"))
-      .required(t("swapping:validation.desirePriceRequired"))
-      .min(1, t("swapping:validation.priceMin"))
-      .max(1000000, t("swapping:validation.priceMax"))
-      .min(
-        yup.ref("desireMinPrice"),
-        t("swapping:validation.maxMoreThanMin"),
-      )
-      .test("max-decimals", t("swapping:validation.maxDecimals"), (value) => {
-        if (value === undefined || value === null) return true;
-        return /^\d+(\.\d{1,2})?$/.test(value.toString());
-      }),
+    // desireMaxPrice: yup
+    //   .number()
+    //   .typeError(t("swapping:validation.desirePriceRequired"))
+    //   .required(t("swapping:validation.desirePriceRequired"))
+    //   .min(1, t("swapping:validation.priceMin"))
+    //   .max(1000000, t("swapping:validation.priceMax"))
+    //   .min(
+    //     yup.ref("desireMinPrice"),
+    //     t("swapping:validation.maxMoreThanMin"),
+    //   )
+    //   .test("max-decimals", t("swapping:validation.maxDecimals"), (value) => {
+    //     if (value === undefined || value === null) return true;
+    //     return /^\d+(\.\d{1,2})?$/.test(value.toString());
+    //   }),
   });
 };
 

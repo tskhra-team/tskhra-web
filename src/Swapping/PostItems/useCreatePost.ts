@@ -5,12 +5,13 @@ import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
 interface PostCreateResponse {
-  postId: string;
+  itemId: string;
 }
 
 const createPost = async (data: CreatePostItemPostData) => {
-  const { photos, categoryId, ...rest } = data;
-  const response = await privateInstance.post("/api/items", rest);
+  const { photos, categoryId, subCategoryId, ...rest } = data;
+  const finalData = { categoryId: subCategoryId, ...rest };
+  const response = await privateInstance.post("/items", finalData);
 
   return response.data;
 };
