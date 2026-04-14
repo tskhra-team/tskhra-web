@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CategoriesLayout from "@/shared/categories/Categories";
+import HeroSwipe from "@/Swapping/HeroSwipe";
 import { Filter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -40,6 +41,8 @@ export default function Swapping() {
         <div className="absolute top-20 left-20 w-96 h-96 bg-red-400/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-rose-400/10 rounded-full blur-3xl" />
       </div>
+
+      <HeroSwipe />
 
       <div className="relative">
         {/* Hero Section with Categories and Slider */}
