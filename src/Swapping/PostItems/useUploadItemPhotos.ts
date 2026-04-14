@@ -21,7 +21,7 @@ const uploadItemPhotos = async ({
     formData.append("file", file);
 
     const response = await privateInstance.post<UploadPhotoResponse>(
-      `post/${postId}/images`,
+      `items/${postId}/images`,
       formData,
       {
         headers: {

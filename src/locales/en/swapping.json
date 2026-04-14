@@ -6,6 +6,7 @@
   },
   "postItem": {
     "pageTitle": "Post New Item",
+    "back": "Go back",
     "pageSubtitle": "List an item you'd like to trade with the community",
     "basicInfo": "Basic Information",
     "basicInfoSub": "Provide details about your item",
@@ -20,9 +21,9 @@
     "subcategory": "Subcategory",
     "condition": "Condition",
     "conditionNew": "New",
-    "conditionGood": "Good",
-    "conditionFair": "Fair",
-    "conditionPoor": "Poor",
+    "conditionGood": "Like new",
+    "conditionFair": "Used",
+    "conditionPoor": "Damaged",
     "photos": "Photos",
     "photosSub": "Upload at least one photo (multiple supported)",
     "desiredItems": "What You're Looking For",
@@ -30,8 +31,16 @@
     "desiredCategories": "Desired Item Categories",
     "minValue": "Minimum Value (₾)",
     "maxValue": "Maximum Value (₾)",
+    "tradeRange": "Trade Range",
+    "tradeRangeCityWide": "City Wide",
+    "tradeRangeCountryWide": "Country Wide",
     "cancel": "Cancel",
     "submit": "Create Item"
+  },
+  "hero": {
+    "searchPlaceholder": "What do you want?",
+    "categoryPlaceholder": "Category",
+    "findSwaps": "Find Swaps"
   },
   "validation": {
     "titleRequired": "Title is required",
@@ -41,6 +50,7 @@
     "descMin": "Description must contain at least 10 characters",
     "descMax": "Description can't contain more than 100 characters",
     "estValueRequired": "Estimated value is required",
+    "cityRequired": "City is required",
     "priceMin": "Minimum price is 1",
     "priceMax": "Maximum price is 1,000,000",
     "categoryRequired": "Category is required",
