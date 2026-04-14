@@ -85,10 +85,10 @@ export default function FeaturedItems() {
   };
 
   return (
-    <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-14">
+    <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-14">
       <div className="container mx-auto">
         {/* Header */}
-        <div className="flex items-end justify-between mb-8">
+        <div className="flex items-end justify-between mb-3 sm:mb-8">
           <div>
             <span className="inline-block px-3.5 py-1 rounded-full bg-[#0f0f2d] text-white text-xs font-semibold uppercase tracking-wider mb-3">
               {t("featured.badge")}
@@ -126,14 +126,14 @@ export default function FeaturedItems() {
           {MOCK_FEATURED.map((item) => (
             <div
               key={item.id}
-              className="group min-w-55 sm:min-w-65 cursor-pointer snap-start"
+              className="group w-[calc((100%-2*1rem)/3)] sm:w-[calc((100%-3*1rem)/4)] lg:w-[calc((100%-4*1rem)/5)] shrink-0 cursor-pointer snap-start"
             >
               {/* Image */}
-              <div className="relative aspect-3/4 rounded-2xl overflow-hidden bg-[#f5f5f7] mb-3">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#f5f5f7] mb-3">
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
                 {item.boosted && (
