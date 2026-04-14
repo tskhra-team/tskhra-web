@@ -3,11 +3,13 @@ import { Link, useParams } from "react-router-dom";
 import {
   ChevronRight,
   ExternalLink,
+  Heart,
   Star,
   Trophy,
   Package,
   ShieldCheck,
 } from "lucide-react";
+import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { useTranslation } from "react-i18next";
 import { getPlatformColors } from "@/shared/categories/platformColors";
 import {
@@ -342,6 +344,7 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
+  const { isFavorite, toggleFavorite } = useEcommerceFavorites();
 
   const product = MOCK_PRODUCTS.find((p) => p.id === Number(id));
   const details = MOCK_PRODUCT_DETAILS.find((d) => d.id === Number(id));
@@ -444,6 +447,19 @@ export default function ProductDetail() {
               <span className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium text-slate-700">
                 {product.condition}
               </span>
+              {/* Favorite button */}
+              <button
+                onClick={() => toggleFavorite(product.id)}
+                className="absolute bottom-4 right-4 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
+              >
+                <Heart
+                  className={`w-5 h-5 transition-colors ${
+                    isFavorite(product.id)
+                      ? "fill-rose-500 text-rose-500"
+                      : "text-slate-400 hover:text-rose-400"
+                  }`}
+                />
+              </button>
             </div>
           </div>
 

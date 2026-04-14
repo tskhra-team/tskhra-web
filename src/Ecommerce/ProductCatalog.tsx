@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal, X, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronRight, Heart } from "lucide-react";
+import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { useTranslation } from "react-i18next";
 import {
   Pagination,
@@ -102,6 +103,7 @@ const ITEMS_PER_PAGE = 8;
 export default function ProductCatalog() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
+  const { isFavorite, toggleFavorite } = useEcommerceFavorites();
   const [searchParams] = useSearchParams();
 
   // Read initial category from URL (?category=Electronics)
@@ -482,6 +484,23 @@ export default function ProductCatalog() {
                         <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
                           {product.condition}
                         </span>
+                        {/* Favorite button */}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleFavorite(product.id);
+                          }}
+                          className="absolute bottom-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
+                        >
+                          <Heart
+                            className={`w-4 h-4 transition-colors ${
+                              isFavorite(product.id)
+                                ? "fill-rose-500 text-rose-500"
+                                : "text-slate-400 hover:text-rose-400"
+                            }`}
+                          />
+                        </button>
                       </div>
 
                       {/* Info */}
