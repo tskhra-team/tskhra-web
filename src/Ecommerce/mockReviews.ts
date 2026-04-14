@@ -1,0 +1,268 @@
+export interface Review {
+  id: number;
+  productId: number;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+export const MOCK_REVIEWS: Review[] = [
+  {
+    id: 1,
+    productId: 1,
+    userId: "u1",
+    userName: "Nino Kapanadze",
+    userAvatar: "https://i.pravatar.cc/150?img=1",
+    rating: 5,
+    comment: "Amazing phone! The camera quality is outstanding and the battery lasts all day. Highly recommend.",
+    date: "2026-03-28",
+  },
+  {
+    id: 2,
+    productId: 1,
+    userId: "u2",
+    userName: "Giorgi Beridze",
+    userAvatar: "https://i.pravatar.cc/150?img=3",
+    rating: 4,
+    comment: "Great device overall. The S Pen is very useful for note-taking. Only minor issue is the weight.",
+    date: "2026-03-15",
+  },
+  {
+    id: 3,
+    productId: 1,
+    userId: "u3",
+    userName: "Mariam Tsereteli",
+    userAvatar: "https://i.pravatar.cc/150?img=5",
+    rating: 5,
+    comment: "Best Samsung phone I've ever owned. The display is incredible!",
+    date: "2026-02-20",
+  },
+  {
+    id: 4,
+    productId: 2,
+    userId: "u4",
+    userName: "Luka Datunashvili",
+    userAvatar: "https://i.pravatar.cc/150?img=7",
+    rating: 5,
+    comment: "Switched from Android and I'm not looking back. The A17 Pro chip is blazing fast.",
+    date: "2026-04-01",
+  },
+  {
+    id: 5,
+    productId: 2,
+    userId: "u1",
+    userName: "Nino Kapanadze",
+    userAvatar: "https://i.pravatar.cc/150?img=1",
+    rating: 4,
+    comment: "Love the titanium design and camera. USB-C is a welcome change.",
+    date: "2026-03-10",
+  },
+  {
+    id: 6,
+    productId: 3,
+    userId: "u5",
+    userName: "Ana Lomidze",
+    userAvatar: "https://i.pravatar.cc/150?img=9",
+    rating: 5,
+    comment: "Perfect for my design work. The M2 chip handles everything I throw at it.",
+    date: "2026-03-22",
+  },
+  {
+    id: 7,
+    productId: 3,
+    userId: "u2",
+    userName: "Giorgi Beridze",
+    userAvatar: "https://i.pravatar.cc/150?img=3",
+    rating: 4,
+    comment: "Great tablet but the price is quite high. Display quality is top notch though.",
+    date: "2026-02-28",
+  },
+  {
+    id: 8,
+    productId: 4,
+    userId: "u3",
+    userName: "Mariam Tsereteli",
+    userAvatar: "https://i.pravatar.cc/150?img=5",
+    rating: 5,
+    comment: "Incredibly thin and powerful. Battery life is exactly as advertised.",
+    date: "2026-03-05",
+  },
+  {
+    id: 9,
+    productId: 5,
+    userId: "u6",
+    userName: "Dato Kvaratskhelia",
+    userAvatar: "https://i.pravatar.cc/150?img=11",
+    rating: 5,
+    comment: "Perfect e-reader. The warm light feature is great for reading at night.",
+    date: "2026-04-05",
+  },
+  {
+    id: 10,
+    productId: 5,
+    userId: "u4",
+    userName: "Luka Datunashvili",
+    userAvatar: "https://i.pravatar.cc/150?img=7",
+    rating: 4,
+    comment: "Love it for reading. Waterproof design is a nice bonus for beach reading.",
+    date: "2026-03-18",
+  },
+  {
+    id: 11,
+    productId: 6,
+    userId: "u1",
+    userName: "Nino Kapanadze",
+    userAvatar: "https://i.pravatar.cc/150?img=1",
+    rating: 5,
+    comment: "The OLED picture quality is stunning. Movies look incredible on this TV.",
+    date: "2026-03-30",
+  },
+  {
+    id: 12,
+    productId: 7,
+    userId: "u5",
+    userName: "Ana Lomidze",
+    userAvatar: "https://i.pravatar.cc/150?img=9",
+    rating: 5,
+    comment: "Best noise-cancelling headphones on the market. Sound quality is superb.",
+    date: "2026-04-02",
+  },
+  {
+    id: 13,
+    productId: 7,
+    userId: "u6",
+    userName: "Dato Kvaratskhelia",
+    userAvatar: "https://i.pravatar.cc/150?img=11",
+    rating: 4,
+    comment: "Very comfortable for long listening sessions. ANC is impressive.",
+    date: "2026-03-12",
+  },
+  {
+    id: 14,
+    productId: 8,
+    userId: "u2",
+    userName: "Giorgi Beridze",
+    userAvatar: "https://i.pravatar.cc/150?img=3",
+    rating: 4,
+    comment: "Great entry-level mirrorless camera. Perfect for starting content creation.",
+    date: "2026-03-25",
+  },
+  {
+    id: 15,
+    productId: 9,
+    userId: "u3",
+    userName: "Mariam Tsereteli",
+    userAvatar: "https://i.pravatar.cc/150?img=5",
+    rating: 5,
+    comment: "The PS5 Slim is great. Smaller design and all the same power. Love it!",
+    date: "2026-04-08",
+  },
+  {
+    id: 16,
+    productId: 9,
+    userId: "u4",
+    userName: "Luka Datunashvili",
+    userAvatar: "https://i.pravatar.cc/150?img=7",
+    rating: 4,
+    comment: "Haptic feedback on the DualSense is amazing. Loading times are non-existent.",
+    date: "2026-03-20",
+  },
+  {
+    id: 17,
+    productId: 11,
+    userId: "u5",
+    userName: "Ana Lomidze",
+    userAvatar: "https://i.pravatar.cc/150?img=9",
+    rating: 5,
+    comment: "Classic fit that never goes out of style. Quality denim as always.",
+    date: "2026-03-14",
+  },
+  {
+    id: 18,
+    productId: 15,
+    userId: "u1",
+    userName: "Nino Kapanadze",
+    userAvatar: "https://i.pravatar.cc/150?img=1",
+    rating: 5,
+    comment: "Iconic sneakers. Comfortable right out of the box, great for daily wear.",
+    date: "2026-04-03",
+  },
+  {
+    id: 19,
+    productId: 15,
+    userId: "u6",
+    userName: "Dato Kvaratskhelia",
+    userAvatar: "https://i.pravatar.cc/150?img=11",
+    rating: 4,
+    comment: "Love the design. True to size and the Air cushioning is as comfortable as ever.",
+    date: "2026-03-08",
+  },
+  {
+    id: 20,
+    productId: 20,
+    userId: "u2",
+    userName: "Giorgi Beridze",
+    userAvatar: "https://i.pravatar.cc/150?img=3",
+    rating: 5,
+    comment: "The laser dust detection actually makes a difference. You can see what you're cleaning.",
+    date: "2026-04-10",
+  },
+  {
+    id: 21,
+    productId: 23,
+    userId: "u3",
+    userName: "Mariam Tsereteli",
+    userAvatar: "https://i.pravatar.cc/150?img=5",
+    rating: 5,
+    comment: "Beautiful collector's set. The hardcover quality is excellent.",
+    date: "2026-03-17",
+  },
+  {
+    id: 22,
+    productId: 27,
+    userId: "u5",
+    userName: "Ana Lomidze",
+    userAvatar: "https://i.pravatar.cc/150?img=9",
+    rating: 4,
+    comment: "Non-slip grip is excellent. Cork surface feels natural and antimicrobial is a plus.",
+    date: "2026-04-06",
+  },
+  {
+    id: 23,
+    productId: 29,
+    userId: "u4",
+    userName: "Luka Datunashvili",
+    userAvatar: "https://i.pravatar.cc/150?img=7",
+    rating: 4,
+    comment: "Solid mountain bike for the price. Hydraulic brakes are responsive on trails.",
+    date: "2026-03-29",
+  },
+  {
+    id: 24,
+    productId: 29,
+    userId: "u6",
+    userName: "Dato Kvaratskhelia",
+    userAvatar: "https://i.pravatar.cc/150?img=11",
+    rating: 5,
+    comment: "Great trail bike. The front suspension handles rough terrain really well.",
+    date: "2026-03-02",
+  },
+];
+
+export function getReviewsForProduct(productId: number): Review[] {
+  return MOCK_REVIEWS.filter((r) => r.productId === productId);
+}
+
+export function getAverageRating(productId: number): number {
+  const reviews = getReviewsForProduct(productId);
+  if (reviews.length === 0) return 0;
+  const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+  return sum / reviews.length;
+}
+
+export function getUserReviews(userId: string): Review[] {
+  return MOCK_REVIEWS.filter((r) => r.userId === userId);
+}

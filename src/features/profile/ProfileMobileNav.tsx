@@ -10,6 +10,7 @@ import {
   History,
   LayoutDashboard,
   LogOut,
+  MessageSquare,
   Shield,
   UserCircle,
 } from "lucide-react";
@@ -43,6 +44,7 @@ export default function ProfileMobileNav({
     { value: "profile", label: t("tabs.profile"), icon: UserCircle },
     { value: "history", label: t("tabs.history"), icon: History },
     { value: "favorites", label: t("tabs.favorites"), icon: Heart },
+    { value: "reviews", label: t("tabs.reviews"), icon: MessageSquare },
     { value: "add-business", label: t("tabs.addBusiness"), icon: Building2 },
     { value: "security", label: t("tabs.security"), icon: Shield },
   ];
