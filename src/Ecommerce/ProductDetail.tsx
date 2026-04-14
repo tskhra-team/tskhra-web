@@ -1,30 +1,30 @@
-import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import StarRating from "@/components/ui/star-rating";
+import { useAuth } from "@/context/useAuth";
+import useGetProfile from "@/features/profile/hooks/useGetProfile";
+import { getPlatformColors } from "@/shared/categories/platformColors";
 import {
   ChevronRight,
   ExternalLink,
   Heart,
-  Star,
-  Trophy,
-  Package,
-  ShieldCheck,
   MessageSquare,
+  Package,
   Send,
+  ShieldCheck,
+  Star,
   Trash2,
+  Trophy,
 } from "lucide-react";
-import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getPlatformColors } from "@/shared/categories/platformColors";
+import { Link, useParams } from "react-router-dom";
 import {
   MOCK_PRODUCTS,
   STORE_COLORS,
   type Store,
 } from "./ProductCatalog";
-import { getReviewsForProduct, getAverageRating, type Review } from "./mockReviews";
-import StarRating from "@/components/ui/star-rating";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useGetProfile from "@/features/profile/hooks/useGetProfile";
-import { useAuth } from "@/context/useAuth";
+import { getAverageRating, getReviewsForProduct, type Review } from "./mockReviews";
 
 // ── Multi-store pricing data ──────────────────────────────────────────
 
@@ -534,7 +534,7 @@ export default function ProductDetail() {
             {product.category}
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-slate-800 font-medium truncate max-w-[200px] sm:max-w-none">
+          <span className="text-slate-800 font-medium truncate max-w-50 sm:max-w-none">
             {product.name}
           </span>
         </nav>

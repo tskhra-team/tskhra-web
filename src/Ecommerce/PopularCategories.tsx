@@ -12,21 +12,21 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
-  { key: "electronics", icon: Laptop, itemCount: 2_340 },
-  { key: "fashion", icon: Shirt, itemCount: 5_120 },
-  { key: "home", icon: Home, itemCount: 1_890 },
-  { key: "sports", icon: Dumbbell, itemCount: 980 },
-  { key: "books", icon: BookOpen, itemCount: 3_450 },
-  { key: "gaming", icon: Gamepad2, itemCount: 1_560 },
-  { key: "kids", icon: Baby, itemCount: 2_100 },
-  { key: "automotive", icon: Car, itemCount: 760 },
+  { key: "electronics", slug: "electronics", icon: Laptop, itemCount: 2_340 },
+  { key: "fashion", slug: "fashion-&-clothing", icon: Shirt, itemCount: 5_120 },
+  { key: "home", slug: "home-&-garden", icon: Home, itemCount: 1_890 },
+  { key: "sports", slug: "sports-&-outdoors", icon: Dumbbell, itemCount: 980 },
+  { key: "books", slug: "books-&-media", icon: BookOpen, itemCount: 3_450 },
+  { key: "gaming", slug: "gaming", icon: Gamepad2, itemCount: 1_560 },
+  { key: "kids", slug: "kids-&-baby", icon: Baby, itemCount: 2_100 },
+  { key: "automotive", slug: "automotive", icon: Car, itemCount: 760 },
 ];
 
 const CATEGORY_NAMES: Record<string, { en: string; ka: string }> = {
   electronics: { en: "Electronics", ka: "ელექტრონიკა" },
-  fashion: { en: "Fashion", ka: "მოდა" },
+  fashion: { en: "Fashion & Clothing", ka: "მოდა და ტანსაცმელი" },
   home: { en: "Home & Garden", ka: "სახლი და ბაღი" },
-  sports: { en: "Sports & Fitness", ka: "სპორტი" },
+  sports: { en: "Sports & Outdoors", ka: "სპორტი" },
   books: { en: "Books & Media", ka: "წიგნები" },
   gaming: { en: "Gaming", ka: "გეიმინგი" },
   kids: { en: "Kids & Baby", ka: "საბავშვო" },
@@ -39,7 +39,7 @@ export default function PopularCategories() {
   const lang = i18n.language === "ka" ? "ka" : "en";
 
   return (
-    <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-14">
+    <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-14">
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
@@ -59,8 +59,11 @@ export default function PopularCategories() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat.key}
-              onClick={() => navigate(`/ecommerce?category=${cat.key}`)}
-              className="group flex flex-col items-center gap-3 p-6 sm:p-8 rounded-2xl bg-[#f8f8fa] hover:bg-[#0f0f2d] transition-colors duration-300 text-center"
+              onClick={() => {
+                navigate(`/ecommerce/category/${cat.slug}`);
+                window.scrollTo(0, 0);
+              }}
+              className="group flex flex-col items-center gap-3 p-6 sm:p-8 rounded-2xl bg-[#f8f8fa] hover:bg-[#0f0f2d] transition-colors duration-300 text-center cursor-pointer"
             >
               <div className="w-12 h-12 rounded-full bg-white group-hover:bg-white/15 flex items-center justify-center transition-colors duration-300">
                 <cat.icon
