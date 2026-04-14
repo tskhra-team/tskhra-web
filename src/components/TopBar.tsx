@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/useAuth";
+import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import useGetUser from "@/features/user/useGetUser";
 import useGetUserNotifications from "@/features/user/useGetUserNotifications";
 import { Bell, Heart, LayoutDashboard, LogOut, User } from "lucide-react";
@@ -29,9 +30,11 @@ export default function TopBar() {
   const { data: notificationsCount } = useGetUserNotifications(
     user?.isVerified,
   );
-  const favoritesCount = user?.favoriteBusinesses
+  const { favoriteIds: ecommerceFavoriteIds } = useEcommerceFavorites();
+  const bookingFavoritesCount = user?.favoriteBusinesses
     ? new Set(user.favoriteBusinesses).size
     : 0;
+  const favoritesCount = bookingFavoritesCount + ecommerceFavoriteIds.length;
   let fullName = user?.userName;
   if (user?.firstName && user?.lastName) {
     fullName = user?.firstName + " " + user?.lastName;
@@ -60,7 +63,14 @@ export default function TopBar() {
         {!isVerification && <LanguageSwitcher />}
         {isAuthenticated && (
           <button
-            onClick={() => navigate("/profile?section=favorites")}
+            onClick={() => {
+              const favTab = pathname.includes("/ecommerce")
+                ? "ecommerce"
+                : pathname.includes("/swapping")
+                  ? "swapping"
+                  : "booking";
+              navigate(`/profile?section=favorites&favTab=${favTab}`);
+            }}
             className={`relative p-2 rounded-full transition-colors cursor-pointer ${isVerification ? "hover:bg-white/10 text-white" : "hover:bg-rose-50 text-slate-600 hover:text-rose-500"}`}
             title={t("auth.favorites", { defaultValue: "Favorites" })}
           >

@@ -4,7 +4,8 @@ import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
 import { getPlatformColors } from "@/shared/categories/platformColors";
 import { useCategories } from "@/shared/categories/useCategories";
 import type { CategoryItem } from "@/shared/categories/types";
-import { ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronRight, ArrowRight, Heart } from "lucide-react";
+import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { MOCK_PRODUCTS, STORE_COLORS } from "./ProductCatalog";
 
 export default function EcommerceCategoryPage() {
@@ -16,6 +17,7 @@ export default function EcommerceCategoryPage() {
   const { t: tEcom } = useTranslation("ecommerce");
   const navigate = useNavigate();
   const colors = getPlatformColors("ecommerce");
+  const { isFavorite, toggleFavorite } = useEcommerceFavorites();
 
   // Find the category by slug
   const category = categories?.find(
@@ -253,6 +255,23 @@ export default function EcommerceCategoryPage() {
                         <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
                           {product.condition}
                         </span>
+                        {/* Favorite button */}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleFavorite(product.id);
+                          }}
+                          className="absolute bottom-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
+                        >
+                          <Heart
+                            className={`w-4 h-4 transition-colors ${
+                              isFavorite(product.id)
+                                ? "fill-rose-500 text-rose-500"
+                                : "text-slate-400 hover:text-rose-400"
+                            }`}
+                          />
+                        </button>
                       </div>
                       <div className="p-3">
                         <h3 className="font-semibold text-slate-900 text-sm truncate">

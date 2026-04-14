@@ -5,9 +5,11 @@ import {
   X,
   ChevronRight,
   ChevronDown,
+  Heart,
   Sparkles,
   SearchX,
 } from "lucide-react";
+import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { useTranslation } from "react-i18next";
 import {
   Pagination,
@@ -53,6 +55,7 @@ const ITEMS_PER_PAGE = 8;
 export default function SearchResults() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
+  const { isFavorite, toggleFavorite } = useEcommerceFavorites();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // ── Read URL params ───────────────────────────────────────────────
@@ -615,6 +618,23 @@ export default function SearchResults() {
                             {t("featured.boosted", { defaultValue: "Boosted" })}
                           </div>
                         )}
+                        {/* Favorite button */}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleFavorite(product.id);
+                          }}
+                          className="absolute bottom-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
+                        >
+                          <Heart
+                            className={`w-4 h-4 transition-colors ${
+                              isFavorite(product.id)
+                                ? "fill-rose-500 text-rose-500"
+                                : "text-slate-400 hover:text-rose-400"
+                            }`}
+                          />
+                        </button>
                       </div>
 
                       {/* Info */}
