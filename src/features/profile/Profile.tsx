@@ -20,6 +20,7 @@ const ProfileSettings = lazy(
 );
 const HistoryTab = lazy(() => import("@/features/profile/HistoryTab"));
 const FavoritesTab = lazy(() => import("@/features/profile/FavoritesTab"));
+const ReviewsTab = lazy(() => import("@/features/profile/ReviewsTab"));
 const AddBusinessTab = lazy(() => import("@/features/profile/AddBusinessTab"));
 const SecurityTab = lazy(() => import("@/features/profile/SecurityTab"));
 
@@ -51,6 +52,9 @@ export default function Profile() {
       </Suspense>
       <Suspense fallback={<InfoTabSkeleton />}>
         {tab === "favorites" && <FavoritesTab />}
+      </Suspense>
+      <Suspense fallback={<InfoTabSkeleton />}>
+        {tab === "reviews" && <ReviewsTab />}
       </Suspense>
       <Suspense fallback={<InfoTabSkeleton />}>
         {tab === "add-business" && <AddBusinessTab />}

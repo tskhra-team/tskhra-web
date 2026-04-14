@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ChevronRight,
@@ -8,6 +8,9 @@ import {
   Trophy,
   Package,
   ShieldCheck,
+  MessageSquare,
+  Send,
+  Trash2,
 } from "lucide-react";
 import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { useTranslation } from "react-i18next";
@@ -17,6 +20,11 @@ import {
   STORE_COLORS,
   type Store,
 } from "./ProductCatalog";
+import { getReviewsForProduct, getAverageRating, type Review } from "./mockReviews";
+import StarRating from "@/components/ui/star-rating";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import useGetProfile from "@/features/profile/hooks/useGetProfile";
+import { useAuth } from "@/context/useAuth";
 
 // ── Multi-store pricing data ──────────────────────────────────────────
 
@@ -338,6 +346,108 @@ const MOCK_PRODUCT_DETAILS: ProductDetails[] = [
   },
 ];
 
+// ── Review Card ───────────────────────────────────────────────────────
+
+function ReviewCard({
+  review,
+  isOwn,
+  onDelete,
+}: {
+  review: Review;
+  isOwn?: boolean;
+  onDelete?: (id: number) => void;
+}) {
+  return (
+    <div className="p-5 bg-white rounded-2xl border border-slate-100 space-y-3">
+      <div className="flex items-center gap-3">
+        <Avatar className="h-10 w-10 border border-slate-200">
+          <AvatarImage src={review.userAvatar} alt={review.userName} />
+          <AvatarFallback className="text-sm bg-blue-50 text-blue-700">
+            {review.userName.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-slate-900 text-sm truncate">
+            {review.userName}
+          </p>
+          <p className="text-xs text-slate-400">
+            {new Date(review.date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+        <StarRating rating={review.rating} size="sm" />
+        {isOwn && onDelete && (
+          <button
+            onClick={() => onDelete(review.id)}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <p className="text-sm text-slate-600 leading-relaxed">{review.comment}</p>
+    </div>
+  );
+}
+
+// ── Review Form ───────────────────────────────────────────────────────
+
+function ReviewForm({
+  onSubmit,
+  t,
+}: {
+  onSubmit: (rating: number, comment: string) => void;
+  t: (key: string, options?: Record<string, string>) => string;
+}) {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (rating === 0 || comment.trim() === "") return;
+    onSubmit(rating, comment.trim());
+    setRating(0);
+    setComment("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="p-5 bg-white rounded-2xl border border-slate-100 space-y-4">
+      <h3 className="font-semibold text-slate-900 text-sm">
+        {t("reviews.writeReview", { defaultValue: "Write a Review" })}
+      </h3>
+      <div className="space-y-1.5">
+        <p className="text-xs text-slate-500">
+          {t("reviews.yourRating", { defaultValue: "Your Rating" })}
+        </p>
+        <StarRating rating={rating} interactive onChange={setRating} />
+      </div>
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder={t("reviews.commentPlaceholder", {
+          defaultValue: "Share your experience with this product...",
+        })}
+        className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 resize-none transition-all"
+        rows={3}
+      />
+      <button
+        type="submit"
+        disabled={rating === 0 || comment.trim() === ""}
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        style={{
+          backgroundColor: rating > 0 && comment.trim() ? "#2563EB" : "#94a3b8",
+        }}
+      >
+        <Send className="w-4 h-4" />
+        {t("reviews.submit", { defaultValue: "Submit Review" })}
+      </button>
+    </form>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────────────
 
 export default function ProductDetail() {
@@ -345,9 +455,15 @@ export default function ProductDetail() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
   const { isFavorite, toggleFavorite } = useEcommerceFavorites();
+  const { isAuthenticated, login } = useAuth();
+  const { data: profile } = useGetProfile();
 
-  const product = MOCK_PRODUCTS.find((p) => p.id === Number(id));
-  const details = MOCK_PRODUCT_DETAILS.find((d) => d.id === Number(id));
+  const productId = Number(id);
+  const product = MOCK_PRODUCTS.find((p) => p.id === productId);
+  const details = MOCK_PRODUCT_DETAILS.find((d) => d.id === productId);
+  const reviews = getReviewsForProduct(productId);
+  const avgRating = getAverageRating(productId);
+  const [localReviews, setLocalReviews] = useState<Review[]>(reviews);
 
   // Related products: same category, excluding current
   const relatedProducts = useMemo(() => {
@@ -591,6 +707,102 @@ export default function ProductDetail() {
                   );
                 })}
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Reviews Section ─────────────────────────────────────── */}
+        <div className="mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <h2 className="text-xl font-bold text-slate-900">
+                {t("reviews.title", { defaultValue: "Customer Reviews" })}
+              </h2>
+              {localReviews.length > 0 && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 w-fit">
+                  <StarRating rating={avgRating} size="sm" />
+                  <span className="text-sm font-semibold text-slate-700">
+                    {avgRating.toFixed(1)}
+                  </span>
+                  <span className="text-sm text-slate-500">
+                    ({localReviews.length})
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 text-sm text-slate-500">
+              <MessageSquare className="w-4 h-4" />
+              {localReviews.length}{" "}
+              {t("reviews.reviewCount", { defaultValue: "reviews" })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Review Form / Login Prompt */}
+            <div className="lg:col-span-1">
+              {isAuthenticated ? (
+                <ReviewForm
+                  t={t}
+                  onSubmit={(rating, comment) => {
+                    const userName =
+                      profile?.firstName && profile?.lastName
+                        ? `${profile.firstName} ${profile.lastName}`
+                        : profile?.userName ?? "You";
+                    const newReview: Review = {
+                      id: Date.now(),
+                      productId: productId,
+                      userId: profile?.userName ?? "current-user",
+                      userName,
+                      userAvatar: profile?.avatar ?? "",
+                      rating,
+                      comment,
+                      date: new Date().toISOString().split("T")[0],
+                    };
+                    setLocalReviews((prev) => [newReview, ...prev]);
+                  }}
+                />
+              ) : (
+                <div className="p-5 bg-white rounded-2xl border border-slate-100 flex flex-col items-center text-center space-y-3 py-8">
+                  <MessageSquare className="w-10 h-10 text-slate-300" />
+                  <p className="text-sm font-medium text-slate-700">
+                    {t("reviews.loginRequired", {
+                      defaultValue: "Log in to leave a review",
+                    })}
+                  </p>
+                  <button
+                    onClick={login}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 cursor-pointer"
+                    style={{ backgroundColor: colors.active.icon }}
+                  >
+                    {t("reviews.loginButton", { defaultValue: "Log In" })}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Reviews List */}
+            <div className="lg:col-span-2 space-y-3 max-h-150 overflow-y-auto pr-1 scrollbar-thin">
+              {localReviews.length > 0 ? (
+                localReviews.map((review) => (
+                  <ReviewCard
+                    key={review.id}
+                    review={review}
+                    isOwn={review.userId === (profile?.userName ?? "current-user")}
+                    onDelete={(id) =>
+                      setLocalReviews((prev) => prev.filter((r) => r.id !== id))
+                    }
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 px-4 bg-white rounded-2xl border border-slate-100">
+                  <MessageSquare className="w-10 h-10 text-slate-300 mb-3" />
+                  <p className="text-slate-500 text-sm font-medium">
+                    {t("reviews.noReviews", {
+                      defaultValue: "No reviews yet. Be the first to review!",
+                    })}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

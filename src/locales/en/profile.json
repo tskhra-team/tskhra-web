@@ -6,6 +6,7 @@
     "settings": "Account Settings",
     "favorites": "Favorites",
     "paymentMethods": "Payment Methods",
+    "reviews": "My Reviews",
     "addBusiness": "Add Business",
     "security": "Security"
   },
@@ -99,6 +100,12 @@
     "exploreSwapping": "Explore Swapping",
     "previous": "Previous",
     "next": "Next"
+  },
+  "reviews": {
+    "title": "My Reviews",
+    "reviewCount": "reviews",
+    "noReviewsTitle": "No Reviews Yet",
+    "noReviewsDescription": "Your product reviews will appear here after you share your experience."
   },
   "addBusiness": {
     "title": "Add Your Business",
