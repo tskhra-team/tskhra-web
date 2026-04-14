@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useModal } from "@/context/ModalContext";
+import useGetCitites from "@/shared/api/useGetCities";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import {
   createPostItem,
@@ -27,7 +28,7 @@ import useUploadItemPhotos from "@/Swapping/PostItems/useUploadItemPhotos";
 import { scrollToTop } from "@/utils";
 import { getStatusConfig } from "@/utils/errorHandling";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CheckIcon } from "lucide-react";
+import { ArrowLeft, CheckIcon } from "lucide-react";
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -38,32 +39,50 @@ export default function PostItem() {
   const { data: categories } = useGetSubBookingCategories(
     i18n.language.toUpperCase(),
   );
+  const { data: cities } = useGetCitites(i18n.language.toUpperCase());
   const { mutate: createPost } = useCreatePost();
   const { mutate: uploadItemPhotos } = useUploadItemPhotos();
   const { showModal, closeModal } = useModal();
   const navigate = useNavigate();
 
+  const tradeRangeOptions = useMemo(
+    () => [
+      {
+        value: "CITY_WIDE",
+        label: t("swapping:postItem.tradeRangeCityWide"),
+        activeClass: "bg-blue-800 hover:bg-blue-900 text-white border-blue-800",
+      },
+      {
+        value: "COUNTRY_WIDE",
+        label: t("swapping:postItem.tradeRangeCountryWide"),
+        activeClass:
+          "bg-green-800 hover:bg-green-900 text-white border-green-800",
+      },
+    ],
+    [t],
+  );
+
   const conditionOptions = useMemo(
     () => [
       {
-        value: "new",
+        value: "NEW",
         label: t("swapping:postItem.conditionNew"),
         activeClass:
           "bg-green-800 hover:bg-green-900 text-white border-green-800",
       },
       {
-        value: "good",
+        value: "LIKE_NEW",
         label: t("swapping:postItem.conditionGood"),
         activeClass: "bg-blue-800 hover:bg-blue-900 text-white border-blue-800",
       },
       {
-        value: "fair",
+        value: "USED",
         label: t("swapping:postItem.conditionFair"),
         activeClass:
           "bg-orange-700 hover:bg-orange-800 text-white border-orange-700",
       },
       {
-        value: "poor",
+        value: "DAMAGED",
         label: t("swapping:postItem.conditionPoor"),
         activeClass: "bg-red-800 hover:bg-red-900 text-white border-red-800",
       },
@@ -102,7 +121,7 @@ export default function PostItem() {
 
     createPost(data, {
       onSuccess: (result) => {
-        const postId = result.postId;
+        const postId = result.itemId;
 
         // Update modal for uploading photos
         showModal(
@@ -149,9 +168,18 @@ export default function PostItem() {
     });
   };
 
+  console.log(errors);
   return (
     <div className="min-h-screen bg-swap-bg">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Button
+          variant="link"
+          className="mb-10"
+          onClick={() => navigate("/swapping")}
+        >
+          <ArrowLeft />
+          {t("swapping:postItem.back")}
+        </Button>
         <div className="mb-10">
           <h1 className="text-4xl font-bold text-foreground">
             {t("swapping:postItem.pageTitle")}
@@ -206,21 +234,92 @@ export default function PostItem() {
                   </p>
                 )}
               </div>
-              {/* Estimated Value */}
+              {/* Estimated Value and City */}
+              <div className="space-y-2 flex flex-col md:flex-row gap-2">
+                <div className="w-full space-y-2">
+                  <Label htmlFor="estimatedValue">
+                    {t("swapping:postItem.estimatedValue")} *
+                  </Label>
+                  <Input
+                    id="estimatedValue"
+                    type="number"
+                    step="any"
+                    {...register("estimatedValue")}
+                    placeholder="0.00"
+                  />
+                  {errors.estimatedValue && (
+                    <p className="text-sm text-red-600 font-medium">
+                      {errors.estimatedValue.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="w-full space-y-2">
+                  <Label htmlFor="cityId">{t("booking:form.city")}</Label>
+                  <Controller
+                    name="cityId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className="w-full h-11 transition-all"
+                          style={{ height: "44px" }}
+                        >
+                          <SelectValue placeholder={t("booking:form.city")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {cities?.map((city) => (
+                            <SelectItem key={city.id} value={String(city.id)}>
+                              {city.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.cityId && (
+                    <p className="text-sm text-red-600 font-medium">
+                      {errors.cityId.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label htmlFor="estimatedValue">
-                  {t("swapping:postItem.estimatedValue")} *
-                </Label>
-                <Input
-                  id="estimatedValue"
-                  type="number"
-                  step="any"
-                  {...register("estimatedValue")}
-                  placeholder="0.00"
+                <Label>{t("swapping:postItem.tradeRange")} *</Label>
+                <Controller
+                  name="tradeRange"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-3 flex-col md:flex-row">
+                      {tradeRangeOptions.map((option) => {
+                        const isSelected = field.value === option.value;
+
+                        return (
+                          <Button
+                            key={option.value}
+                            type="button"
+                            variant="outline"
+                            onClick={() => field.onChange(option.value)}
+                            className={`flex-1 h-11 transition-all ${
+                              isSelected
+                                ? option.activeClass
+                                : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                            }`}
+                          >
+                            {option.label}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  )}
                 />
-                {errors.estimatedValue && (
+                {errors.tradeRange && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.estimatedValue.message}
+                    {errors.tradeRange.message}
                   </p>
                 )}
               </div>
@@ -416,7 +515,7 @@ export default function PostItem() {
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <Controller
-                name="desireCategories"
+                name="desiredCategories"
                 control={control}
                 defaultValue={[]}
                 render={({ field }) => (
@@ -459,11 +558,16 @@ export default function PostItem() {
                         );
                       })}
                     </div>
+                    {errors.desiredCategories && (
+                      <p className="text-sm text-red-600 font-medium">
+                        {errors.desiredCategories.message}
+                      </p>
+                    )}
                   </div>
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="minValue">
                     {t("swapping:postItem.minValue")} *
@@ -499,13 +603,13 @@ export default function PostItem() {
                     </p>
                   )}
                 </div>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
 
           {/* Submit */}
           <div className="flex items-center justify-end space-x-4 pt-6">
-            <Link to="/">
+            <Link to="/swapping">
               <Button
                 type="button"
                 variant="outline"

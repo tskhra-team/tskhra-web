@@ -6,6 +6,7 @@
   },
   "postItem": {
     "pageTitle": "ახალი ნივთის დამატება",
+    "back": "უკან",
     "pageSubtitle": "განათავსეთ ნივთი, რომლის გაცვლაც გსურთ",
     "basicInfo": "ძირითადი ინფორმაცია",
     "basicInfoSub": "შეავსეთ დეტალები თქვენი ნივთის შესახებ",
@@ -20,9 +21,9 @@
     "subcategory": "ქვეკატეგორია",
     "condition": "მდგომარეობა",
     "conditionNew": "ახალი",
-    "conditionGood": "კარგი",
-    "conditionFair": "საშუალო",
-    "conditionPoor": "ცუდი",
+    "conditionGood": "ახალსავით",
+    "conditionFair": "ნახმარი",
+    "conditionPoor": "დაზიანებული",
     "photos": "ფოტოები",
     "photosSub": "ატვირთეთ მინიმუმ ერთი ფოტო (რამდენიმე დაშვებულია)",
     "desiredItems": "რას ეძებთ",
@@ -30,8 +31,16 @@
     "desiredCategories": "სასურველი კატეგორიები",
     "minValue": "მინიმალური ღირებულება (₾)",
     "maxValue": "მაქსიმალური ღირებულება (₾)",
+    "tradeRange": "გაცვლის არეალი",
+    "tradeRangeCityWide": "ქალაქის მასშტაბით",
+    "tradeRangeCountryWide": "ქვეყნის მასშტაბით",
     "cancel": "გაუქმება",
     "submit": "ნივთის შექმნა"
+  },
+  "hero": {
+    "searchPlaceholder": "რას ეძებთ?",
+    "categoryPlaceholder": "კატეგორია",
+    "findSwaps": "ძიება"
   },
   "validation": {
     "titleRequired": "სათაური აუცილებელია",
@@ -41,6 +50,7 @@
     "descMin": "აღწერა უნდა შეიცავდეს მინიმუმ 10 სიმბოლოს",
     "descMax": "აღწერა არ შეიძლება შეიცავდეს 100-ზე მეტ სიმბოლოს",
     "estValueRequired": "სავარაუდო ღირებულება აუცილებელია",
+    "cityRequired": "ქალაქი აუცილებელია",
     "priceMin": "მინიმალური ფასი არის 1",
     "priceMax": "მაქსიმალური ფასი არის 1,000,000",
     "categoryRequired": "კატეგორია აუცილებელია",
