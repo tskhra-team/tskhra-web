@@ -71,6 +71,17 @@
     "noResultsHintQuery": "We couldn't find anything for \"{{query}}\". Try different keywords or adjust your filters.",
     "noResultsHint": "Try adjusting your filters to see more products."
   },
+  "reviews": {
+    "title": "Customer Reviews",
+    "writeReview": "Write a Review",
+    "yourRating": "Your Rating",
+    "commentPlaceholder": "Share your experience with this product...",
+    "submit": "Submit Review",
+    "reviewCount": "reviews",
+    "noReviews": "No reviews yet. Be the first to review!",
+    "loginRequired": "Log in to leave a review",
+    "loginButton": "Log In"
+  },
   "stats": {
     "totalItems": "Total Items",
     "totalTrades": "Successful Trades",
