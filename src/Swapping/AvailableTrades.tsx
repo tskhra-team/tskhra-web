@@ -129,7 +129,7 @@ export function AvailableTrades() {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-[var(--swap-primary)] transition-colors"
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-swap-primary transition-colors"
               >
                 <Heart className="w-5 h-5" />
               </motion.button>
