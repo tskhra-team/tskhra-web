@@ -56,6 +56,7 @@ export default function CategoryMegaMenu({
 
   const handleCategoryClick = (category: CategoryItem) => {
     navigate(`/ecommerce/category/${getCategorySlug(category)}`);
+    window.scrollTo(0, 0);
     onClose();
   };
 
@@ -66,6 +67,7 @@ export default function CategoryMegaMenu({
     navigate(
       `/ecommerce/category/${getCategorySlug(category)}?sub=${getCategorySlug(subcategory)}`
     );
+    window.scrollTo(0, 0);
     onClose();
   };
 
@@ -82,7 +84,8 @@ export default function CategoryMegaMenu({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="container mx-auto flex min-h-[340px] max-h-[70vh]">
+      {/* Desktop: side-by-side panels */}
+      <div className="hidden md:flex container mx-auto min-h-85 max-h-[70vh]">
         {/* Left panel - Main categories */}
         <div className="w-64 shrink-0 border-r border-slate-100 overflow-y-auto py-2">
           {categories.map((category, index) => {
@@ -174,7 +177,7 @@ export default function CategoryMegaMenu({
               {/* Subcategories grid */}
               {activeCategory.childItems &&
               activeCategory.childItems.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                   {activeCategory.childItems.map((subcategory) => {
                     const subKey = categoryNameToKey[subcategory.name];
                     const subDisplayName = subKey
@@ -223,6 +226,130 @@ export default function CategoryMegaMenu({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Mobile: accordion-style list */}
+      <div className="md:hidden max-h-[70vh] overflow-y-auto py-2">
+        {categories.map((category, index) => {
+          const translationKey = categoryNameToKey[category.name];
+          const displayName = translationKey
+            ? t(translationKey)
+            : category.name;
+          const isActive = index === activeIndex;
+
+          return (
+            <div key={category.name}>
+              <button
+                onClick={() => setActiveIndex(isActive ? -1 : index)}
+                className="w-full flex items-center gap-3 px-5 py-3.5 text-left text-sm font-medium transition-colors duration-150 cursor-pointer"
+                style={{
+                  backgroundColor: isActive
+                    ? colors.active.background
+                    : "transparent",
+                  color: isActive ? colors.active.text : colors.inactive.text,
+                }}
+              >
+                {category.iconUrl ? (
+                  <img
+                    src={category.iconUrl}
+                    alt=""
+                    className="w-5 h-5 object-contain shrink-0"
+                    style={{ opacity: isActive ? 1 : 0.5 }}
+                  />
+                ) : category.icon ? (
+                  <category.icon
+                    className="w-5 h-5 shrink-0"
+                    style={{
+                      color: isActive
+                        ? colors.active.icon
+                        : colors.inactive.icon,
+                    }}
+                  />
+                ) : null}
+                <span className="truncate">{displayName}</span>
+                <svg
+                  className={`w-4 h-4 ml-auto shrink-0 opacity-40 transition-transform duration-200 ${isActive ? "rotate-90" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+
+              {/* Expanded subcategories */}
+              {isActive &&
+                category.childItems &&
+                category.childItems.length > 0 && (
+                  <div className="px-4 pb-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="flex items-center justify-between mb-2 px-2">
+                      <span
+                        className="text-xs font-semibold uppercase tracking-wider"
+                        style={{ color: colors.active.text }}
+                      >
+                        {displayName}
+                      </span>
+                      <button
+                        onClick={() => handleCategoryClick(category)}
+                        className="text-xs font-medium px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 cursor-pointer"
+                        style={{
+                          backgroundColor: colors.active.background,
+                          color: colors.active.text,
+                        }}
+                      >
+                        {tEcom("categories.viewAll")}
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-0.5">
+                      {category.childItems.map((subcategory) => {
+                        const subKey = categoryNameToKey[subcategory.name];
+                        const subDisplayName = subKey
+                          ? t(subKey)
+                          : subcategory.name;
+
+                        return (
+                          <button
+                            key={subcategory.name}
+                            onClick={() =>
+                              handleSubcategoryClick(category, subcategory)
+                            }
+                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-left text-sm transition-colors duration-150 cursor-pointer"
+                            style={{ color: colors.inactive.text }}
+                          >
+                            {subcategory.iconUrl ? (
+                              <img
+                                src={subcategory.iconUrl}
+                                alt=""
+                                className="w-4 h-4 object-contain shrink-0 opacity-60"
+                              />
+                            ) : subcategory.icon ? (
+                              <subcategory.icon className="w-4 h-4 shrink-0 opacity-50" />
+                            ) : (
+                              <span
+                                className="w-1.5 h-1.5 rounded-full shrink-0"
+                                style={{
+                                  backgroundColor: colors.active.icon,
+                                  opacity: 0.4,
+                                }}
+                              />
+                            )}
+                            <span className="font-medium">
+                              {subDisplayName}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
