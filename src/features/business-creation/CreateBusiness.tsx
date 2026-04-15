@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import CreateBookingBusiness from "@/features/business-creation/booking-business/CreateBookingBusiness";
+import CreateEcommerceBusiness from "@/features/business-creation/ecommerce-business/CreateEcommerceBusiness";
 import { scrollToTop } from "@/utils";
 import { Calendar, Check, ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -15,9 +16,7 @@ export default function CreateBusiness() {
     return (
       <div className="container mx-auto py-8 px-4">
         {selectedType === "ecommerce" ? (
-          <>
-            <div>{t("businessTypeSelection.ecommerce.comingSoonMessage")}</div>
-          </>
+          <CreateEcommerceBusiness />
         ) : (
           <>
             <CreateBookingBusiness />
@@ -96,52 +95,49 @@ export default function CreateBusiness() {
           </Card>
 
           {/* E-commerce Card */}
-          <Card className="relative border-2 border-border/30 bg-muted/30 backdrop-blur-sm">
-            <div className="absolute -top-3 right-6 bg-muted-foreground text-background px-5 py-1.5 rounded-full text-sm font-semibold shadow-md">
-              {t("businessTypeSelection.comingSoon")}
-            </div>
-            <CardContent className="p-8 opacity-60">
+          <Card className="relative group border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-8">
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center">
-                  <ShoppingCart className="w-10 h-10 text-muted-foreground" />
+                <div className="w-20 h-20 bg-linear-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <ShoppingCart className="w-10 h-10 text-primary-foreground" />
                 </div>
               </div>
-              <h2 className="text-3xl font-bold text-center mb-4 tracking-tight text-muted-foreground">
+              <h2 className="text-3xl font-bold text-center mb-4 tracking-tight">
                 {t("businessTypeSelection.ecommerce.title")}
               </h2>
-              <p className="text-muted-foreground/80 text-center mb-8 leading-relaxed">
+              <p className="text-muted-foreground text-center mb-8 leading-relaxed">
                 {t("businessTypeSelection.ecommerce.description")}
               </p>
               <ul className="space-y-4 mb-10">
                 <li className="flex items-start">
-                  <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mr-3 mt-0.5 shrink-0">
-                    <Check className="w-3.5 h-3.5 text-muted-foreground" />
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-sm leading-relaxed text-muted-foreground/80">
+                  <span className="text-sm leading-relaxed">
                     {t("businessTypeSelection.ecommerce.feature1")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mr-3 mt-0.5 shrink-0">
-                    <Check className="w-3.5 h-3.5 text-muted-foreground" />
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-sm leading-relaxed text-muted-foreground/80">
+                  <span className="text-sm leading-relaxed">
                     {t("businessTypeSelection.ecommerce.feature2")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center mr-3 mt-0.5 shrink-0">
-                    <Check className="w-3.5 h-3.5 text-muted-foreground" />
+                  <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-sm leading-relaxed text-muted-foreground/80">
+                  <span className="text-sm leading-relaxed">
                     {t("businessTypeSelection.ecommerce.feature3")}
                   </span>
                 </li>
               </ul>
               <Button
-                disabled
+                onClick={() => handleClick("ecommerce")}
                 size="lg"
-                className="w-full h-12 text-base font-semibold cursor-not-allowed"
+                className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
               >
                 {t("businessTypeSelection.getStarted")}
               </Button>
