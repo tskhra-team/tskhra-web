@@ -63,5 +63,46 @@
       "feature3": "Order management system",
       "comingSoonMessage": "Ecommerce business creation form coming soon..."
     }
+  },
+  "ecommerceForm": {
+    "title": "Add New Product",
+    "subtitle": "Fill in the details to list your product on the marketplace",
+    "basicInfo": "Basic Information",
+    "productTitle": "Product Title",
+    "productTitlePlaceholder": "Enter product title",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter product description",
+    "descriptionHint": "Provide a detailed description of your product",
+    "pricingInventory": "Pricing & Inventory",
+    "price": "Price",
+    "stockQuantity": "Stock Quantity",
+    "sku": "SKU",
+    "skuPlaceholder": "E.G., 1234",
+    "organization": "Organization",
+    "category": "Category",
+    "categoryPlaceholder": "Select a category",
+    "productImages": "Product Images",
+    "coverImage": "Cover Image",
+    "additionalImages": "Additional Images",
+    "additionalImagesSub": "Up to 4 additional images",
+    "specifications": "Product Specifications",
+    "enterSpec": "Enter",
+    "selectCategoryForSpecs": "Select a category first to see available options",
+    "publishProduct": "Publish Product",
+    "cancel": "Cancel",
+    "successTitle": "Product Published!",
+    "successMessage": "Your product has been submitted successfully and will appear in the catalog.",
+    "addAnother": "Add Another Product",
+    "validation": {
+      "productTitleRequired": "Product title is required",
+      "descriptionRequired": "Description is required",
+      "priceRequired": "Price is required",
+      "priceMin": "Price must be greater than 0",
+      "stockRequired": "Stock quantity is required",
+      "stockMin": "Stock must be at least 1",
+      "skuRequired": "SKU is required",
+      "categoryRequired": "Category is required",
+      "coverImageRequired": "Cover image is required"
+    }
   }
 }

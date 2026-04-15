@@ -78,5 +78,6 @@
     "sortByDate": "Sort by Date",
     "status": "Status",
     "onlyVip": "Only VIP"
-  }
+  },
+  "aiEstimatedPrice": "Price estimated by our AI"
 }
