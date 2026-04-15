@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Search, SlidersHorizontal, X, ChevronRight, Heart } from "lucide-react";
 import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { useTranslation } from "react-i18next";
@@ -86,14 +86,6 @@ export const MOCK_PRODUCTS: Product[] = [
   { id: 30, name: "Hiking Backpack 65L", price: 199, image: "https://picsum.photos/seed/hikebag/400/400", store: "Alta", condition: "New", category: "Sports & Outdoors", subcategory: "Outdoor Gear" },
 ];
 
-const ALL_STORES: Store[] = ["Alta", "Elit", "Informal"];
-const ALL_CATEGORIES: Category[] = [
-  "Electronics",
-  "Fashion & Clothing",
-  "Home & Garden",
-  "Books & Media",
-  "Sports & Outdoors",
-];
 const ALL_CONDITIONS: Condition[] = ["New", "Like New", "Used"];
 
 const ITEMS_PER_PAGE = 8;
@@ -104,16 +96,9 @@ export default function ProductCatalog() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
   const { isFavorite, toggleFavorite } = useEcommerceFavorites();
-  const [searchParams] = useSearchParams();
-
-  // Read initial category from URL (?category=Electronics)
-  const urlCategory = searchParams.get("category") as Category | null;
-  const initialCategories = urlCategory && ALL_CATEGORIES.includes(urlCategory) ? [urlCategory] : [];
 
   // Filters state
   const [search, setSearch] = useState("");
-  const [selectedStores, setSelectedStores] = useState<Store[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>(initialCategories);
   const [selectedConditions, setSelectedConditions] = useState<Condition[]>([]);
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
@@ -131,17 +116,13 @@ export default function ProductCatalog() {
     return MOCK_PRODUCTS.filter((p) => {
       if (search && !p.name.toLowerCase().includes(search.toLowerCase()))
         return false;
-      if (selectedStores.length && !selectedStores.includes(p.store))
-        return false;
-      if (selectedCategories.length && !selectedCategories.includes(p.category))
-        return false;
       if (selectedConditions.length && !selectedConditions.includes(p.condition))
         return false;
       if (priceMin && p.price < Number(priceMin)) return false;
       if (priceMax && p.price > Number(priceMax)) return false;
       return true;
     });
-  }, [search, selectedStores, selectedCategories, selectedConditions, priceMin, priceMax]);
+  }, [search, selectedConditions, priceMin, priceMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const paginated = filtered.slice(
@@ -150,15 +131,11 @@ export default function ProductCatalog() {
   );
 
   const activeFilterCount =
-    selectedStores.length +
-    selectedCategories.length +
     selectedConditions.length +
     (priceMin ? 1 : 0) +
     (priceMax ? 1 : 0);
 
   const clearFilters = () => {
-    setSelectedStores([]);
-    setSelectedCategories([]);
     setSelectedConditions([]);
     setPriceMin("");
     setPriceMax("");
@@ -187,62 +164,6 @@ export default function ProductCatalog() {
 
   const filterContent = (
     <div className="space-y-6">
-      {/* Store filter */}
-      <div>
-        <h3 className="text-sm font-semibold text-slate-800 mb-3">
-          {t("catalog.store", { defaultValue: "Store" })}
-        </h3>
-        <div className="space-y-2">
-          {ALL_STORES.map((store) => (
-            <label
-              key={store}
-              className="flex items-center gap-2.5 cursor-pointer group"
-            >
-              <Checkbox
-                checked={selectedStores.includes(store)}
-                onCheckedChange={() =>
-                  toggleFilter(selectedStores, store, setSelectedStores)
-                }
-              />
-              <span
-                className="inline-flex items-center gap-1.5 text-sm text-slate-700 group-hover:text-slate-900"
-              >
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: STORE_COLORS[store].text }}
-                />
-                {store}
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Category filter */}
-      <div>
-        <h3 className="text-sm font-semibold text-slate-800 mb-3">
-          {t("catalog.category", { defaultValue: "Category" })}
-        </h3>
-        <div className="space-y-2">
-          {ALL_CATEGORIES.map((cat) => (
-            <label
-              key={cat}
-              className="flex items-center gap-2.5 cursor-pointer group"
-            >
-              <Checkbox
-                checked={selectedCategories.includes(cat)}
-                onCheckedChange={() =>
-                  toggleFilter(selectedCategories, cat, setSelectedCategories)
-                }
-              />
-              <span className="text-sm text-slate-700 group-hover:text-slate-900">
-                {cat}
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
-
       {/* Condition filter */}
       <div>
         <h3 className="text-sm font-semibold text-slate-800 mb-3">
@@ -470,18 +391,8 @@ export default function ProductCatalog() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
-                        {/* Store badge */}
-                        <span
-                          className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold"
-                          style={{
-                            backgroundColor: STORE_COLORS[product.store].bg,
-                            color: STORE_COLORS[product.store].text,
-                          }}
-                        >
-                          {product.store}
-                        </span>
                         {/* Condition badge */}
-                        <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
+                        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
                           {product.condition}
                         </span>
                         {/* Favorite button */}
