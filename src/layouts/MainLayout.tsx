@@ -1,7 +1,8 @@
+import ShoppingCart from "@/Ecommerce/ShoppingCart";
 import Footer from "@/Home/Footer";
 import Header from "@/Home/Header";
-import { Outlet } from "react-router-dom";
 import { AuthRedirectHandler } from "@/components/AuthRedirectHandler";
+import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
   return (
@@ -10,6 +11,7 @@ export default function MainLayout() {
       <Header />
       <Outlet />
       <Footer />
+      <ShoppingCart />
     </>
   );
 }

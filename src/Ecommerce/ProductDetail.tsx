@@ -1,3 +1,4 @@
+import useEcommerceCart from "@/Ecommerce/hooks/useEcommerceCart";
 import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import StarRating from "@/components/ui/star-rating";
@@ -12,6 +13,7 @@ import {
   Package,
   Send,
   ShieldCheck,
+  ShoppingCart,
   Star,
   Trash2,
   Trophy,
@@ -455,6 +457,7 @@ export default function ProductDetail() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
   const { isFavorite, toggleFavorite } = useEcommerceFavorites();
+  const { addToCart, isInCart } = useEcommerceCart();
   const { isAuthenticated, login } = useAuth();
   const { data: profile } = useGetProfile();
 
@@ -708,6 +711,21 @@ export default function ProductDetail() {
                 })}
               </div>
             </div>
+
+            {/* ── Add to Cart Button ───────────────────────────────── */}
+            <button
+              onClick={() => addToCart(product)}
+              className={`w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-base font-semibold transition-all duration-200 cursor-pointer ${
+                isInCart(product.id)
+                  ? "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+              }`}
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {isInCart(product.id)
+                ? t("cart.addMore")
+                : t("cart.addToCart")}
+            </button>
           </div>
         </div>
 
