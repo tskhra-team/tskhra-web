@@ -108,9 +108,9 @@ export default function MyItems() {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {Array.from({ length: size }).map((_, i) => (
-            <Card key={i} className="h-56 animate-pulse bg-muted" />
+            <Card key={i} className="h-115 animate-pulse bg-muted rounded-3xl" />
           ))}
         </div>
       ) : items?.empty ? (
@@ -122,7 +122,7 @@ export default function MyItems() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items?.content.map((item) => (
             <ItemCard key={item.id} item={item} />
           ))}

@@ -65,5 +65,6 @@
     "fileSizeTooLarge": "ფაილი ძალიან დიდია (მაქს 5MB)",
     "fileTypeInvalid": "ფაილის ტიპი არასწორია",
     "maxDecimals": "ფასში მაქსიმუმ 2 ათწილადი დაშვებულია"
-  }
+  },
+  "aiEstimatedPrice": "ფასი შეფასებულია ჩვენი AI-ს მიერ"
 }
