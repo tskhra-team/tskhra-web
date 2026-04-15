@@ -8,7 +8,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ArrowUp, Minus, Plus, ShoppingCart as CartIcon, Trash2, X } from "lucide-react";
+import { Minus, Plus, Trash2, X } from "lucide-react";
+import { TbArrowNarrowUpDashed } from "react-icons/tb";
+import { HiOutlineChatBubbleBottomCenterText } from "react-icons/hi2";
+import { GiShoppingCart } from "react-icons/gi";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -47,12 +50,24 @@ export default function ShoppingCart() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-18 right-4 sm:bottom-22 sm:right-6 z-40 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-md hover:bg-slate-50 transition-colors cursor-pointer"
+          className="fixed bottom-30 right-4 sm:bottom-34 sm:right-6 z-40 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-md hover:bg-slate-50 transition-colors cursor-pointer"
         >
-          <ArrowUp className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+          <TbArrowNarrowUpDashed className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
         </motion.button>
       )}
     </AnimatePresence>
+
+    {/* ── Chat Button ──────────────────────────────────────── */}
+    <motion.button
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="fixed bottom-18 right-4 sm:bottom-22 sm:right-6 z-40 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-md hover:bg-slate-50 transition-colors cursor-pointer"
+    >
+      <HiOutlineChatBubbleBottomCenterText className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+    </motion.button>
 
     <Sheet open={open} onOpenChange={setOpen}>
       {/* ── Floating Cart Button ──────────────────────────────── */}
@@ -65,7 +80,7 @@ export default function ShoppingCart() {
           whileTap={{ scale: 0.95 }}
           className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-colors cursor-pointer"
         >
-          <CartIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+          <GiShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
 
           {/* Badge */}
           <AnimatePresence>
@@ -208,7 +223,7 @@ export default function ShoppingCart() {
                 className="flex flex-col items-center justify-center py-16 text-center"
               >
                 <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                  <CartIcon className="w-8 h-8 text-slate-400" />
+                  <GiShoppingCart className="w-8 h-8 text-slate-400" />
                 </div>
                 <h3 className="text-base font-semibold text-slate-700 mb-1">
                   {t("cart.emptyTitle")}

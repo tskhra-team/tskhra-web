@@ -13,11 +13,11 @@ import {
   Package,
   Send,
   ShieldCheck,
-  ShoppingCart,
   Star,
   Trash2,
   Trophy,
 } from "lucide-react";
+import { GiShoppingCart } from "react-icons/gi";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
@@ -721,7 +721,7 @@ export default function ProductDetail() {
                   : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
               }`}
             >
-              <ShoppingCart className="w-5 h-5" />
+              <GiShoppingCart className="w-5 h-5" />
               {isInCart(product.id)
                 ? t("cart.addMore")
                 : t("cart.addToCart")}
