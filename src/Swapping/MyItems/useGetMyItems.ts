@@ -13,6 +13,8 @@ export interface Item {
   tradeRange: string;
   estimatedValue: number | null;
   createdAt: string;
+  images: string[];
+  vip: boolean;
 }
 
 export interface PaginatedItemsResponse {
