@@ -98,7 +98,7 @@ function Footer() {
         </div>
 
         {/* Newsletter */}
-        <div className="bg-linear-to-r from-blue-600/10 to-purple-600/10 rounded-xl lg:rounded-2xl p-6 sm:p-8 mb-8 border border-slate-700/50">
+        {/* <div className="bg-linear-to-r from-blue-600/10 to-purple-600/10 rounded-xl lg:rounded-2xl p-6 sm:p-8 mb-8 border border-slate-700/50">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div>
               <h3 className="text-white font-bold text-lg sm:text-xl mb-2">
@@ -119,7 +119,7 @@ function Footer() {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">

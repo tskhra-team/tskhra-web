@@ -66,5 +66,18 @@
     "fileTypeInvalid": "Invalid file type",
     "maxDecimals": "Maximum 2 decimal places allowed"
   },
+  "catalog": {
+    "all": "All",
+    "newest": "Newest first",
+    "oldest": "Oldest first",
+    "filters": "Filters",
+    "clearAll": "Clear all",
+    "filtersNotApplied": "Filters aren't applied yet. Select options and click \"Apply Filters\" below.",
+    "applyFilters": "Apply Filters",
+    "city": "City",
+    "sortByDate": "Sort by Date",
+    "status": "Status",
+    "onlyVip": "Only VIP"
+  },
   "aiEstimatedPrice": "Price estimated by our AI"
 }
