@@ -87,5 +87,21 @@
     "totalTrades": "წარმატებული გარიგებები",
     "totalUsers": "აქტიური მომხმარებლები",
     "satisfaction": "კმაყოფილების მაჩვენებელი"
+  },
+  "cart": {
+    "title": "კალათა",
+    "itemCount_one": "{{count}} ნივთი კალათაში",
+    "itemCount_other": "{{count}} ნივთი კალათაში",
+    "clearAll": "ყველას წაშლა",
+    "emptyTitle": "კალათა ცარიელია",
+    "emptyDescription": "დაათვალიერე პროდუქტები და დაამატე ნივთები",
+    "subtotal_one": "ჯამი ({{count}} ნივთი)",
+    "subtotal_other": "ჯამი ({{count}} ნივთი)",
+    "shipping": "მიტანა",
+    "shippingFree": "უფასო",
+    "total": "სულ",
+    "checkout": "შეკვეთა",
+    "addToCart": "კალათაში დამატება",
+    "addMore": "კიდევ დამატება"
   }
 }

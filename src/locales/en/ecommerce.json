@@ -87,5 +87,21 @@
     "totalTrades": "Successful Trades",
     "totalUsers": "Active Users",
     "satisfaction": "Satisfaction Rate"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "itemCount_one": "{{count}} item in your cart",
+    "itemCount_other": "{{count}} items in your cart",
+    "clearAll": "Clear all",
+    "emptyTitle": "Your cart is empty",
+    "emptyDescription": "Browse products and add items to get started",
+    "subtotal_one": "Subtotal ({{count}} item)",
+    "subtotal_other": "Subtotal ({{count}} items)",
+    "shipping": "Shipping",
+    "shippingFree": "Free",
+    "total": "Total",
+    "checkout": "Checkout",
+    "addToCart": "Add to Cart",
+    "addMore": "Add More to Cart"
   }
 }
