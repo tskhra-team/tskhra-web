@@ -67,6 +67,9 @@
     "businessLimits": "Business limits has been reached. You can only have 5 busiensses",
     "deleteBusinessWarn": "Are you sure you want to delete this business",
     "deleteBusinessSuccess": "This business was successfully deleted",
+    "confirmDeleteItem": "Are you sure you want to delete this item?",
+    "itemDeletedSuccess": "Item was successfully deleted!",
+    "itemDidntDeleted": "Item was not deleted, please try again",
     "goToDashboardError": "To visit dashboard you need to be verified user",
     "createBusinessError": "To to create a business you need to be verified user"
   },

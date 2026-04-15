@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
 const deleteItem = async (itemId: string) => {
-  const response = await privateInstance.delete(`/items/items/${itemId}`);
+  const response = await privateInstance.delete(`/items/${itemId}`);
   return response.data;
 };
 
