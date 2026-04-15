@@ -64,5 +64,46 @@
       "feature3": "შეკვეთების მართვის სისტემა",
       "comingSoonMessage": "ელექტრონული კომერციის ბიზნესის შექმნის ფორმა მალე გამოჩნდება..."
     }
+  },
+  "ecommerceForm": {
+    "title": "ახალი პროდუქტის დამატება",
+    "subtitle": "შეავსეთ დეტალები პროდუქტის კატალოგში განსათავსებლად",
+    "basicInfo": "ძირითადი ინფორმაცია",
+    "productTitle": "პროდუქტის სათაური",
+    "productTitlePlaceholder": "შეიყვანეთ პროდუქტის სათაური",
+    "description": "აღწერა",
+    "descriptionPlaceholder": "შეიყვანეთ პროდუქტის აღწერა",
+    "descriptionHint": "მიუთითეთ თქვენი პროდუქტის დეტალური აღწერა",
+    "pricingInventory": "ფასი და ინვენტარი",
+    "price": "ფასი",
+    "stockQuantity": "მარაგის რაოდენობა",
+    "sku": "SKU",
+    "skuPlaceholder": "მაგ., 1234",
+    "organization": "ორგანიზაცია",
+    "category": "კატეგორია",
+    "categoryPlaceholder": "აირჩიეთ კატეგორია",
+    "productImages": "პროდუქტის სურათები",
+    "coverImage": "მთავარი სურათი",
+    "additionalImages": "დამატებითი სურათები",
+    "additionalImagesSub": "4-მდე დამატებითი სურათი",
+    "specifications": "პროდუქტის სპეციფიკაციები",
+    "enterSpec": "შეიყვანეთ",
+    "selectCategoryForSpecs": "აირჩიეთ კატეგორია ხელმისაწვდომი პარამეტრების სანახავად",
+    "publishProduct": "პროდუქტის გამოქვეყნება",
+    "cancel": "გაუქმება",
+    "successTitle": "პროდუქტი გამოქვეყნდა!",
+    "successMessage": "თქვენი პროდუქტი წარმატებით გაიგზავნა და გამოჩნდება კატალოგში.",
+    "addAnother": "სხვა პროდუქტის დამატება",
+    "validation": {
+      "productTitleRequired": "პროდუქტის სათაური აუცილებელია",
+      "descriptionRequired": "აღწერა აუცილებელია",
+      "priceRequired": "ფასი აუცილებელია",
+      "priceMin": "ფასი უნდა იყოს 0-ზე მეტი",
+      "stockRequired": "მარაგის რაოდენობა აუცილებელია",
+      "stockMin": "მარაგი უნდა იყოს მინიმუმ 1",
+      "skuRequired": "SKU აუცილებელია",
+      "categoryRequired": "კატეგორია აუცილებელია",
+      "coverImageRequired": "მთავარი სურათი აუცილებელია"
+    }
   }
 }
