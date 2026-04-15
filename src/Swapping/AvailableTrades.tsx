@@ -9,6 +9,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom";
 
 // Mock data with images from unsplash
 const TRADES = [
@@ -75,6 +76,7 @@ const TRADES = [
 ];
 
 export function AvailableTrades() {
+  const navigate = useNavigate();
   return (
     <>
       <div className="px-8 md:px-20 text-3xl mb-10 font-bold flex justify-between items-center">
@@ -82,6 +84,7 @@ export function AvailableTrades() {
         <Button
           variant="outline"
           className=" h-10 rounded-4xl bg-swap-primary text-swap-secondary hover:bg-swap-secondary hover:text-swap-primary"
+          onClick={() => navigate("/swapping/catalog")}
         >
           View All
           <ArrowRight />

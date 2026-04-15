@@ -9,12 +9,15 @@ import { Navigate } from "react-router-dom";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const EcommercePage = lazy(() => import("@/pages/EcommercePage"));
-const EcommerceCategoryPage = lazy(() => import("@/pages/EcommerceCategoryPage"));
+const EcommerceCategoryPage = lazy(
+  () => import("@/pages/EcommerceCategoryPage"),
+);
 const ProductCatalogPage = lazy(() => import("@/pages/ProductCatalogPage"));
 const SearchResultsPage = lazy(() => import("@/pages/SearchResultsPage"));
 const ProductDetailPage = lazy(() => import("@/pages/ProductDetailPage"));
 const BookingPage = lazy(() => import("@/pages/BookingPage"));
 const SwappingPage = lazy(() => import("@/pages/SwappingPage"));
+const SwapCatalogPage = lazy(() => import("@/pages/SwapCatalogPage"));
 const CreateBusinessPage = lazy(() => import("@/pages/CreateBusinessPage"));
 const BusinessCatalogPage = lazy(() => import("@/pages/ServicesCatalogPage"));
 const MyBusinessesPage = lazy(() => import("@/pages/MyBusinessesPage"));
@@ -91,6 +94,16 @@ export const routes = [
             <SwappingPage />
           </Suspense>
         ),
+        children: [
+          {
+            path: "catalog",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <SwapCatalogPage />
+              </Suspense>
+            ),
+          },
+        ],
       },
       {
         path: "/booking",
