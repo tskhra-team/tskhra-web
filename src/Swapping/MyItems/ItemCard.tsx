@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useModal } from "@/context/ModalContext";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useDeleteItem from "@/Swapping/MyItems/useDeleteItem";
 import type { Item } from "@/Swapping/MyItems/useGetMyItems";
@@ -9,9 +16,10 @@ import {
   Loader2,
   MapPin,
   Pencil,
+  Sparkles,
   Trash2,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 const CONDITION_LABELS: Record<string, string> = {
   NEW: "New",
@@ -27,6 +35,37 @@ const TRADE_RANGE_LABELS: Record<string, string> = {
 
 export function ItemCard({ item }: { item: Item }) {
   const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
+  const { showModal } = useModal();
+  const { t } = useTranslation(["swapping", "modal"]);
+
+  const handleDelete = () => {
+    showModal(
+      "warning",
+      t("modal:titles.attention"),
+      t("modal:messages.confirmDeleteItem"),
+      t("modal:buttons.close"),
+      () => {},
+      t("modal:buttons.yesDelete"),
+      () => {
+        deleteItem(item.id, {
+          onSuccess: () => {
+            showModal(
+              "success",
+              t("modal:titles.successful"),
+              t("modal:messages.itemDeletedSuccess"),
+            );
+          },
+          onError: () => {
+            showModal(
+              "error",
+              t("modal:titles.somethingWentWrong"),
+              t("modal:messages.itemDidntDeleted"),
+            );
+          },
+        });
+      },
+    );
+  };
 
   const formattedDate = new Date(item.createdAt).toLocaleDateString("en-US", {
     month: "short",
@@ -37,8 +76,7 @@ export function ItemCard({ item }: { item: Item }) {
   const coverPhoto = item.images?.[0];
 
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
+    <div
       className={`rounded-3xl bg-white shadow-xl overflow-hidden border-2 flex flex-col group cursor-default ${
         item.vip
           ? "border-amber-400 shadow-amber-100"
@@ -131,7 +169,7 @@ export function ItemCard({ item }: { item: Item }) {
             variant="outline"
             className="w-11 h-10 text-red-500 hover:text-white hover:bg-red-500 hover:border-red-500 transition-all"
             disabled={isDeleting}
-            onClick={() => deleteItem(item.id)}
+            onClick={handleDelete}
           >
             {isDeleting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -144,9 +182,19 @@ export function ItemCard({ item }: { item: Item }) {
         {/* Footer — price + trade range */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           {item.estimatedValue && (
-            <span className="text-lg font-bold text-swap-primary">
-              {item.estimatedValue} ₾
-            </span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-lg font-bold text-swap-primary cursor-help flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    {item.estimatedValue} ₾
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  {t("swapping:aiEstimatedPrice")}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           <span
             className="text-sm font-medium flex items-center gap-1"
@@ -169,6 +217,6 @@ export function ItemCard({ item }: { item: Item }) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

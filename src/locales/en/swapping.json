@@ -65,5 +65,6 @@
     "fileSizeTooLarge": "File is too large (max 5MB)",
     "fileTypeInvalid": "Invalid file type",
     "maxDecimals": "Maximum 2 decimal places allowed"
-  }
+  },
+  "aiEstimatedPrice": "Price estimated by our AI"
 }
