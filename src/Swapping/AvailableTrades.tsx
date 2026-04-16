@@ -174,7 +174,25 @@ export function AvailableTrades() {
                 </div>
               </div>
 
-              <Button className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary">
+              <Button
+                className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/swapping/trade-offer", {
+                    state: {
+                      targetItem: {
+                        id: String(trade.id),
+                        name: trade.title,
+                        description: trade.lookingFor,
+                        image: trade.image,
+                        estimatedValue: null,
+                        condition: "USED",
+                        category: trade.category,
+                      },
+                    },
+                  });
+                }}
+              >
                 Make Offer
               </Button>
 
