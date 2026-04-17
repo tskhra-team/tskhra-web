@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useModal } from "@/context/ModalContext";
-import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
+import { CardImageSlider } from "@/Swapping/CardImageSlider";
 import useDeleteItem from "@/Swapping/MyItems/useDeleteItem";
 import type { Item } from "@/Swapping/MyItems/useGetMyItems";
 import {
@@ -73,8 +73,6 @@ export function ItemCard({ item }: { item: Item }) {
     year: "numeric",
   });
 
-  const coverPhoto = item.images?.[0];
-
   return (
     <div
       className={`rounded-3xl bg-white shadow-xl overflow-hidden border-2 flex flex-col group cursor-default ${
@@ -85,19 +83,10 @@ export function ItemCard({ item }: { item: Item }) {
     >
       {/* Image Header */}
       <div className="relative h-56 w-full overflow-hidden">
-        <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-110">
-          {coverPhoto ? (
-            <ImageWithFallback
-              src={coverPhoto}
-              alt={item.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <span className="text-gray-400 text-sm">No photo</span>
-            </div>
-          )}
-        </div>
+        <CardImageSlider
+          images={item.images ?? []}
+          alt={item.name}
+        />
 
         {/* Category + VIP badges */}
         <div className="absolute top-4 left-4 flex items-center gap-2">
