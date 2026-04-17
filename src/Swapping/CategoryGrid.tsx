@@ -16,56 +16,56 @@ const categories = [
     icon: Shirt,
     name: "Fashion",
     count: "12.5K",
-    color: "#a31621",
+    color: "var(--swap-primary)",
     subcategories: ["Vintage", "Sneakers", "Streetwear", "Bags"],
   },
   {
     icon: Laptop,
     name: "Electronics",
     count: "8.2K",
-    color: "#c7522a",
+    color: "var(--swap-accent-orange)",
     subcategories: ["Phones", "Laptops", "Cameras", "Gaming"],
   },
   {
     icon: Home,
     name: "Home & Garden",
     count: "15.3K",
-    color: "#e5c185",
+    color: "var(--swap-accent-gold)",
     subcategories: ["Furniture", "Decor", "Plants", "Tools"],
   },
   {
     icon: Palette,
     name: "Art & Crafts",
     count: "6.7K",
-    color: "#74a892",
+    color: "var(--swap-accent-green)",
     subcategories: ["Paintings", "Supplies", "Handmade", "Prints"],
   },
   {
     icon: Dumbbell,
     name: "Sports",
     count: "9.1K",
-    color: "#8b7e74",
+    color: "var(--swap-accent-taupe)",
     subcategories: ["Bikes", "Weights", "Apparel", "Rackets"],
   },
   {
     icon: BookOpen,
     name: "Books & Media",
     count: "11.4K",
-    color: "#a31621",
+    color: "var(--swap-primary)",
     subcategories: ["Fiction", "Vinyl", "Textbooks", "Comics"],
   },
   {
     icon: Utensils,
     name: "Kitchen",
     count: "7.8K",
-    color: "#c7522a",
+    color: "var(--swap-accent-orange)",
     subcategories: ["Appliances", "Cookware", "Coffee", "Tableware"],
   },
   {
     icon: Car,
     name: "Automotive",
     count: "5.9K",
-    color: "#e5c185",
+    color: "var(--swap-accent-gold)",
     subcategories: ["Parts", "Motorcycles", "Accessories", "Tools"],
   },
 ];
@@ -133,7 +133,7 @@ export function CategoryGrid() {
                     key={sub}
                     className="px-2 py-1 text-xs font-medium rounded-md"
                     style={{
-                      backgroundColor: "rgba(0,0,0,0.04)",
+                      backgroundColor: "var(--swap-overlay-subtle)",
                       color: "var(--swap-text2)",
                     }}
                   >

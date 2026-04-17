@@ -25,7 +25,7 @@ const TRADES = [
       "https://images.unsplash.com/photo-1630939687530-241d630735df?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHdvbWFuJTIwcG9ydHJhaXQlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjA3MTA5OXww&ixlib=rb-4.1.0&q=80&w=1080",
     time: "2h ago",
     location: "Brooklyn, NY",
-    color: "#c7522a",
+    color: "var(--swap-accent-orange)",
     status: "VIP",
   },
   {
@@ -40,7 +40,7 @@ const TRADES = [
       "https://images.unsplash.com/photo-1762708590808-c453c0e4fb0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMG1hbiUyMHBvcnRyYWl0JTIwc21pbGluZ3xlbnwxfHx8fDE3NzYxMDI1NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
     time: "5h ago",
     location: "Austin, TX",
-    color: "#a31621",
+    color: "var(--swap-primary)",
     status: "VIP",
   },
   {
@@ -55,7 +55,7 @@ const TRADES = [
       "https://images.unsplash.com/photo-1630939687530-241d630735df?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHdvbWFuJTIwcG9ydHJhaXQlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjA3MTA5OXww&ixlib=rb-4.1.0&q=80&w=1080",
     time: "1d ago",
     location: "Denver, CO",
-    color: "#8b7e74",
+    color: "var(--swap-accent-taupe)",
     status: null,
   },
   {
@@ -70,7 +70,7 @@ const TRADES = [
       "https://images.unsplash.com/photo-1762708590808-c453c0e4fb0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMG1hbiUyMHBvcnRyYWl0JTIwc21pbGluZ3xlbnwxfHx8fDE3NzYxMDI1NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
     time: "2d ago",
     location: "Portland, OR",
-    color: "#e5c185",
+    color: "var(--swap-accent-gold)",
     status: null,
   },
 ];
@@ -174,7 +174,25 @@ export function AvailableTrades() {
                 </div>
               </div>
 
-              <Button className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary">
+              <Button
+                className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/swapping/trade-offer", {
+                    state: {
+                      targetItem: {
+                        id: String(trade.id),
+                        name: trade.title,
+                        description: trade.lookingFor,
+                        image: trade.image,
+                        estimatedValue: null,
+                        condition: "USED",
+                        category: trade.category,
+                      },
+                    },
+                  });
+                }}
+              >
                 Make Offer
               </Button>
 

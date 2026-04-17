@@ -275,7 +275,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                 className="flex-1 md:flex-none px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 text-white border-none cursor-pointer"
                 style={{
                   background:
-                    "linear-gradient(135deg, #7c3aed, #a855f7, #c084fc)",
+                    "linear-gradient(135deg, var(--swap-magic-start), var(--swap-magic-mid), var(--swap-magic-end))",
                   fontSize: "0.95rem",
                 }}
               >

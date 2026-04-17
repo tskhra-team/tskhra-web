@@ -26,6 +26,7 @@ const MyBookingsPage = lazy(() => import("@/pages/MyBookingsPage"));
 const MyItemsPage = lazy(() => import("@/pages/MyItemsPage"));
 const OffersPage = lazy(() => import("@/pages/OffersPage"));
 const PostItemsPage = lazy(() => import("@/pages/PostItemsPage"));
+const TradeOfferPage = lazy(() => import("@/pages/TradeOfferPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
@@ -177,6 +178,14 @@ export const routes = [
             element: (
               <Suspense fallback={<Loader />}>
                 <OffersPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "trade-offer",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <TradeOfferPage />
               </Suspense>
             ),
           },
