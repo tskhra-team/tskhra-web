@@ -452,6 +452,7 @@ export default function TradeOffer() {
 
     submitOffer(
       {
+        responderId: targetItem.ownerId,
         offererItems: offeredItems.map((i) => i.id),
         responderItems: [targetItem.id],
       },

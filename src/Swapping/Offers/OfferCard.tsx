@@ -4,7 +4,11 @@ import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import { ArrowRightLeft, Clock, Scale } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import type { TradeOffer } from "./types";
+import type { TradeOffer, TradeOfferItem } from "./types";
+
+function getItemImage(item: TradeOfferItem): string {
+  return item.images?.[0] ?? item.image ?? "";
+}
 
 function useTimeRemaining(expiresAt: string) {
   const now = new Date();
@@ -47,13 +51,19 @@ function ItemThumbnails({
       <div className="flex gap-2 flex-wrap">
         {items.map((item) => (
           <div key={item.id} className="flex flex-col items-center gap-1 w-16">
-            <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-swap-bg shrink-0">
-              <ImageWithFallback
-                src={item.images[0]}
-                alt={item.name}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+            <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-swap-bg shrink-0 bg-gray-100">
+              {getItemImage(item) ? (
+                <ImageWithFallback
+                  src={getItemImage(item)}
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]">
+                  No img
+                </div>
+              )}
             </div>
             <span className="text-[10px] text-swap-text2 text-center leading-tight line-clamp-2">
               {item.name}

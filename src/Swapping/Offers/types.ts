@@ -1,11 +1,19 @@
-import type { Item } from "@/Swapping/MyItems/useGetMyItems";
+export interface TradeOfferItem {
+  id: string;
+  name: string;
+  images?: string[];
+  image?: string;
+  estimatedValue?: number | null;
+  category?: string;
+  condition?: string;
+}
 
 export interface TradeOffer {
   offerId: string;
   offererId: number;
   responderId: number;
-  offererItems: Item[];
-  responderItems: Item[];
+  offererItems: TradeOfferItem[];
+  responderItems: TradeOfferItem[];
   fairnessRatio: number;
   status: "PENDING" | "ACCEPTED" | "REJECTED" | "EXPIRED";
   createdAt: string;

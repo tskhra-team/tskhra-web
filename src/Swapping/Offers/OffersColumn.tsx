@@ -72,9 +72,11 @@ export function OffersColumn({
             </p>
           </div>
         ) : (
-          offers?.map((offer, idx) => (
-            <OfferCard key={offer.offerId} offer={offer} index={idx} />
-          ))
+          <div className="space-y-4">
+            {offers?.map((offer, idx) => (
+              <OfferCard key={offer.offerId} offer={offer} index={idx} />
+            ))}
+          </div>
         )}
       </div>
 
