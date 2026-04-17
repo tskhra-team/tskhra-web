@@ -37,16 +37,16 @@ export const createPostItem = (t: TFunction) => {
       .min(10, t("swapping:validation.descMin"))
       .max(100, t("swapping:validation.descMax")),
 
-    estimatedValue: yup
-      .number()
-      .typeError(t("swapping:validation.estValueRequired"))
-      .required(t("swapping:validation.estValueRequired"))
-      .min(1, t("swapping:validation.priceMin"))
-      .max(1000000, t("swapping:validation.priceMax"))
-      .test("max-decimals", t("swapping:validation.maxDecimals"), (value) => {
-        if (value === undefined || value === null) return true;
-        return /^\d+(\.\d{1,2})?$/.test(value.toString());
-      }),
+    // estimatedValue: yup
+    //   .number()
+    //   .typeError(t("swapping:validation.estValueRequired"))
+    //   .required(t("swapping:validation.estValueRequired"))
+    //   .min(1, t("swapping:validation.priceMin"))
+    //   .max(1000000, t("swapping:validation.priceMax"))
+    //   .test("max-decimals", t("swapping:validation.maxDecimals"), (value) => {
+    //     if (value === undefined || value === null) return true;
+    //     return /^\d+(\.\d{1,2})?$/.test(value.toString());
+    //   }),
 
     cityId: yup.string().required(t("swapping:validation.cityRequired")),
 

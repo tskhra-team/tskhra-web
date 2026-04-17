@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { CatalogItemCard } from "@/Swapping/SwapCatalog/CatalogItemCard";
 import useGetAllItems from "@/Swapping/SwapCatalog/useGetAllItems";
+import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
 import { Package } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -53,6 +54,7 @@ export default function SwapCatalogCards() {
   const { t } = useTranslation(["swapping"]);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // set default pages
   useEffect(() => {
     if (!searchParams.has("page")) {
       setSearchParams(
@@ -84,7 +86,49 @@ export default function SwapCatalogCards() {
     [apiPage, setSearchParams],
   );
 
-  const { data: items, isLoading, isError } = useGetAllItems(apiPage, SIZE);
+  // check if we has any filtest on url
+  const hasFilters = Array.from(searchParams.keys()).some(
+    (key) => key !== "page",
+  );
+
+  // get all data from url
+  const query = searchParams.get("s") || undefined;
+
+  // THIS IS SHOULD BE REPLACED WITH RIGTH USING SC AND C
+  const sc = searchParams.get("sc");
+  const categoryId = sc ? Number(sc) : undefined;
+
+  const cityIdParam = searchParams.get("cityId");
+  const cityId = cityIdParam ? Number(cityIdParam) : undefined;
+
+  const condition = (searchParams.get("condition") as any) || undefined;
+  const tradeRange = (searchParams.get("tradeRange") as any) || undefined;
+
+  const {
+    data: allItems,
+    isLoading: isLoadingAll,
+    isError: isErrorAll,
+  } = useGetAllItems(apiPage, SIZE); // tip: it would be good to add this prop  { enabled: !hasFilters }
+
+  const {
+    data: searchedItems,
+    isLoading: isLoadingSearch,
+    isError: isErrorSearch,
+  } = useGetSearchedItems({
+    query,
+    categoryId, // here i sending sc but in future it should be c
+    cityId,
+    condition,
+    tradeRange,
+    page: apiPage,
+    size: SIZE,
+    enabled: hasFilters,
+  });
+
+  // choose actual data
+  const items = hasFilters ? searchedItems : allItems;
+  const isLoading = hasFilters ? isLoadingSearch : isLoadingAll;
+  const isError = hasFilters ? isErrorSearch : isErrorAll;
 
   const totalPages = items?.totalPages ?? 0;
 
@@ -104,7 +148,10 @@ export default function SwapCatalogCards() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {Array.from({ length: SIZE }).map((_, i) => (
-            <Card key={i} className="h-115 animate-pulse bg-muted rounded-3xl" />
+            <Card
+              key={i}
+              className="h-115 animate-pulse bg-muted rounded-3xl"
+            />
           ))}
         </div>
       ) : isError ? (

@@ -112,7 +112,7 @@ export default function FilterSwapCatalog() {
         params.delete(key);
       }
     });
-
+    params.set("page", "1");
     setSearchParams(params);
   };
 
@@ -137,7 +137,7 @@ export default function FilterSwapCatalog() {
   };
 
   return (
-    <div className="bg-swap-primary p-8 h-auto w-100 rounded-3xl text-white font-bold">
+    <div className="bg-swap-primary sticky top-8 p-8 h-full w-100 rounded-3xl text-white font-bold">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-2xl">{t("swapping:catalog.filters")}</h1>
         {hasActiveFilters && (
@@ -174,7 +174,7 @@ export default function FilterSwapCatalog() {
             initial={{ height: 0 }}
             animate={{
               height: "1.25rem",
-            }} /* 1.25rem - это эквивалент mb-5 в Tailwind */
+            }}
             exit={{ height: 0 }}
             className="w-full"
           />
@@ -384,6 +384,13 @@ export default function FilterSwapCatalog() {
         <Button
           type="submit"
           className="mt-5 w-full bg-white text-swap-text hover:bg-swap-bg"
+          onClick={() =>
+            setTimeout(
+              () => window.scrollTo({ top: 120, left: 0, behavior: "smooth" }),
+              200,
+              [],
+            )
+          }
         >
           {t("swapping:catalog.applyFilters")}
         </Button>
