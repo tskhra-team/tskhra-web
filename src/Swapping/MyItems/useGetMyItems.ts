@@ -5,6 +5,7 @@ import type { AxiosError } from "axios";
 
 export interface Item {
   id: string;
+  ownerId: number;
   name: string;
   description: string;
   category: string;

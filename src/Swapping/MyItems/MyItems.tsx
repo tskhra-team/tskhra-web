@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Pagination,
@@ -10,10 +11,10 @@ import {
 } from "@/components/ui/pagination";
 import { ItemCard } from "@/Swapping/MyItems/ItemCard";
 import useGetMyItems from "@/Swapping/MyItems/useGetMyItems";
-import { Package } from "lucide-react";
+import { ArrowLeft, Package } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const getVisiblePages = (totalPages: number, currentPage: number) => {
   if (totalPages <= 7) {
@@ -49,6 +50,7 @@ const getVisiblePages = (totalPages: number, currentPage: number) => {
 
 export default function MyItems() {
   const { t } = useTranslation(["swapping"]);
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -96,6 +98,14 @@ export default function MyItems() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+      <Button
+        variant="link"
+        className="mb-2"
+        onClick={() => navigate("/swapping")}
+      >
+        <ArrowLeft />
+        {t("swapping:postItem.back")}
+      </Button>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t("swapping:nav.myItems")}</h1>

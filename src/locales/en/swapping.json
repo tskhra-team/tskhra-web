@@ -7,6 +7,7 @@
   "postItem": {
     "pageTitle": "Post New Item",
     "back": "Go back",
+    "catalog": "Go to Catalog",
     "pageSubtitle": "List an item you'd like to trade with the community",
     "basicInfo": "Basic Information",
     "basicInfoSub": "Provide details about your item",
@@ -65,6 +66,30 @@
     "fileSizeTooLarge": "File is too large (max 5MB)",
     "fileTypeInvalid": "Invalid file type",
     "maxDecimals": "Maximum 2 decimal places allowed"
+  },
+  "availableTrades": {
+    "title": "Available Trades",
+    "viewAll": "View All",
+    "description": "Description",
+    "makeOffer": "Make Offer",
+    "noPhoto": "No photo",
+    "noTrades": "No trades available"
+  },
+  "categories": {
+    "Legal and Finance": "Legal & Finance",
+    "Electronics": "Electronics",
+    "Fashion": "Fashion",
+    "Home and Garden": "Home & Garden",
+    "Art and Crafts": "Art & Crafts",
+    "Sports": "Sports",
+    "Books and Media": "Books & Media",
+    "Kitchen": "Kitchen",
+    "Automotive": "Automotive",
+    "Music": "Music",
+    "Health and Beauty": "Health & Beauty",
+    "Toys and Games": "Toys & Games",
+    "Pets": "Pets",
+    "Other": "Other"
   },
   "catalog": {
     "all": "All",

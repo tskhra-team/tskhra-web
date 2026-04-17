@@ -7,6 +7,7 @@
   "postItem": {
     "pageTitle": "ახალი ნივთის დამატება",
     "back": "უკან",
+    "catalog": "კატალოგზე გადასვლა",
     "pageSubtitle": "განათავსეთ ნივთი, რომლის გაცვლაც გსურთ",
     "basicInfo": "ძირითადი ინფორმაცია",
     "basicInfoSub": "შეავსეთ დეტალები თქვენი ნივთის შესახებ",
@@ -65,6 +66,30 @@
     "fileSizeTooLarge": "ფაილი ძალიან დიდია (მაქს 5MB)",
     "fileTypeInvalid": "ფაილის ტიპი არასწორია",
     "maxDecimals": "ფასში მაქსიმუმ 2 ათწილადი დაშვებულია"
+  },
+  "availableTrades": {
+    "title": "ხელმისაწვდომი გაცვლები",
+    "viewAll": "ყველას ნახვა",
+    "description": "აღწერა",
+    "makeOffer": "შეთავაზება",
+    "noPhoto": "ფოტო არ არის",
+    "noTrades": "გაცვლები არ არის ხელმისაწვდომი"
+  },
+  "categories": {
+    "Legal and Finance": "იურიდიული და ფინანსები",
+    "Electronics": "ელექტრონიკა",
+    "Fashion": "მოდა",
+    "Home and Garden": "სახლი და ბაღი",
+    "Art and Crafts": "ხელოვნება და ხელსაქმე",
+    "Sports": "სპორტი",
+    "Books and Media": "წიგნები და მედია",
+    "Kitchen": "სამზარეულო",
+    "Automotive": "ავტომობილი",
+    "Music": "მუსიკა",
+    "Health and Beauty": "ჯანმრთელობა და სილამაზე",
+    "Toys and Games": "სათამაშოები და თამაშები",
+    "Pets": "შინაური ცხოველები",
+    "Other": "სხვა"
   },
   "catalog": {
     "all": "ყველა",

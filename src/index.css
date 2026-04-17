@@ -47,6 +47,14 @@
   --color-swap-text: var(--swap-text);
   --color-swap-text2: var(--swap-text2);
   --color-swap-bg: var(--swap-bg);
+  --color-swap-accent-orange: var(--swap-accent-orange);
+  --color-swap-accent-gold: var(--swap-accent-gold);
+  --color-swap-accent-green: var(--swap-accent-green);
+  --color-swap-accent-taupe: var(--swap-accent-taupe);
+  --color-swap-accent-blue: var(--swap-accent-blue);
+  --color-swap-magic-start: var(--swap-magic-start);
+  --color-swap-magic-mid: var(--swap-magic-mid);
+  --color-swap-magic-end: var(--swap-magic-end);
 }
 
 :root {
@@ -87,6 +95,22 @@
   --swap-text: #1e1e1e;
   --swap-text2: #595959;
   --swap-bg: #f3f3f3;
+  --swap-accent-orange: #c7522a;
+  --swap-accent-gold: #e5c185;
+  --swap-accent-green: #74a892;
+  --swap-accent-taupe: #8b7e74;
+  --swap-accent-blue: #4a6fa5;
+  --swap-magic-start: #7c3aed;
+  --swap-magic-mid: #a855f7;
+  --swap-magic-end: #c084fc;
+  --swap-shadow-primary-sm: rgba(163, 22, 33, 0.25);
+  --swap-shadow-primary-md: rgba(163, 22, 33, 0.3);
+  --swap-shadow-primary-lg: rgba(163, 22, 33, 0.4);
+  --swap-overlay-light: rgba(255, 255, 255, 0.7);
+  --swap-overlay-lighter: rgba(255, 255, 255, 0.9);
+  --swap-shadow-soft: rgba(0, 0, 0, 0.08);
+  --swap-shadow-card: rgba(0, 0, 0, 0.15);
+  --swap-overlay-subtle: rgba(0, 0, 0, 0.04);
 }
 
 .dark {

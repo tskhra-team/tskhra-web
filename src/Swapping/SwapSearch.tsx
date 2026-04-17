@@ -5,7 +5,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
-import { ChevronDown, Grid, Search, Sparkles, X } from "lucide-react";
+import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
+
+import { ChevronDown, Grid, Loader2, Search, Sparkles, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +24,6 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
     i18n.language.toUpperCase(),
   );
 
-  // routing and parametres
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -31,6 +32,8 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get("s") || "");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     searchParams.get("c") || "",
   );
@@ -40,13 +43,37 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
 
   const [open, setOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
+
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
 
+  // sinc with URL
   useEffect(() => {
     setSearchQuery(searchParams.get("s") || "");
     setSelectedCategoryId(searchParams.get("c") || "");
     setSelectedSubCategoryId(searchParams.get("sc") || "");
   }, [searchParams]);
+
+  // debounce logic
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const { data: liveSearchData, isLoading: isLiveSearchLoading } =
+    useGetSearchedItems({
+      page: 0,
+      size: 4,
+      query: debouncedSearchQuery,
+      categoryId: selectedSubCategoryId
+        ? Number(selectedSubCategoryId)
+        : undefined,
+      enabled:
+        debouncedSearchQuery.length > 0 || Boolean(selectedSubCategoryId),
+    });
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -56,16 +83,11 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
     );
   }, []);
 
-  // saving id not name
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
     setSelectedSubCategoryId("");
     setOpen(false);
-
-    //this for focus on search input
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 10);
+    setTimeout(() => inputRef.current?.focus(), 10);
   };
 
   const handleSubCategorySelect = (
@@ -75,14 +97,9 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
     setSelectedCategoryId(categoryId);
     setSelectedSubCategoryId(subCategoryId);
     setOpen(false);
-
-    //this for focus on search input
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 10);
+    setTimeout(() => inputRef.current?.focus(), 10);
   };
 
-  // search names by id in url
   const selectedCatObj = categories?.find(
     (c) => String(c.id) === String(selectedCategoryId),
   );
@@ -97,72 +114,56 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
     ? `${displayCategoryName} · ${displaySubCategoryName}`
     : displayCategoryName;
 
-  const showOverlay = open || (!!displayCategory && isActive);
+  const showOverlay = open || isActive || isSearchFocused;
 
   const handleClearAll = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Останавливаем всплытие, чтобы не моргал фон
-
-    // 1. Очищаем локальные стейты
+    e.stopPropagation();
     setSearchQuery("");
+    setDebouncedSearchQuery("");
     setSelectedCategoryId("");
     setSelectedSubCategoryId("");
     setIsActive(false);
 
-    // 2. Берем текущие параметры URL
-    const params = new URLSearchParams(searchParams);
+    setIsSearchFocused(false);
+    inputRef.current?.blur();
 
-    // 3. Удаляем только параметры поиска и категорий
+    const params = new URLSearchParams(searchParams);
     params.delete("s");
     params.delete("c");
     params.delete("sc");
 
-    // 4. Пушим чистый URL
-    navigate({
-      pathname: "/swapping/catalog",
-      search: params.toString(),
-    });
+    navigate({ pathname: "/swapping/catalog", search: params.toString() });
   };
 
   const handleSearchSubmit = () => {
-    // 1. Передаем searchParams внутрь, чтобы СОХРАНИТЬ текущие фильтры!
     const params = new URLSearchParams(searchParams);
 
-    // 2. Добавляем или УДАЛЯЕМ параметры (если юзер стер текст в поиске)
-    if (searchQuery) {
-      params.set("s", searchQuery);
-    } else {
-      params.delete("s");
-    }
+    if (searchQuery) params.set("s", searchQuery);
+    else params.delete("s");
 
-    if (selectedCategoryId) {
-      params.set("c", String(selectedCategoryId));
-    } else {
-      params.delete("c");
-    }
+    if (selectedCategoryId) params.set("c", String(selectedCategoryId));
+    else params.delete("c");
 
-    if (selectedSubCategoryId) {
-      params.set("sc", String(selectedSubCategoryId));
-    } else {
-      params.delete("sc");
-    }
+    if (selectedSubCategoryId) params.set("sc", String(selectedSubCategoryId));
+    else params.delete("sc");
 
+    params.set("page", "1");
     setIsActive(false);
     setOpen(false);
+    setIsSearchFocused(false);
+    inputRef.current?.blur();
 
-    navigate({
-      pathname: "/swapping/catalog",
-      search: params.toString(),
-    });
+    navigate({ pathname: "/swapping/catalog", search: params.toString() });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearchSubmit();
-    }
+    if (e.key === "Enter") handleSearchSubmit();
   };
 
-  // Проверяем, есть ли активные параметры в поиске или категориях
   const hasActiveSearchOrCategory = searchQuery || selectedCategoryId;
+
+  const showLiveSearchPopover =
+    isSearchFocused && debouncedSearchQuery.length > 0;
 
   return (
     <motion.div
@@ -184,6 +185,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
             onClick={() => {
               setOpen(false);
               setIsActive(false);
+              setIsSearchFocused(false);
             }}
           />
         )}
@@ -191,115 +193,190 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverAnchor asChild>
-          <div
-            ref={anchorRef}
-            onMouseDown={() => setIsActive(true)}
-            className="p-2 rounded-2xl md:rounded-full backdrop-blur-xl bg-white/80 border-2 shadow-2xl flex flex-col md:flex-row items-center gap-2"
-            style={{ borderColor: "var(--swap-secondary)" }}
-          >
-            {/* Search Input */}
-            <div className="flex-1 flex items-center gap-3 px-5 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200">
-              <Search className="w-5 h-5 text-gray-400 shrink-0" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleKeyDown} //
-                placeholder={t("swapping:hero.searchPlaceholder")}
-                className="w-full bg-transparent border-none outline-none text-gray-800 placeholder-gray-400 font-medium text-base"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={() => setSearchQuery("")}
-                  className="shrink-0 p-0.5 rounded-full hover:bg-gray-200 transition-colors cursor-pointer border-none bg-transparent"
-                >
-                  <X className="w-4 h-4 text-gray-400" />
-                </button>
-              )}
-            </div>
-
-            {/* Category Trigger */}
-            <PopoverTrigger asChild>
-              <button className="flex-1 w-full flex items-center gap-3 px-5 py-3 cursor-pointer bg-transparent border-none outline-none text-left">
-                <Grid className="w-5 h-5 text-gray-400 shrink-0" />
-                <span
-                  className={`flex-1 font-medium text-base truncate ${
-                    displayCategory ? "text-gray-800" : "text-gray-400"
-                  }`}
-                >
-                  {displayCategory || t("swapping:hero.categoryPlaceholder")}
-                </span>
-                {displayCategory ? (
+          <div className="relative">
+            {" "}
+            <div
+              ref={anchorRef}
+              onMouseDown={() => setIsActive(true)}
+              className="p-2 rounded-2xl md:rounded-full backdrop-blur-xl bg-white/80 border-2 shadow-2xl flex flex-col md:flex-row items-center gap-2 relative z-10"
+              style={{ borderColor: "var(--swap-secondary)" }}
+            >
+              {/* Search Input */}
+              <div className="flex-1 flex items-center gap-3 px-5 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 relative">
+                <Search className="w-5 h-5 text-gray-400 shrink-0" />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={t("swapping:hero.searchPlaceholder")}
+                  className="w-full bg-transparent border-none outline-none text-gray-800 placeholder-gray-400 font-medium text-base"
+                />
+                {searchQuery && (
                   <button
                     type="button"
                     onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedCategoryId("");
-                      setSelectedSubCategoryId("");
-                      setIsActive(false);
+                    onClick={() => {
+                      setSearchQuery("");
+                      setDebouncedSearchQuery("");
                     }}
                     className="shrink-0 p-0.5 rounded-full hover:bg-gray-200 transition-colors cursor-pointer border-none bg-transparent"
                   >
                     <X className="w-4 h-4 text-gray-400" />
                   </button>
-                ) : (
-                  <ChevronDown
-                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                      open ? "rotate-180" : ""
-                    }`}
-                  />
                 )}
-              </button>
-            </PopoverTrigger>
+              </div>
 
-            {/* Buttons */}
-            <div className="flex gap-2 w-full md:w-auto">
-              {hasActiveSearchOrCategory && (
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={handleClearAll}
-                  className="px-3 py-2 text-sm font-semibold text-gray-400 hover:text-gray-800 transition-colors cursor-pointer bg-transparent border-none"
-                >
-                  Clear All
+              {/* Category Trigger */}
+              <PopoverTrigger asChild>
+                <button className="flex-1 w-full flex items-center gap-3 px-5 py-3 cursor-pointer bg-transparent border-none outline-none text-left">
+                  <Grid className="w-5 h-5 text-gray-400 shrink-0" />
+                  <span
+                    className={`flex-1 font-medium text-base truncate ${
+                      displayCategory ? "text-gray-800" : "text-gray-400"
+                    }`}
+                  >
+                    {displayCategory || t("swapping:hero.categoryPlaceholder")}
+                  </span>
+                  {displayCategory ? (
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCategoryId("");
+                        setSelectedSubCategoryId("");
+                        setIsActive(false);
+                      }}
+                      className="shrink-0 p-0.5 rounded-full hover:bg-gray-200 transition-colors cursor-pointer border-none bg-transparent"
+                    >
+                      <X className="w-4 h-4 text-gray-400" />
+                    </button>
+                  ) : (
+                    <ChevronDown
+                      className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                        open ? "rotate-180" : ""
+                      }`}
+                    />
+                  )}
                 </button>
-              )}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onMouseDown={(e) => e.stopPropagation()}
-                className="flex-1 md:flex-none px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 text-white border-none cursor-pointer"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #7c3aed, #a855f7, #c084fc)",
-                  fontSize: "0.95rem",
-                }}
-              >
-                <Sparkles className="w-4 h-4" />
-                Magic Chain
-              </motion.button>
+              </PopoverTrigger>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={handleSearchSubmit}
-                className="flex-1 md:flex-none px-6 py-3 rounded-full text-white font-medium flex items-center justify-center gap-2 border-none cursor-pointer"
-                style={{
-                  background: "var(--swap-primary)",
-                  fontSize: "0.95rem",
-                }}
-              >
-                <Search className="w-4 h-4" />
-                {t("swapping:hero.findSwaps")}
-              </motion.button>
+              {/* Buttons */}
+              <div className="flex gap-2 w-full md:w-auto items-center">
+                {hasActiveSearchOrCategory && (
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={handleClearAll}
+                    className="px-3 py-2 text-sm font-semibold text-gray-400 hover:text-gray-800 transition-colors cursor-pointer bg-transparent border-none"
+                  >
+                    Clear All
+                  </button>
+                )}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  className="flex-1 md:flex-none px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 text-white border-none cursor-pointer"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, var(--swap-magic-start), var(--swap-magic-mid), var(--swap-magic-end))",
+                    fontSize: "0.95rem",
+                  }}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Magic Chain
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={handleSearchSubmit}
+                  className="flex-1 md:flex-none px-6 py-3 rounded-full text-white font-medium flex items-center justify-center gap-2 border-none cursor-pointer"
+                  style={{
+                    background: "var(--swap-primary)",
+                    fontSize: "0.95rem",
+                  }}
+                >
+                  <Search className="w-4 h-4" />
+                  {t("swapping:hero.findSwaps")}
+                </motion.button>
+              </div>
             </div>
+            {/* live search popup*/}
+            <AnimatePresence>
+              {showLiveSearchPopover && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute left-0 right-0 md:right-auto md:w-100 top-[calc(100%+12px)] bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-20"
+                >
+                  <div className="p-4">
+                    {isLiveSearchLoading ? (
+                      <div className="flex items-center gap-2 text-gray-400 justify-center py-4">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span className="text-sm font-medium">
+                          Searching...
+                        </span>
+                      </div>
+                    ) : liveSearchData?.content.length ? (
+                      <div className="space-y-3">
+                        <p className="text-xs font-bold text-gray-400 uppercase px-2">
+                          Top Results
+                        </p>
+                        {liveSearchData.content.map((item: any) => (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              setIsSearchFocused(false);
+                              inputRef.current?.blur();
+
+                              navigate(`/swapping/trade-offer?id=${item.id}`);
+                            }}
+                            className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border-none bg-transparent text-left"
+                          >
+                            <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                              <img src={item.images[0]} />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-gray-800 text-sm line-clamp-1">
+                                {item.name}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {item.categoryName}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+
+                        <button
+                          onClick={handleSearchSubmit}
+                          className="w-full mt-2 py-2 text-sm font-semibold text-swap-primary hover:bg-(--swap-primary)/10 rounded-lg transition-colors border-none bg-transparent cursor-pointer"
+                        >
+                          View all results
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6 text-gray-500">
+                        <p className="text-sm">
+                          No items found for "{debouncedSearchQuery}"
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </PopoverAnchor>
+
+        {/* ... (остальной код PopoverContent для категорий без изменений) ... */}
 
         <PopoverContent
           className="p-0 max-h-[70vh] overflow-hidden rounded-xl relative"

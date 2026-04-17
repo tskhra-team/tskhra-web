@@ -5,21 +5,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useModal } from "@/context/ModalContext";
 import { CardImageSlider } from "@/Swapping/CardImageSlider";
-import useDeleteItem from "@/Swapping/MyItems/useDeleteItem";
 import type { Item } from "@/Swapping/MyItems/useGetMyItems";
 import {
   ArrowRightLeft,
   Calendar,
   Crown,
-  Loader2,
   MapPin,
-  Pencil,
   Sparkles,
-  Trash2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const CONDITION_LABELS: Record<string, string> = {
   NEW: "New",
@@ -33,39 +29,9 @@ const TRADE_RANGE_LABELS: Record<string, string> = {
   COUNTRY_WIDE: "Country Wide",
 };
 
-export function ItemCard({ item }: { item: Item }) {
-  const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
-  const { showModal } = useModal();
-  const { t } = useTranslation(["swapping", "modal"]);
-
-  const handleDelete = () => {
-    showModal(
-      "warning",
-      t("modal:titles.attention"),
-      t("modal:messages.confirmDeleteItem"),
-      t("modal:buttons.close"),
-      () => {},
-      t("modal:buttons.yesDelete"),
-      () => {
-        deleteItem(item.id, {
-          onSuccess: () => {
-            showModal(
-              "success",
-              t("modal:titles.successful"),
-              t("modal:messages.itemDeletedSuccess"),
-            );
-          },
-          onError: () => {
-            showModal(
-              "error",
-              t("modal:titles.somethingWentWrong"),
-              t("modal:messages.itemDidntDeleted"),
-            );
-          },
-        });
-      },
-    );
-  };
+export function CatalogItemCard({ item }: { item: Item }) {
+  const navigate = useNavigate();
+  const { t } = useTranslation(["swapping"]);
 
   const formattedDate = new Date(item.createdAt).toLocaleDateString("en-US", {
     month: "short",
@@ -75,7 +41,7 @@ export function ItemCard({ item }: { item: Item }) {
 
   return (
     <div
-      className={`rounded-3xl bg-white shadow-xl overflow-hidden border-2 flex flex-col group cursor-default ${
+      className={`rounded-3xl bg-white shadow-xl overflow-hidden border-2 flex flex-col group cursor-pointer ${
         item.vip
           ? "border-amber-400 shadow-amber-100"
           : "border-swap-secondary"
@@ -88,7 +54,6 @@ export function ItemCard({ item }: { item: Item }) {
           alt={item.name}
         />
 
-        {/* Category + VIP badges */}
         <div className="absolute top-4 left-4 flex items-center gap-2">
           <span className="px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider shadow-sm bg-swap-primary">
             {item.category}
@@ -101,7 +66,6 @@ export function ItemCard({ item }: { item: Item }) {
           )}
         </div>
 
-        {/* Price pill on image */}
         {item.estimatedValue && (
           <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
             <span className="text-xs font-bold text-white">
@@ -123,7 +87,6 @@ export function ItemCard({ item }: { item: Item }) {
           {item.name}
         </h3>
 
-        {/* Description box — styled like "LOOKING FOR" */}
         <div
           className="mb-6 p-4 rounded-xl relative flex-1"
           style={{ backgroundColor: "var(--swap-secondary)" }}
@@ -148,27 +111,16 @@ export function ItemCard({ item }: { item: Item }) {
           </div>
         </div>
 
-        {/* Edit button — styled like "Make Offer" */}
-        <div className="flex gap-2">
-          <Button className="flex-1 bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary">
-            <Pencil className="w-4 h-4 mr-1.5" />
-            Edit
-          </Button>
-          <Button
-            variant="outline"
-            className="w-11 h-10 text-red-500 hover:text-white hover:bg-red-500 hover:border-red-500 transition-all"
-            disabled={isDeleting}
-            onClick={handleDelete}
-          >
-            {isDeleting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Trash2 className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
+        <Button
+          className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary"
+          onClick={() => {
+            navigate(`/swapping/trade-offer?id=${item.id}`);
+          }}
+        >
+          {t("swapping:catalog.makeOffer", "Make Offer")}
+        </Button>
 
-        {/* Footer — price + trade range */}
+        {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           {item.estimatedValue && (
             <TooltipProvider>
@@ -194,7 +146,6 @@ export function ItemCard({ item }: { item: Item }) {
           </span>
         </div>
 
-        {/* Location + Date */}
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-400 font-medium">
           <div className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5" />

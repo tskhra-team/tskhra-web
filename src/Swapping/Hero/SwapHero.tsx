@@ -92,7 +92,7 @@ export default function SwapHero() {
               <motion.button
                 whileHover={{
                   scale: 1.05,
-                  boxShadow: "0 10px 40px rgba(163, 22, 33, 0.3)",
+                  boxShadow: "0 10px 40px var(--swap-shadow-primary-md)",
                 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 rounded-full text-white flex items-center gap-2 shadow-lg"
@@ -145,12 +145,12 @@ export default function SwapHero() {
                   background:
                     activeTab === tab.id
                       ? "var(--swap-primary)"
-                      : "rgba(255,255,255,0.7)",
+                      : "var(--swap-overlay-light)",
                   color: activeTab === tab.id ? "white" : "var(--swap-text2)",
                   boxShadow:
                     activeTab === tab.id
-                      ? "0 4px 15px rgba(163,22,33,0.25)"
-                      : "0 2px 8px rgba(0,0,0,0.08)",
+                      ? "0 4px 15px var(--swap-shadow-primary-sm)"
+                      : "0 2px 8px var(--swap-shadow-soft)",
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

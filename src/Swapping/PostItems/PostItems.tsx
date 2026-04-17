@@ -32,7 +32,7 @@ import { ArrowLeft, CheckIcon } from "lucide-react";
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function PostItem() {
   const { t, i18n } = useTranslation(["swapping", "booking", "modal"]);
@@ -44,6 +44,9 @@ export default function PostItem() {
   const { mutate: uploadItemPhotos } = useUploadItemPhotos();
   const { showModal, closeModal } = useModal();
   const navigate = useNavigate();
+  const location = useLocation();
+  const cameFromTradeOffer =
+    (location.state as { from?: string } | null)?.from === "trade-offer";
 
   const tradeRangeOptions = useMemo(
     () => [
@@ -144,7 +147,11 @@ export default function PostItem() {
                 t("modal:buttons.see"),
                 () => {
                   scrollToTop();
-                  navigate(`/swapping/my-items`);
+                  navigate(
+                    cameFromTradeOffer
+                      ? `/swapping/trade-offer`
+                      : `/swapping/my-items`,
+                  );
                 },
               );
             },
@@ -175,11 +182,14 @@ export default function PostItem() {
         <Button
           variant="link"
           className="mb-10"
-          onClick={() => navigate("/swapping")}
+          onClick={() =>
+            navigate((cameFromTradeOffer ? "/swapping/trade-offer" : -1) as any)
+          }
         >
           <ArrowLeft />
           {t("swapping:postItem.back")}
         </Button>
+
         <div className="mb-10">
           <h1 className="text-4xl font-bold text-foreground">
             {t("swapping:postItem.pageTitle")}
@@ -236,7 +246,7 @@ export default function PostItem() {
               </div>
               {/* Estimated Value and City */}
               <div className="space-y-2 flex flex-col md:flex-row gap-2">
-                <div className="w-full space-y-2">
+                {/* <div className="w-full space-y-2">
                   <Label htmlFor="estimatedValue">
                     {t("swapping:postItem.estimatedValue")} *
                   </Label>
@@ -252,7 +262,7 @@ export default function PostItem() {
                       {errors.estimatedValue.message}
                     </p>
                   )}
-                </div>
+                </div> */}
 
                 <div className="w-full space-y-2">
                   <Label htmlFor="cityId">{t("booking:form.city")}</Label>
@@ -609,7 +619,9 @@ export default function PostItem() {
 
           {/* Submit */}
           <div className="flex items-center justify-end space-x-4 pt-6">
-            <Link to="/swapping">
+            <Link
+              to={cameFromTradeOffer ? "/swapping/trade-offer" : "/swapping"}
+            >
               <Button
                 type="button"
                 variant="outline"

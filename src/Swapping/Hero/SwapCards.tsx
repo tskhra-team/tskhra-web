@@ -17,24 +17,24 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 /* ─── Basic Swap data ─── */
 const items = [
-  { icon: Camera, name: "Vintage Camera", color: "#a31621", user: "Sarah M." },
-  { icon: Book, name: "Design Books", color: "#c7522a", user: "Mike R." },
-  { icon: Gamepad2, name: "Gaming Console", color: "#e5c185", user: "Alex K." },
-  { icon: Music, name: "Guitar Lessons", color: "#74a892", user: "Jamie L." },
-  { icon: Coffee, name: "Coffee Maker", color: "#8b7e74", user: "Chris P." },
-  { icon: Watch, name: "Smart Watch", color: "#a31621", user: "Taylor W." },
+  { icon: Camera, name: "Vintage Camera", color: "var(--swap-primary)", user: "Sarah M." },
+  { icon: Book, name: "Design Books", color: "var(--swap-accent-orange)", user: "Mike R." },
+  { icon: Gamepad2, name: "Gaming Console", color: "var(--swap-accent-gold)", user: "Alex K." },
+  { icon: Music, name: "Guitar Lessons", color: "var(--swap-accent-green)", user: "Jamie L." },
+  { icon: Coffee, name: "Coffee Maker", color: "var(--swap-accent-taupe)", user: "Chris P." },
+  { icon: Watch, name: "Smart Watch", color: "var(--swap-primary)", user: "Taylor W." },
 ];
 
 /* ─── Magic Swap chain data ─── */
 const chainMiddle = [
-  { icon: Book, name: "Book", color: "#c7522a" },
-  { icon: Headphones, name: "Headphones", color: "#74a892" },
-  { icon: Camera, name: "Camera", color: "#a31621" },
-  { icon: Laptop, name: "Laptop", color: "#4a6fa5" },
+  { icon: Book, name: "Book", color: "var(--swap-accent-orange)" },
+  { icon: Headphones, name: "Headphones", color: "var(--swap-accent-green)" },
+  { icon: Camera, name: "Camera", color: "var(--swap-primary)" },
+  { icon: Laptop, name: "Laptop", color: "var(--swap-accent-blue)" },
 ];
 
-const startItem = { icon: Pen, name: "Pen", color: "#8b7e74" };
-const endItem = { icon: Car, name: "Car", color: "#e5c185" };
+const startItem = { icon: Pen, name: "Pen", color: "var(--swap-accent-taupe)" };
+const endItem = { icon: Car, name: "Car", color: "var(--swap-accent-gold)" };
 
 export function SwapCards() {
   const [currentPair, setCurrentPair] = useState([0, 1]);
@@ -321,8 +321,8 @@ export function MagicSwap() {
             animate={{
               boxShadow:
                 showChain || phase === "casting"
-                  ? `0 0 20px ${startItem.color}50`
-                  : "0 4px 12px rgba(0,0,0,0.15)",
+                  ? `0 0 20px color-mix(in srgb, ${startItem.color} 31%, transparent)`
+                  : "0 4px 12px var(--swap-shadow-card)",
             }}
           >
             <Pen className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
@@ -348,7 +348,7 @@ export function MagicSwap() {
                 {/* Left dashed line */}
                 <motion.div
                   className="h-px flex-1 border-t-2 border-dashed mb-7"
-                  style={{ borderColor: `${startItem.color}60` }}
+                  style={{ borderColor: `color-mix(in srgb, ${startItem.color} 38%, transparent)` }}
                 />
 
                 {/* Magic button */}
@@ -372,7 +372,7 @@ export function MagicSwap() {
                     phase === "idle"
                       ? {
                           scale: 1.12,
-                          boxShadow: "0 0 30px rgba(163,22,33,0.4)",
+                          boxShadow: "0 0 30px var(--swap-shadow-primary-lg)",
                         }
                       : {}
                   }
@@ -385,7 +385,7 @@ export function MagicSwap() {
                 {/* Right dashed line */}
                 <motion.div
                   className="h-px flex-1 border-t-2 border-dashed mb-7"
-                  style={{ borderColor: `${endItem.color}60` }}
+                  style={{ borderColor: `color-mix(in srgb, ${endItem.color} 38%, transparent)` }}
                 />
               </motion.div>
             )}
@@ -433,11 +433,11 @@ export function MagicSwap() {
                           boxShadow:
                             i === buildStep && phase === "building"
                               ? [
-                                  `0 0 0px ${item.color}00`,
-                                  `0 0 20px ${item.color}70`,
-                                  `0 0 8px ${item.color}30`,
+                                  `0 0 0px transparent`,
+                                  `0 0 20px color-mix(in srgb, ${item.color} 44%, transparent)`,
+                                  `0 0 8px color-mix(in srgb, ${item.color} 19%, transparent)`,
                                 ]
-                              : `0 2px 8px rgba(0,0,0,0.15)`,
+                              : `0 2px 8px var(--swap-shadow-card)`,
                         }}
                         transition={{
                           duration: 0.8,
@@ -516,11 +516,11 @@ export function MagicSwap() {
             }}
             animate={{
               background:
-                phase === "complete" ? endItem.color : "rgba(255,255,255,0.9)",
+                phase === "complete" ? endItem.color : "var(--swap-overlay-lighter)",
               boxShadow:
                 phase === "complete"
-                  ? `0 0 30px ${endItem.color}70`
-                  : "0 4px 12px rgba(0,0,0,0.15)",
+                  ? `0 0 30px color-mix(in srgb, ${endItem.color} 44%, transparent)`
+                  : "0 4px 12px var(--swap-shadow-card)",
             }}
             transition={{ duration: 0.5 }}
           >
