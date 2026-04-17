@@ -102,7 +102,9 @@
     "city": "ქალაქი",
     "sortByDate": "თარიღით დალაგება",
     "status": "სტატუსი",
-    "onlyVip": "მხოლოდ VIP"
+    "onlyVip": "მხოლოდ VIP",
+    "lookingFor": "ეძებს",
+    "makeOffer": "შეთავაზება"
   },
   "aiEstimatedPrice": "ფასი შეფასებულია ჩვენი AI-ს მიერ"
 }
