@@ -24,11 +24,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetMyItems, { type Item } from "@/Swapping/MyItems/useGetMyItems";
+import useCreateTradeOffer from "@/Swapping/TradeOffer/useCreateTradeOffer";
+import { toast } from "sonner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface TradeItem {
   id: string;
+  ownerId?: number;
   name: string;
   description: string;
   image: string;
@@ -49,6 +52,7 @@ const CONDITION_LABELS: Record<string, string> = {
 function mapItemToTradeItem(item: Item): TradeItem {
   return {
     id: item.id,
+    ownerId: item.ownerId,
     name: item.name,
     description: item.description,
     image: item.images?.[0] ?? "",
@@ -386,6 +390,7 @@ export default function TradeOffer() {
 
   // Fetch user's items from API
   const { data } = useGetMyItems(0, 50);
+  const { mutate: submitOffer, isPending: isSubmitting } = useCreateTradeOffer();
 
   useEffect(() => {
     if (data?.content) {
@@ -430,6 +435,26 @@ export default function TradeOffer() {
     if (!item) return;
     setOfferedItems((prev) => prev.filter((i) => i.id !== id));
     setInventoryItems((prev) => [...prev, item]);
+  };
+
+  const handleSubmitOffer = () => {
+    if (offeredItems.length === 0) return;
+
+    submitOffer(
+      {
+        offererItems: offeredItems.map((i) => i.id),
+        responderItems: [targetItem.id],
+      },
+      {
+        onSuccess: () => {
+          toast.success("Trade offer sent!");
+          navigate("/swapping");
+        },
+        onError: () => {
+          toast.error("Failed to send trade offer. Please try again.");
+        },
+      },
+    );
   };
 
   // Active item for drag overlay
@@ -501,10 +526,15 @@ export default function TradeOffer() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  <Button className="w-full h-12 text-base font-bold bg-swap-primary hover:bg-swap-primary/90 text-white rounded-xl shadow-lg">
+                  <Button
+                    onClick={handleSubmitOffer}
+                    disabled={isSubmitting}
+                    className="w-full h-12 text-base font-bold bg-swap-primary hover:bg-swap-primary/90 text-white rounded-xl shadow-lg"
+                  >
                     <ArrowRightLeft className="w-5 h-5 mr-2" />
-                    Send Trade Offer ({offeredItems.length} item
-                    {offeredItems.length !== 1 ? "s" : ""})
+                    {isSubmitting
+                      ? "Sending..."
+                      : `Send Trade Offer (${offeredItems.length} item${offeredItems.length !== 1 ? "s" : ""})`}
                   </Button>
                 </motion.div>
               )}

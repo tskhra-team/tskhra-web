@@ -129,6 +129,7 @@ export function CatalogItemCard({ item }: { item: Item }) {
               state: {
                 targetItem: {
                   id: item.id,
+                  ownerId: item.ownerId,
                   name: item.name,
                   description: item.description,
                   image: coverPhoto,
