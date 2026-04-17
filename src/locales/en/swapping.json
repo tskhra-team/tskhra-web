@@ -106,5 +106,20 @@
     "lookingFor": "Looking for",
     "makeOffer": "Make Offer"
   },
+  "offers": {
+    "title": "Trade Offers",
+    "incoming": "Incoming Offers",
+    "outgoing": "Outgoing Offers",
+    "offering": "Offering",
+    "requesting": "Requesting",
+    "noOffers": "No offers found",
+    "accept": "Accept",
+    "reject": "Reject",
+    "withdraw": "Withdraw",
+    "accepted": "Offer accepted!",
+    "rejected": "Offer rejected",
+    "withdrawn": "Offer withdrawn",
+    "actionFailed": "Action failed. Please try again."
+  },
   "aiEstimatedPrice": "Price estimated by our AI"
 }
