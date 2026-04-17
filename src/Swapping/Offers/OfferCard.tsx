@@ -1,10 +1,17 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
-import { ArrowRightLeft, Clock, Scale } from "lucide-react";
+import { ArrowRightLeft, Check, Clock, Loader2, Scale, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import type { TradeOffer, TradeOfferItem } from "./types";
+import { toast } from "sonner";
+import type { TradeOffer, TradeOfferDirection, TradeOfferItem } from "./types";
+import {
+  useAcceptOffer,
+  useRejectOffer,
+  useWithdrawOffer,
+} from "./useTradeOfferActions";
 
 function getItemImage(item: TradeOfferItem): string {
   return item.images?.[0] ?? item.image ?? "";
@@ -75,13 +82,92 @@ function ItemThumbnails({
   );
 }
 
+function IncomingActions({ offerId }: { offerId: string }) {
+  const { t } = useTranslation(["swapping"]);
+  const { mutate: accept, isPending: accepting } = useAcceptOffer();
+  const { mutate: reject, isPending: rejecting } = useRejectOffer();
+  const busy = accepting || rejecting;
+
+  return (
+    <div className="flex gap-2">
+      <Button
+        size="sm"
+        disabled={busy}
+        onClick={() =>
+          accept(offerId, {
+            onSuccess: () => toast.success(t("swapping:offers.accepted")),
+            onError: () => toast.error(t("swapping:offers.actionFailed")),
+          })
+        }
+        className="bg-swap-accent-green hover:bg-swap-accent-green/90 text-white gap-1 text-xs h-8"
+      >
+        {accepting ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <Check className="w-3.5 h-3.5" />
+        )}
+        {t("swapping:offers.accept")}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        disabled={busy}
+        onClick={() =>
+          reject(offerId, {
+            onSuccess: () => toast.success(t("swapping:offers.rejected")),
+            onError: () => toast.error(t("swapping:offers.actionFailed")),
+          })
+        }
+        className="border-swap-primary/30 text-swap-primary hover:bg-swap-primary/5 gap-1 text-xs h-8"
+      >
+        {rejecting ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <X className="w-3.5 h-3.5" />
+        )}
+        {t("swapping:offers.reject")}
+      </Button>
+    </div>
+  );
+}
+
+function OutgoingActions({ offerId }: { offerId: string }) {
+  const { t } = useTranslation(["swapping"]);
+  const { mutate: withdraw, isPending } = useWithdrawOffer();
+
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      disabled={isPending}
+      onClick={() =>
+        withdraw(offerId, {
+          onSuccess: () => toast.success(t("swapping:offers.withdrawn")),
+          onError: () => toast.error(t("swapping:offers.actionFailed")),
+        })
+      }
+      className="border-swap-primary/30 text-swap-primary hover:bg-swap-primary/5 gap-1 text-xs h-8"
+    >
+      {isPending ? (
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+      ) : (
+        <X className="w-3.5 h-3.5" />
+      )}
+      {t("swapping:offers.withdraw")}
+    </Button>
+  );
+}
+
 export function OfferCard({
   offer,
   index,
+  direction,
 }: {
   offer: TradeOffer;
   index: number;
+  direction: TradeOfferDirection;
 }) {
+  const offerId = offer.id ?? offer.offerId ?? "";
   const { t } = useTranslation(["swapping"]);
   const timeRemaining = useTimeRemaining(offer.expiresAt);
   const isExpiringSoon =
@@ -139,6 +225,14 @@ export function OfferCard({
           <span className="text-[10px] text-swap-text2">
             {formatDate(offer.createdAt)}
           </span>
+        </div>
+
+        <div className="flex justify-end mt-3 pt-3 border-t border-swap-bg">
+          {direction === "RECEIVED" ? (
+            <IncomingActions offerId={offerId} />
+          ) : (
+            <OutgoingActions offerId={offerId} />
+          )}
         </div>
       </Card>
     </motion.div>

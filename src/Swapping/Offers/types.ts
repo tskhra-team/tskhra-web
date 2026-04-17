@@ -9,7 +9,8 @@ export interface TradeOfferItem {
 }
 
 export interface TradeOffer {
-  offerId: string;
+  id: string;
+  offerId?: string;
   offererId: number;
   responderId: number;
   offererItems: TradeOfferItem[];

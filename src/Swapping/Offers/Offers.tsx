@@ -43,6 +43,7 @@ export default function Offers() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <OffersColumn
           title={t("swapping:offers.incoming")}
+          direction="RECEIVED"
           offers={incoming?.content}
           isLoading={incomingLoading}
           isEmpty={incoming?.empty ?? true}
@@ -54,6 +55,7 @@ export default function Offers() {
 
         <OffersColumn
           title={t("swapping:offers.outgoing")}
+          direction="SENT"
           offers={outgoing?.content}
           isLoading={outgoingLoading}
           isEmpty={outgoing?.empty ?? true}

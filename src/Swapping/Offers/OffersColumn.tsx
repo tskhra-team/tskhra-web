@@ -11,10 +11,11 @@ import { PackageOpen } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { OfferCard } from "./OfferCard";
-import type { TradeOffer } from "./types";
+import type { TradeOffer, TradeOfferDirection } from "./types";
 
 interface OffersColumnProps {
   title: string;
+  direction: TradeOfferDirection;
   offers: TradeOffer[] | undefined;
   isLoading: boolean;
   isEmpty: boolean;
@@ -36,6 +37,7 @@ function getVisiblePages(totalPages: number, currentPage: number) {
 
 export function OffersColumn({
   title,
+  direction,
   offers,
   isLoading,
   isEmpty,
@@ -74,7 +76,7 @@ export function OffersColumn({
         ) : (
           <div className="space-y-4">
             {offers?.map((offer, idx) => (
-              <OfferCard key={offer.offerId} offer={offer} index={idx} />
+              <OfferCard key={offer.id ?? offer.offerId} offer={offer} index={idx} direction={direction} />
             ))}
           </div>
         )}
