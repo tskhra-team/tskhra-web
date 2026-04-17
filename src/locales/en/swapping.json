@@ -7,6 +7,7 @@
   "postItem": {
     "pageTitle": "Post New Item",
     "back": "Go back",
+    "catalog": "Go to Catalog",
     "pageSubtitle": "List an item you'd like to trade with the community",
     "basicInfo": "Basic Information",
     "basicInfoSub": "Provide details about your item",
