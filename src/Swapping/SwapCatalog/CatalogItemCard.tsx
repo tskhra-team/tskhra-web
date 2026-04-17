@@ -125,20 +125,7 @@ export function CatalogItemCard({ item }: { item: Item }) {
         <Button
           className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary"
           onClick={() => {
-            navigate("/swapping/trade-offer", {
-              state: {
-                targetItem: {
-                  id: item.id,
-                  ownerId: item.ownerId,
-                  name: item.name,
-                  description: item.description,
-                  image: coverPhoto,
-                  estimatedValue: item.estimatedValue,
-                  condition: item.condition,
-                  category: item.category,
-                },
-              },
-            });
+            navigate(`/swapping/trade-offer?id=${item.id}`);
           }}
         >
           {t("swapping:catalog.makeOffer", "Make Offer")}

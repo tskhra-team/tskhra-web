@@ -82,7 +82,7 @@ function CardImageSlider({
           <ImageWithFallback
             src={images[activeIdx]}
             alt={`${alt} ${activeIdx + 1}`}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </motion.div>
       </AnimatePresence>
@@ -149,7 +149,9 @@ export function AvailableTrades() {
   const navigate = useNavigate();
   const { t } = useTranslation(["swapping"]);
   const { data, isLoading } = useGetAllItems(0, 7);
-  const trades = data?.content?.slice(0, 7) ?? [];
+  const trades = [...(data?.content ?? [])]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 7);
 
   const itemsPerPage = useItemsPerPage();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -230,7 +232,6 @@ export function AvailableTrades() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <AnimatePresence mode="popLayout">
                   {visibleTrades.map((item, idx) => {
-                    const coverPhoto = item.images?.[0];
                     const accentColor =
                       ACCENT_COLORS[
                         trades.indexOf(item) % ACCENT_COLORS.length
@@ -330,20 +331,7 @@ export function AvailableTrades() {
                             className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/swapping/trade-offer", {
-                                state: {
-                                  targetItem: {
-                                    id: item.id,
-                                    ownerId: item.ownerId,
-                                    name: item.name,
-                                    description: item.description,
-                                    image: coverPhoto ? toImageUrl(coverPhoto) : undefined,
-                                    estimatedValue: item.estimatedValue,
-                                    condition: item.condition,
-                                    category: item.category,
-                                  },
-                                },
-                              });
+                              navigate(`/swapping/trade-offer?id=${item.id}`);
                             }}
                           >
                             {t("swapping:availableTrades.makeOffer")}
