@@ -12,7 +12,7 @@ export default function Offers() {
       <Button
         variant="link"
         className="mb-2"
-        onClick={() => navigate("/swapping")}
+        onClick={() => navigate("/swapping/catalog")}
       >
         <ArrowLeft />
         {t("swapping:postItem.back")}

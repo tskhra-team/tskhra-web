@@ -102,7 +102,9 @@
     "city": "City",
     "sortByDate": "Sort by Date",
     "status": "Status",
-    "onlyVip": "Only VIP"
+    "onlyVip": "Only VIP",
+    "lookingFor": "Looking for",
+    "makeOffer": "Make Offer"
   },
   "aiEstimatedPrice": "Price estimated by our AI"
 }

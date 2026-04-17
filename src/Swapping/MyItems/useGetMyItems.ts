@@ -15,6 +15,7 @@ export interface Item {
   estimatedValue: number | null;
   createdAt: string;
   images: string[];
+  desiredCategories: string[];
   vip: boolean;
 }
 
