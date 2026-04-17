@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   DndContext,
   DragOverlay,
@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetMyItems, { type Item } from "@/Swapping/MyItems/useGetMyItems";
 import useCreateTradeOffer from "@/Swapping/TradeOffer/useCreateTradeOffer";
+import useGetItemById from "@/Swapping/TradeOffer/useGetItemById";
 import { toast } from "sonner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -374,8 +375,17 @@ export default function TradeOffer() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const itemId = searchParams.get("id");
 
-  const targetItem: TradeItem = (() => {
+  const { data: fetchedItem, isLoading: isLoadingItem } = useGetItemById(itemId);
+
+  const targetItem: TradeItem = useMemo(() => {
+    if (fetchedItem) {
+      const mapped = mapItemToTradeItem(fetchedItem);
+      sessionStorage.setItem("trade-offer-target", JSON.stringify(mapped));
+      return mapped;
+    }
     const fromState = (location.state as { targetItem?: TradeItem } | null)?.targetItem;
     if (fromState) {
       sessionStorage.setItem("trade-offer-target", JSON.stringify(fromState));
@@ -386,7 +396,7 @@ export default function TradeOffer() {
       return JSON.parse(stored) as TradeItem;
     }
     return MOCK_TARGET_ITEM;
-  })();
+  }, [fetchedItem, location.state]);
 
   // Fetch user's items from API
   const { data } = useGetMyItems(0, 50);
@@ -469,7 +479,12 @@ export default function TradeOffer() {
       onDragEnd={handleDragEnd}
     >
       <div className="min-h-screen bg-swap-bg p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
+        {isLoadingItem && (
+          <div className="flex justify-center items-center py-32">
+            <div className="w-10 h-10 border-4 border-swap-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        {!isLoadingItem && <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
             <h1
@@ -540,7 +555,7 @@ export default function TradeOffer() {
               )}
             </div>
           </div>
-        </div>
+        </div>}
       </div>
 
       {/* Drag Overlay */}
