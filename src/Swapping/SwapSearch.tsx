@@ -5,6 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
 
 import { ChevronDown, Grid, Loader2, Search, Sparkles, X } from "lucide-react";
@@ -66,13 +67,18 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
   const { data: liveSearchData, isLoading: isLiveSearchLoading } =
     useGetSearchedItems({
       page: 0,
-      size: 4,
-      query: debouncedSearchQuery,
+      size: 3,
+      query: debouncedSearchQuery ? debouncedSearchQuery : undefined,
       categoryId: selectedSubCategoryId
         ? Number(selectedSubCategoryId)
-        : undefined,
-      enabled:
-        debouncedSearchQuery.length > 0 || Boolean(selectedSubCategoryId),
+        : selectedCategoryId
+          ? Number(selectedCategoryId)
+          : undefined,
+      enabled: Boolean(
+        debouncedSearchQuery.length > 0 ||
+        selectedSubCategoryId ||
+        selectedCategoryId,
+      ),
     });
 
   const handleScroll = useCallback(() => {
@@ -170,7 +176,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: animation ? 1.2 : 0, duration: animation ? 0.6 : 0 }}
-      className="px-8 md:px-20 mb-10 mt-10 md:mt-30 relative z-20 "
+      className="px-8 lg:px-20 mb-10 mt-10 lg:mt-30 relative z-20 "
       style={style}
       id="target-section"
     >
@@ -198,11 +204,13 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
             <div
               ref={anchorRef}
               onMouseDown={() => setIsActive(true)}
-              className="p-2 rounded-2xl md:rounded-full backdrop-blur-xl bg-white/80 border-2 shadow-2xl flex flex-col md:flex-row items-center gap-2 relative z-10"
+              className="p-2 rounded-2xl lg:rounded-full backdrop-blur-xl bg-white/80 border-2 shadow-2xl flex flex-col lg:flex-row items-center gap-2 relative z-10"
               style={{ borderColor: "var(--swap-secondary)" }}
             >
               {/* Search Input */}
-              <div className="flex-1 flex items-center gap-3 px-5 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 relative">
+              <div
+                className={`flex-1 ${isSearchFocused ? "border-swap-primary" : ""} flex items-center gap-3 px-5 py-3 w-full border-b lg:border-b-0 lg:border-r border-gray-200 relative`}
+              >
                 <Search className="w-5 h-5 text-gray-400 shrink-0" />
                 <input
                   ref={inputRef}
@@ -231,7 +239,10 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
 
               {/* Category Trigger */}
               <PopoverTrigger asChild>
-                <button className="flex-1 w-full flex items-center gap-3 px-5 py-3 cursor-pointer bg-transparent border-none outline-none text-left">
+                <div
+                  tabIndex={0}
+                  className="flex-1 w-full flex items-center gap-3 px-5 py-3 cursor-pointer bg-transparent border-none outline-none text-left"
+                >
                   <Grid className="w-5 h-5 text-gray-400 shrink-0" />
                   <span
                     className={`flex-1 font-medium text-base truncate ${
@@ -261,11 +272,11 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                       }`}
                     />
                   )}
-                </button>
+                </div>
               </PopoverTrigger>
 
               {/* Buttons */}
-              <div className="flex gap-2 w-full md:w-auto items-center">
+              <div className="flex gap-2 w-full lg:w-auto items-center flex-col lg:flex-row">
                 {hasActiveSearchOrCategory && (
                   <button
                     type="button"
@@ -280,7 +291,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onMouseDown={(e) => e.stopPropagation()}
-                  className="flex-1 md:flex-none px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 text-white border-none cursor-pointer"
+                  className="flex-1 lg:flex-none w-full lg:w-auto px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 text-white border-none cursor-pointer"
                   style={{
                     background:
                       "linear-gradient(135deg, var(--swap-magic-start), var(--swap-magic-mid), var(--swap-magic-end))",
@@ -296,7 +307,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                   whileTap={{ scale: 0.95 }}
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={handleSearchSubmit}
-                  className="flex-1 md:flex-none px-6 py-3 rounded-full text-white font-medium flex items-center justify-center gap-2 border-none cursor-pointer"
+                  className="flex-1 lg:flex-none w-full lg:w-auto px-6 py-3 rounded-full text-white font-medium flex items-center justify-center gap-2 border-none cursor-pointer"
                   style={{
                     background: "var(--swap-primary)",
                     fontSize: "0.95rem",
@@ -315,7 +326,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute left-0 right-0 md:right-auto md:w-100 top-[calc(100%+12px)] bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-20"
+                  className="absolute left-0 right-0 lg:right-auto lg:w-100 top-[calc(100%+12px)] bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-20"
                 >
                   <div className="p-4">
                     {isLiveSearchLoading ? (
@@ -339,13 +350,16 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
 
                               navigate(`/swapping/trade-offer?id=${item.id}`);
                             }}
-                            className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border-none bg-transparent text-left"
+                            className="w-full h-22 flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border-none bg-transparent text-left"
                           >
-                            <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                              <img src={item.images[0]} />
+                            <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                              <ImageWithFallback
+                                src={item.images[0]}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-semibold text-gray-800 text-sm line-clamp-1">
+                              <span className="font-semibold text-gray-800 text-md line-clamp-1">
                                 {item.name}
                               </span>
                               <span className="text-xs text-gray-500">
@@ -376,8 +390,6 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
           </div>
         </PopoverAnchor>
 
-        {/* ... (остальной код PopoverContent для категорий без изменений) ... */}
-
         <PopoverContent
           className="p-0 max-h-[70vh] overflow-hidden rounded-xl relative"
           align="center"
@@ -389,7 +401,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 overflow-y-auto max-h-[70vh]"
+            className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 overflow-y-auto max-h-[70vh]"
           >
             {categories?.map((cat) => (
               <div key={cat.id} className="space-y-1">
@@ -431,7 +443,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                             String(sub.id),
                           )
                         }
-                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer border-none text-left ${
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border-none text-left ${
                           String(sub.id) === String(selectedSubCategoryId)
                             ? "bg-gray-100"
                             : "bg-transparent"

@@ -92,7 +92,6 @@ export default function PostItem() {
     ],
     [t],
   );
-
   const {
     register,
     handleSubmit,
@@ -101,7 +100,8 @@ export default function PostItem() {
     watch,
     formState: { errors },
   } = useForm<CreatePostItemPostData>({
-    resolver: yupResolver(createPostItem(t)),
+    resolver: yupResolver(createPostItem),
+    mode: "onChange",
   });
 
   const category = watch("categoryId");
@@ -175,7 +175,6 @@ export default function PostItem() {
     });
   };
 
-  console.log(errors);
   return (
     <div className="min-h-screen bg-swap-bg">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -191,7 +190,7 @@ export default function PostItem() {
         </Button>
 
         <div className="mb-10">
-          <h1 className="text-4xl font-bold text-foreground">
+          <h1 className="text-3xl font-bold text-foreground mb-3">
             {t("swapping:postItem.pageTitle")}
           </h1>
 
@@ -222,7 +221,7 @@ export default function PostItem() {
                 />
                 {errors.title && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.title.message}
+                    {t(errors.title.message!)}
                   </p>
                 )}
               </div>
@@ -240,7 +239,7 @@ export default function PostItem() {
                 />
                 {errors.description && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.description.message}
+                    {t(errors.description.message!)}
                   </p>
                 )}
               </div>
@@ -292,7 +291,7 @@ export default function PostItem() {
                   />
                   {errors.cityId && (
                     <p className="text-sm text-red-600 font-medium">
-                      {errors.cityId.message}
+                      {t(errors.cityId.message!)}
                     </p>
                   )}
                 </div>
@@ -329,7 +328,7 @@ export default function PostItem() {
                 />
                 {errors.tradeRange && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.tradeRange.message}
+                    {t(errors.tradeRange.message!)}
                   </p>
                 )}
               </div>
@@ -387,7 +386,7 @@ export default function PostItem() {
                   />
                   {errors.categoryId && (
                     <p className="text-sm text-red-600 font-medium">
-                      {errors.categoryId.message}
+                      {t(errors.categoryId.message!)}
                     </p>
                   )}
                 </div>
@@ -431,7 +430,7 @@ export default function PostItem() {
                   />
                   {errors.subCategoryId && (
                     <p className="text-sm text-red-600 font-medium">
-                      {errors.subCategoryId.message}
+                      {t(errors.subCategoryId.message!)}
                     </p>
                   )}
                 </div>
@@ -471,7 +470,7 @@ export default function PostItem() {
 
                 {errors.condition && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.condition.message}
+                    {t(errors.condition.message!)}
                   </p>
                 )}
               </div>
@@ -506,7 +505,7 @@ export default function PostItem() {
 
                 {errors.photos && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.photos.message}
+                    {t(errors.photos.message!)}
                   </p>
                 )}
               </div>
@@ -570,7 +569,7 @@ export default function PostItem() {
                     </div>
                     {errors.desiredCategories && (
                       <p className="text-sm text-red-600 font-medium">
-                        {errors.desiredCategories.message}
+                        {t(errors.desiredCategories.message!)}
                       </p>
                     )}
                   </div>

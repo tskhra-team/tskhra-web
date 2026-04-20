@@ -17,7 +17,7 @@
     "descriptionPlaceholder": "აღწერეთ თქვენი ნივთი დეტალურად",
     "estimatedValue": "სავარაუდო ღირებულება (₾)",
     "categoryCondition": "კატეგორია და მდგომარეობა",
-    "categoryConditionSub": "კლასიფიცირეთ თქვენი ნივთი",
+    "categoryConditionSub": "დააკლასიფიცირეთ თქვენი ნივთი",
     "category": "კატეგორია",
     "subcategory": "ქვეკატეგორია",
     "condition": "მდგომარეობა",
@@ -57,7 +57,9 @@
     "categoryRequired": "კატეგორია აუცილებელია",
     "subCategoryRequired": "ქვეკატეგორია აუცილებელია",
     "conditionRequired": "მდგომარეობა აუცილებელია",
+    "tradeRangeRequired": "გაცვლის არეალი აუცილებელია",
     "conditionInvalid": "არასწორი მდგომარეობა არჩეულია",
+    "photoRequiered": "სურათი აუცილებელია",
     "photoMin": "მინიმუმ 1 ფოტო აუცილებელია",
     "photoMax": "მაქსიმუმ 5 ფოტო დაშვებულია",
     "desireCatRequired": "მინიმუმ 1 სასურველი კატეგორია აუცილებელია",
@@ -146,6 +148,9 @@
     "conditionNew": "ახალი",
     "conditionLikeNew": "ახალსავით",
     "conditionUsed": "ნახმარი",
-    "conditionDamaged": "დაზიანებული"
+    "conditionDamaged": "დაზიანებული",
+    "ownItemTitle": "ეს თქვენი ნივთია",
+    "ownItemDescription": "საკუთარ თავთან გაცვლის შეთავაზების გაგზავნა შეუძლებელია. მოძებნეთ სხვა მომხმარებლების ნივთები კატალოგში.",
+    "backToCatalog": "კატალოგში დაბრუნება"
   }
 }

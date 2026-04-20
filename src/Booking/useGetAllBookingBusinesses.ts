@@ -3,7 +3,7 @@ import type { ErrorResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-type BusinessType = {
+export type BusinessType = {
   businessId: string;
   businessName: string;
   category: string;

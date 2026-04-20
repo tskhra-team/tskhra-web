@@ -1,5 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
+import useGetMyItems, { type Item } from "@/Swapping/MyItems/useGetMyItems";
+import OwnItem from "@/Swapping/TradeOffer/OwnItem";
+import useCreateTradeOffer from "@/Swapping/TradeOffer/useCreateTradeOffer";
+import useGetItemById from "@/Swapping/TradeOffer/useGetItemById";
 import {
   DndContext,
   DragOverlay,
@@ -12,8 +16,8 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { AnimatePresence, motion } from "motion/react";
 import {
+  ArrowLeft,
   ArrowRightLeft,
   ChevronLeft,
   ChevronRight,
@@ -23,13 +27,11 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
-import useGetMyItems, { type Item } from "@/Swapping/MyItems/useGetMyItems";
-import useCreateTradeOffer from "@/Swapping/TradeOffer/useCreateTradeOffer";
-import useGetItemById from "@/Swapping/TradeOffer/useGetItemById";
-import { toast } from "sonner";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -70,7 +72,8 @@ function mapItemToTradeItem(item: Item): TradeItem {
 const MOCK_TARGET_ITEM: TradeItem = {
   id: "target-1",
   name: "iPhone 15 Pro Max",
-  description: "256GB, Space Black, excellent condition with original box and all accessories included.",
+  description:
+    "256GB, Space Black, excellent condition with original box and all accessories included.",
   image: "",
   estimatedValue: 3500,
   condition: "LIKE_NEW",
@@ -94,7 +97,9 @@ function TargetItemCard({ item }: { item: TradeItem }) {
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-swap-secondary to-white">
             <Package className="w-16 h-16 text-swap-primary/30" />
-            <span className="text-sm text-swap-text2 mt-2">{t("swapping:tradeOffer.noPhoto")}</span>
+            <span className="text-sm text-swap-text2 mt-2">
+              {t("swapping:tradeOffer.noPhoto")}
+            </span>
           </div>
         )}
         <div className="absolute top-4 left-4">
@@ -115,7 +120,9 @@ function TargetItemCard({ item }: { item: TradeItem }) {
 
         <div className="mb-4 p-4 rounded-xl bg-swap-secondary flex-1">
           <div className="text-xs uppercase font-bold tracking-wider text-swap-primary mb-1">
-            {CONDITION_KEYS[item.condition] ? t(`swapping:${CONDITION_KEYS[item.condition]}`) : item.condition}
+            {CONDITION_KEYS[item.condition]
+              ? t(`swapping:${CONDITION_KEYS[item.condition]}`)
+              : item.condition}
           </div>
           <p
             className="text-sm text-gray-700 leading-relaxed"
@@ -182,7 +189,9 @@ function DraggableInventoryItem({ item }: { item: TradeItem }) {
           {item.name}
         </p>
         <p className="text-[10px] text-swap-text2 mt-0.5">
-          {CONDITION_KEYS[item.condition] ? t(`swapping:${CONDITION_KEYS[item.condition]}`) : item.condition}
+          {CONDITION_KEYS[item.condition]
+            ? t(`swapping:${CONDITION_KEYS[item.condition]}`)
+            : item.condition}
         </p>
         {item.estimatedValue != null && (
           <p className="text-xs font-bold text-swap-primary mt-1">
@@ -280,7 +289,10 @@ function OfferDropZone({
         </h2>
         {offeredItems.length > 0 && (
           <span className="ml-auto text-xs font-medium text-swap-text2 bg-swap-secondary px-2.5 py-1 rounded-full">
-            {offeredItems.length} {offeredItems.length !== 1 ? t("swapping:tradeOffer.items") : t("swapping:tradeOffer.item")}
+            {offeredItems.length}{" "}
+            {offeredItems.length !== 1
+              ? t("swapping:tradeOffer.items")
+              : t("swapping:tradeOffer.item")}
           </span>
         )}
       </div>
@@ -348,7 +360,10 @@ function InventorySlider({
 
   const totalPages = Math.ceil(items.length / itemsPerPage);
   const safePage = Math.min(page, totalPages - 1);
-  const pagedItems = items.slice(safePage * itemsPerPage, (safePage + 1) * itemsPerPage);
+  const pagedItems = items.slice(
+    safePage * itemsPerPage,
+    (safePage + 1) * itemsPerPage,
+  );
 
   return (
     <div className="rounded-2xl border-2 border-swap-secondary bg-white p-5">
@@ -426,7 +441,8 @@ export default function TradeOffer() {
   const [searchParams] = useSearchParams();
   const itemId = searchParams.get("id");
 
-  const { data: fetchedItem, isLoading: isLoadingItem } = useGetItemById(itemId);
+  const { data: fetchedItem, isLoading: isLoadingItem } =
+    useGetItemById(itemId);
 
   const targetItem: TradeItem = useMemo(() => {
     if (fetchedItem) {
@@ -434,7 +450,8 @@ export default function TradeOffer() {
       sessionStorage.setItem("trade-offer-target", JSON.stringify(mapped));
       return mapped;
     }
-    const fromState = (location.state as { targetItem?: TradeItem } | null)?.targetItem;
+    const fromState = (location.state as { targetItem?: TradeItem } | null)
+      ?.targetItem;
     if (fromState) {
       sessionStorage.setItem("trade-offer-target", JSON.stringify(fromState));
       return fromState;
@@ -448,7 +465,8 @@ export default function TradeOffer() {
 
   // Fetch user's items from API
   const { data } = useGetMyItems(0, 50);
-  const { mutate: submitOffer, isPending: isSubmitting } = useCreateTradeOffer();
+  const { mutate: submitOffer, isPending: isSubmitting } =
+    useCreateTradeOffer();
 
   useEffect(() => {
     if (data?.content) {
@@ -506,11 +524,15 @@ export default function TradeOffer() {
       },
       {
         onSuccess: () => {
-          toast.success(t("swapping:tradeOffer.offerSent"));
-          navigate("/swapping");
+          toast.success(t("swapping:tradeOffer.offerSent"), {
+            position: "top-center",
+          });
+          navigate("/swapping/offers");
         },
         onError: () => {
-          toast.error(t("swapping:tradeOffer.offerFailed"));
+          toast.error(
+            t("swapping:tradeOffer.offerFailed", { position: "top-center" }),
+          );
         },
       },
     );
@@ -520,6 +542,10 @@ export default function TradeOffer() {
   const activeItem = activeId
     ? inventoryItems.find((i) => i.id === activeId)
     : null;
+
+  if (fetchedItem?.ownerId === data?.content.at(0)?.ownerId) {
+    return <OwnItem />;
+  }
 
   return (
     <DndContext
@@ -533,78 +559,92 @@ export default function TradeOffer() {
             <div className="w-10 h-10 border-4 border-swap-primary border-t-transparent rounded-full animate-spin" />
           </div>
         )}
-        {!isLoadingItem && <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1
-              className="text-2xl md:text-3xl text-swap-text flex items-center gap-3"
-              style={{ fontFamily: "'Archivo Black', sans-serif" }}
+        {!isLoadingItem && (
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <Button
+              variant="link"
+              className="mb-10"
+              onClick={() => navigate(-1)}
             >
-              <ArrowRightLeft className="w-8 h-8 text-swap-primary" />
-              {t("swapping:tradeOffer.title")}
-            </h1>
-            <p className="text-swap-text2 mt-2 text-sm">
-              {t("swapping:tradeOffer.subtitle")}
-            </p>
-          </div>
-
-          {/* Main split layout */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Column — Target Item (40%) */}
-            <div className="w-full lg:w-[40%]">
-              <div className="sticky top-8">
-                <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
-                  {t("swapping:tradeOffer.youWant")}
-                </p>
-                <TargetItemCard item={targetItem} />
-              </div>
+              <ArrowLeft />
+              {t("swapping:postItem.back")}
+            </Button>
+            <div className="mb-8">
+              <h1
+                className="text-2xl md:text-3xl text-swap-text flex items-center gap-3"
+                style={{ fontFamily: "'Archivo Black', sans-serif" }}
+              >
+                <ArrowRightLeft className="w-8 h-8 text-swap-primary" />
+                {t("swapping:tradeOffer.title")}
+              </h1>
+              <p className="text-swap-text2 mt-2 text-sm">
+                {t("swapping:tradeOffer.subtitle")}
+              </p>
             </div>
 
-            {/* Right Column (60%) */}
-            <div className="w-full lg:w-[60%] flex flex-col gap-6">
-              {/* Drop Zone — Top */}
-              <div>
-                <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
-                  {t("swapping:tradeOffer.youOffer")}
-                </p>
-                <OfferDropZone
-                  offeredItems={offeredItems}
-                  onRemoveItem={handleRemoveOffer}
-                />
+            {/* Main split layout */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Left Column — Target Item (40%) */}
+              <div className="w-full lg:w-[40%]">
+                <div className="sticky top-8">
+                  <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
+                    {t("swapping:tradeOffer.youWant")}
+                  </p>
+                  <TargetItemCard item={targetItem} />
+                </div>
               </div>
 
-              {/* Inventory Slider — Bottom */}
-              <div>
-                <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
-                  {t("swapping:tradeOffer.yourInventory")}
-                </p>
-                <InventorySlider
-                  items={inventoryItems}
-                  onAddClick={() => navigate("/swapping/post-item", { state: { from: "trade-offer" } })}
-                />
-              </div>
+              {/* Right Column (60%) */}
+              <div className="w-full lg:w-[60%] flex flex-col gap-6">
+                {/* Drop Zone — Top */}
+                <div>
+                  <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
+                    {t("swapping:tradeOffer.youOffer")}
+                  </p>
+                  <OfferDropZone
+                    offeredItems={offeredItems}
+                    onRemoveItem={handleRemoveOffer}
+                  />
+                </div>
 
-              {/* Submit offer button */}
-              {offeredItems.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <Button
-                    onClick={handleSubmitOffer}
-                    disabled={isSubmitting}
-                    className="w-full h-12 text-base font-bold bg-swap-primary hover:bg-swap-primary/90 text-white rounded-xl shadow-lg"
+                {/* Inventory Slider — Bottom */}
+                <div>
+                  <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
+                    {t("swapping:tradeOffer.yourInventory")}
+                  </p>
+                  <InventorySlider
+                    items={inventoryItems}
+                    onAddClick={() =>
+                      navigate("/swapping/post-item", {
+                        state: { from: "trade-offer" },
+                      })
+                    }
+                  />
+                </div>
+
+                {/* Submit offer button */}
+                {offeredItems.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                   >
-                    <ArrowRightLeft className="w-5 h-5 mr-2" />
-                    {isSubmitting
-                      ? t("swapping:tradeOffer.sending")
-                      : `${t("swapping:tradeOffer.sendOffer")} (${offeredItems.length} ${offeredItems.length !== 1 ? t("swapping:tradeOffer.items") : t("swapping:tradeOffer.item")})`}
-                  </Button>
-                </motion.div>
-              )}
+                    <Button
+                      onClick={handleSubmitOffer}
+                      disabled={isSubmitting}
+                      className="w-full h-12 text-base font-bold bg-swap-primary hover:bg-swap-primary/90 text-white rounded-xl shadow-lg"
+                    >
+                      <ArrowRightLeft className="w-5 h-5 mr-2" />
+                      {isSubmitting
+                        ? t("swapping:tradeOffer.sending")
+                        : `${t("swapping:tradeOffer.sendOffer")} (${offeredItems.length} ${offeredItems.length !== 1 ? t("swapping:tradeOffer.items") : t("swapping:tradeOffer.item")})`}
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
-        </div>}
+        )}
       </div>
 
       {/* Drag Overlay */}
@@ -632,7 +672,6 @@ export default function TradeOffer() {
           </div>
         ) : null}
       </DragOverlay>
-
     </DndContext>
   );
 }

@@ -5,6 +5,10 @@ export default function SwappingNavigation() {
   const { t } = useTranslation("swapping");
   const location = useLocation();
 
+  const isInMain =
+    location.pathname === "/swapping" ||
+    location.pathname === "/swapping/catalog";
+
   const navItems = [
     { name: t("nav.myItems"), link: "/swapping/my-items", color: "#A31621" },
     { name: t("nav.postItem"), link: "/swapping/post-item", color: "#FF6439" },
@@ -12,7 +16,9 @@ export default function SwappingNavigation() {
   ];
 
   return (
-    <div className="w-full h-12 sm:h-14 bg-white/60 backdrop-blur-lg border-b border-slate-200/40 sticky top-16 z-40">
+    <div
+      className={`w-full ${!isInMain ? "bg-swap-bg" : "bg-white/60"} h-12 sm:h-14  backdrop-blur-lg border-b border-slate-200/40 sticky top-16 z-40`}
+    >
       <div className="flex h-full justify-center items-center gap-0.5 sm:gap-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.link;
