@@ -8,7 +8,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { CatalogItemCard } from "@/Swapping/SwapCatalog/CatalogItemCard";
+import { SwapItemCard } from "@/Swapping/SwapItemCard";
 import useGetAllItems from "@/Swapping/SwapCatalog/useGetAllItems";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
 import { Package } from "lucide-react";
@@ -182,8 +182,8 @@ export default function SwapCatalogCards() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items?.content.map((item) => (
-            <CatalogItemCard key={item.id} item={item} />
+          {items?.content.map((item, idx) => (
+            <SwapItemCard key={item.id} item={item} colorIndex={idx} />
           ))}
         </div>
       )}
