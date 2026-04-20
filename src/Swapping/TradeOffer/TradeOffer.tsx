@@ -524,11 +524,15 @@ export default function TradeOffer() {
       },
       {
         onSuccess: () => {
-          toast.success(t("swapping:tradeOffer.offerSent"));
+          toast.success(t("swapping:tradeOffer.offerSent"), {
+            position: "top-center",
+          });
           navigate("/swapping/offers");
         },
         onError: () => {
-          toast.error(t("swapping:tradeOffer.offerFailed"));
+          toast.error(
+            t("swapping:tradeOffer.offerFailed", { position: "top-center" }),
+          );
         },
       },
     );

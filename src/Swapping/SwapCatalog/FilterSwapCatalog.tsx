@@ -20,7 +20,7 @@ interface FilterFormValues {
   tradeRange: string;
   condition: string;
   sortByDate: string;
-  status: string;
+  vipOnly: string;
 }
 
 export default function FilterSwapCatalog() {
@@ -35,7 +35,7 @@ export default function FilterSwapCatalog() {
         tradeRange: searchParams.get("tradeRange") || "",
         condition: searchParams.get("condition") || "",
         sortByDate: searchParams.get("sortByDate") || "",
-        status: searchParams.get("status") || "",
+        vipOnly: searchParams.get("vipOnly") || "",
       },
     });
 
@@ -45,7 +45,7 @@ export default function FilterSwapCatalog() {
       tradeRange: searchParams.get("tradeRange") || "",
       condition: searchParams.get("condition") || "",
       sortByDate: searchParams.get("sortByDate") || "",
-      status: searchParams.get("status") || "",
+      vipOnly: searchParams.get("vipOnly") || "",
     });
   }, [searchParams, reset]);
 
@@ -56,7 +56,7 @@ export default function FilterSwapCatalog() {
     formValues.tradeRange ||
     formValues.condition ||
     formValues.sortByDate ||
-    formValues.status,
+    formValues.vipOnly,
   );
 
   const isFiltersAppliedInUrl = Boolean(
@@ -64,7 +64,7 @@ export default function FilterSwapCatalog() {
     searchParams.get("tradeRange") ||
     searchParams.get("condition") ||
     searchParams.get("sortByDate") ||
-    searchParams.get("status"),
+    searchParams.get("vipOnly"),
   );
 
   const isCityChoosed = formValues.cityId;
@@ -95,8 +95,8 @@ export default function FilterSwapCatalog() {
 
   const sortOptions = useMemo(
     () => [
-      { value: "newest", label: t("swapping:catalog.newest") },
-      { value: "oldest", label: t("swapping:catalog.oldest") },
+      { value: "NEWEST", label: t("swapping:catalog.newest") },
+      { value: "OLDEST", label: t("swapping:catalog.oldest") },
     ],
     [t],
   );
@@ -104,7 +104,6 @@ export default function FilterSwapCatalog() {
   const onSubmit = (data: FilterFormValues) => {
     const params = new URLSearchParams(searchParams);
 
-    // Проходимся по всем полям формы
     Object.entries(data).forEach(([key, value]) => {
       if (value && value !== "ALL") {
         params.set(key, value);
@@ -119,7 +118,7 @@ export default function FilterSwapCatalog() {
   const handleResetAll = () => {
     const params = new URLSearchParams(searchParams);
 
-    ["cityId", "tradeRange", "condition", "sortByDate", "status"].forEach(
+    ["cityId", "tradeRange", "condition", "sortByDate", "vipOnly"].forEach(
       (key) => {
         params.delete(key);
       },
@@ -132,7 +131,7 @@ export default function FilterSwapCatalog() {
       tradeRange: "",
       condition: "",
       sortByDate: "",
-      status: "",
+      vipOnly: "",
     });
   };
 
@@ -332,22 +331,22 @@ export default function FilterSwapCatalog() {
           />
         </div>
 
-        {/* Status */}
+        {/* vipOnly */}
         <div>
           <div className="flex items-center justify-between h-3.5">
             <Label>{t("swapping:catalog.status")}</Label>
-            {watch("status") && (
+            {watch("vipOnly") && (
               <button
                 type="button"
-                onClick={() => setValue("status", "")}
-                className="p-1 rounded bg-swap-secondary text-black hover:bg-white/10 transition-colors cursor-pointer border-none   hover:text-white"
+                onClick={() => setValue("vipOnly", "")}
+                className="p-1 rounded bg-swap-secondary text-black hover:bg-white/10 transition-colors cursor-pointer border-none hover:text-white"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
           <Controller
-            name="status"
+            name="vipOnly"
             control={control}
             render={({ field }) => (
               <div className="mt-2">
@@ -355,21 +354,21 @@ export default function FilterSwapCatalog() {
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    if (field.value === "VIP") {
-                      setValue("status", "");
+                    if (field.value === "true") {
+                      setValue("vipOnly", "");
                     } else {
-                      field.onChange("VIP");
+                      field.onChange("true");
                     }
                   }}
                   className={`flex-1 h-10 transition-all w-full ${
-                    field.value === "VIP"
+                    field.value === "true"
                       ? "bg-amber-400 border-amber-400 text-amber-900 hover:bg-amber-500"
                       : "text-swap-text2 hover:bg-gray-100"
                   }`}
                 >
                   <Crown
                     className={`w-4 h-4 mr-1 ${
-                      field.value === "VIP"
+                      field.value === "true"
                         ? "text-amber-900"
                         : "text-amber-400"
                     }`}

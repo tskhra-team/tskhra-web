@@ -5,6 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
 
 import { ChevronDown, Grid, Loader2, Search, Sparkles, X } from "lucide-react";
@@ -66,13 +67,18 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
   const { data: liveSearchData, isLoading: isLiveSearchLoading } =
     useGetSearchedItems({
       page: 0,
-      size: 4,
-      query: debouncedSearchQuery,
+      size: 3,
+      query: debouncedSearchQuery ? debouncedSearchQuery : undefined,
       categoryId: selectedSubCategoryId
         ? Number(selectedSubCategoryId)
-        : undefined,
-      enabled:
-        debouncedSearchQuery.length > 0 || Boolean(selectedSubCategoryId),
+        : selectedCategoryId
+          ? Number(selectedCategoryId)
+          : undefined,
+      enabled: Boolean(
+        debouncedSearchQuery.length > 0 ||
+        selectedSubCategoryId ||
+        selectedCategoryId,
+      ),
     });
 
   const handleScroll = useCallback(() => {
@@ -344,13 +350,16 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
 
                               navigate(`/swapping/trade-offer?id=${item.id}`);
                             }}
-                            className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border-none bg-transparent text-left"
+                            className="w-full h-22 flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border-none bg-transparent text-left"
                           >
-                            <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                              <img src={item.images[0]} />
+                            <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                              <ImageWithFallback
+                                src={item.images[0]}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-semibold text-gray-800 text-sm line-clamp-1">
+                              <span className="font-semibold text-gray-800 text-md line-clamp-1">
                                 {item.name}
                               </span>
                               <span className="text-xs text-gray-500">

@@ -8,9 +8,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { SwapItemCard } from "@/Swapping/SwapItemCard";
 import useGetAllItems from "@/Swapping/SwapCatalog/useGetAllItems";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
+import { SwapItemCard } from "@/Swapping/SwapItemCard";
 import { Package } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -94,9 +94,9 @@ export default function SwapCatalogCards() {
   // get all data from url
   const query = searchParams.get("s") || undefined;
 
-  // THIS IS SHOULD BE REPLACED WITH RIGTH USING SC AND C
   const sc = searchParams.get("sc");
-  const categoryId = sc ? Number(sc) : undefined;
+  const c = searchParams.get("c");
+  const categoryId = sc ? Number(sc) : c ? Number(c) : undefined;
 
   const cityIdParam = searchParams.get("cityId");
   const cityId = cityIdParam ? Number(cityIdParam) : undefined;
@@ -104,11 +104,14 @@ export default function SwapCatalogCards() {
   const condition = (searchParams.get("condition") as any) || undefined;
   const tradeRange = (searchParams.get("tradeRange") as any) || undefined;
 
+  const vipOnly = (searchParams.get("vipOnly") as any) || undefined;
+  const sortByDate = (searchParams.get("sortByDate") as any) || undefined;
+
   const {
     data: allItems,
     isLoading: isLoadingAll,
     isError: isErrorAll,
-  } = useGetAllItems(apiPage, SIZE, !hasFilters); // tip: it would be good to add this prop  { enabled: !hasFilters }
+  } = useGetAllItems(apiPage, SIZE, !hasFilters);
 
   const {
     data: searchedItems,
@@ -116,10 +119,12 @@ export default function SwapCatalogCards() {
     isError: isErrorSearch,
   } = useGetSearchedItems({
     query,
-    categoryId, // here i sending sc but in future it should be c
+    categoryId,
     cityId,
     condition,
     tradeRange,
+    vipOnly,
+    sortByDate,
     page: apiPage,
     size: SIZE,
     enabled: hasFilters,

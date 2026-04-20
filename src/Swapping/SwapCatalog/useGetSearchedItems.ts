@@ -10,6 +10,8 @@ interface SearchedItemsRequest {
   cityId?: number;
   condition?: "NEW" | "LIKE_NEW" | "USED" | "DAMAGED";
   tradeRange?: "CITY_WIDE" | "COUNTRY_WIDE";
+  vipOnly?: boolean;
+  sortByDate?: "NEWEST" | "OLDEST";
   page?: number;
   size?: number;
 }
@@ -20,6 +22,8 @@ const getSearchedItems = async ({
   cityId,
   condition,
   tradeRange,
+  vipOnly,
+  sortByDate,
   page,
   size,
 }: SearchedItemsRequest) => {
@@ -30,6 +34,8 @@ const getSearchedItems = async ({
       cityId,
       condition,
       tradeRange,
+      vipOnly,
+      sortByDate,
       page,
       size,
     },
@@ -44,6 +50,8 @@ const useGetSearchedItems = ({
   cityId,
   condition,
   tradeRange,
+  vipOnly,
+  sortByDate,
   page,
   size,
   enabled = true,
@@ -56,6 +64,8 @@ const useGetSearchedItems = ({
         cityId,
         condition,
         tradeRange,
+        vipOnly,
+        sortByDate,
         page,
         size,
       }),
@@ -66,6 +76,8 @@ const useGetSearchedItems = ({
       cityId,
       condition,
       tradeRange,
+      vipOnly,
+      sortByDate,
       page,
       size,
     ],

@@ -56,8 +56,11 @@ function ItemThumbnails({
         {label}
       </p>
       <div className="flex gap-2 flex-wrap">
-        {items.map((item) => (
-          <div key={item.id} className="flex flex-col items-center gap-1 w-16">
+        {items.map((item, i) => (
+          <div
+            key={item.id ?? `fallback-key-${i}`}
+            className="flex flex-col items-center gap-1 w-16"
+          >
             <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-swap-bg shrink-0 bg-gray-100">
               {getItemImage(item) ? (
                 <ImageWithFallback
@@ -67,7 +70,10 @@ function ItemThumbnails({
                   loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]">
+                <div
+                  key={item.id}
+                  className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]"
+                >
                   No img
                 </div>
               )}
@@ -190,7 +196,6 @@ export function OfferCard({
       <Card className="p-4 rounded-2xl border-2 border-swap-bg hover:border-swap-primary/20 transition-colors">
         <div className="flex items-start gap-3">
           <ItemThumbnails
-            key={offer.id}
             items={offer.offererItems}
             label={t("swapping:offers.offering")}
           />
@@ -200,7 +205,6 @@ export function OfferCard({
           </div>
 
           <ItemThumbnails
-            key={offer.id}
             items={offer.responderItems}
             label={t("swapping:offers.requesting")}
           />
