@@ -174,7 +174,7 @@ export default function HeroSection() {
                 }}
                 onFocus={() => setIsDropdownOpen(true)}
                 placeholder={t("hero.searchPlaceholder")}
-                className="w-full py-3.5 sm:py-4 pl-12 pr-28 sm:pr-36 bg-transparent text-[#0f0f2d] placeholder:text-[#0f0f2d]/40 focus:outline-none text-sm sm:text-base"
+                className="w-full py-3.5 sm:py-4 pl-12 pr-28 sm:pr-36 bg-transparent text-[#0f0f2d] placeholder:text-[#0f0f2d]/60 placeholder:truncate focus:outline-none text-sm sm:text-base"
               />
               <button
                 type="submit"

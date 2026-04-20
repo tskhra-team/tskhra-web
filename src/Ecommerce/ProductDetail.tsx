@@ -101,7 +101,7 @@ function ReviewCard({
           </button>
         )}
       </div>
-      <p className="text-sm text-slate-600 leading-relaxed">{review.comment}</p>
+      <p className="text-sm text-slate-600 leading-relaxed wrap-break-word overflow-hidden">{review.comment}</p>
     </div>
   );
 }

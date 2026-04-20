@@ -7,7 +7,7 @@
   "hero": {
     "title": "Find Everything You Need",
     "subtitle": "Discover thousands of products from trusted sellers. Shop smart, shop safe.",
-    "searchPlaceholder": "Search for products, brands, categories..."
+    "searchPlaceholder": "Search for products..."
   },
   "featured": {
     "badge": "Featured",
@@ -87,6 +87,31 @@
     "totalTrades": "Successful Trades",
     "totalUsers": "Active Users",
     "satisfaction": "Satisfaction Rate"
+  },
+  "categoryPage": {
+    "browse": "Browse {{category}}",
+    "productsFound": "{{count}} products found",
+    "viewAllInCatalog": "View all in catalog",
+    "noProductsYet": "No products in this category yet.",
+    "browseCatalog": "Browse full catalog",
+    "categoryNotFound": "Category not found",
+    "backToShop": "Back to shop"
+  },
+  "catalog": {
+    "title": "Product Catalog",
+    "searchPlaceholder": "Search products...",
+    "filters": "Filters",
+    "condition": "Condition",
+    "conditionNew": "New",
+    "conditionLikeNew": "Like New",
+    "conditionUsed": "Used",
+    "priceRange": "Price Range",
+    "priceMin": "Min",
+    "priceMax": "Max",
+    "clearFilters": "Clear all filters",
+    "showing": "{{count}} products found",
+    "noResults": "No products found",
+    "noResultsHint": "Try adjusting your filters or search terms."
   },
   "cart": {
     "title": "Shopping Cart",

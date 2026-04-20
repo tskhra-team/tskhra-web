@@ -7,7 +7,7 @@
   "hero": {
     "title": "იპოვე ყველაფერი რაც გჭირდება",
     "subtitle": "აღმოაჩინე ათასობით პროდუქტი სანდო გამყიდველებისგან. იყიდე ჭკვიანურად, იყიდე უსაფრთხოდ.",
-    "searchPlaceholder": "მოძებნე პროდუქტები, ბრენდები, კატეგორიები..."
+    "searchPlaceholder": "მოძებნე..."
   },
   "featured": {
     "badge": "რჩეული",
@@ -87,6 +87,31 @@
     "totalTrades": "წარმატებული გარიგებები",
     "totalUsers": "აქტიური მომხმარებლები",
     "satisfaction": "კმაყოფილების მაჩვენებელი"
+  },
+  "categoryPage": {
+    "browse": "{{category}} - დათვალიერება",
+    "productsFound": "{{count}} პროდუქტი ნაპოვნია",
+    "viewAllInCatalog": "ყველას ნახვა კატალოგში",
+    "noProductsYet": "ამ კატეგორიაში პროდუქტები ჯერ არ არის.",
+    "browseCatalog": "სრული კატალოგის დათვალიერება",
+    "categoryNotFound": "კატეგორია ვერ მოიძებნა",
+    "backToShop": "მაღაზიაში დაბრუნება"
+  },
+  "catalog": {
+    "title": "პროდუქტების კატალოგი",
+    "searchPlaceholder": "მოძებნე პროდუქტები...",
+    "filters": "ფილტრები",
+    "condition": "მდგომარეობა",
+    "conditionNew": "ახალი",
+    "conditionLikeNew": "თითქმის ახალი",
+    "conditionUsed": "მეორადი",
+    "priceRange": "ფასის დიაპაზონი",
+    "priceMin": "მინ",
+    "priceMax": "მაქს",
+    "clearFilters": "ფილტრების გასუფთავება",
+    "showing": "{{count}} პროდუქტი ნაპოვნია",
+    "noResults": "პროდუქტები ვერ მოიძებნა",
+    "noResultsHint": "სცადეთ ფილტრების ან საძიებო სიტყვების შეცვლა."
   },
   "cart": {
     "title": "კალათა",
