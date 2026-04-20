@@ -146,6 +146,9 @@
     "conditionNew": "New",
     "conditionLikeNew": "Like New",
     "conditionUsed": "Used",
-    "conditionDamaged": "Damaged"
+    "conditionDamaged": "Damaged",
+    "ownItemTitle": "This is your own item",
+    "ownItemDescription": "You can't send a trade offer to yourself. Browse the catalog to find items from other users.",
+    "backToCatalog": "Back to Catalog"
   }
 }

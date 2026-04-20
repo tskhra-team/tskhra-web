@@ -146,6 +146,9 @@
     "conditionNew": "ახალი",
     "conditionLikeNew": "ახალსავით",
     "conditionUsed": "ნახმარი",
-    "conditionDamaged": "დაზიანებული"
+    "conditionDamaged": "დაზიანებული",
+    "ownItemTitle": "ეს თქვენი ნივთია",
+    "ownItemDescription": "საკუთარ თავთან გაცვლის შეთავაზების გაგზავნა შეუძლებელია. მოძებნეთ სხვა მომხმარებლების ნივთები კატალოგში.",
+    "backToCatalog": "კატალოგში დაბრუნება"
   }
 }

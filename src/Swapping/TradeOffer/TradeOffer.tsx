@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetMyItems, { type Item } from "@/Swapping/MyItems/useGetMyItems";
+import OwnItem from "@/Swapping/TradeOffer/OwnItem";
 import useCreateTradeOffer from "@/Swapping/TradeOffer/useCreateTradeOffer";
 import useGetItemById from "@/Swapping/TradeOffer/useGetItemById";
 import {
@@ -537,6 +538,10 @@ export default function TradeOffer() {
   const activeItem = activeId
     ? inventoryItems.find((i) => i.id === activeId)
     : null;
+
+  if (fetchedItem?.ownerId === data?.content.at(0)?.ownerId) {
+    return <OwnItem />;
+  }
 
   return (
     <DndContext
