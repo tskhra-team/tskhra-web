@@ -77,7 +77,7 @@ export default function CreateEcommerceBusiness() {
     : [];
 
   const onSubmit = (data: EcommerceFormData) => {
-    // console.log("Ecommerce product submitted:", data);
+    console.log("Ecommerce product submitted:", data);
     setSubmitted(true);
   };
 
