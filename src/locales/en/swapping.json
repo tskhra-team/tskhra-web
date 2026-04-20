@@ -121,5 +121,31 @@
     "withdrawn": "Offer withdrawn",
     "actionFailed": "Action failed. Please try again."
   },
-  "aiEstimatedPrice": "Price estimated by our AI"
+  "aiEstimatedPrice": "Price estimated by our AI",
+  "tradeOffer": {
+    "title": "Trade Offer",
+    "subtitle": "Drag your items to build your trade offer",
+    "youWant": "You want",
+    "youOffer": "You offer",
+    "yourOffer": "Your Offer",
+    "yourInventory": "Your inventory",
+    "yourItems": "Your Items",
+    "addNewItem": "Add New Item",
+    "noPhoto": "No photo",
+    "item": "item",
+    "items": "items",
+    "dragHint": "Drag items from your inventory below",
+    "dropHint": "Drop here to add to your offer!",
+    "dragDescription": "Build your trade offer by dragging items here",
+    "noItems": "No items in your inventory yet.",
+    "noItemsHint": "Click \"Add New Item\" to get started",
+    "sending": "Sending...",
+    "sendOffer": "Send Trade Offer",
+    "offerSent": "Trade offer sent!",
+    "offerFailed": "Failed to send trade offer. Please try again.",
+    "conditionNew": "New",
+    "conditionLikeNew": "Like New",
+    "conditionUsed": "Used",
+    "conditionDamaged": "Damaged"
+  }
 }
