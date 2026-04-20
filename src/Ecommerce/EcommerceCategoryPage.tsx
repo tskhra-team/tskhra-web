@@ -61,14 +61,14 @@ export default function EcommerceCategoryPage() {
         <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 flex items-center justify-center">
           <div className="text-center space-y-4">
             <h1 className="text-2xl font-bold text-slate-800">
-              {t("categoryNotFound", { defaultValue: "Category not found" })}
+              {tEcom("categoryPage.categoryNotFound")}
             </h1>
             <Link
               to="/ecommerce"
               className="inline-block px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors"
               style={{ backgroundColor: colors.active.icon }}
             >
-              {t("backToShop", { defaultValue: "Back to shop" })}
+              {tEcom("categoryPage.backToShop")}
             </Link>
           </div>
         </div>
@@ -149,10 +149,7 @@ export default function EcommerceCategoryPage() {
             category.childItems.length > 0 && (
               <div className="mb-12">
                 <h2 className="text-lg font-semibold text-slate-800 mb-4">
-                  {t("subcategoriesIn", {
-                    category: categoryName,
-                    defaultValue: `Browse ${categoryName}`,
-                  })}
+                  {tEcom("categoryPage.browse", { category: categoryName })}
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                   {category.childItems.map((sub) => {
@@ -213,8 +210,7 @@ export default function EcommerceCategoryPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm text-slate-500">
-                    {categoryProducts.length}{" "}
-                    {t("productsFound", { defaultValue: "products found" })}
+                    {tEcom("categoryPage.productsFound", { count: categoryProducts.length })}
                   </p>
                   <Link
                     to={`/ecommerce/catalog?category=${encodeURIComponent(
@@ -223,9 +219,7 @@ export default function EcommerceCategoryPage() {
                     className="hidden sm:flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-80"
                     style={{ color: colors.active.icon }}
                   >
-                    {t("viewAllInCatalog", {
-                      defaultValue: "View all in catalog",
-                    })}
+                    {tEcom("categoryPage.viewAllInCatalog")}
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -253,7 +247,7 @@ export default function EcommerceCategoryPage() {
                           {product.store}
                         </span>
                         <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
-                          {product.condition}
+                          {tEcom(`catalog.condition${product.condition.replace(/\s/g, "")}`)}
                         </span>
                         {/* Favorite button */}
                         <button
@@ -305,17 +299,14 @@ export default function EcommerceCategoryPage() {
                       : categoryName}
                   </h3>
                   <p className="text-sm text-slate-500">
-                    {t("noProductsYet", {
-                      defaultValue:
-                        "No products in this category yet.",
-                    })}
+                    {tEcom("categoryPage.noProductsYet")}
                   </p>
                   <Link
                     to="/ecommerce/catalog"
                     className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
                     style={{ backgroundColor: colors.active.icon }}
                   >
-                    {t("browseCatalog", { defaultValue: "Browse full catalog" })}
+                    {tEcom("categoryPage.browseCatalog")}
                   </Link>
                 </div>
               </div>

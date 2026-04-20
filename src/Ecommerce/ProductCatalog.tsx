@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, SlidersHorizontal, X, ChevronRight, Heart } from "lucide-react";
 import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
@@ -125,6 +125,11 @@ export default function ProductCatalog() {
   }, [search, selectedConditions, priceMin, priceMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+
+  useEffect(() => {
+    setCurrentPage((p) => Math.min(p, totalPages));
+  }, [totalPages]);
+
   const paginated = filtered.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -182,7 +187,7 @@ export default function ProductCatalog() {
                 }
               />
               <span className="text-sm text-slate-700 group-hover:text-slate-900">
-                {cond}
+                {t(`catalog.condition${cond.replace(/\s/g, "")}`, { defaultValue: cond })}
               </span>
             </label>
           ))}
@@ -197,23 +202,17 @@ export default function ProductCatalog() {
         <div className="flex items-center gap-2">
           <input
             type="number"
-            placeholder="Min"
+            placeholder={t("catalog.priceMin", { defaultValue: "Min" })}
             value={priceMin}
-            onChange={(e) => {
-              setPriceMin(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setPriceMin(e.target.value)}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30"
           />
           <span className="text-slate-400 text-sm">–</span>
           <input
             type="number"
-            placeholder="Max"
+            placeholder={t("catalog.priceMax", { defaultValue: "Max" })}
             value={priceMax}
-            onChange={(e) => {
-              setPriceMax(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setPriceMax(e.target.value)}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30"
           />
         </div>
@@ -393,7 +392,7 @@ export default function ProductCatalog() {
                         />
                         {/* Condition badge */}
                         <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
-                          {product.condition}
+                          {t(`catalog.condition${product.condition.replace(/\s/g, "")}`, { defaultValue: product.condition })}
                         </span>
                         {/* Favorite button */}
                         <button

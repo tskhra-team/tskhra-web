@@ -15,6 +15,8 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRightLeft,
+  ChevronLeft,
+  ChevronRight,
   GripVertical,
   Package,
   Plus,
@@ -27,6 +29,7 @@ import useGetMyItems, { type Item } from "@/Swapping/MyItems/useGetMyItems";
 import useCreateTradeOffer from "@/Swapping/TradeOffer/useCreateTradeOffer";
 import useGetItemById from "@/Swapping/TradeOffer/useGetItemById";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -41,11 +44,11 @@ export interface TradeItem {
   category: string;
 }
 
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: "New",
-  LIKE_NEW: "Like New",
-  USED: "Used",
-  DAMAGED: "Damaged",
+const CONDITION_KEYS: Record<string, string> = {
+  NEW: "tradeOffer.conditionNew",
+  LIKE_NEW: "tradeOffer.conditionLikeNew",
+  USED: "tradeOffer.conditionUsed",
+  DAMAGED: "tradeOffer.conditionDamaged",
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -77,20 +80,21 @@ const MOCK_TARGET_ITEM: TradeItem = {
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function TargetItemCard({ item }: { item: TradeItem }) {
+  const { t } = useTranslation(["swapping"]);
   return (
     <div className="h-full rounded-3xl border-2 border-swap-secondary bg-white shadow-xl overflow-hidden flex flex-col">
       {/* Image */}
-      <div className="relative h-64 w-full bg-gray-100 overflow-hidden">
+      <div className="relative h-64 w-full bg-gray-50 overflow-hidden">
         {item.image ? (
           <ImageWithFallback
             src={item.image}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-linear-to-br from-swap-secondary to-white">
             <Package className="w-16 h-16 text-swap-primary/30" />
-            <span className="text-sm text-swap-text2 mt-2">No photo</span>
+            <span className="text-sm text-swap-text2 mt-2">{t("swapping:tradeOffer.noPhoto")}</span>
           </div>
         )}
         <div className="absolute top-4 left-4">
@@ -111,7 +115,7 @@ function TargetItemCard({ item }: { item: TradeItem }) {
 
         <div className="mb-4 p-4 rounded-xl bg-swap-secondary flex-1">
           <div className="text-xs uppercase font-bold tracking-wider text-swap-primary mb-1">
-            {CONDITION_LABELS[item.condition] ?? item.condition}
+            {CONDITION_KEYS[item.condition] ? t(`swapping:${CONDITION_KEYS[item.condition]}`) : item.condition}
           </div>
           <p
             className="text-sm text-gray-700 leading-relaxed"
@@ -137,6 +141,7 @@ function TargetItemCard({ item }: { item: TradeItem }) {
 // ─── Draggable inventory card ────────────────────────────────────────────────
 
 function DraggableInventoryItem({ item }: { item: TradeItem }) {
+  const { t } = useTranslation(["swapping"]);
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({
     id: item.id,
   });
@@ -146,7 +151,7 @@ function DraggableInventoryItem({ item }: { item: TradeItem }) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`relative shrink-0 w-36 h-44 rounded-2xl border-2 border-swap-secondary bg-white shadow-md
+      className={`relative rounded-2xl border-2 border-swap-secondary bg-white shadow-md
         cursor-grab active:cursor-grabbing touch-none select-none
         transition-all hover:shadow-lg hover:border-swap-primary/30 group
         ${isDragging ? "opacity-30 scale-95" : ""}`}
@@ -157,12 +162,12 @@ function DraggableInventoryItem({ item }: { item: TradeItem }) {
       </div>
 
       {/* Image */}
-      <div className="h-24 w-full rounded-t-2xl overflow-hidden bg-gray-50">
+      <div className="h-24 w-full rounded-t-2xl overflow-hidden bg-gray-50 p-1">
         {item.image ? (
           <ImageWithFallback
             src={item.image}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-swap-secondary to-white">
@@ -177,7 +182,7 @@ function DraggableInventoryItem({ item }: { item: TradeItem }) {
           {item.name}
         </p>
         <p className="text-[10px] text-swap-text2 mt-0.5">
-          {CONDITION_LABELS[item.condition] ?? item.condition}
+          {CONDITION_KEYS[item.condition] ? t(`swapping:${CONDITION_KEYS[item.condition]}`) : item.condition}
         </p>
         {item.estimatedValue != null && (
           <p className="text-xs font-bold text-swap-primary mt-1">
@@ -215,12 +220,12 @@ function OfferedItemCard({
         <X className="w-3 h-3" />
       </button>
 
-      <div className="h-20 w-full bg-gray-50 overflow-hidden">
+      <div className="h-20 w-full bg-gray-50 overflow-hidden p-1">
         {item.image ? (
           <ImageWithFallback
             src={item.image}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-swap-secondary to-white">
@@ -252,6 +257,7 @@ function OfferDropZone({
   offeredItems: TradeItem[];
   onRemoveItem: (id: string) => void;
 }) {
+  const { t } = useTranslation(["swapping"]);
   const { setNodeRef, isOver } = useDroppable({ id: "offer-drop-zone" });
 
   return (
@@ -270,11 +276,11 @@ function OfferDropZone({
           className="text-base font-bold text-swap-text"
           style={{ fontFamily: "'Archivo Black', sans-serif" }}
         >
-          Your Offer
+          {t("swapping:tradeOffer.yourOffer")}
         </h2>
         {offeredItems.length > 0 && (
           <span className="ml-auto text-xs font-medium text-swap-text2 bg-swap-secondary px-2.5 py-1 rounded-full">
-            {offeredItems.length} item{offeredItems.length !== 1 ? "s" : ""}
+            {offeredItems.length} {offeredItems.length !== 1 ? t("swapping:tradeOffer.items") : t("swapping:tradeOffer.item")}
           </span>
         )}
       </div>
@@ -289,11 +295,11 @@ function OfferDropZone({
           </motion.div>
           <p className="text-sm font-medium text-swap-text2">
             {isOver
-              ? "Drop here to add to your offer!"
-              : "Drag items from your inventory below"}
+              ? t("swapping:tradeOffer.dropHint")
+              : t("swapping:tradeOffer.dragHint")}
           </p>
           <p className="text-xs text-gray-400 mt-1">
-            Build your trade offer by dragging items here
+            {t("swapping:tradeOffer.dragDescription")}
           </p>
         </div>
       ) : (
@@ -315,6 +321,20 @@ function OfferDropZone({
 
 // ─── Inventory slider ────────────────────────────────────────────────────────
 
+function useItemsPerPage() {
+  const [count, setCount] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth < 768 ? 3 : 5,
+  );
+
+  useEffect(() => {
+    const update = () => setCount(window.innerWidth < 768 ? 3 : 5);
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return count;
+}
+
 function InventorySlider({
   items,
   onAddClick,
@@ -322,6 +342,14 @@ function InventorySlider({
   items: TradeItem[];
   onAddClick: () => void;
 }) {
+  const { t } = useTranslation(["swapping"]);
+  const itemsPerPage = useItemsPerPage();
+  const [page, setPage] = useState(0);
+
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const safePage = Math.min(page, totalPages - 1);
+  const pagedItems = items.slice(safePage * itemsPerPage, (safePage + 1) * itemsPerPage);
+
   return (
     <div className="rounded-2xl border-2 border-swap-secondary bg-white p-5">
       {/* Header */}
@@ -330,7 +358,7 @@ function InventorySlider({
           className="text-base font-bold text-swap-text"
           style={{ fontFamily: "'Archivo Black', sans-serif" }}
         >
-          Your Items
+          {t("swapping:tradeOffer.yourItems")}
         </h2>
         <Button
           onClick={onAddClick}
@@ -338,28 +366,47 @@ function InventorySlider({
           className="bg-swap-primary hover:bg-swap-primary/90 text-white gap-1.5"
         >
           <Plus className="w-4 h-4" />
-          Add New Item
+          {t("swapping:tradeOffer.addNewItem")}
         </Button>
       </div>
 
-      {/* Scrollable slider */}
       {items.length === 0 ? (
         <div className="flex items-center justify-center py-8 text-center">
           <div>
             <Package className="w-10 h-10 text-gray-300 mx-auto mb-2" />
             <p className="text-sm text-swap-text2">
-              No items in your inventory yet.
+              {t("swapping:tradeOffer.noItems")}
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              Click "Add New Item" to get started
+              {t("swapping:tradeOffer.noItemsHint")}
             </p>
           </div>
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-          {items.map((item) => (
-            <DraggableInventoryItem key={item.id} item={item} />
-          ))}
+        <div className="relative">
+          {safePage > 0 && (
+            <button
+              onClick={() => setPage((p) => p - 1)}
+              className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white border-2 border-swap-secondary shadow-md flex items-center justify-center hover:bg-swap-secondary transition-colors cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4 text-swap-text" />
+            </button>
+          )}
+
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+            {pagedItems.map((item) => (
+              <DraggableInventoryItem key={item.id} item={item} />
+            ))}
+          </div>
+
+          {safePage < totalPages - 1 && (
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white border-2 border-swap-secondary shadow-md flex items-center justify-center hover:bg-swap-secondary transition-colors cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4 text-swap-text" />
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -369,6 +416,7 @@ function InventorySlider({
 // ─── Main TradeOffer component ───────────────────────────────────────────────
 
 export default function TradeOffer() {
+  const { t } = useTranslation(["swapping"]);
   const [inventoryItems, setInventoryItems] = useState<TradeItem[]>([]);
   const [offeredItems, setOfferedItems] = useState<TradeItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -458,11 +506,11 @@ export default function TradeOffer() {
       },
       {
         onSuccess: () => {
-          toast.success("Trade offer sent!");
+          toast.success(t("swapping:tradeOffer.offerSent"));
           navigate("/swapping");
         },
         onError: () => {
-          toast.error("Failed to send trade offer. Please try again.");
+          toast.error(t("swapping:tradeOffer.offerFailed"));
         },
       },
     );
@@ -493,10 +541,10 @@ export default function TradeOffer() {
               style={{ fontFamily: "'Archivo Black', sans-serif" }}
             >
               <ArrowRightLeft className="w-8 h-8 text-swap-primary" />
-              Trade Offer
+              {t("swapping:tradeOffer.title")}
             </h1>
             <p className="text-swap-text2 mt-2 text-sm">
-              Drag your items to build your trade offer
+              {t("swapping:tradeOffer.subtitle")}
             </p>
           </div>
 
@@ -506,7 +554,7 @@ export default function TradeOffer() {
             <div className="w-full lg:w-[40%]">
               <div className="sticky top-8">
                 <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
-                  You want
+                  {t("swapping:tradeOffer.youWant")}
                 </p>
                 <TargetItemCard item={targetItem} />
               </div>
@@ -517,7 +565,7 @@ export default function TradeOffer() {
               {/* Drop Zone — Top */}
               <div>
                 <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
-                  You offer
+                  {t("swapping:tradeOffer.youOffer")}
                 </p>
                 <OfferDropZone
                   offeredItems={offeredItems}
@@ -528,7 +576,7 @@ export default function TradeOffer() {
               {/* Inventory Slider — Bottom */}
               <div>
                 <p className="text-xs uppercase font-bold tracking-widest text-swap-text2 mb-3">
-                  Your inventory
+                  {t("swapping:tradeOffer.yourInventory")}
                 </p>
                 <InventorySlider
                   items={inventoryItems}
@@ -549,8 +597,8 @@ export default function TradeOffer() {
                   >
                     <ArrowRightLeft className="w-5 h-5 mr-2" />
                     {isSubmitting
-                      ? "Sending..."
-                      : `Send Trade Offer (${offeredItems.length} item${offeredItems.length !== 1 ? "s" : ""})`}
+                      ? t("swapping:tradeOffer.sending")
+                      : `${t("swapping:tradeOffer.sendOffer")} (${offeredItems.length} ${offeredItems.length !== 1 ? t("swapping:tradeOffer.items") : t("swapping:tradeOffer.item")})`}
                   </Button>
                 </motion.div>
               )}
@@ -563,12 +611,12 @@ export default function TradeOffer() {
       <DragOverlay dropAnimation={null}>
         {activeItem ? (
           <div className="w-32 h-40 rounded-xl shadow-2xl ring-2 ring-swap-primary overflow-hidden rotate-2 opacity-90 bg-white">
-            <div className="h-24 w-full overflow-hidden">
+            <div className="h-24 w-full overflow-hidden p-1">
               {activeItem.image ? (
                 <ImageWithFallback
                   src={activeItem.image}
                   alt={activeItem.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-swap-secondary">
