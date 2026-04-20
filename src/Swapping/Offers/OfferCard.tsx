@@ -190,6 +190,7 @@ export function OfferCard({
       <Card className="p-4 rounded-2xl border-2 border-swap-bg hover:border-swap-primary/20 transition-colors">
         <div className="flex items-start gap-3">
           <ItemThumbnails
+            key={offer.id}
             items={offer.offererItems}
             label={t("swapping:offers.offering")}
           />
@@ -199,6 +200,7 @@ export function OfferCard({
           </div>
 
           <ItemThumbnails
+            key={offer.id}
             items={offer.responderItems}
             label={t("swapping:offers.requesting")}
           />

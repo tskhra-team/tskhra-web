@@ -97,97 +97,106 @@ export default function MyItems() {
   );
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-      <Button
-        variant="link"
-        className="mb-2"
-        onClick={() => navigate("/swapping/catalog")}
-      >
-        <ArrowLeft />
-        {t("swapping:postItem.back")}
-      </Button>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t("swapping:nav.myItems")}</h1>
-          {items && (
-            <p className="text-muted-foreground mt-1">
-              {items.totalElements} items
-            </p>
-          )}
+    <div className="bg-swap-bg">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Button
+          variant="link"
+          className="mb-10"
+          onClick={() => navigate("/swapping/catalog")}
+        >
+          <ArrowLeft />
+          {t("swapping:postItem.back")}
+        </Button>
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">
+              {t("swapping:nav.myItems")}
+            </h1>
+            {items && (
+              <p className="text-muted-foreground mt-1">
+                {items.totalElements} items
+              </p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: size }).map((_, i) => (
-            <Card key={i} className="h-115 animate-pulse bg-muted rounded-3xl" />
-          ))}
-        </div>
-      ) : items?.empty ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Package className="w-16 h-16 text-muted-foreground/40 mb-4" />
-          <h2 className="text-xl font-semibold mb-2">No items yet</h2>
-          <p className="text-muted-foreground mb-6">
-            Post your first item to start swapping!
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items?.content.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      )}
-
-      {totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                className={
-                  apiPage === 0
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: size }).map((_, i) => (
+              <Card
+                key={i}
+                className="h-115 animate-pulse bg-muted rounded-3xl"
               />
-            </PaginationItem>
+            ))}
+          </div>
+        ) : items?.empty ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <Package className="w-16 h-16 text-muted-foreground/40 mb-4" />
+            <h2 className="text-xl font-semibold mb-2">No items yet</h2>
+            <p className="text-muted-foreground mb-6">
+              Post your first item to start swapping!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {items?.content.map((item) => (
+              <ItemCard key={item.id} item={item} />
+            ))}
+          </div>
+        )}
 
-            {visiblePages.map((pageIndex, index) => {
-              if (typeof pageIndex === "string") {
+        {totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  className={
+                    apiPage === 0
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+
+              {visiblePages.map((pageIndex, index) => {
+                if (typeof pageIndex === "string") {
+                  return (
+                    <PaginationItem key={`${pageIndex}-${index}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+
                 return (
-                  <PaginationItem key={`${pageIndex}-${index}`}>
-                    <PaginationEllipsis />
+                  <PaginationItem key={pageIndex}>
+                    <PaginationLink
+                      onClick={() => setPage(pageIndex)}
+                      isActive={apiPage === pageIndex}
+                      className="cursor-pointer"
+                    >
+                      {pageIndex + 1}
+                    </PaginationLink>
                   </PaginationItem>
                 );
-              }
+              })}
 
-              return (
-                <PaginationItem key={pageIndex}>
-                  <PaginationLink
-                    onClick={() => setPage(pageIndex)}
-                    isActive={apiPage === pageIndex}
-                    className="cursor-pointer"
-                  >
-                    {pageIndex + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                className={
-                  apiPage === totalPages - 1
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    setPage((p) => Math.min(totalPages - 1, p + 1))
+                  }
+                  className={
+                    apiPage === totalPages - 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+      </div>
     </div>
   );
 }

@@ -137,7 +137,7 @@ export default function FilterSwapCatalog() {
   };
 
   return (
-    <div className="bg-swap-primary sticky top-8 p-8 h-full w-100 rounded-3xl text-white font-bold">
+    <div className="bg-swap-primary block lg:sticky top-8 p-8 h-full lg:w-100 rounded-3xl text-white font-bold">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-2xl">{t("swapping:catalog.filters")}</h1>
         {hasActiveFilters && (
