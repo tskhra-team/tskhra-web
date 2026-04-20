@@ -12,11 +12,12 @@ const getAllItems = async (page: number, size: number) => {
   return response.data;
 };
 
-const useGetAllItems = (page: number, size: number) => {
+const useGetAllItems = (page: number, size: number, enabled?: boolean) => {
   return useQuery<PaginatedItemsResponse, AxiosError<ErrorResponse>>({
     queryFn: () => getAllItems(page, size),
     queryKey: ["getAllItems", page, size],
     placeholderData: keepPreviousData,
+    enabled: enabled,
   });
 };
 

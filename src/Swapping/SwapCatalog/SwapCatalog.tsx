@@ -4,7 +4,7 @@ import { SwapSearch } from "@/Swapping/SwapSearch";
 
 export default function SwapCatalog() {
   return (
-    <div className="px-20">
+    <div className="md:px-20 px-8">
       <SwapSearch
         style={{ marginTop: "25px", padding: "0px" }}
         animation={false}

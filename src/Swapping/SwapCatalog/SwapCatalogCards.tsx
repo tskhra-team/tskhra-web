@@ -108,7 +108,7 @@ export default function SwapCatalogCards() {
     data: allItems,
     isLoading: isLoadingAll,
     isError: isErrorAll,
-  } = useGetAllItems(apiPage, SIZE); // tip: it would be good to add this prop  { enabled: !hasFilters }
+  } = useGetAllItems(apiPage, SIZE, !hasFilters); // tip: it would be good to add this prop  { enabled: !hasFilters }
 
   const {
     data: searchedItems,

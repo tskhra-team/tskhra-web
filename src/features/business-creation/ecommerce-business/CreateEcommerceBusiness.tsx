@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Check, Package, Info } from "lucide-react";
+import { ArrowLeft, Check, Info, Package } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -72,10 +72,12 @@ export default function CreateEcommerceBusiness() {
   });
 
   const selectedCategory = watch("category");
-  const specFields = selectedCategory ? CATEGORY_SPECS[selectedCategory] || [] : [];
+  const specFields = selectedCategory
+    ? CATEGORY_SPECS[selectedCategory] || []
+    : [];
 
   const onSubmit = (data: EcommerceFormData) => {
-    console.log("Ecommerce product submitted:", data);
+    // console.log("Ecommerce product submitted:", data);
     setSubmitted(true);
   };
 
@@ -143,10 +145,7 @@ export default function CreateEcommerceBusiness() {
           </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="pb-16"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-6">
@@ -160,11 +159,14 @@ export default function CreateEcommerceBusiness() {
                 <CardContent className="space-y-5">
                   <div className="space-y-2.5">
                     <Label className="text-sm font-medium">
-                      {t("ecommerceForm.productTitle")} <span className="text-red-500">*</span>
+                      {t("ecommerceForm.productTitle")}{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       {...register("productTitle", {
-                        required: t("ecommerceForm.validation.productTitleRequired"),
+                        required: t(
+                          "ecommerceForm.validation.productTitleRequired",
+                        ),
                       })}
                       placeholder={t("ecommerceForm.productTitlePlaceholder")}
                       className="h-11 transition-all"
@@ -178,11 +180,14 @@ export default function CreateEcommerceBusiness() {
 
                   <div className="space-y-2.5">
                     <Label className="text-sm font-medium">
-                      {t("ecommerceForm.description")} <span className="text-red-500">*</span>
+                      {t("ecommerceForm.description")}{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <textarea
                       {...register("description", {
-                        required: t("ecommerceForm.validation.descriptionRequired"),
+                        required: t(
+                          "ecommerceForm.validation.descriptionRequired",
+                        ),
                       })}
                       placeholder={t("ecommerceForm.descriptionPlaceholder")}
                       rows={5}
@@ -211,7 +216,8 @@ export default function CreateEcommerceBusiness() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div className="space-y-2.5">
                       <Label className="text-sm font-medium">
-                        {t("ecommerceForm.price")} <span className="text-red-500">*</span>
+                        {t("ecommerceForm.price")}{" "}
+                        <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         type="number"
@@ -236,7 +242,8 @@ export default function CreateEcommerceBusiness() {
 
                     <div className="space-y-2.5">
                       <Label className="text-sm font-medium">
-                        {t("ecommerceForm.stockQuantity")} <span className="text-red-500">*</span>
+                        {t("ecommerceForm.stockQuantity")}{" "}
+                        <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         type="number"
@@ -261,7 +268,8 @@ export default function CreateEcommerceBusiness() {
 
                     <div className="space-y-2.5">
                       <Label className="text-sm font-medium">
-                        {t("ecommerceForm.sku")} <span className="text-red-500">*</span>
+                        {t("ecommerceForm.sku")}{" "}
+                        <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         {...register("sku", {
@@ -290,7 +298,8 @@ export default function CreateEcommerceBusiness() {
                 <CardContent className="space-y-6">
                   <div className="space-y-3">
                     <Label className="text-sm font-medium">
-                      {t("ecommerceForm.coverImage")} <span className="text-red-500">*</span>
+                      {t("ecommerceForm.coverImage")}{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <Controller
                       name="coverImage"
@@ -390,7 +399,9 @@ export default function CreateEcommerceBusiness() {
                       name="category"
                       control={control}
                       rules={{
-                        required: t("ecommerceForm.validation.categoryRequired"),
+                        required: t(
+                          "ecommerceForm.validation.categoryRequired",
+                        ),
                       }}
                       render={({ field }) => (
                         <Select
@@ -402,7 +413,9 @@ export default function CreateEcommerceBusiness() {
                         >
                           <SelectTrigger className="w-full h-11 transition-all">
                             <SelectValue
-                              placeholder={t("ecommerceForm.categoryPlaceholder")}
+                              placeholder={t(
+                                "ecommerceForm.categoryPlaceholder",
+                              )}
                             />
                           </SelectTrigger>
                           <SelectContent>
