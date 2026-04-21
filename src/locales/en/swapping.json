@@ -106,7 +106,8 @@
     "status": "Status",
     "onlyVip": "Only VIP",
     "lookingFor": "Looking for",
-    "makeOffer": "Make Offer"
+    "makeOffer": "Make Offer",
+    "close": "Close"
   },
   "offers": {
     "title": "Trade Offers",

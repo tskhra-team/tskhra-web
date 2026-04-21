@@ -106,7 +106,8 @@
     "status": "სტატუსი",
     "onlyVip": "მხოლოდ VIP",
     "lookingFor": "ეძებს",
-    "makeOffer": "შეთავაზება"
+    "makeOffer": "შეთავაზება",
+    "close": "დახურვა"
   },
   "offers": {
     "title": "სავაჭრო შეთავაზებები",
