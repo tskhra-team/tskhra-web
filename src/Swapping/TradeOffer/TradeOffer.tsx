@@ -543,7 +543,11 @@ export default function TradeOffer() {
     ? inventoryItems.find((i) => i.id === activeId)
     : null;
 
-  const isMyOwnItem = fetchedItem?.ownerId === data?.content.at(0)?.ownerId;
+  // Строгая проверка: убеждаемся, что данные загрузились, прежде чем сравнивать
+  const isMyOwnItem =
+    fetchedItem?.ownerId != null &&
+    data?.content?.at(0)?.ownerId != null &&
+    fetchedItem.ownerId === data.content.at(0)?.ownerId;
 
   return isMyOwnItem ? (
     <OwnItem />
@@ -565,7 +569,7 @@ export default function TradeOffer() {
             <Button
               variant="link"
               className="mb-10"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(-1 || "/swappping/catalog")}
             >
               <ArrowLeft />
               {t("swapping:postItem.back")}

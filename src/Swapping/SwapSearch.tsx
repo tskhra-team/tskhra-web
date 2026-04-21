@@ -7,6 +7,7 @@ import {
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
+import useGetSearchSuggestions from "@/Swapping/useGetSearchSuggestions";
 
 import { ChevronDown, Grid, Loader2, Search, Sparkles, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -80,6 +81,16 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
         selectedCategoryId,
       ),
     });
+
+  const { data: suggestions } = useGetSearchSuggestions(
+    debouncedSearchQuery,
+    5,
+    Boolean(
+      debouncedSearchQuery.length > 0 ||
+      selectedSubCategoryId ||
+      selectedCategoryId,
+    ),
+  );
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -159,6 +170,34 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
     setIsSearchFocused(false);
     inputRef.current?.blur();
 
+    navigate({ pathname: "/swapping/catalog", search: params.toString() });
+  };
+
+  // Функция для клика по саджесту
+  const handleSuggestionClick = (suggestionText: string) => {
+    // 1. Обновляем стейты инпута визуально
+    setSearchQuery(suggestionText);
+    setDebouncedSearchQuery(suggestionText);
+
+    // 2. Собираем параметры для URL
+    const params = new URLSearchParams(searchParams);
+    params.set("s", suggestionText);
+
+    if (selectedCategoryId) params.set("c", String(selectedCategoryId));
+    else params.delete("c");
+
+    if (selectedSubCategoryId) params.set("sc", String(selectedSubCategoryId));
+    else params.delete("sc");
+
+    params.set("page", "1");
+
+    // 3. Закрываем попапы и убираем фокус
+    setIsActive(false);
+    setOpen(false);
+    setIsSearchFocused(false);
+    inputRef.current?.blur();
+
+    // 4. Пушим в URL
     navigate({ pathname: "/swapping/catalog", search: params.toString() });
   };
 
@@ -338,6 +377,26 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                       </div>
                     ) : liveSearchData?.content.length ? (
                       <div className="space-y-3">
+                        {suggestions?.length ? (
+                          <div className="mb-2">
+                            <p className="text-xs font-bold text-gray-400 uppercase px-2 mb-2">
+                              Suggestions
+                            </p>
+                            <div className="flex flex-wrap gap-2 px-2">
+                              {suggestions.map((suggest, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => handleSuggestionClick(suggest)}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors cursor-pointer border-none text-left"
+                                >
+                                  <Search className="w-3 h-3 text-gray-400 shrink-0" />
+                                  <span className="truncate">{suggest}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+
                         <p className="text-xs font-bold text-gray-400 uppercase px-2">
                           Top Results
                         </p>
@@ -377,10 +436,31 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                         </button>
                       </div>
                     ) : (
-                      <div className="text-center py-6 text-gray-500">
-                        <p className="text-sm">
-                          No items found for "{debouncedSearchQuery}"
-                        </p>
+                      <div className="space-y-3">
+                        {suggestions?.length ? (
+                          <div className="mb-2">
+                            <p className="text-xs font-bold text-gray-400 uppercase px-2 mb-2">
+                              Suggestions
+                            </p>
+                            <div className="flex flex-wrap gap-2 px-2">
+                              {suggestions.map((suggest, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => handleSuggestionClick(suggest)}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors cursor-pointer border-none text-left"
+                                >
+                                  <Search className="w-3 h-3 text-gray-400 shrink-0" />
+                                  <span className="truncate">{suggest}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+                        <div className="text-center py-6 text-gray-500">
+                          <p className="text-sm">
+                            No items found for "{debouncedSearchQuery}"
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

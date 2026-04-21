@@ -1,25 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { SwapItemCard } from "@/Swapping/SwapItemCard";
 import useGetAllItems from "@/Swapping/SwapCatalog/useGetAllItems";
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-} from "lucide-react";
+import { SwapItemCard } from "@/Swapping/SwapItemCard";
+import { ArrowRight, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
-const ACCENT_COLORS = [
-  "var(--swap-accent-orange)",
-  "var(--swap-primary)",
-  "var(--swap-accent-taupe)",
-  "var(--swap-accent-gold)",
-  "var(--swap-accent-green)",
-  "var(--swap-accent-blue)",
-];
 
 function useItemsPerPage() {
   const [count, setCount] = useState(4);
@@ -41,7 +27,10 @@ export function AvailableTrades() {
   const { t } = useTranslation(["swapping"]);
   const { data, isLoading } = useGetAllItems(0, 7);
   const trades = [...(data?.content ?? [])]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     .slice(0, 7);
 
   const itemsPerPage = useItemsPerPage();
@@ -64,10 +53,7 @@ export function AvailableTrades() {
     return () => clearInterval(timer);
   }, [next, trades.length, itemsPerPage, isPaused]);
 
-  const visibleTrades = trades.slice(
-    currentIndex,
-    currentIndex + itemsPerPage
-  );
+  const visibleTrades = trades.slice(currentIndex, currentIndex + itemsPerPage);
 
   return (
     <>
@@ -123,11 +109,6 @@ export function AvailableTrades() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <AnimatePresence mode="popLayout">
                   {visibleTrades.map((item, idx) => {
-                    const accentColor =
-                      ACCENT_COLORS[
-                        trades.indexOf(item) % ACCENT_COLORS.length
-                      ];
-
                     return (
                       <motion.div
                         key={item.id}
@@ -143,10 +124,7 @@ export function AvailableTrades() {
                           damping: 28,
                         }}
                       >
-                        <SwapItemCard
-                          item={item}
-                          accentColor={accentColor}
-                        />
+                        <SwapItemCard item={item} />
                       </motion.div>
                     );
                   })}
