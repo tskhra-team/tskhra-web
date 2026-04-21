@@ -31,8 +31,20 @@ function getVisiblePages(totalPages: number, currentPage: number) {
   }
   if (currentPage <= 1) return [0, 1, 2, 3, 4];
   if (currentPage >= totalPages - 2)
-    return [totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1];
-  return [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
+    return [
+      totalPages - 5,
+      totalPages - 4,
+      totalPages - 3,
+      totalPages - 2,
+      totalPages - 1,
+    ];
+  return [
+    currentPage - 2,
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    currentPage + 2,
+  ];
 }
 
 export function OffersColumn({
@@ -76,7 +88,12 @@ export function OffersColumn({
         ) : (
           <div className="space-y-4">
             {offers?.map((offer, idx) => (
-              <OfferCard key={offer.id ?? offer.offerId} offer={offer} index={idx} direction={direction} />
+              <OfferCard
+                key={offer.id}
+                offer={offer}
+                index={idx}
+                direction={direction}
+              />
             ))}
           </div>
         )}

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { OffersColumn } from "./OffersColumn";
 import useGetTradeOffers from "./useGetTradeOffers";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 6;
 
 export default function Offers() {
   const { t } = useTranslation(["swapping"]);

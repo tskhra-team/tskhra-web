@@ -23,7 +23,7 @@ export default function SwapHero() {
 
   return (
     // <section className="my-20 flex items-center justify-center">
-    <div className="px-8  md:px-20 my-10 w-full">
+    <div className="px-8 md:px-20 my-10 w-full">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         {/* Left Content */}
         <div>

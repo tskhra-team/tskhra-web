@@ -125,7 +125,7 @@ export default function TopBar() {
                     </AvatarFallback>
                   </Avatar>
                   {(favoritesCount || notificationsCount) && isMobile ? (
-                    <span className="absolute top-3 right-11.5 bg-red-500 text-white text-[10px] font-bold min-w-3 h-3 flex items-center justify-center rounded-full leading-none px-1"></span>
+                    <span className="absolute top-3 right-11.5 bg-red-700 text-white text-[10px] font-bold min-w-3 h-3 flex items-center justify-center rounded-full leading-none px-1"></span>
                   ) : null}
                 </button>
               </DropdownMenuTrigger>
