@@ -24,7 +24,7 @@ export default function OwnItem() {
         </div>
 
         <Button
-          onClick={() => navigate("/swapping/catalog")}
+          onClick={() => navigate(-1)}
           className="bg-swap-primary hover:bg-swap-primary/90 text-white"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

@@ -543,11 +543,11 @@ export default function TradeOffer() {
     ? inventoryItems.find((i) => i.id === activeId)
     : null;
 
-  if (fetchedItem?.ownerId === data?.content.at(0)?.ownerId) {
-    return <OwnItem />;
-  }
+  const isMyOwnItem = fetchedItem?.ownerId === data?.content.at(0)?.ownerId;
 
-  return (
+  return isMyOwnItem ? (
+    <OwnItem />
+  ) : (
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
