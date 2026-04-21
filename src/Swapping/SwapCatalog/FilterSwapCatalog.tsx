@@ -478,7 +478,7 @@ export default function FilterSwapCatalog() {
   }
 
   return (
-    <div className="bg-swap-primary lg:sticky top-8 h-fit lg:w-100 rounded-3xl text-white shadow-xl">
+    <div className="bg-swap-primary lg:sticky top-8 h-fit lg:w-100 rounded-3xl text-white shadow-xl lg:max-h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar">
       <Accordion
         type="single"
         collapsible

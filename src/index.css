@@ -215,3 +215,12 @@
 #fc-dom-2 {
   @apply text-lg sm:text-2xl;
 }
+
+/* Скрываем скроллбар, но оставляем возможность скроллить */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
