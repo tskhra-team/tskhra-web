@@ -173,7 +173,7 @@ export function OfferCard({
   index: number;
   direction: TradeOfferDirection;
 }) {
-  const offerId = offer.id ?? offer.offerId ?? "";
+  const offerId = offer.id ?? "";
   const { t } = useTranslation(["swapping"]);
   const timeRemaining = useTimeRemaining(offer.expiresAt);
   const isExpiringSoon =

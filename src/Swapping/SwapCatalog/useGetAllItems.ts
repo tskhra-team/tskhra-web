@@ -18,6 +18,7 @@ const useGetAllItems = (page: number, size: number, enabled?: boolean) => {
     queryKey: ["getAllItems", page, size],
     placeholderData: keepPreviousData,
     enabled: enabled,
+    staleTime: 1000 * 10 * 60,
   });
 };
 

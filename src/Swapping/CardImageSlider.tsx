@@ -33,7 +33,7 @@ export function CardImageSlider({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
           className="absolute inset-0"
         >
           <ImageWithFallback
@@ -52,7 +52,7 @@ export function CardImageSlider({
               e.stopPropagation();
               setActiveIdx((p) => (p <= 0 ? images.length - 1 : p - 1));
             }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover/slider:opacity-100 transition-opacity"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-swap-primary/40 hover:bg-swap-primary/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -61,7 +61,7 @@ export function CardImageSlider({
               e.stopPropagation();
               setActiveIdx((p) => (p >= images.length - 1 ? 0 : p + 1));
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover/slider:opacity-100 transition-opacity"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-swap-primary/40 hover:bg-swap-primary/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -76,8 +76,8 @@ export function CardImageSlider({
                 }}
                 className={`rounded-full transition-all duration-200 ${
                   i === activeIdx
-                    ? "w-4 h-1.5 bg-white"
-                    : "w-1.5 h-1.5 bg-white/50"
+                    ? "w-4 h-1.5 bg-swap-primary"
+                    : "w-1.5 h-1.5 bg-swap-secondary"
                 }`}
               />
             ))}
