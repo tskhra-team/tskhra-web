@@ -12,6 +12,7 @@ export interface Item {
   city: string;
   condition: string;
   tradeRange: string;
+  status: "AVAILABLE" | "HIDDEN";
   estimatedValue: number | null;
   createdAt: string;
   images: string[];
@@ -43,6 +44,7 @@ const useGetMyItems = (page: number, size: number) => {
     queryFn: () => getMyItems(page, size),
     queryKey: ["getMyItems", page, size],
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 10,
   });
 };
 

@@ -124,6 +124,11 @@
     "withdrawn": "Offer withdrawn",
     "actionFailed": "Action failed. Please try again."
   },
+  "myItems": {
+    "hide": "Hide",
+    "unhide": "Unhide",
+    "makeVip": "Make this item VIP!"
+  },
   "aiEstimatedPrice": "Price estimated by our AI",
   "tradeOffer": {
     "title": "Trade Offer",
