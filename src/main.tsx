@@ -21,6 +21,6 @@ createRoot(document.getElementById("root")!).render(
         </ModalProvider>
       </WebSocketProvider>
     </AuthProvider>
-    <Toaster />
+    <Toaster position="top-center" />
   </QueryClientProvider>,
 );

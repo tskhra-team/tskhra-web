@@ -1,7 +1,7 @@
 import { privateInstance } from "@/api";
 import type { CreatePostItemPostData } from "@/Swapping/PostItems/PostItemsSchema";
 import type { ErrorResponse } from "@/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
 interface PostCreateResponse {
@@ -17,12 +17,16 @@ const createPost = async (data: CreatePostItemPostData) => {
 };
 
 const useCreatePost = () => {
+  const queryClient = useQueryClient()
   return useMutation<
     PostCreateResponse,
     AxiosError<ErrorResponse>,
     CreatePostItemPostData
   >({
     mutationFn: createPost,
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({queryKey: ['getMyItems']})
+    }
   });
 };
 
