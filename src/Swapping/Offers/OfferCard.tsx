@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type {
   TradeOffer,
@@ -168,8 +169,15 @@ function AcceptedActions({ offerId }: { offerId: string }) {
   );
 }
 
-function IncomingActions({ offerId }: { offerId: string }) {
+function IncomingActions({
+  offerId,
+  offer,
+}: {
+  offerId: string;
+  offer: TradeOffer;
+}) {
   const { t } = useTranslation(["swapping"]);
+  const navigate = useNavigate();
   const { mutate: accept, isPending: accepting } = useAcceptOffer();
   const { mutate: reject, isPending: rejecting } = useRejectOffer();
   const busy = accepting || rejecting;
@@ -212,6 +220,20 @@ function IncomingActions({ offerId }: { offerId: string }) {
           <X className="w-3.5 h-3.5" />
         )}
         {t("swapping:offers.reject")}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        disabled={busy}
+        onClick={() =>
+          navigate(`/swapping/counter-offer/${offerId}`, {
+            state: { offer },
+          })
+        }
+        className="border-purple-500/30 text-purple-500 hover:bg-purple-500/5 gap-1 text-xs h-8"
+      >
+        <ArrowRightLeft className="w-3.5 h-3.5" />
+        {t("swapping:offers.counterOffer")}
       </Button>
     </div>
   );
@@ -335,7 +357,7 @@ export function OfferCard({
             {offer.status === "ACCEPTED" ? (
               <AcceptedActions offerId={offerId} />
             ) : direction === "RECEIVED" ? (
-              <IncomingActions offerId={offerId} />
+              <IncomingActions offerId={offerId} offer={offer} />
             ) : (
               <OutgoingActions offerId={offerId} />
             )}
