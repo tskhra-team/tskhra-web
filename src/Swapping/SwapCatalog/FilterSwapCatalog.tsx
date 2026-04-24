@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { useIsMobile } from "@/components/ui/use-mobile";
 import { useIsMobile } from "@/components/ui/use-mobile";
 import useGetCitites from "@/shared/api/useGetCities";
 import { Check, Crown, SlidersHorizontal, Trash2, X } from "lucide-react";
@@ -40,7 +39,6 @@ interface FilterFormValues {
   vipOnly: string;
 }
 
-// Extracted Filter Form Component for reuse
 function FilterForm({
   onApplied,
   isMobile,
@@ -162,28 +160,50 @@ function FilterForm({
     });
   };
 
+  const activeFilterCount = [
+    formValues.cityId,
+    formValues.tradeRange,
+    formValues.condition,
+    formValues.sortByDate,
+    formValues.vipOnly,
+  ].filter(Boolean).length;
+
   return (
     <>
       <div
-        className={`flex items-center ${!isMobile && !hideTitle ? "justify-between" : "justify-end"} mb-6`}
+        className={`flex items-center ${!isMobile && !hideTitle ? "justify-between" : "justify-end"} mb-5`}
       >
         {!isMobile && !hideTitle && (
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-xl font-semibold tracking-tight">
             {t("swapping:catalog.filters")}
           </h2>
         )}
-        {hasActiveFilters && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleResetAll}
-            className="text-white/70 hover:text-white hover:bg-white/10 transition-all"
-          >
-            <X className="w-4 h-4 mr-1" />
-            {t("swapping:catalog.clearAll")}
-          </Button>
-        )}
+        <AnimatePresence>
+          {hasActiveFilters && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleResetAll}
+                className="text-white/60 hover:text-white hover:bg-white/8 transition-all rounded-lg text-xs gap-1"
+              >
+                <X className="w-3.5 h-3.5" />
+                {t("swapping:catalog.clearAll")}
+                {activeFilterCount > 0 && (
+                  <span className="ml-0.5 bg-white/15 text-white/80 rounded-full w-5 h-5 text-[10px] inline-flex items-center justify-center font-medium">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <AnimatePresence initial={false}>
@@ -196,8 +216,8 @@ function FilterForm({
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="bg-white/10 rounded-lg p-3 mb-6">
-              <p className="text-sm text-white/80 font-normal">
+            <div className="bg-amber-500/10 border border-amber-400/20 rounded-lg px-3.5 py-2.5 mb-5">
+              <p className="text-[13px] text-amber-200/90 leading-snug">
                 {t("swapping:catalog.filtersNotApplied")}
               </p>
             </div>
@@ -205,25 +225,32 @@ function FilterForm({
         ) : null}
       </AnimatePresence>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* City Filter */}
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+        >
           <div className="flex items-center justify-between">
-            <Label className="text-base font-semibold">
+            <Label className="text-[13px] font-medium text-white/70 uppercase tracking-wider h-6">
               {t("swapping:catalog.city")}
             </Label>
             {isCityChoosed && (
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 type="button"
                 onClick={() => {
                   setValue("cityId", "");
                   setValue("tradeRange", "");
                 }}
-                className="p-1.5 rounded-lg bg-swap-secondary text-black hover:bg-white/10 transition-colors cursor-pointer border-none hover:text-white"
+                className="p-1 rounded-md text-white/60 hover:text-white/80 hover:bg-white/8 transition-all cursor-pointer border-none bg-transparent"
                 aria-label="Clear city filter"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
+                <Trash2 className="w-3.5 h-3.5" />
+              </motion.button>
             )}
           </div>
           <Controller
@@ -239,7 +266,7 @@ function FilterForm({
                   }
                 }}
               >
-                <SelectTrigger className="w-full h-11 transition-all bg-swap-secondary text-swap-text2 border-0 hover:bg-opacity-90">
+                <SelectTrigger className="w-full h-10 transition-all bg-white/7 text-white/90 border border-white/8 rounded-lg hover:bg-white/10 hover:border-white/15 focus:ring-1 focus:ring-white/20 focus:border-white/20 data-placeholder:text-white/60">
                   <SelectValue placeholder={t("booking:form.city")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -252,7 +279,7 @@ function FilterForm({
               </Select>
             )}
           />
-        </div>
+        </motion.div>
 
         {/* Trade Range */}
         {isCityChoosed && (
@@ -262,7 +289,7 @@ function FilterForm({
             exit={{ opacity: 0, height: 0 }}
             className="space-y-2"
           >
-            <Label className="text-base font-semibold">
+            <Label className="text-[13px] font-medium text-white/70 uppercase tracking-wider h-6">
               {t("swapping:postItem.tradeRange")}
             </Label>
             <Controller
@@ -273,20 +300,27 @@ function FilterForm({
                   {tradeRangeOptions.map((option) => {
                     const isSelected = field.value === option.value;
                     return (
-                      <Button
+                      <motion.div
                         key={option.value}
-                        type="button"
-                        variant="outline"
-                        onClick={() => field.onChange(option.value)}
-                        className={`h-11 transition-all justify-start ${
-                          isSelected
-                            ? "bg-white border-white text-swap-text2 font-semibold"
-                            : "bg-swap-secondary text-swap-text2 border-0 hover:bg-white/20"
-                        }`}
+                        whileTap={{ scale: 0.97 }}
+                        className="flex-1"
                       >
-                        {isSelected && <Check className="w-4 h-4 mr-2" />}
-                        {option.label}
-                      </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => field.onChange(option.value)}
+                          className={`h-10 w-full transition-all text-[13px] rounded-lg ${
+                            isSelected
+                              ? "bg-white text-swap-primary border-white font-semibold shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                              : "bg-white/7 text-white/70 border-white/8 hover:bg-white/12 hover:text-white/90"
+                          }`}
+                        >
+                          {isSelected && (
+                            <Check className="w-3.5 h-3.5 mr-1.5" />
+                          )}
+                          {option.label}
+                        </Button>
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -295,21 +329,30 @@ function FilterForm({
           </motion.div>
         )}
 
+        <div className="border-t border-white/6 my-1" />
+
         {/* Condition Filter */}
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
           <div className="flex items-center justify-between">
-            <Label className="text-base font-semibold">
+            <Label className="text-[13px] font-medium text-white/70 uppercase tracking-wider h-6">
               {t("swapping:postItem.condition")}
             </Label>
             {watch("condition") && (
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 type="button"
                 onClick={() => setValue("condition", "")}
-                className="p-1.5 rounded-lg bg-swap-secondary text-black hover:bg-white/10 transition-colors cursor-pointer border-none hover:text-white"
+                className="p-1 rounded-md text-white/40 hover:text-white/80 hover:bg-white/8 transition-all cursor-pointer border-none bg-transparent"
                 aria-label="Clear condition filter"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
+                <Trash2 className="w-3.5 h-3.5" />
+              </motion.button>
             )}
           </div>
           <Controller
@@ -317,7 +360,7 @@ function FilterForm({
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full h-11 transition-all bg-swap-secondary text-swap-text2 border-0 hover:bg-opacity-90">
+                <SelectTrigger className="w-full h-10 transition-all bg-white/7 text-white/90 border border-white/8 rounded-lg hover:bg-white/10 hover:border-white/15 focus:ring-1 focus:ring-white/20 focus:border-white/20 data-placeholder:text-white/60">
                   <SelectValue placeholder={t("swapping:postItem.condition")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -330,23 +373,30 @@ function FilterForm({
               </Select>
             )}
           />
-        </div>
+        </motion.div>
 
         {/* Sort by Date */}
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
           <div className="flex items-center justify-between">
-            <Label className="text-base font-semibold">
+            <Label className="text-[13px] font-medium text-white/70 uppercase tracking-wider h-6">
               {t("swapping:catalog.sortByDate")}
             </Label>
             {watch("sortByDate") && (
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 type="button"
                 onClick={() => setValue("sortByDate", "")}
-                className="p-1.5 rounded-lg bg-swap-secondary text-black hover:bg-white/10 transition-colors cursor-pointer border-none hover:text-white"
+                className="p-1 rounded-md text-white/40 hover:text-white/80 hover:bg-white/8 transition-all cursor-pointer border-none bg-transparent"
                 aria-label="Clear sort filter"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
+                <Trash2 className="w-3.5 h-3.5" />
+              </motion.button>
             )}
           </div>
           <Controller
@@ -354,7 +404,7 @@ function FilterForm({
             control={control}
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full h-11 transition-all bg-swap-secondary text-swap-text2 border-0 hover:bg-opacity-90">
+                <SelectTrigger className="w-full h-10 transition-all bg-white/7 text-white/90 border border-white/8 rounded-lg hover:bg-white/10 hover:border-white/15 focus:ring-1 focus:ring-white/20 focus:border-white/20 data-placeholder:text-white/60">
                   <SelectValue placeholder={t("swapping:catalog.sortByDate")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -367,106 +417,147 @@ function FilterForm({
               </Select>
             )}
           />
-        </div>
+        </motion.div>
+
+        <div className="border-t border-white/6 my-1" />
 
         {/* VIP Only Filter */}
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
           <div className="flex items-center justify-between">
-            <Label className="text-base font-semibold">
+            <Label className="text-[13px] font-medium text-white/70 uppercase tracking-wider h-6">
               {t("swapping:catalog.status")}
             </Label>
             {watch("vipOnly") && (
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 type="button"
                 onClick={() => setValue("vipOnly", "")}
-                className="p-1.5 rounded-lg bg-swap-secondary text-black hover:bg-white/10 transition-colors cursor-pointer border-none hover:text-white"
+                className="p-1 rounded-md text-white/40 hover:text-white/80 hover:bg-white/8 transition-all cursor-pointer border-none bg-transparent"
                 aria-label="Clear VIP filter"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
+                <Trash2 className="w-3.5 h-3.5" />
+              </motion.button>
             )}
           </div>
           <Controller
             name="vipOnly"
             control={control}
             render={({ field }) => (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  if (field.value === "true") {
-                    setValue("vipOnly", "");
-                  } else {
-                    field.onChange("true");
-                  }
-                }}
-                className={`h-11 transition-all w-full justify-start ${
-                  field.value === "true"
-                    ? "bg-amber-400 border-amber-400 text-amber-900 hover:bg-amber-500 font-semibold"
-                    : "bg-swap-secondary text-swap-text2 border-0 hover:bg-white/20"
-                }`}
-              >
-                <Crown
-                  className={`w-4 h-4 mr-2 ${
-                    field.value === "true" ? "text-amber-900" : "text-amber-400"
+              <motion.div whileTap={{ scale: 0.98 }}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    if (field.value === "true") {
+                      setValue("vipOnly", "");
+                    } else {
+                      field.onChange("true");
+                    }
+                  }}
+                  className={`h-10 transition-all w-full justify-start rounded-lg text-[13px] ${
+                    field.value === "true"
+                      ? "bg-linear-to-r from-amber-400 to-amber-500 border-amber-400/50 text-amber-950 hover:from-amber-500 hover:to-amber-600 font-semibold shadow-[0_0_24px_rgba(251,191,36,0.15)]"
+                      : "bg-white/7 text-white/70 border-white/8 hover:bg-white/12 hover:text-white/90"
                   }`}
-                />
-                {t("swapping:catalog.onlyVip")}
-              </Button>
+                >
+                  <Crown
+                    className={`w-4 h-4 mr-2 ${
+                      field.value === "true"
+                        ? "text-amber-950"
+                        : "text-amber-400/80"
+                    }`}
+                  />
+                  {t("swapping:catalog.onlyVip")}
+                </Button>
+              </motion.div>
             )}
           />
-        </div>
+        </motion.div>
 
-        <Button
-          type="submit"
-          className="w-full h-12 bg-white text-swap-text hover:bg-gray-100 font-semibold text-base shadow-lg"
-          onClick={() => {
-            setTimeout(
-              () => window.scrollTo({ top: 120, left: 0, behavior: "smooth" }),
-              200,
-            );
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.25 }}
+          className="pt-2"
         >
-          {t("swapping:catalog.applyFilters")}
-        </Button>
+          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              type="submit"
+              className="w-full h-11 bg-white text-swap-primary hover:bg-white/90 font-semibold text-sm rounded-lg shadow-[0_4px_24px_rgba(255,255,255,0.1)] transition-all"
+              onClick={() => {
+                setTimeout(
+                  () =>
+                    window.scrollTo({ top: 120, left: 0, behavior: "smooth" }),
+                  200,
+                );
+              }}
+            >
+              {t("swapping:catalog.applyFilters")}
+            </Button>
+          </motion.div>
+        </motion.div>
       </form>
     </>
   );
 }
 
-// Main Component with Responsive Design
 export default function FilterSwapCatalog() {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation(["swapping"]);
+  const [searchParams] = useSearchParams();
 
-  // Mobile: Drawer
+  const activeFilterCount = [
+    "cityId",
+    "tradeRange",
+    "condition",
+    "sortByDate",
+    "vipOnly",
+  ].filter((key) => searchParams.get(key)).length;
+
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button
-            className="fixed bottom-6 right-6 z-40 h-14 px-6 bg-swap-primary text-white shadow-2xl hover:bg-swap-primary/90 font-bold"
-            size="lg"
+          <motion.div
+            className="fixed bottom-6 right-6 z-40"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <SlidersHorizontal className="w-5 h-5 mr-2" />
-            {t("swapping:catalog.filters")}
-          </Button>
+            <Button
+              className="h-13 px-5 bg-swap-primary text-white shadow-[0_8px_32px_rgba(163,22,33,0.4)] hover:bg-swap-primary/90 font-semibold rounded-2xl"
+              size="lg"
+            >
+              <SlidersHorizontal className="w-4.5 h-4.5 mr-2" />
+              {t("swapping:catalog.filters")}
+              {activeFilterCount > 0 && (
+                <span className="ml-1.5 bg-white text-swap-primary rounded-full min-w-5 h-5 px-1.5 text-xs inline-flex items-center justify-center font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </Button>
+          </motion.div>
         </DrawerTrigger>
-        <DrawerContent className="bg-swap-primary text-white max-h-[85vh]">
-          <DrawerHeader className="border-b border-white/10">
-            <DrawerTitle className="text-2xl font-bold text-white">
+        <DrawerContent className="bg-swap-primary text-white max-h-[85vh] rounded-t-3xl">
+          <DrawerHeader className="border-b border-white/8 pb-4">
+            <DrawerTitle className="text-xl font-semibold text-white tracking-tight">
               {t("swapping:catalog.filters")}
             </DrawerTitle>
           </DrawerHeader>
-          <div className="overflow-y-auto px-4 py-6">
+          <div className="overflow-y-auto px-5 py-5">
             <FilterForm isMobile={isMobile} onApplied={() => setOpen(false)} />
           </div>
-          <DrawerFooter className="border-t border-white/10 pt-4">
+          <DrawerFooter className="border-t border-white/8 pt-3 pb-4">
             <DrawerClose asChild>
               <Button
                 variant="outline"
-                className="w-full h-12 bg-transparent border-white text-white hover:bg-white/10"
+                className="w-full h-11 bg-transparent border-white/20 text-white/80 hover:bg-white/8 hover:text-white rounded-lg text-sm"
               >
                 {t("swapping:catalog.close")}
               </Button>
@@ -478,7 +569,7 @@ export default function FilterSwapCatalog() {
   }
 
   return (
-    <div className="bg-swap-primary lg:sticky top-8 h-fit lg:w-100 rounded-3xl text-white shadow-xl lg:max-h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar">
+    <div className="bg-swap-primary lg:block top-8 h-fit lg:w-100 rounded-2xl text-white shadow-[0_8px_40px_rgba(163,22,33,0.2)] overflow-hidden">
       <Accordion
         type="single"
         collapsible
@@ -486,12 +577,19 @@ export default function FilterSwapCatalog() {
         className="w-full"
       >
         <AccordionItem value="filters" className="border-none">
-          <AccordionTrigger className="px-8 pt-4 pb-4 hover:no-underline items-center ">
-            <span className="text-2xl font-bold">
-              {t("swapping:catalog.filters")}
-            </span>
+          <AccordionTrigger className="px-7 pt-5 pb-4 hover:no-underline items-center">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl font-semibold tracking-tight">
+                {t("swapping:catalog.filters")}
+              </span>
+              {activeFilterCount > 0 && (
+                <span className="bg-white/15 text-white/90 rounded-full min-w-5 h-5 px-1.5 text-[11px] inline-flex items-center justify-center font-medium">
+                  {activeFilterCount}
+                </span>
+              )}
+            </div>
           </AccordionTrigger>
-          <AccordionContent className="px-8 pb-8">
+          <AccordionContent className="px-7 pb-7">
             <FilterForm hideTitle={true} />
           </AccordionContent>
         </AccordionItem>
