@@ -21,6 +21,7 @@ interface OffersColumnProps {
   isEmpty: boolean;
   page: number;
   totalPages: number;
+  totalElements: number;
   onPageChange: (page: number) => void;
   skeletonCount: number;
 }
@@ -55,6 +56,7 @@ export function OffersColumn({
   isEmpty,
   page,
   totalPages,
+  totalElements,
   onPageChange,
   skeletonCount,
 }: OffersColumnProps) {
@@ -66,9 +68,16 @@ export function OffersColumn({
 
   return (
     <div className="flex flex-col min-h-0">
-      <h2 className="text-xl font-bold mb-4 text-swap-text">{title}</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-xl font-bold text-swap-text">{title}</h2>
+        {!isLoading && totalElements > 0 && (
+          <span className="text-xs font-medium text-swap-text2 bg-swap-bg rounded-full px-2 py-0.5">
+            {totalElements}
+          </span>
+        )}
+      </div>
 
-      <div className="flex-1 overflow-y-auto space-y-4 pr-1 max-h-[calc(100vh-260px)]">
+      <div className="space-y-4">
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: skeletonCount }).map((_, i) => (
