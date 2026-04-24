@@ -135,7 +135,10 @@
     "statusCountered": "Countered",
     "statusExpired": "Expired",
     "statusCompleted": "Completed",
-    "statusWithdrawn": "Withdrawn"
+    "statusWithdrawn": "Withdrawn",
+    "counterOffer": "Counter Offer",
+    "counterOfferSent": "Counter offer sent!",
+    "counterOfferFailed": "Failed to send counter offer. Please try again."
   },
   "myItems": {
     "hide": "Hide",
@@ -143,6 +146,25 @@
     "makeVip": "Make this item VIP!"
   },
   "aiEstimatedPrice": "Price estimated by our AI",
+  "counterOffer": {
+    "title": "Counter Offer",
+    "subtitle": "Adjust the trade by selecting items from both inventories",
+    "myInventory": "My Inventory",
+    "theirInventory": "Their Inventory",
+    "myOffer": "Items I'm Offering",
+    "requestedItems": "Items I Want",
+    "dragMyItems": "Drag your items here",
+    "dragTheirItems": "Drag their items here",
+    "dropMyHint": "Drop here to offer this item!",
+    "dropTheirHint": "Drop here to request this item!",
+    "dragMyDescription": "Add items you want to offer in this trade",
+    "dragTheirDescription": "Add items you want from the other user",
+    "sendCounterOffer": "Send Counter Offer",
+    "sending": "Sending...",
+    "noOriginalOffer": "Original offer not found",
+    "noOriginalOfferDesc": "The trade offer you're trying to counter could not be loaded.",
+    "backToOffers": "Back to Offers"
+  },
   "tradeOffer": {
     "title": "Trade Offer",
     "subtitle": "Drag your items to build your trade offer",
