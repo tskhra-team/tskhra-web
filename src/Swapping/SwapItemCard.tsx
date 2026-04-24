@@ -48,12 +48,17 @@ export function SwapItemCard({ item }: SwapItemCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation(["swapping"]);
 
+  const handleNavigate = (itemId: string) => {
+    window.scrollTo({ top: 0 });
+    navigate(`/swapping/trade-offer?id=${itemId}`);
+  };
+
   return (
     <div
       className={`rounded-3xl bg-white overflow-hidden border-2 flex flex-col cursor-pointer ${
         item.vip ? "border-amber-400" : "border-swap-secondary"
       }`}
-      onClick={() => navigate(`/swapping/trade-offer?id=${item.id}`)}
+      onClick={() => handleNavigate(item.id)}
     >
       <div className="relative h-56 w-full overflow-hidden">
         <CardImageSlider
@@ -141,7 +146,7 @@ export function SwapItemCard({ item }: SwapItemCardProps) {
           className="bg-swap-primary hover:bg-swap-secondary hover:text-swap-primary"
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/swapping/trade-offer?id=${item.id}`);
+            handleNavigate(item.id);
           }}
         >
           {t("swapping:availableTrades.makeOffer")}
