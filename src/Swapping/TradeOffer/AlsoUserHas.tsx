@@ -13,7 +13,7 @@ export default function AlsoUserHas({ ownerId }: { ownerId: number }) {
       >
         {t("swapping:tradeOffer.alsoUserHas")}
       </h1>
-      <div className="grid grid-cols-3 max-w-5xl mx-auto gap-5">
+      <div className="grid md:grid-cols-3 grid-cols-1 max-w-5xl mx-auto gap-5">
         {items?.content.map((item) => (
           <SwapItemCard item={item} />
         ))}
