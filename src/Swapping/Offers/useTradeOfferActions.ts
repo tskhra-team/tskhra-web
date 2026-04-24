@@ -39,3 +39,23 @@ export function useWithdrawOffer() {
     },
   });
 }
+
+export function useConfirmOffer() {
+  const queryClient = useQueryClient();
+  return useMutation<unknown, AxiosError<ErrorResponse>, string>({
+    mutationFn: (offerId) => tradeOfferAction(offerId, "confirm"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getTradeOffers"] });
+    },
+  });
+}
+
+export function useCancelOffer() {
+  const queryClient = useQueryClient();
+  return useMutation<unknown, AxiosError<ErrorResponse>, string>({
+    mutationFn: (offerId) => tradeOfferAction(offerId, "cancel"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getTradeOffers"] });
+    },
+  });
+}

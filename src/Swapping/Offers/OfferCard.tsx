@@ -2,13 +2,29 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
-import { ArrowRightLeft, Check, Clock, Loader2, Scale, X } from "lucide-react";
+import {
+  ArrowRightLeft,
+  Ban,
+  Check,
+  CheckCheck,
+  Clock,
+  Loader2,
+  Scale,
+  X,
+} from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import type { TradeOffer, TradeOfferDirection, TradeOfferItem } from "./types";
+import type {
+  TradeOffer,
+  TradeOfferDirection,
+  TradeOfferItem,
+  TradeOfferStatus,
+} from "./types";
 import {
   useAcceptOffer,
+  useCancelOffer,
+  useConfirmOffer,
   useRejectOffer,
   useWithdrawOffer,
 } from "./useTradeOfferActions";
@@ -84,6 +100,70 @@ function ItemThumbnails({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+const STATUS_STYLES: Record<TradeOfferStatus, string> = {
+  PENDING: "bg-yellow-500/10 text-yellow-500 border-yellow-500/30",
+  ACCEPTED: "bg-blue-500/10 text-blue-500 border-blue-500/30",
+  REJECTED: "bg-red-500/10 text-red-500 border-red-500/30",
+  CANCELED: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+  COUNTERED: "bg-purple-500/10 text-purple-500 border-purple-500/30",
+  EXPIRED: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+  COMPLETED: "bg-swap-accent-green/10 text-swap-accent-green border-swap-accent-green/30",
+  WITHDRAWN: "bg-gray-500/10 text-gray-400 border-gray-500/30",
+};
+
+function hasActions(status: TradeOfferStatus) {
+  return status === "PENDING" || status === "ACCEPTED";
+}
+
+function AcceptedActions({ offerId }: { offerId: string }) {
+  const { t } = useTranslation(["swapping"]);
+  const { mutate: confirm, isPending: confirming } = useConfirmOffer();
+  const { mutate: cancel, isPending: canceling } = useCancelOffer();
+  const busy = confirming || canceling;
+
+  return (
+    <div className="flex gap-2">
+      <Button
+        size="sm"
+        disabled={busy}
+        onClick={() =>
+          confirm(offerId, {
+            onSuccess: () => toast.success(t("swapping:offers.confirmed")),
+            onError: () => toast.error(t("swapping:offers.actionFailed")),
+          })
+        }
+        className="bg-swap-accent-green hover:bg-swap-accent-green/90 text-white gap-1 text-xs h-8"
+      >
+        {confirming ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <CheckCheck className="w-3.5 h-3.5" />
+        )}
+        {t("swapping:offers.confirm")}
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        disabled={busy}
+        onClick={() =>
+          cancel(offerId, {
+            onSuccess: () => toast.success(t("swapping:offers.canceled")),
+            onError: () => toast.error(t("swapping:offers.actionFailed")),
+          })
+        }
+        className="border-swap-primary/30 text-swap-primary hover:bg-swap-primary/5 gap-1 text-xs h-8"
+      >
+        {canceling ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <Ban className="w-3.5 h-3.5" />
+        )}
+        {t("swapping:offers.cancel")}
+      </Button>
     </div>
   );
 }
@@ -187,13 +267,21 @@ export function OfferCard({
         ? "text-swap-accent-gold"
         : "text-swap-accent-orange";
 
+  const isActionable = hasActions(offer.status);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.06 }}
     >
-      <Card className="p-4 rounded-2xl border-2 border-swap-bg hover:border-swap-primary/20 transition-colors">
+      <Card
+        className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
+          isActionable
+            ? "border-l-4 border-l-swap-primary border-swap-primary/15 hover:border-swap-primary/30 hover:shadow-md"
+            : "border-swap-bg hover:border-swap-primary/10 opacity-75 hover:opacity-100"
+        }`}
+      >
         <div className="flex items-start gap-3">
           <ItemThumbnails
             items={offer.offererItems}
@@ -212,6 +300,13 @@ export function OfferCard({
 
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-swap-bg">
           <div className="flex items-center gap-3">
+            <Badge
+              variant="outline"
+              className={`text-[10px] font-semibold ${STATUS_STYLES[offer.status]}`}
+            >
+              {t(`swapping:offers.status${offer.status.charAt(0)}${offer.status.slice(1).toLowerCase()}`)}
+            </Badge>
+
             <div className="flex items-center gap-1">
               <Scale className={`w-3.5 h-3.5 ${fairnessColor}`} />
               <span className={`text-xs font-semibold ${fairnessColor}`}>
@@ -219,13 +314,15 @@ export function OfferCard({
               </span>
             </div>
 
-            <Badge
-              variant="outline"
-              className={`text-[10px] gap-1 ${isExpiringSoon ? "border-swap-accent-orange text-swap-accent-orange" : "text-swap-text2"}`}
-            >
-              <Clock className="w-3 h-3" />
-              {timeRemaining}
-            </Badge>
+            {offer.status === "PENDING" && (
+              <Badge
+                variant="outline"
+                className={`text-[10px] gap-1 ${isExpiringSoon ? "border-swap-accent-orange text-swap-accent-orange" : "text-swap-text2"}`}
+              >
+                <Clock className="w-3 h-3" />
+                {timeRemaining}
+              </Badge>
+            )}
           </div>
 
           <span className="text-[10px] text-swap-text2">
@@ -233,13 +330,17 @@ export function OfferCard({
           </span>
         </div>
 
-        <div className="flex justify-end mt-3 pt-3 border-t border-swap-bg">
-          {direction === "RECEIVED" ? (
-            <IncomingActions offerId={offerId} />
-          ) : (
-            <OutgoingActions offerId={offerId} />
-          )}
-        </div>
+        {hasActions(offer.status) && (
+          <div className="flex justify-end mt-3 pt-3 border-t border-swap-bg">
+            {offer.status === "ACCEPTED" ? (
+              <AcceptedActions offerId={offerId} />
+            ) : direction === "RECEIVED" ? (
+              <IncomingActions offerId={offerId} />
+            ) : (
+              <OutgoingActions offerId={offerId} />
+            )}
+          </div>
+        )}
       </Card>
     </motion.div>
   );

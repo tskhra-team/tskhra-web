@@ -16,7 +16,7 @@ export interface TradeOffer {
   offererItems: TradeOfferItem[];
   responderItems: TradeOfferItem[];
   fairnessRatio: number;
-  status: "PENDING" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+  status: TradeOfferStatus;
   createdAt: string;
   expiresAt: string;
 }
@@ -33,4 +33,12 @@ export interface PaginatedTradeOffersResponse {
 }
 
 export type TradeOfferDirection = "RECEIVED" | "SENT";
-export type TradeOfferStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+export type TradeOfferStatus =
+  | "PENDING"
+  | "ACCEPTED"
+  | "REJECTED"
+  | "CANCELED"
+  | "COUNTERED"
+  | "EXPIRED"
+  | "COMPLETED"
+  | "WITHDRAWN";
