@@ -29,7 +29,7 @@ import { scrollToTop } from "@/utils";
 import { getStatusConfig } from "@/utils/errorHandling";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowLeft, CheckIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -45,6 +45,23 @@ export default function PostItem() {
   const location = useLocation();
   const cameFromTradeOffer =
     (location.state as { from?: string } | null)?.from === "trade-offer";
+
+  const itemPhotoRef = useRef<HTMLDivElement>(null);
+  const desireCatRef = useRef<HTMLDivElement>(null);
+
+  const onFormError = () => {
+    if (errors.photos) {
+      itemPhotoRef.current?.scrollIntoView({
+        // behavior: "smooth",
+        block: "center",
+      });
+    } else if (errors.desiredCategories) {
+      desireCatRef.current?.scrollIntoView({
+        // behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
 
   const tradeRangeOptions = useMemo(
     () => [
@@ -99,7 +116,7 @@ export default function PostItem() {
     formState: { errors },
   } = useForm<CreatePostItemPostData>({
     resolver: yupResolver(createPostItem),
-    mode: "onChange",
+    // mode: "onChange",
   });
 
   const category = watch("categoryId");
@@ -197,7 +214,10 @@ export default function PostItem() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={handleSubmit(onSubmit, onFormError)}
+          className="space-y-8"
+        >
           {/* Basic Information */}
           <Card className="border-none shadow-sm py-0">
             <CardHeader className="border-b border-border pt-7 bg-swap-secondary/30 h-full rounded-t-xl">
@@ -274,6 +294,7 @@ export default function PostItem() {
                         <SelectTrigger
                           className="w-full h-11 transition-all"
                           style={{ height: "44px" }}
+                          ref={field.ref}
                         >
                           <SelectValue placeholder={t("booking:form.city")} />
                         </SelectTrigger>
@@ -307,6 +328,7 @@ export default function PostItem() {
 
                         return (
                           <Button
+                            ref={field.ref}
                             key={option.value}
                             type="button"
                             variant="outline"
@@ -447,6 +469,7 @@ export default function PostItem() {
                         return (
                           <Button
                             key={option.value}
+                            ref={field.ref}
                             type="button"
                             variant="outline"
                             onClick={() => field.onChange(option.value)}
@@ -485,7 +508,10 @@ export default function PostItem() {
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="space-y-6">
-                <div className="border-2 border-dashed border-border rounded-xl p-12 text-center hover:border-swap-primary/50 hover:bg-swap-secondary/20 transition-all">
+                <div
+                  ref={itemPhotoRef}
+                  className="border-2 border-dashed border-border rounded-xl p-12 text-center hover:border-swap-primary/50 hover:bg-swap-secondary/20 transition-all"
+                >
                   <Controller
                     name="photos"
                     control={control}
@@ -524,7 +550,7 @@ export default function PostItem() {
                 control={control}
                 defaultValue={[]}
                 render={({ field }) => (
-                  <div className="space-y-4">
+                  <div ref={desireCatRef} className="space-y-4">
                     <Label>{t("swapping:postItem.desiredCategories")} *</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {categories?.map((cat) => {
