@@ -4,7 +4,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import useGetSwappingCategories from "@/shared/api/useGetSwappingCategories";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
 import useGetSearchSuggestions from "@/Swapping/useGetSearchSuggestions";
@@ -21,10 +21,8 @@ interface SwapSearchProps {
 }
 
 export function SwapSearch({ style, animation = true }: SwapSearchProps) {
-  const { t, i18n } = useTranslation(["swapping"]);
-  const { data: categories } = useGetSubBookingCategories(
-    i18n.language.toUpperCase(),
-  );
+  const { t } = useTranslation(["swapping"]);
+  const { data: categories } = useGetSwappingCategories();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -120,7 +118,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
   const selectedCatObj = categories?.find(
     (c) => String(c.id) === String(selectedCategoryId),
   );
-  const selectedSubCatObj = selectedCatObj?.subcategories?.find(
+  const selectedSubCatObj = selectedCatObj?.children?.find(
     (s) => String(s.id) === String(selectedSubCategoryId),
   );
 
@@ -512,9 +510,9 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                   </span>
                 </button>
 
-                {cat.subcategories?.length > 0 && (
+                {cat.children?.length > 0 && (
                   <div className="ml-2 pl-3 border-l-2 border-gray-200 space-y-0.5">
-                    {cat.subcategories.map((sub) => (
+                    {cat.children.map((sub) => (
                       <button
                         key={sub.id}
                         onClick={() =>
