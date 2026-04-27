@@ -49,7 +49,7 @@
     "titleMax": "Title can't contain more than 40 characters",
     "descRequired": "Description is required",
     "descMin": "Description must contain at least 10 characters",
-    "descMax": "Description can't contain more than 100 characters",
+    "descMax": "Description can't contain more than 300 characters",
     "estValueRequired": "Estimated value is required",
     "cityRequired": "City is required",
     "priceMin": "Minimum price is 1",

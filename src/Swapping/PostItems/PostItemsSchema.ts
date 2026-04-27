@@ -33,7 +33,7 @@ export const createPostItem = yup.object({
     .string()
     .required("swapping:validation.descRequired")
     .min(10, "swapping:validation.descMin")
-    .max(100, "swapping:validation.descMax"),
+    .max(300, "swapping:validation.descMax"),
 
   cityId: yup.string().required("swapping:validation.cityRequired"),
 
