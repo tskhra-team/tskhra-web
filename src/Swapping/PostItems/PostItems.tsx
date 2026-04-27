@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useModal } from "@/context/ModalContext";
 import useGetCitites from "@/shared/api/useGetCities";
-import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import useGetSwappingCategories from "@/shared/api/useGetSwappingCategories";
 import {
   createPostItem,
   type CreatePostItemPostData,
@@ -36,9 +36,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function PostItem() {
   const { t, i18n } = useTranslation(["swapping", "booking", "modal"]);
-  const { data: categories } = useGetSubBookingCategories(
-    i18n.language.toUpperCase(),
-  );
+  const { data: categories } = useGetSwappingCategories();
   const { data: cities } = useGetCitites(i18n.language.toUpperCase());
   const { mutate: createPost } = useCreatePost();
   const { mutate: uploadItemPhotos } = useUploadItemPhotos();
@@ -414,16 +412,14 @@ export default function PostItem() {
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {selectedCategory?.subcategories.map(
-                            (subcategory) => (
-                              <SelectItem
-                                key={subcategory.id}
-                                value={String(subcategory.id)}
-                              >
-                                {subcategory.name}
-                              </SelectItem>
-                            ),
-                          )}
+                          {selectedCategory?.children.map((subcategory) => (
+                            <SelectItem
+                              key={subcategory.id}
+                              value={String(subcategory.id)}
+                            >
+                              {subcategory.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     )}

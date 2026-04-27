@@ -6,22 +6,20 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
-import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
+import useGetSwappingCategories from "@/shared/api/useGetSwappingCategories";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
 export default function HistoryBreadcrumb() {
-  const { i18n, t } = useTranslation(["swapping"]);
+  const { t } = useTranslation(["swapping"]);
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get("c");
   const subCategory = searchParams.get("sc");
   const search = searchParams.get("s");
   const isActive = category || subCategory || search;
 
-  const { data: categories, isLoading } = useGetSubBookingCategories(
-    i18n.language.toUpperCase(),
-  );
+  const { data: categories, isLoading } = useGetSwappingCategories();
 
   const handleLevelClick = (level: "all" | "category" | "subcategory") => {
     if (level === "all") {
@@ -41,7 +39,7 @@ export default function HistoryBreadcrumb() {
   const selectedCatObj = categories?.find(
     (c) => String(c.id) === String(category),
   );
-  const selectedSubCatObj = selectedCatObj?.subcategories?.find(
+  const selectedSubCatObj = selectedCatObj?.children?.find(
     (s) => String(s.id) === String(subCategory),
   );
 
