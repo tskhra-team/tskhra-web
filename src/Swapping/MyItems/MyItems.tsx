@@ -136,6 +136,12 @@ export default function MyItems() {
             <p className="text-muted-foreground mb-6">
               Post your first item to start swapping!
             </p>
+            <Button
+              className="bg-swap-primary hover:bg-swap-primary/80"
+              onClick={() => navigate("/swapping/post-item")}
+            >
+              Add new Item
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

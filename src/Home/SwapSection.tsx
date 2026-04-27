@@ -94,7 +94,10 @@ export default function SwapSection() {
 
         <div className="text-center mt-8 sm:mt-12">
           <Button
-            onClick={() => navigate("swapping")}
+            onClick={() => {
+              navigate("swapping");
+              window.scrollTo({ top: 0 });
+            }}
             className="group/btn px-6 sm:px-8 lg:px-10 py-3 sm:py-4 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white text-sm sm:text-base font-bold rounded-xl lg:rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
           >
             <span className="relative z-10 flex items-center gap-2">

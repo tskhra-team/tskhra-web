@@ -23,6 +23,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 const CONDITION_CONFIG: Record<string, { key: string; className: string }> = {
   NEW: { key: "conditionNew", className: "bg-green-700 text-white" },
@@ -132,13 +133,16 @@ export function ItemCard({ item }: { item: Item }) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div
-                  className="text-sm h-10 font-medium text-gray-800 line-clamp-2 mb-4"
+                  className="text-sm h-10 font-medium text-gray-800 overflow-hidden line-clamp-2 mb-4"
                   style={{ fontFamily: "'Work Sans', sans-serif" }}
                 >
                   {item.description}
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs">
+              <TooltipContent
+                side="bottom"
+                className="max-w-xs wrap-break-word"
+              >
                 {item.description}
               </TooltipContent>
             </Tooltip>
@@ -235,7 +239,23 @@ export function ItemCard({ item }: { item: Item }) {
             </Button>
           </div>
           {!item.vip && (
-            <Button className="w-full h-10 bg-amber-500 hover:bg-amber-600">
+            <Button
+              className="w-full h-10 bg-amber-500 hover:bg-amber-600"
+              onClick={() => {
+                showModal(
+                  "idle",
+                  "Make this item VIP?",
+                  "To make this item VIP u need to pay 20GEL/week",
+                  "Chekout",
+                  () => {
+                    toast.error("This feature in developing stage", {
+                      position: "top-center",
+                    });
+                  },
+                  "Close",
+                );
+              }}
+            >
               <Crown />
               {t("swapping:myItems.makeVip")}
             </Button>
