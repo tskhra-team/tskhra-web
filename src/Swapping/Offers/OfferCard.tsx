@@ -76,7 +76,7 @@ function ItemThumbnails({
         {items.map((item, i) => (
           <div
             key={item.id ?? `fallback-key-${i}`}
-            className="flex flex-col items-center gap-1 w-16"
+            className="flex flex-col items-center gap-1 w-16 overflow-hidden"
           >
             <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-swap-bg shrink-0 bg-gray-100">
               {getItemImage(item) ? (
@@ -95,7 +95,7 @@ function ItemThumbnails({
                 </div>
               )}
             </div>
-            <span className="text-[10px] text-swap-text2 text-center leading-tight line-clamp-2">
+            <span className="text-[10px] text-swap-text2 text-center leading-tight line-clamp-2 break-all">
               {item.name}
             </span>
           </div>
@@ -122,12 +122,12 @@ function hasActions(status: TradeOfferStatus) {
 
 function AcceptedActions({ offerId }: { offerId: string }) {
   const { t } = useTranslation(["swapping"]);
-  const { mutate: confirm, isPending: confirming } = useConfirmOffer();
+  const { mutate: confirm, isPending: confirming, isSuccess: confirmed } = useConfirmOffer();
   const { mutate: cancel, isPending: canceling } = useCancelOffer();
-  const busy = confirming || canceling;
+  const busy = confirming || canceling || confirmed;
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button
         size="sm"
         disabled={busy}
@@ -137,14 +137,14 @@ function AcceptedActions({ offerId }: { offerId: string }) {
             onError: () => toast.error(t("swapping:offers.actionFailed")),
           })
         }
-        className="bg-swap-accent-green hover:bg-swap-accent-green/90 text-white gap-1 text-xs h-8"
+        className={`gap-1 text-xs h-8 ${confirmed ? "bg-swap-accent-green/50 text-white cursor-not-allowed" : "bg-swap-accent-green hover:bg-swap-accent-green/90 text-white"}`}
       >
         {confirming ? (
           <Loader2 className="w-3.5 h-3.5 animate-spin" />
         ) : (
           <CheckCheck className="w-3.5 h-3.5" />
         )}
-        {t("swapping:offers.confirm")}
+        {confirmed ? t("swapping:offers.confirmed") : t("swapping:offers.confirm")}
       </Button>
       <Button
         size="sm"
@@ -183,7 +183,7 @@ function IncomingActions({
   const busy = accepting || rejecting;
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button
         size="sm"
         disabled={busy}
@@ -353,7 +353,7 @@ export function OfferCard({
         </div>
 
         {hasActions(offer.status) && (
-          <div className="flex justify-end mt-3 pt-3 border-t border-swap-bg">
+          <div className="flex flex-wrap justify-end mt-3 pt-3 border-t border-swap-bg">
             {offer.status === "ACCEPTED" ? (
               <AcceptedActions offerId={offerId} />
             ) : direction === "RECEIVED" ? (
