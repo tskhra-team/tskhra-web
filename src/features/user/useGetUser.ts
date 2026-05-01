@@ -5,6 +5,7 @@ import type { AxiosError } from "axios";
 
 export type UserType = {
   userName: string;
+  userId: number;
   firstName: string | undefined;
   lastName: string | undefined;
   userEmail: string;

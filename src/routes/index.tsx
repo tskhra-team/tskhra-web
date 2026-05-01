@@ -28,6 +28,7 @@ const OffersPage = lazy(() => import("@/pages/OffersPage"));
 const PostItemsPage = lazy(() => import("@/pages/PostItemsPage"));
 const TradeOfferPage = lazy(() => import("@/pages/TradeOfferPage"));
 const CounterOfferPage = lazy(() => import("@/pages/CounterOfferPage"));
+const MagicChainPage = lazy(() => import("@/pages/MagicChainPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
@@ -187,6 +188,14 @@ export const routes = [
             element: (
               <Suspense fallback={<Loader />}>
                 <TradeOfferPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "magic-chain",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <MagicChainPage />
               </Suspense>
             ),
           },

@@ -21,18 +21,20 @@ import {
   createIndividualBusinessSchema,
   type IndividualBusinessFormData,
 } from "@/features/business-creation/booking-business/IndividualBusinessSchema";
+import useGetAIQuestions from "@/features/business-creation/booking-business/useGetAiQuestions";
 import useGetCitites from "@/shared/api/useGetCities";
 import useGetSubBookingCategories from "@/shared/api/useGetSubBookingCategories";
 import { scrollToTop } from "@/utils";
 import { getStatusConfig } from "@/utils/errorHandling";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CircleAlert, CircleQuestionMark } from "lucide-react";
-import { useRef } from "react";
+import { CircleAlert, CircleQuestionMark, Sparkles } from "lucide-react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ServiceFormSkeleton from "./ServiceFormSkeleton";
 import useCreateIndividualBusiness from "./useCreateIndividualBusiness";
+import useSubmitAiAnswers from "./useSubmitAiAnswers";
 import useUploadBusinessPhotos from "./useUploadBusinessPhotos";
 import WorkingSchedule from "./WorkingSchedule";
 
@@ -44,6 +46,8 @@ export default function IndividualBusinessForm() {
     useCreateIndividualBusiness();
   const { mutate: uploadPhotos, isPending: isUploading } =
     useUploadBusinessPhotos();
+  const { mutate: submitAiAnswers, isPending: isSubmittingAnswers } =
+    useSubmitAiAnswers();
   const { data: cities, isLoading: isLoadingCities } = useGetCitites(
     i18n.language.toUpperCase(),
   );
@@ -112,7 +116,34 @@ export default function IndividualBusinessForm() {
   const mainCategory = watch("mainCategory");
   const isEnglish = watch("isEnglish");
 
+  // const subCategoryId = watch("subCategoryId");
+
+  const { data: questions, isLoading: isLoadingQuestions } = useGetAIQuestions(
+    mainCategory,
+    !!mainCategory,
+  );
+
+  const [aiEnabled, setAiEnabled] = useState(false);
+  const [aiAnswers, setAiAnswers] = useState<Record<string, string>>({});
+  const [aiAnswersError, setAiAnswersError] = useState(false);
+  const questionsRef = useRef<HTMLDivElement>(null);
+
   const onSubmit = (data: IndividualBusinessFormData) => {
+    if (aiEnabled && questions && questions.questions?.length > 0) {
+      const unanswered = questions.questions?.some(
+        (q) => !aiAnswers[q]?.trim(),
+      );
+      if (unanswered) {
+        setAiAnswersError(true);
+        questionsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        return;
+      }
+    }
+    setAiAnswersError(false);
+
     showModal(
       "pending",
       t("modal:titles.creatingBusiness"),
@@ -146,6 +177,7 @@ export default function IndividualBusinessForm() {
       onSuccess: (result) => {
         // Step 2: Save businessId to localStorage
         const businessId = result.businessId;
+        // const providerId = result.providerId;
         localStorage.setItem("businessId", businessId);
 
         // Update modal for uploading photos
@@ -165,20 +197,55 @@ export default function IndividualBusinessForm() {
           { data: allPhotos, businessId },
           {
             onSuccess: () => {
-              // Step 4: Show success and navigate
-              closeModal();
-              showModal(
-                "success",
-                t("modal:titles.congratulations"),
-                t("modal:messages.businessCreatedSuccess"),
-                t("modal:buttons.addServices"),
-                () => {
-                  scrollToTop();
-                  navigate(
-                    `/create-business?business=booking&type=individual&step=2&isEnglish=${data.isEnglish}`,
-                  );
-                },
-              );
+              // Step 4: Submit AI answers
+              if (aiEnabled && questions && questions.questions?.length > 0) {
+                submitAiAnswers(
+                  {
+                    businessId,
+                    answers: aiAnswers,
+                  },
+                  {
+                    onSuccess: () => {
+                      closeModal();
+                      showModal(
+                        "success",
+                        t("modal:titles.congratulations"),
+                        t("modal:messages.businessCreatedSuccess"),
+                        t("modal:buttons.addServices"),
+                        () => {
+                          scrollToTop();
+                          navigate(
+                            `/create-business?business=booking&type=individual&step=2&isEnglish=${data.isEnglish}`,
+                          );
+                        },
+                      );
+                    },
+                    onError: () => {
+                      closeModal();
+                      showModal(
+                        "error",
+                        t("modal:titles.somethingWentWrong"),
+                        t("booking:messages.error"),
+                        t("modal:buttons.tryAgain"),
+                      );
+                    },
+                  },
+                );
+              } else {
+                closeModal();
+                showModal(
+                  "success",
+                  t("modal:titles.congratulations"),
+                  t("modal:messages.businessCreatedSuccess"),
+                  t("modal:buttons.addServices"),
+                  () => {
+                    scrollToTop();
+                    navigate(
+                      `/create-business?business=booking&type=individual&step=2&isEnglish=${data.isEnglish}`,
+                    );
+                  },
+                );
+              }
             },
             onError: () => {
               closeModal();
@@ -738,15 +805,79 @@ export default function IndividualBusinessForm() {
         </CardContent>
       </Card>
 
+      {/* AI Questions Card */}
+      {mainCategory && (
+        <Card
+          ref={questionsRef}
+          className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm"
+        >
+          <CardHeader className="pb-6 space-y-1">
+            <CardTitle className="text-2xl font-semibold tracking-tight flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-5 text-[#7c3aed]" />
+                {t("booking:form.aiQuestions")}
+              </div>
+              <Switch checked={aiEnabled} onCheckedChange={setAiEnabled} />
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {t("booking:form.aiQuestionsSub")}
+            </p>
+          </CardHeader>
+          {aiEnabled && (
+            <CardContent className="space-y-5">
+              {isLoadingQuestions ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="space-y-2">
+                      <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                      <div className="h-20 w-full bg-muted animate-pulse rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+              ) : questions && questions.questions.length > 0 ? (
+                questions.questions.map((question, index) => (
+                  <div key={index} className="space-y-2">
+                    <Label className="text-sm font-medium">
+                      {index + 1}. {question}
+                    </Label>
+                    <textarea
+                      value={aiAnswers[question] ?? ""}
+                      onChange={(e) =>
+                        setAiAnswers((prev) => ({
+                          ...prev,
+                          [question]: e.target.value,
+                        }))
+                      }
+                      placeholder={t("booking:form.aiAnswerPlaceholder")}
+                      rows={3}
+                      className="w-full rounded-lg border border-input bg-background/50 px-4 py-3.5 text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 resize-none"
+                    />
+                    {aiAnswersError && !aiAnswers[question]?.trim() && (
+                      <p className="text-xs text-red-500 font-medium">
+                        {t("booking:form.aiAnswerRequired")}
+                      </p>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {t("booking:form.noQuestions")}
+                </p>
+              )}
+            </CardContent>
+          )}
+        </Card>
+      )}
+
       {/* Submit Button */}
       <div className="flex justify-end pt-4">
         <Button
           type="submit"
-          disabled={isCreating || isUploading}
+          disabled={isCreating || isUploading || isSubmittingAnswers}
           size="lg"
           className="px-16 h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all"
         >
-          {isCreating || isUploading
+          {isCreating || isUploading || isSubmittingAnswers
             ? t("booking:form.processing")
             : t("booking:form.nextStep")}
         </Button>

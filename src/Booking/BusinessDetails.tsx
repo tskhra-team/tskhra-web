@@ -4,12 +4,15 @@ import BookNowCard from "@/Booking/components/BookNowCard";
 import BusinessDescription from "@/Booking/components/BusinessDescription";
 import BusinessGallery from "@/Booking/components/BusinessGallery";
 import BusinessHeader from "@/Booking/components/BusinessHeader";
+import ChatbotPanel from "@/Booking/components/Chatbot/ChatbotPanel";
 import ContactInformationCard from "@/Booking/components/ContactInformationCard";
 import LocationCard from "@/Booking/components/LocationCard";
 import ServicesList from "@/Booking/components/ServicesList";
 import WorkingHoursCard from "@/Booking/components/WorkingHoursCard";
 import { useBookingDialog } from "@/Booking/hooks/useBookingDialog";
+import { useChatbot } from "@/Booking/hooks/useChatbot";
 import { useImageGallery } from "@/Booking/hooks/useImageGallery";
+import useGetAIChatCreds from "@/Booking/useGetAIChatCreds";
 import useGetBookingBusinessServices from "@/Booking/useGetBookingBusinessServices";
 import useGetBookingSingleBusiness from "@/Booking/useGetBookingSingleBusiness";
 import useGetBusinessTimeslots from "@/Booking/useGetBusinessTimeslots";
@@ -19,7 +22,9 @@ import {
   getAvailableDays,
 } from "@/Booking/utils/businessDetailsUtils";
 import { Button } from "@/components/ui/button";
-import { useRef } from "react";
+import { useAuth } from "@/context/useAuth";
+import useGetUser from "@/features/user/useGetUser";
+import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -28,6 +33,8 @@ export default function BusinessDetails() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("booking");
   const servicesRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated, token } = useAuth();
+  const { data: profile } = useGetUser(isAuthenticated);
 
   // Fetch business data from API (only if id exists)
   const {
@@ -42,6 +49,8 @@ export default function BusinessDetails() {
   const { data: services, isLoading: servicesLoading } =
     useGetBookingBusinessServices(id || "", !!id, i18n.language.toUpperCase());
 
+  const { data: aiCreds } = useGetAIChatCreds(id);
+
   // Custom hooks for state management
   const {
     bookingDialogOpen,
@@ -55,6 +64,17 @@ export default function BusinessDetails() {
     setBookingDialogOpen,
     isBooking,
   } = useBookingDialog(id || "");
+
+  const chatAuth = useMemo(() => {
+    if (!isAuthenticated || !token || !profile) return null;
+    return {
+      customer_id: Number(profile.userId),
+      customer_name: profile.firstName ?? profile.userName,
+      auth_token: token,
+    };
+  }, [isAuthenticated, token, profile]);
+
+  const chatbot = useChatbot(aiCreds, i18n.language, chatAuth);
 
   const allImages = business
     ? [business.mainImage, ...(business.galleryImages || [])]
@@ -192,6 +212,7 @@ export default function BusinessDetails() {
               <BookNowCard
                 businessName={business.businessName}
                 onBookNowClick={scrollToServices}
+                onChatbotClick={() => chatbot.setIsOpen(true)}
               />
               {business.info && <ContactInformationCard info={business.info} />}
 
@@ -219,6 +240,7 @@ export default function BusinessDetails() {
             <BookNowCard
               businessName={business.businessName}
               onBookNowClick={scrollToServices}
+              onChatbotClick={() => chatbot.setIsOpen(true)}
             />
 
             {business.info && <ContactInformationCard info={business.info} />}
@@ -234,6 +256,19 @@ export default function BusinessDetails() {
             />
           </div>
         </div>
+
+        <ChatbotPanel
+          isOpen={chatbot.isOpen}
+          onOpenChange={chatbot.handleOpenChange}
+          messages={chatbot.messages}
+          isTyping={chatbot.isTyping}
+          onSendMessage={chatbot.sendMessage}
+          onLoadSession={chatbot.loadSession}
+          onNewChat={chatbot.startNewChat}
+          businessName={business.businessName}
+          customerId={chatAuth?.customer_id}
+          chatApiKey={aiCreds?.chatApiKey}
+        />
 
         <BookingDialog
           open={bookingDialogOpen}

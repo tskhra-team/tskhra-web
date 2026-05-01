@@ -4,6 +4,7 @@ import BusinessSidebarProvider from "@/features/my-businesses/BusinessSidebarPro
 import useGetAllBookings from "@/features/my-businesses/Calendar/hooks/useGetAllBookings";
 import ReadOnlyCalendar from "@/features/my-businesses/Calendar/ReadOnlyCalendar";
 import type { WorkSchedule } from "@/features/my-businesses/Calendar/types/calendar.types";
+import ChatBot from "@/features/my-businesses/ChatBot/ChatBot";
 import Manage from "@/features/my-businesses/Manage/Manage";
 import Notifications from "@/features/my-businesses/Notifications/Notifications";
 import MyServices from "@/features/my-businesses/Services/MyServices";
@@ -92,6 +93,8 @@ export default function MyBusinesses() {
         return <Notifications businessId={businessId} />;
       case "services":
         return <MyServices businessId={businessId} />;
+      case "chatbot":
+        return <ChatBot businessId={businessId} />;
       default:
         return businesses?.length ? (
           <BusinessPicker businesses={businesses} isLoading={isLoading} />
