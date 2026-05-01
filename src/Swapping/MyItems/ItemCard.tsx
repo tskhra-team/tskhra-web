@@ -14,10 +14,10 @@ import {
   ArrowRightLeft,
   Calendar,
   Crown,
+  Eye,
+  EyeOff,
   Loader2,
   MapPin,
-  Power,
-  PowerOff,
   Search,
   Sparkles,
   Trash2,
@@ -217,9 +217,9 @@ export function ItemCard({ item }: { item: Item }) {
               {isUpdatingStatus ? (
                 <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
               ) : item.status === "AVAILABLE" ? (
-                <PowerOff className="w-4 h-4 mr-1.5" />
+                <EyeOff className="w-4 h-4 mr-1.5" />
               ) : (
-                <Power className="w-4 h-4 mr-1.5" />
+                <Eye className="w-4 h-4 mr-1.5" />
               )}
               {isHidden
                 ? t("swapping:myItems.unhide")
