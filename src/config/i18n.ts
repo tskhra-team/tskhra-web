@@ -5,6 +5,7 @@ import { initReactI18next } from "react-i18next";
 // Import translation files
 import authEN from "../locales/en/auth.json";
 import bookingEN from "../locales/en/booking.json";
+import chatbotEN from "../locales/en/chatbot.json";
 import categoriesEN from "../locales/en/categories.json";
 import commonEN from "../locales/en/common.json";
 import dashboardEN from "../locales/en/dashboard.json";
@@ -17,6 +18,7 @@ import swappingEN from "../locales/en/swapping.json";
 import verificationEN from "../locales/en/verification.json";
 import authKA from "../locales/ka/auth.json";
 import bookingKA from "../locales/ka/booking.json";
+import chatbotKA from "../locales/ka/chatbot.json";
 import categoriesKA from "../locales/ka/categories.json";
 import commonKA from "../locales/ka/common.json";
 import dashboardKA from "../locales/ka/dashboard.json";
@@ -39,6 +41,7 @@ i18n
           home: homeEN,
           auth: authEN,
           booking: bookingEN,
+          chatbot: chatbotEN,
           dashboard: dashboardEN,
           ecommerce: ecommerceEN,
           swapping: swappingEN,
@@ -53,6 +56,7 @@ i18n
           home: homeKA,
           auth: authKA,
           booking: bookingKA,
+          chatbot: chatbotKA,
           dashboard: dashboardKA,
           ecommerce: ecommerceKA,
           swapping: swappingKA,

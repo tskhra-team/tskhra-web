@@ -21,6 +21,7 @@ import "driver.js/dist/driver.css";
 import {
   BarChart3,
   Bell,
+  BotMessageSquare,
   BriefcaseBusiness,
   Calendar,
   Languages,
@@ -119,6 +120,11 @@ export function MyBusinessesSidebar() {
       title: t("navigation.notification"),
       icon: Bell,
       section: "notification",
+    },
+    {
+      title: t("navigation.aiChat"),
+      icon: BotMessageSquare,
+      section: "chatbot",
     },
   ];
 

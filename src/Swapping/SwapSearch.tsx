@@ -4,6 +4,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useModal } from "@/context/ModalContext";
+import { useAuth } from "@/context/useAuth";
 import useGetSwappingCategories from "@/shared/api/useGetSwappingCategories";
 import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import useGetSearchedItems from "@/Swapping/SwapCatalog/useGetSearchedItems";
@@ -23,6 +25,9 @@ interface SwapSearchProps {
 export function SwapSearch({ style, animation = true }: SwapSearchProps) {
   const { t } = useTranslation(["swapping"]);
   const { data: categories } = useGetSwappingCategories();
+
+  const { isAuthenticated, login } = useAuth();
+  const { showModal } = useModal();
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -169,6 +174,24 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
     inputRef.current?.blur();
 
     navigate({ pathname: "/swapping/catalog", search: params.toString() });
+  };
+
+  const handleMagicChain = () => {
+    if (!isAuthenticated) {
+      showModal(
+        "warning",
+        "Warning!",
+        "To use Magci Chain tou need to be authenticated",
+        "Close",
+        () => {},
+        "Login",
+        () => {
+          login();
+        },
+      );
+    } else {
+      navigate("/swapping/magic-chain");
+    }
   };
 
   // Функция для клика по саджесту
@@ -328,6 +351,7 @@ export function SwapSearch({ style, animation = true }: SwapSearchProps) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onMouseDown={(e) => e.stopPropagation()}
+                  onClick={handleMagicChain}
                   className="flex-1 lg:flex-none w-full lg:w-auto px-5 py-3 rounded-full font-medium flex items-center justify-center gap-2 text-white border-none cursor-pointer"
                   style={{
                     background:

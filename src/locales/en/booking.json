@@ -84,7 +84,12 @@
     "contactInfoSub": "How can clients reach you",
     "phoneNumber": "Phone number",
     "processing": "Processing...",
-    "submit": "Submit"
+    "submit": "Submit",
+    "aiQuestions": "AI Assistant Setup",
+    "aiQuestionsSub": "Answer these questions to help the AI assistant better serve your clients",
+    "aiAnswerPlaceholder": "Type your answer...",
+    "aiAnswerRequired": "This answer is required",
+    "noQuestions": "No questions available for this category."
   },
   "validation": {
     "serviceNameMin": "Name must contain at least 2 characters",
@@ -101,7 +106,7 @@
     "descriptionRequiredKa": "Description is required",
     "descriptionRequired": "Description in English is required",
     "descriptionMin": "Description should contain at least 10 characters",
-    "descriptionMax": "Description can't contain more than 250 characters",
+    "descriptionMax": "Description can't contain more than 400 characters",
     "photosRequired": "Photos are required",
     "businessPhotoRequired": "Business photo is required",
     "businessPhotoMax": "You can upload only 1 business photo",

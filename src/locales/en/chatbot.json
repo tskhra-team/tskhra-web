@@ -1,0 +1,36 @@
+{
+  "header": {
+    "title": "AI Assistant",
+    "subtitle": "Ask me anything about {{businessName}}"
+  },
+  "welcome": {
+    "greeting": "How can I help you today?",
+    "subtitle": "I can answer questions about services, pricing, hours, and booking."
+  },
+  "suggestions": {
+    "services": "What services do you offer?",
+    "hours": "What are your working hours?",
+    "booking": "How do I book an appointment?",
+    "pricing": "Tell me about pricing"
+  },
+  "input": {
+    "placeholder": "Type your message..."
+  },
+  "buttons": {
+    "send": "Send",
+    "aiChatBot": "AI Chat Bot"
+  },
+  "history": {
+    "title": "Chat History",
+    "subtitle": "Your previous conversations",
+    "newChat": "New Chat",
+    "messages": "messages",
+    "empty": "No conversations yet"
+  },
+  "provider": {
+    "conversations": "Conversations",
+    "conversation": "Conversation",
+    "noConversations": "No conversations yet",
+    "selectConversation": "Select a conversation to view"
+  }
+}

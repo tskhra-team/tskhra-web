@@ -6,7 +6,8 @@
     "manage": "Manage",
     "services": "Services",
     "notification": "Notification",
-    "language": "Language"
+    "language": "Language",
+    "aiChat": "AI Chat History"
   },
   "tutorial": "Tutorial for Dashboard",
   "userMenu": {
