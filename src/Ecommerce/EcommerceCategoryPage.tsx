@@ -29,7 +29,10 @@ const SORT_OPTIONS = [
 
 function ProductCard({ product }: { product: EcommerceProduct }) {
   return (
-    <div className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300">
+    <Link
+      to={`/ecommerce/product/${product.id}`}
+      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
+    >
       <div className="relative aspect-square overflow-hidden bg-slate-50">
         {product.cover_image_url ? (
           <img
@@ -64,7 +67,7 @@ function ProductCard({ product }: { product: EcommerceProduct }) {
           {product.price.toFixed(2)}₾
         </p>
       </div>
-    </div>
+    </Link>
   );
 }
 
