@@ -1,23 +1,30 @@
-import { publicInstance } from "@/api";
+import { publicInstancePython } from "@/api";
 import type { ErrorResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
+import type { EcommerceCategory } from "./useGetMainEcommerceCategories";
 
-type SubCategoriesResponse = Record<string, string[]>;
+interface CategoriesResponse {
+  categories: EcommerceCategory[];
+}
 
-const getSubEcommerceCategories = async () => {
-  // TODO: Update endpoint when ecommerce API is ready
-  const response = await publicInstance.get("/categories/ecommerce");
+const getSubEcommerceCategories = async (parentId: number) => {
+  const response = await publicInstancePython.get<CategoriesResponse>(
+    "/categories",
+    {
+      params: { parent_id: parentId },
+    }
+  );
 
-  return response.data;
+  return response.data.categories;
 };
 
-const useGetSubEcommerceCategories = () => {
-  return useQuery<SubCategoriesResponse, AxiosError<ErrorResponse>>({
-    queryFn: getSubEcommerceCategories,
-    queryKey: ["getSubEcommerceCategories"],
+const useGetSubEcommerceCategories = (parentId: number | null) => {
+  return useQuery<EcommerceCategory[], AxiosError<ErrorResponse>>({
+    queryFn: () => getSubEcommerceCategories(parentId!),
+    queryKey: ["getSubEcommerceCategories", parentId],
     staleTime: 100 * 60 * 1000,
-    enabled: false, // Disabled until API endpoint is ready
+    enabled: parentId != null,
   });
 };
 

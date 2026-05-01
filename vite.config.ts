@@ -29,9 +29,18 @@ export default defineConfig({
       },
     }),
   ],
-  // server: {
-  //   host: true,
-  // },
+  server: {
+    proxy: {
+      "/api/python": {
+        target: "https://armory-monsieur-zigzagged.ngrok-free.dev",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/python/, "/ecommerce/products"),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
