@@ -9,9 +9,17 @@ export interface ProductBrand {
   logo_url: string;
 }
 
+export interface ProductCategory {
+  id: number;
+  name: string;
+  slug: string;
+  parent_id: number | null;
+}
+
 export interface EcommerceProduct {
   id: number;
   brand: ProductBrand;
+  category: ProductCategory;
   price: number;
   title: string;
   description: string;
