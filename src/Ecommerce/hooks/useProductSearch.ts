@@ -4,7 +4,6 @@ import {
   type Product,
   type Store,
   type Condition,
-  type Category,
 } from "../ProductCatalog";
 
 export type SortOption = "newest" | "price-low-high" | "price-high-low" | "most-popular";
@@ -12,7 +11,7 @@ export type SortOption = "newest" | "price-low-high" | "price-high-low" | "most-
 export interface SearchParams {
   query: string;
   sort: SortOption;
-  categories: Category[];
+  categories: string[];
   conditions: Condition[];
   stores: Store[];
   minPrice: number | null;
