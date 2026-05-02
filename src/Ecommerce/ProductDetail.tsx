@@ -5,6 +5,10 @@ import StarRating from "@/components/ui/star-rating";
 import { useAuth } from "@/context/useAuth";
 import useGetProfile from "@/features/profile/hooks/useGetProfile";
 import { getPlatformColors } from "@/shared/categories/platformColors";
+import useGetEcommerceProduct from "@/shared/api/useGetEcommerceProduct";
+import type { DetailedEcommerceProduct } from "@/shared/api/useGetEcommerceProduct";
+import useGetEcommerceProducts from "@/shared/api/useGetEcommerceProducts";
+import type { EcommerceProduct } from "@/shared/api/useGetEcommerceProducts";
 import {
   ChevronRight,
   Heart,
@@ -16,48 +20,24 @@ import {
   Trash2,
 } from "lucide-react";
 import { GiShoppingCart } from "react-icons/gi";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import {
-  MOCK_PRODUCTS,
-} from "./ProductCatalog";
 import { getAverageRating, getReviewsForProduct, type Review } from "./mockReviews";
+import type { Product } from "./ProductCatalog";
 
-// ── Product descriptions ─────────────────────────────────────────────
-
-const MOCK_PRODUCT_DESCRIPTIONS: Record<number, string> = {
-  1: "Samsung Galaxy S24 Ultra with titanium frame, 200MP camera, and S Pen. Features a 6.8-inch Dynamic AMOLED display and Snapdragon 8 Gen 3 processor for flagship performance.",
-  2: "Apple iPhone 15 Pro Max with A17 Pro chip, titanium design, and advanced camera system. 48MP main camera with 5x optical zoom and USB-C connectivity.",
-  3: "iPad Pro 12.9\" with M2 chip, Liquid Retina XDR display, and ProMotion technology. Perfect for creative professionals and power users.",
-  4: "MacBook Air with M3 chip delivers incredible performance in an impossibly thin design. 15-hour battery life, 18GB unified memory, and a stunning Liquid Retina display.",
-  5: "Kindle Paperwhite 2024 with 6.8\" glare-free display, adjustable warm light, and up to 10 weeks of battery life. Waterproof design for reading anywhere.",
-  6: "Samsung 55\" OLED TV with Neural Quantum Processor, Dolby Atmos, and Object Tracking Sound. Infinite contrast ratio for the ultimate viewing experience.",
-  7: "Sony WH-1000XM5 wireless noise-cancelling headphones with industry-leading noise cancellation, 30-hour battery, and crystal-clear hands-free calling.",
-  8: "Canon EOS R50 mirrorless camera with 24.2MP APS-C sensor, 4K video recording, and advanced autofocus. Lightweight and perfect for content creators.",
-  9: "PlayStation 5 Slim console with ultra-high speed SSD, ray tracing, and haptic feedback. Smaller, sleeker design with 1TB storage.",
-  10: "USB-C Charging Hub 7-in-1 with HDMI 4K output, USB 3.0 ports, SD card reader, and 100W Power Delivery pass-through charging.",
-  11: "Levi's 501 Original Fit Jeans in classic straight-leg silhouette. Iconic denim with button fly closure, made from premium cotton.",
-  12: "The North Face insulated jacket with DryVent waterproof technology, ThermoBall insulation, and adjustable hood. Built for cold weather adventures.",
-  13: "Zara oversized blazer in premium fabric with structured shoulders and flap pockets. Versatile for both casual and professional styling.",
-  14: "H&M summer dress in lightweight, breathable fabric with floral print. Features adjustable straps and a flattering A-line silhouette.",
-  15: "Nike Air Max 90 sneakers with visible Max Air cushioning, waffle outsole for traction, and iconic design details. A timeless streetwear classic.",
-  16: "Adidas Ultraboost 23 running shoes with BOOST midsole for energy return, Primeknit upper, and Continental rubber outsole for grip.",
-  17: "Genuine leather crossbody bag with adjustable strap, multiple compartments, and gold-tone hardware. Compact design fits all daily essentials.",
-  18: "IKEA KALLAX shelf unit with 4x4 grid design, versatile storage with optional inserts. Perfect for books, decor, and organization.",
-  19: "Philips Air Fryer XXL with Rapid Air technology for healthier cooking. Extra-large capacity, digital display, and multiple preset programs.",
-  20: "Dyson V15 Detect cordless vacuum with laser dust detection, piezo sensor, and LCD screen showing particle counts. Up to 60 minutes of runtime.",
-  21: "Bosch 18V cordless drill set with impact driver, 2 batteries, charger, and 40-piece accessory kit. Professional performance for DIY projects.",
-  22: "Premium cotton bedding set in king size with 400 thread count. Includes duvet cover, fitted sheet, and 4 pillowcases. Machine washable.",
-  23: "Harry Potter complete book set with all 7 novels in hardcover edition. Collector's box with original artwork and premium binding.",
-  24: "Sapiens: A Brief History of Humankind by Yuval Noah Harari. Bestselling exploration of human evolution, culture, and the forces that shaped civilization.",
-  25: "Curated vinyl record collection featuring 10 classic jazz albums. Includes works by Miles Davis, John Coltrane, and Thelonious Monk on 180g vinyl.",
-  26: "Wilson Pro Staff tennis racket with carbon fiber frame, 97 sq inch head size, and vibration dampening technology. Endorsed by professional players.",
-  27: "Premium cork yoga mat with natural antimicrobial surface, non-slip grip, and TPE rubber base. 5mm thick for optimal cushioning during practice.",
-  28: "4-person camping tent with waterproof flysheet, fiberglass poles, and mesh ventilation. Quick setup design with integrated rainfly and gear loft.",
-  29: "Mountain bike with 29\" wheels, Shimano 21-speed drivetrain, hydraulic disc brakes, and aluminum alloy frame. Front suspension fork for trail riding.",
-  30: "65-liter hiking backpack with adjustable torso length, hip belt, and multiple access points. Rain cover included. Ideal for multi-day treks.",
-};
+function toCartProduct(p: DetailedEcommerceProduct): Product {
+  return {
+    id: p.id,
+    name: p.title,
+    price: p.price,
+    image: p.image_url || p.images[0] || "",
+    store: "Alta",
+    condition: p.stock_quantity > 0 ? "New" : "Used",
+    category: p.category?.parent?.name ?? p.category?.name ?? "General",
+    subcategory: p.category?.name ?? "",
+  };
+}
 
 // ── Review Card ───────────────────────────────────────────────────────
 
@@ -101,7 +81,9 @@ function ReviewCard({
           </button>
         )}
       </div>
-      <p className="text-sm text-slate-600 leading-relaxed wrap-break-word overflow-hidden">{review.comment}</p>
+      <p className="text-sm text-slate-600 leading-relaxed wrap-break-word overflow-hidden">
+        {review.comment}
+      </p>
     </div>
   );
 }
@@ -127,7 +109,10 @@ function ReviewForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-5 bg-white rounded-2xl border border-slate-100 space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="p-5 bg-white rounded-2xl border border-slate-100 space-y-4"
+    >
       <h3 className="font-semibold text-slate-900 text-sm">
         {t("reviews.writeReview", { defaultValue: "Write a Review" })}
       </h3>
@@ -151,13 +136,92 @@ function ReviewForm({
         disabled={rating === 0 || comment.trim() === ""}
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         style={{
-          backgroundColor: rating > 0 && comment.trim() ? "#2563EB" : "#94a3b8",
+          backgroundColor:
+            rating > 0 && comment.trim() ? "#2563EB" : "#94a3b8",
         }}
       >
         <Send className="w-4 h-4" />
         {t("reviews.submit", { defaultValue: "Submit Review" })}
       </button>
     </form>
+  );
+}
+
+// ── Related Product Card ──────────────────────────────────────────────
+
+function RelatedProductCard({ product }: { product: EcommerceProduct }) {
+  return (
+    <Link
+      to={`/ecommerce/product/${product.id}`}
+      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300"
+    >
+      <div className="relative aspect-square overflow-hidden bg-slate-50">
+        {product.cover_image_url ? (
+          <img
+            src={product.cover_image_url}
+            alt={product.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-300">
+            <Package className="w-10 h-10" />
+          </div>
+        )}
+        {product.stock_quantity <= 0 && (
+          <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-red-50/90 backdrop-blur-sm text-[11px] font-medium text-red-600">
+            Out of stock
+          </span>
+        )}
+      </div>
+      <div className="p-3">
+        {product.brand && (
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">
+            {product.brand.name}
+          </p>
+        )}
+        <h3 className="font-semibold text-slate-900 text-sm truncate">
+          {product.title}
+        </h3>
+        <p className="text-base font-bold text-slate-900 mt-1">
+          {product.price.toFixed(2)}₾
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+// ── Loading Skeleton ──────────────────────────────────────────────────
+
+function ProductDetailSkeleton() {
+  return (
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="h-4 w-16 bg-slate-200 rounded animate-pulse" />
+          <div className="h-4 w-4 bg-slate-200 rounded animate-pulse" />
+          <div className="h-4 w-24 bg-slate-200 rounded animate-pulse" />
+          <div className="h-4 w-4 bg-slate-200 rounded animate-pulse" />
+          <div className="h-4 w-32 bg-slate-200 rounded animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div className="bg-slate-200 rounded-2xl aspect-square animate-pulse" />
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <div className="h-4 w-32 bg-slate-200 rounded animate-pulse" />
+              <div className="h-8 w-3/4 bg-slate-200 rounded animate-pulse" />
+            </div>
+            <div className="h-20 bg-slate-200 rounded animate-pulse" />
+            <div className="flex gap-3">
+              <div className="h-9 w-24 bg-slate-200 rounded-xl animate-pulse" />
+              <div className="h-9 w-24 bg-slate-200 rounded-xl animate-pulse" />
+            </div>
+            <div className="h-8 w-28 bg-slate-200 rounded animate-pulse" />
+            <div className="h-14 bg-slate-200 rounded-2xl animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -168,29 +232,36 @@ export default function ProductDetail() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
   const { isFavorite, toggleFavorite } = useEcommerceFavorites();
-  const { addToCart, isInCart } = useEcommerceCart();
+  const { addToCart, isInCart, isMutating } = useEcommerceCart();
   const { isAuthenticated, login } = useAuth();
   const { data: profile } = useGetProfile();
 
-  const productId = Number(id);
-  const product = MOCK_PRODUCTS.find((p) => p.id === productId);
-  const description = MOCK_PRODUCT_DESCRIPTIONS[productId];
-  const reviews = getReviewsForProduct(productId);
-  const avgRating = getAverageRating(productId);
+  const productId = id ? Number(id) : null;
+  const { data, isLoading, isError } = useGetEcommerceProduct(productId);
+  const product = data?.product ?? null;
+
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const reviews = productId ? getReviewsForProduct(productId) : [];
+  const avgRating = productId ? getAverageRating(productId) : 0;
   const [localReviews, setLocalReviews] = useState<Review[]>(reviews);
 
-  // Related products: same category, excluding current
-  const relatedProducts = useMemo(() => {
-    if (!product) return [];
-    return MOCK_PRODUCTS.filter(
-      (p) => p.category === product.category && p.id !== product.id
-    ).slice(0, 4);
-  }, [product]);
+  const { data: relatedData } = useGetEcommerceProducts(
+    {
+      category_id: product?.category_id ?? null,
+      limit: 4,
+    },
+    product != null
+  );
 
-  // Build category slug for breadcrumb link
-  const categorySlug = product?.category.toLowerCase().replace(/\s+/g, "-");
+  const relatedProducts =
+    relatedData?.items.filter((p) => p.id !== productId) ?? [];
 
-  if (!product) {
+  if (isLoading) {
+    return <ProductDetailSkeleton />;
+  }
+
+  if (isError || !product) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20 flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -209,6 +280,16 @@ export default function ProductDetail() {
     );
   }
 
+  const allImages = [
+    product.image_url,
+    ...product.images,
+  ].filter(Boolean);
+
+  const currentImage = allImages[selectedImage] || allImages[0] || "";
+
+  const parentCategory = product.category?.parent;
+  const categoryName = product.category?.name;
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
       {/* Decorative background */}
@@ -219,110 +300,226 @@ export default function ProductDetail() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* ── Breadcrumb ─────────────────────────────────────────── */}
-        <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+        <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
           <Link
             to="/ecommerce"
             className="hover:text-slate-800 transition-colors"
           >
             {t("nav.products", { defaultValue: "Shop" })}
           </Link>
-          <ChevronRight className="w-3.5 h-3.5" />
-          <Link
-            to={`/ecommerce/category/${categorySlug}`}
-            className="hover:text-slate-800 transition-colors"
-          >
-            {product.category}
-          </Link>
+          {parentCategory && (
+            <>
+              <ChevronRight className="w-3.5 h-3.5" />
+              <Link
+                to={`/ecommerce/category/${parentCategory.slug}`}
+                className="hover:text-slate-800 transition-colors"
+              >
+                {parentCategory.name}
+              </Link>
+            </>
+          )}
+          {categoryName && (
+            <>
+              <ChevronRight className="w-3.5 h-3.5" />
+              <Link
+                to={
+                  parentCategory
+                    ? `/ecommerce/category/${parentCategory.slug}?sub=${product.category.slug}`
+                    : `/ecommerce/category/${product.category.slug}`
+                }
+                className="hover:text-slate-800 transition-colors"
+              >
+                {categoryName}
+              </Link>
+            </>
+          )}
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-slate-800 font-medium truncate max-w-50 sm:max-w-none">
-            {product.name}
+            {product.title}
           </span>
         </nav>
 
         {/* ── Product Main Section ────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Image */}
-          <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-            <div className="relative aspect-square">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-              {/* Condition badge */}
-              <span className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium text-slate-700">
-                {product.condition}
-              </span>
-              {/* Favorite button */}
-              <button
-                onClick={() => toggleFavorite(product.id)}
-                className="absolute bottom-4 right-4 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
-              >
-                <Heart
-                  className={`w-5 h-5 transition-colors ${
-                    isFavorite(product.id)
-                      ? "fill-rose-500 text-rose-500"
-                      : "text-slate-400 hover:text-rose-400"
-                  }`}
-                />
-              </button>
+          {/* Image Gallery */}
+          <div className="space-y-3">
+            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+              <div className="relative aspect-square">
+                {currentImage ? (
+                  <img
+                    src={currentImage}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-50">
+                    <Package className="w-16 h-16" />
+                  </div>
+                )}
+                {/* Stock badge */}
+                {product.stock_quantity <= 0 && (
+                  <span className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-red-50/90 backdrop-blur-sm text-xs font-medium text-red-600">
+                    {t("productDetail.outOfStock", {
+                      defaultValue: "Out of stock",
+                    })}
+                  </span>
+                )}
+                {/* Favorite button */}
+                <button
+                  onClick={() => toggleFavorite(product.id)}
+                  className="absolute bottom-4 right-4 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
+                >
+                  <Heart
+                    className={`w-5 h-5 transition-colors ${
+                      isFavorite(product.id)
+                        ? "fill-rose-500 text-rose-500"
+                        : "text-slate-400 hover:text-rose-400"
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
+
+            {/* Thumbnails */}
+            {allImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                {allImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImage(idx)}
+                    className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                      selectedImage === idx
+                        ? "border-blue-500 shadow-md"
+                        : "border-slate-100 hover:border-slate-300"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
           <div className="space-y-6">
-            {/* Title & Category */}
+            {/* Brand & Title */}
             <div>
-              <p className="text-sm text-slate-500 mb-1">
-                {product.category} / {product.subcategory}
-              </p>
+              {product.brand && (
+                <div className="flex items-center gap-2 mb-2">
+                  {product.brand.logo_url && (
+                    <img
+                      src={product.brand.logo_url}
+                      alt={product.brand.name}
+                      className="w-6 h-6 object-contain"
+                    />
+                  )}
+                  <p className="text-sm text-slate-500 uppercase tracking-wide">
+                    {product.brand.name}
+                  </p>
+                </div>
+              )}
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                {product.name}
+                {product.title}
               </h1>
             </div>
 
             {/* Description */}
-            {description && (
+            {product.description && (
               <p className="text-slate-600 leading-relaxed">
-                {description}
+                {product.description}
               </p>
             )}
 
             {/* Product features */}
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-medium">
-                <Package className="w-4 h-4" />
-                {product.condition}
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 text-green-700 text-sm font-medium">
-                <ShieldCheck className="w-4 h-4" />
-                {t("productDetail.verified", { defaultValue: "Verified" })}
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 text-amber-700 text-sm font-medium">
-                <Star className="w-4 h-4" />
-                {product.subcategory}
-              </div>
+              {product.stock_quantity > 0 ? (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 text-green-700 text-sm font-medium">
+                  <ShieldCheck className="w-4 h-4" />
+                  {t("productDetail.inStock", { defaultValue: "In Stock" })}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 text-red-600 text-sm font-medium">
+                  <Package className="w-4 h-4" />
+                  {t("productDetail.outOfStock", {
+                    defaultValue: "Out of stock",
+                  })}
+                </div>
+              )}
+              {product.brand && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-medium">
+                  <Star className="w-4 h-4" />
+                  {product.brand.name}
+                </div>
+              )}
+              {categoryName && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 text-amber-700 text-sm font-medium">
+                  <Package className="w-4 h-4" />
+                  {categoryName}
+                </div>
+              )}
             </div>
+
+            {/* SKU */}
+            {product.sku && (
+              <p className="text-xs text-slate-400">
+                SKU: {product.sku}
+              </p>
+            )}
 
             {/* ── Price ────────────────────────────────────────────── */}
             <p className="text-2xl font-bold text-slate-900">
-              {product.price}₾
+              {product.price.toFixed(2)}₾
             </p>
 
             {/* ── Add to Cart Button ───────────────────────────────── */}
             <button
-              onClick={() => addToCart(product)}
+              onClick={() => addToCart(toCartProduct(product))}
+              disabled={product.stock_quantity <= 0 || isMutating}
               className={`w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-base font-semibold transition-all duration-200 cursor-pointer ${
-                isInCart(product.id)
-                  ? "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
-                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
-              }`}
+                product.stock_quantity <= 0
+                  ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                  : isInCart(product.id)
+                    ? "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
+                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+              } disabled:opacity-60 disabled:cursor-not-allowed`}
             >
               <GiShoppingCart className="w-5 h-5" />
-              {isInCart(product.id)
-                ? t("cart.addMore")
-                : t("cart.addToCart")}
+              {product.stock_quantity <= 0
+                ? t("productDetail.outOfStock", { defaultValue: "Out of stock" })
+                : isInCart(product.id)
+                  ? t("cart.addMore")
+                  : t("cart.addToCart")}
             </button>
+
+            {/* ── Specifications ────────────────────────────────────── */}
+            {product.specifications && product.specifications.length > 0 && (
+              <div className="bg-white rounded-2xl border border-slate-100 p-5">
+                <h3 className="font-semibold text-slate-900 text-sm mb-4">
+                  {t("productDetail.specifications", {
+                    defaultValue: "Specifications",
+                  })}
+                </h3>
+                <div className="space-y-2">
+                  {product.specifications.map((spec, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0"
+                    >
+                      <span className="text-sm text-slate-500">
+                        {spec.field_name}
+                      </span>
+                      <span className="text-sm font-medium text-slate-800">
+                        {spec.field_value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -365,7 +562,7 @@ export default function ProductDetail() {
                         : profile?.userName ?? "You";
                     const newReview: Review = {
                       id: Date.now(),
-                      productId: productId,
+                      productId: productId!,
                       userId: profile?.userName ?? "current-user",
                       userName,
                       userAvatar: profile?.avatar ?? "",
@@ -402,9 +599,14 @@ export default function ProductDetail() {
                   <ReviewCard
                     key={review.id}
                     review={review}
-                    isOwn={review.userId === (profile?.userName ?? "current-user")}
+                    isOwn={
+                      review.userId ===
+                      (profile?.userName ?? "current-user")
+                    }
                     onDelete={(id) =>
-                      setLocalReviews((prev) => prev.filter((r) => r.id !== id))
+                      setLocalReviews((prev) =>
+                        prev.filter((r) => r.id !== id)
+                      )
                     }
                   />
                 ))
@@ -413,7 +615,8 @@ export default function ProductDetail() {
                   <MessageSquare className="w-10 h-10 text-slate-300 mb-3" />
                   <p className="text-slate-500 text-sm font-medium">
                     {t("reviews.noReviews", {
-                      defaultValue: "No reviews yet. Be the first to review!",
+                      defaultValue:
+                        "No reviews yet. Be the first to review!",
                     })}
                   </p>
                 </div>
@@ -431,44 +634,23 @@ export default function ProductDetail() {
                   defaultValue: "Related Products",
                 })}
               </h2>
-              <Link
-                to={`/ecommerce/catalog?category=${encodeURIComponent(product.category)}`}
-                className="text-sm font-semibold transition-colors hover:opacity-80"
-                style={{ color: colors.active.icon }}
-              >
-                {t("productDetail.viewAll", { defaultValue: "View all" })}
-              </Link>
+              {product.category && (
+                <Link
+                  to={
+                    parentCategory
+                      ? `/ecommerce/category/${parentCategory.slug}?sub=${product.category.slug}`
+                      : `/ecommerce/category/${product.category.slug}`
+                  }
+                  className="text-sm font-semibold transition-colors hover:opacity-80"
+                  style={{ color: colors.active.icon }}
+                >
+                  {t("productDetail.viewAll", { defaultValue: "View all" })}
+                </Link>
+              )}
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {relatedProducts.map((rp) => (
-                <Link
-                  key={rp.id}
-                  to={`/ecommerce/product/${rp.id}`}
-                  className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-slate-50">
-                    <img
-                      src={rp.image}
-                      alt={rp.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
-                      {rp.condition}
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <h3 className="font-semibold text-slate-900 text-sm truncate">
-                      {rp.name}
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      {rp.category}
-                    </p>
-                    <p className="text-base font-bold text-slate-900 mt-1">
-                      {rp.price}₾
-                    </p>
-                  </div>
-                </Link>
+              {relatedProducts.slice(0, 4).map((rp) => (
+                <RelatedProductCard key={rp.id} product={rp} />
               ))}
             </div>
           </div>

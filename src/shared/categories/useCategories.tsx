@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { mockCategories } from "./mockData";
 import type { CategoryItem, Platform } from "./types";
 import useGetSubBookingCategories, { type Category } from "@/shared/api/useGetSubBookingCategories";
+import useGetMainEcommerceCategories, { type EcommerceCategory } from "@/shared/api/useGetMainEcommerceCategories";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { getCategoryIcon } from "./categoryIconMapping";
@@ -32,9 +33,19 @@ function transformCategories(categories: Category[], platform: Platform): Catego
   }));
 }
 
-// Mock function that simulates API call (used for ecommerce and swapping temporarily)
+function transformEcommerceCategories(categories: EcommerceCategory[]): CategoryItem[] {
+  return categories.map((cat) => ({
+    id: cat.id,
+    name: cat.name,
+    url: cat.slug,
+    icon: getCategoryIcon(cat.name, "ecommerce"),
+    imageUrl: cat.image_url || undefined,
+    platforms: ["ecommerce" as Platform],
+  }));
+}
+
+// Mock function that simulates API call (used for swapping temporarily)
 async function fetchMockCategories(): Promise<CategoryItem[]> {
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 300));
   return mockCategories;
 }
@@ -60,7 +71,25 @@ export function useCategories(platform: Platform) {
     };
   }
 
-  // For ecommerce and swapping, use mock data temporarily
+  // For ecommerce platform, use Python API
+  if (platform === "ecommerce") {
+    const { data: categories, isLoading, error } = useGetMainEcommerceCategories();
+
+    const transformedData = useMemo(() => {
+      if (categories) {
+        return transformEcommerceCategories(categories);
+      }
+      return [];
+    }, [categories]);
+
+    return {
+      data: transformedData,
+      isLoading,
+      error,
+    };
+  }
+
+  // For swapping, use mock data temporarily
   return useQuery({
     queryKey: ["categories", platform],
     queryFn: fetchMockCategories,

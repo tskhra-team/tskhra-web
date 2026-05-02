@@ -33,7 +33,7 @@ export interface Product {
   image: string;
   store: Store;
   condition: Condition;
-  category: Category;
+  category: string;
   subcategory: string;
   boosted?: boolean;
 }

@@ -1,15 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
+import { useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   SlidersHorizontal,
   X,
   ChevronRight,
-  ChevronDown,
-  Heart,
-  Sparkles,
+  Search,
   SearchX,
 } from "lucide-react";
-import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
 import { useTranslation } from "react-i18next";
 import {
   Pagination,
@@ -21,376 +18,387 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Switch } from "@/components/ui/switch";
 import { getPlatformColors } from "@/shared/categories/platformColors";
-import { STORE_COLORS, type Store, type Condition, type Category } from "./ProductCatalog";
-import { useProductSearch, type SortOption } from "./hooks/useProductSearch";
+import useSearchEcommerceProducts from "@/shared/api/useSearchEcommerceProducts";
+import useGetEcommerceFilters from "@/shared/api/useGetEcommerceFilters";
+import type { EcommerceProduct } from "@/shared/api/useGetEcommerceProducts";
 
-// ── Constants ─────────────────────────────────────────────────────────
+const SORT_OPTIONS = [
+  { value: "popular", label: "Popular" },
+  { value: "newest", label: "Newest" },
+  { value: "price_asc", label: "Price: Low → High" },
+  { value: "price_desc", label: "Price: High → Low" },
+] as const;
 
-const ALL_STORES: Store[] = ["Alta", "Elit", "Informal"];
-const ALL_CATEGORIES: Category[] = [
-  "Electronics",
-  "Fashion & Clothing",
-  "Home & Garden",
-  "Books & Media",
-  "Sports & Outdoors",
-];
-const ALL_CONDITIONS: Condition[] = ["New", "Like New", "Used"];
-
-const SORT_OPTIONS: { value: SortOption; labelKey: string; defaultLabel: string }[] = [
-  { value: "newest", labelKey: "search.sortNewest", defaultLabel: "Newest" },
-  { value: "price-low-high", labelKey: "search.sortPriceLow", defaultLabel: "Price: Low to High" },
-  { value: "price-high-low", labelKey: "search.sortPriceHigh", defaultLabel: "Price: High to Low" },
-  { value: "most-popular", labelKey: "search.sortPopular", defaultLabel: "Most Popular" },
-];
-
-const PRICE_MIN = 0;
-const PRICE_MAX = 5000;
-const PRICE_STEP = 50;
-const ITEMS_PER_PAGE = 8;
-
-// ── Component ─────────────────────────────────────────────────────────
+function ProductCard({ product }: { product: EcommerceProduct }) {
+  return (
+    <Link
+      to={`/ecommerce/product/${product.id}`}
+      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
+    >
+      <div className="relative aspect-square overflow-hidden bg-slate-50">
+        {product.cover_image_url ? (
+          <img
+            src={product.cover_image_url}
+            alt={product.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-300">
+            <svg
+              className="w-12 h-12"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+        )}
+        {product.stock_quantity <= 0 && (
+          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-red-50/90 backdrop-blur-sm text-[11px] font-medium text-red-600">
+            Out of stock
+          </span>
+        )}
+      </div>
+      <div className="p-3.5">
+        {product.brand && (
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">
+            {product.brand.name}
+          </p>
+        )}
+        <h3 className="font-semibold text-slate-900 text-sm truncate">
+          {product.title}
+        </h3>
+        <p className="text-base font-bold text-slate-900 mt-1.5">
+          {product.price.toFixed(2)}₾
+        </p>
+      </div>
+    </Link>
+  );
+}
 
 export default function SearchResults() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
-  const { isFavorite, toggleFavorite } = useEcommerceFavorites();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const catalogRef = useRef<HTMLDivElement>(null);
 
-  // ── Read URL params ───────────────────────────────────────────────
   const query = searchParams.get("q") || "";
-  const sort = (searchParams.get("sort") as SortOption) || "newest";
 
-  const urlCategories = searchParams.getAll("category") as Category[];
-  const urlConditions = searchParams.getAll("condition") as Condition[];
-  const urlStores = searchParams.getAll("store") as Store[];
-  const urlMinPrice = searchParams.get("minPrice");
-  const urlMaxPrice = searchParams.get("maxPrice");
-  const urlBoosted = searchParams.get("boosted") === "true";
-
-  // ── Local filter state (synced to URL on change) ──────────────────
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>(
-    urlCategories.filter((c) => ALL_CATEGORIES.includes(c))
-  );
-  const [selectedConditions, setSelectedConditions] = useState<Condition[]>(
-    urlConditions.filter((c) => ALL_CONDITIONS.includes(c))
-  );
-  const [selectedStores, setSelectedStores] = useState<Store[]>(
-    urlStores.filter((s) => ALL_STORES.includes(s))
-  );
-  const [priceRange, setPriceRange] = useState<[number, number]>([
-    urlMinPrice ? Math.max(PRICE_MIN, Number(urlMinPrice)) : PRICE_MIN,
-    urlMaxPrice ? Math.min(PRICE_MAX, Number(urlMaxPrice)) : PRICE_MAX,
-  ]);
-  const [onlyBoosted, setOnlyBoosted] = useState(urlBoosted);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("popular");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [inStock, setInStock] = useState(true);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<number, number[]>
+  >({});
+  const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
+  const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
 
-  // ── URL sync helper ───────────────────────────────────────────────
-  const syncUrl = useCallback(
-    (overrides: Record<string, string | string[] | null>) => {
-      const next = new URLSearchParams();
-      if (query) next.set("q", query);
+  const allSelectedOptionIds = Object.values(selectedOptions).flat();
 
-      const newSort = overrides.sort !== undefined ? overrides.sort : sort;
-      if (newSort && newSort !== "newest") next.set("sort", newSort as string);
-
-      const cats = overrides.category !== undefined
-        ? (overrides.category as string[])
-        : selectedCategories;
-      (cats as string[]).forEach((c) => next.append("category", c));
-
-      const conds = overrides.condition !== undefined
-        ? (overrides.condition as string[])
-        : selectedConditions;
-      (conds as string[]).forEach((c) => next.append("condition", c));
-
-      const stores = overrides.store !== undefined
-        ? (overrides.store as string[])
-        : selectedStores;
-      (stores as string[]).forEach((s) => next.append("store", s));
-
-      const min = overrides.minPrice !== undefined ? overrides.minPrice : (priceRange[0] > PRICE_MIN ? String(priceRange[0]) : null);
-      const max = overrides.maxPrice !== undefined ? overrides.maxPrice : (priceRange[1] < PRICE_MAX ? String(priceRange[1]) : null);
-      if (min) next.set("minPrice", min as string);
-      if (max) next.set("maxPrice", max as string);
-
-      const boosted = overrides.boosted !== undefined ? overrides.boosted === "true" : onlyBoosted;
-      if (boosted) next.set("boosted", "true");
-
-      setSearchParams(next, { replace: true });
-    },
-    [query, sort, selectedCategories, selectedConditions, selectedStores, priceRange, onlyBoosted, setSearchParams]
-  );
-
-  // ── Toggle helpers ────────────────────────────────────────────────
-  const toggleFilter = <T extends string>(arr: T[], item: T, setter: (v: T[]) => void, paramKey: string) => {
-    const next = arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item];
-    setter(next);
-    setCurrentPage(1);
-    syncUrl({ [paramKey]: next });
-  };
-
-  const removeFilter = (type: string, value: string) => {
-    switch (type) {
-      case "category":
-        { const next = selectedCategories.filter((c) => c !== value);
-        setSelectedCategories(next);
-        syncUrl({ category: next }); }
-        break;
-      case "condition":
-        { const next = selectedConditions.filter((c) => c !== value);
-        setSelectedConditions(next);
-        syncUrl({ condition: next }); }
-        break;
-      case "store":
-        { const next = selectedStores.filter((s) => s !== value);
-        setSelectedStores(next);
-        syncUrl({ store: next }); }
-        break;
-      case "price":
-        setPriceRange([PRICE_MIN, PRICE_MAX]);
-        syncUrl({ minPrice: null, maxPrice: null });
-        break;
-      case "boosted":
-        setOnlyBoosted(false);
-        syncUrl({ boosted: "false" });
-        break;
-    }
-    setCurrentPage(1);
-  };
-
-  const clearAllFilters = () => {
-    setSelectedCategories([]);
-    setSelectedConditions([]);
-    setSelectedStores([]);
-    setPriceRange([PRICE_MIN, PRICE_MAX]);
-    setOnlyBoosted(false);
-    setCurrentPage(1);
-    const next = new URLSearchParams();
-    if (query) next.set("q", query);
-    setSearchParams(next, { replace: true });
-  };
-
-  // ── Search ────────────────────────────────────────────────────────
-  const { products: filtered, total } = useProductSearch({
-    query,
-    sort,
-    categories: selectedCategories,
-    conditions: selectedConditions,
-    stores: selectedStores,
-    minPrice: priceRange[0] > PRICE_MIN ? priceRange[0] : null,
-    maxPrice: priceRange[1] < PRICE_MAX ? priceRange[1] : null,
-    onlyBoosted,
+  const { data: filtersData } = useGetEcommerceFilters({
+    min_price: priceMin ? Number(priceMin) : null,
+    max_price: priceMax ? Number(priceMax) : null,
+    in_stock: inStock,
   });
 
-  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
-  const paginated = filtered.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const { data, isLoading } = useSearchEcommerceProducts({
+    q: query,
+    page,
+    limit: 20,
+    sort_by: sortBy,
+    min_price: priceMin ? Number(priceMin) : null,
+    max_price: priceMax ? Number(priceMax) : null,
+    in_stock: inStock,
+    option_ids:
+      allSelectedOptionIds.length > 0 ? allSelectedOptionIds : undefined,
+    brand_ids: selectedBrands.length > 0 ? selectedBrands : undefined,
+  });
 
-  // ── Active filter chips ───────────────────────────────────────────
-  const activeFilters = useMemo(() => {
-    const chips: { type: string; value: string; label: string }[] = [];
-    selectedCategories.forEach((c) => chips.push({ type: "category", value: c, label: c }));
-    selectedConditions.forEach((c) => chips.push({ type: "condition", value: c, label: c }));
-    selectedStores.forEach((s) => chips.push({ type: "store", value: s, label: s }));
-    if (priceRange[0] > PRICE_MIN || priceRange[1] < PRICE_MAX) {
-      chips.push({ type: "price", value: "price", label: `${priceRange[0]}₾ – ${priceRange[1]}₾` });
-    }
-    if (onlyBoosted) {
-      chips.push({ type: "boosted", value: "boosted", label: t("search.boostedOnly", { defaultValue: "Boosted only" }) });
-    }
-    return chips;
-  }, [selectedCategories, selectedConditions, selectedStores, priceRange, onlyBoosted, t]);
+  const totalPages = data?.total_pages ?? 1;
 
-  // ── Pagination range ──────────────────────────────────────────────
+  const activeFilterCount =
+    (priceMin ? 1 : 0) +
+    (priceMax ? 1 : 0) +
+    (!inStock ? 1 : 0) +
+    allSelectedOptionIds.length +
+    selectedBrands.length;
+
+  const goToPage = (newPage: number) => {
+    setPage(newPage);
+    catalogRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const clearFilters = () => {
+    setPriceMin("");
+    setPriceMax("");
+    setInStock(true);
+    setSortBy("popular");
+    setSelectedOptions({});
+    setSelectedBrands([]);
+    setPage(1);
+  };
+
+  const toggleOption = (fieldId: number, optionId: number) => {
+    setSelectedOptions((prev) => {
+      const current = prev[fieldId] ?? [];
+      const next = current.includes(optionId)
+        ? current.filter((id) => id !== optionId)
+        : [...current, optionId];
+      if (next.length === 0) {
+        const { [fieldId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [fieldId]: next };
+    });
+    setPage(1);
+  };
+
+  const toggleBrand = (brandId: number) => {
+    setSelectedBrands((prev) =>
+      prev.includes(brandId)
+        ? prev.filter((id) => id !== brandId)
+        : [...prev, brandId]
+    );
+    setPage(1);
+  };
+
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
     if (totalPages <= 5) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       pages.push(1);
-      if (currentPage > 3) pages.push("ellipsis");
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
+      if (page > 3) pages.push("ellipsis");
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
       for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push("ellipsis");
+      if (page < totalPages - 2) pages.push("ellipsis");
       pages.push(totalPages);
     }
     return pages;
   };
 
-  // ── Sort handler ──────────────────────────────────────────────────
-  const handleSort = (value: SortOption) => {
-    setSortOpen(false);
-    setCurrentPage(1);
-    syncUrl({ sort: value === "newest" ? null : value });
-  };
-
-  const currentSortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.defaultLabel || "Newest";
-
-  // ── Price range handlers ──────────────────────────────────────────
-  const handlePriceMinChange = (val: number) => {
-    const next: [number, number] = [Math.min(val, priceRange[1] - PRICE_STEP), priceRange[1]];
-    setPriceRange(next);
-  };
-
-  const handlePriceMaxChange = (val: number) => {
-    const next: [number, number] = [priceRange[0], Math.max(val, priceRange[0] + PRICE_STEP)];
-    setPriceRange(next);
-  };
-
-  const handlePriceCommit = () => {
-    setCurrentPage(1);
-    syncUrl({
-      minPrice: priceRange[0] > PRICE_MIN ? String(priceRange[0]) : null,
-      maxPrice: priceRange[1] < PRICE_MAX ? String(priceRange[1]) : null,
-    });
-  };
-
-  // ── Filter sidebar content ────────────────────────────────────────
-
   const filterContent = (
     <div className="space-y-6">
-      {/* Category */}
+      {/* Sort */}
       <div>
         <h3 className="text-sm font-semibold text-slate-800 mb-3">
-          {t("catalog.category", { defaultValue: "Category" })}
+          {t("catalog.sortBy", { defaultValue: "Sort by" })}
         </h3>
-        <div className="space-y-2">
-          {ALL_CATEGORIES.map((cat) => (
-            <label key={cat} className="flex items-center gap-2.5 cursor-pointer group">
-              <Checkbox
-                checked={selectedCategories.includes(cat)}
-                onCheckedChange={() => toggleFilter(selectedCategories, cat, setSelectedCategories, "category")}
-              />
-              <span className="text-sm text-slate-700 group-hover:text-slate-900">{cat}</span>
-            </label>
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+            setPage(1);
+          }}
+          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30 bg-white"
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {t(`catalog.sort_${opt.value}`, { defaultValue: opt.label })}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
-      {/* Price range slider */}
+      {/* Price range */}
       <div>
         <h3 className="text-sm font-semibold text-slate-800 mb-3">
           {t("catalog.priceRange", { defaultValue: "Price Range" })}
         </h3>
-        <div className="px-1">
-          {/* Dual range slider */}
-          <div className="relative h-6 mb-2">
-            {/* Track background */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1.5 bg-slate-200 rounded-full" />
-            {/* Active track */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full"
-              style={{
-                backgroundColor: colors.active.icon,
-                left: `${((priceRange[0] - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
-                right: `${100 - ((priceRange[1] - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
-              }}
-            />
-            {/* Min thumb */}
-            <input
-              type="range"
-              min={PRICE_MIN}
-              max={PRICE_MAX}
-              step={PRICE_STEP}
-              value={priceRange[0]}
-              onChange={(e) => handlePriceMinChange(Number(e.target.value))}
-              onMouseUp={handlePriceCommit}
-              onTouchEnd={handlePriceCommit}
-              className="absolute inset-0 w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500 [&::-webkit-slider-thumb]:shadow-sm [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-500 [&::-moz-range-thumb]:shadow-sm [&::-moz-range-thumb]:cursor-pointer"
-            />
-            {/* Max thumb */}
-            <input
-              type="range"
-              min={PRICE_MIN}
-              max={PRICE_MAX}
-              step={PRICE_STEP}
-              value={priceRange[1]}
-              onChange={(e) => handlePriceMaxChange(Number(e.target.value))}
-              onMouseUp={handlePriceCommit}
-              onTouchEnd={handlePriceCommit}
-              className="absolute inset-0 w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500 [&::-webkit-slider-thumb]:shadow-sm [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-500 [&::-moz-range-thumb]:shadow-sm [&::-moz-range-thumb]:cursor-pointer"
-            />
-          </div>
-          <div className="flex justify-between text-xs text-slate-500">
-            <span>{priceRange[0]}₾</span>
-            <span>{priceRange[1]}₾</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            placeholder={t("catalog.priceMin", { defaultValue: "Min" })}
+            value={priceMin}
+            min={0}
+            onChange={(e) => {
+              setPriceMin(e.target.value);
+              setPage(1);
+            }}
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30"
+          />
+          <span className="text-slate-400 text-sm">–</span>
+          <input
+            type="number"
+            placeholder={t("catalog.priceMax", { defaultValue: "Max" })}
+            value={priceMax}
+            min={0}
+            onChange={(e) => {
+              setPriceMax(e.target.value);
+              setPage(1);
+            }}
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30"
+          />
         </div>
       </div>
 
-      {/* Condition */}
+      {/* In stock */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-800 mb-3">
-          {t("catalog.condition", { defaultValue: "Condition" })}
-        </h3>
-        <div className="space-y-2">
-          {ALL_CONDITIONS.map((cond) => (
-            <label key={cond} className="flex items-center gap-2.5 cursor-pointer group">
-              <Checkbox
-                checked={selectedConditions.includes(cond)}
-                onCheckedChange={() => toggleFilter(selectedConditions, cond, setSelectedConditions, "condition")}
-              />
-              <span className="text-sm text-slate-700 group-hover:text-slate-900">{cond}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Store */}
-      <div>
-        <h3 className="text-sm font-semibold text-slate-800 mb-3">
-          {t("catalog.store", { defaultValue: "Store" })}
-        </h3>
-        <div className="space-y-2">
-          {ALL_STORES.map((store) => (
-            <label key={store} className="flex items-center gap-2.5 cursor-pointer group">
-              <Checkbox
-                checked={selectedStores.includes(store)}
-                onCheckedChange={() => toggleFilter(selectedStores, store, setSelectedStores, "store")}
-              />
-              <span className="inline-flex items-center gap-1.5 text-sm text-slate-700 group-hover:text-slate-900">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: STORE_COLORS[store].text }}
-                />
-                {store}
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Boosted only */}
-      <div>
-        <label className="flex items-center justify-between cursor-pointer">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-semibold text-slate-800">
-              {t("search.boostedOnly", { defaultValue: "Boosted only" })}
-            </span>
-          </div>
-          <Switch
-            checked={onlyBoosted}
+        <label className="flex items-center gap-2.5 cursor-pointer group">
+          <Checkbox
+            checked={inStock}
             onCheckedChange={(checked) => {
-              setOnlyBoosted(checked);
-              setCurrentPage(1);
-              syncUrl({ boosted: checked ? "true" : "false" });
+              setInStock(!!checked);
+              setPage(1);
             }}
           />
+          <span className="text-sm text-slate-700 group-hover:text-slate-900">
+            {t("catalog.inStockOnly", { defaultValue: "In stock only" })}
+          </span>
         </label>
       </div>
 
-      {/* Clear all */}
-      {activeFilters.length > 0 && (
+      {/* Dynamic filters */}
+      {filtersData?.filters.map((group) =>
+        group.fields.map((field) => {
+          const VISIBLE_COUNT = 5;
+          const isExpanded = expandedFields.has(`field-${field.field_id}`);
+          const visibleOptions = isExpanded
+            ? field.options
+            : field.options.slice(0, VISIBLE_COUNT);
+          const hasMore = field.options.length > VISIBLE_COUNT;
+
+          return (
+            <div key={field.field_id}>
+              <h3 className="text-sm font-semibold text-slate-800 mb-3">
+                {field.field_name}
+              </h3>
+              <div className="space-y-2">
+                {visibleOptions.map((option) => (
+                  <label
+                    key={option.option_id}
+                    className={`flex items-center gap-2.5 cursor-pointer group ${
+                      option.product_count === 0
+                        ? "opacity-40 pointer-events-none"
+                        : ""
+                    }`}
+                  >
+                    <Checkbox
+                      checked={(
+                        selectedOptions[field.field_id] ?? []
+                      ).includes(option.option_id)}
+                      onCheckedChange={() =>
+                        toggleOption(field.field_id, option.option_id)
+                      }
+                      disabled={option.product_count === 0}
+                    />
+                    <span className="text-sm text-slate-700 group-hover:text-slate-900 flex-1">
+                      {option.option_value}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      {option.product_count}
+                    </span>
+                  </label>
+                ))}
+              </div>
+              {hasMore && (
+                <button
+                  onClick={() =>
+                    setExpandedFields((prev) => {
+                      const next = new Set(prev);
+                      const key = `field-${field.field_id}`;
+                      if (next.has(key)) next.delete(key);
+                      else next.add(key);
+                      return next;
+                    })
+                  }
+                  className="mt-2 text-xs font-medium text-blue-500 hover:text-blue-600 transition-colors"
+                >
+                  {isExpanded
+                    ? t("catalog.showLess", { defaultValue: "Show less" })
+                    : t("catalog.showMore", {
+                        count: field.options.length - VISIBLE_COUNT,
+                        defaultValue: `Show ${field.options.length - VISIBLE_COUNT} more`,
+                      })}
+                </button>
+              )}
+            </div>
+          );
+        })
+      )}
+
+      {/* Brands */}
+      {filtersData?.brands &&
+        filtersData.brands.length > 0 &&
+        (() => {
+          const VISIBLE_COUNT = 5;
+          const isExpanded = expandedFields.has("brands");
+          const visibleBrands = isExpanded
+            ? filtersData.brands
+            : filtersData.brands.slice(0, VISIBLE_COUNT);
+          const hasMore = filtersData.brands.length > VISIBLE_COUNT;
+
+          return (
+            <div>
+              <h3 className="text-sm font-semibold text-slate-800 mb-3">
+                {t("catalog.brands", { defaultValue: "Brands" })}
+              </h3>
+              <div className="space-y-2">
+                {visibleBrands.map((brand) => (
+                  <label
+                    key={brand.id}
+                    className={`flex items-center gap-2.5 cursor-pointer group ${
+                      brand.product_count === 0
+                        ? "opacity-40 pointer-events-none"
+                        : ""
+                    }`}
+                  >
+                    <Checkbox
+                      checked={selectedBrands.includes(brand.id)}
+                      onCheckedChange={() => toggleBrand(brand.id)}
+                      disabled={brand.product_count === 0}
+                    />
+                    <span className="text-sm text-slate-700 group-hover:text-slate-900 flex-1">
+                      {brand.name}
+                    </span>
+                    {brand.product_count != null && (
+                      <span className="text-xs text-slate-400">
+                        {brand.product_count}
+                      </span>
+                    )}
+                  </label>
+                ))}
+              </div>
+              {hasMore && (
+                <button
+                  onClick={() =>
+                    setExpandedFields((prev) => {
+                      const next = new Set(prev);
+                      if (next.has("brands")) next.delete("brands");
+                      else next.add("brands");
+                      return next;
+                    })
+                  }
+                  className="mt-2 text-xs font-medium text-blue-500 hover:text-blue-600 transition-colors"
+                >
+                  {isExpanded
+                    ? t("catalog.showLess", { defaultValue: "Show less" })
+                    : t("catalog.showMore", {
+                        count: filtersData.brands.length - VISIBLE_COUNT,
+                        defaultValue: `Show ${filtersData.brands.length - VISIBLE_COUNT} more`,
+                      })}
+                </button>
+              )}
+            </div>
+          );
+        })()}
+
+      {/* Clear filters */}
+      {activeFilterCount > 0 && (
         <button
-          onClick={clearAllFilters}
+          onClick={clearFilters}
           className="w-full text-sm font-medium text-red-500 hover:text-red-600 transition-colors py-2"
         >
           {t("catalog.clearFilters", { defaultValue: "Clear all filters" })}
@@ -401,16 +409,21 @@ export default function SearchResults() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-orange-50/20">
-      {/* Decorative background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div
+        ref={catalogRef}
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link to="/ecommerce" className="hover:text-slate-800 transition-colors">
+          <Link
+            to="/ecommerce"
+            className="hover:text-slate-800 transition-colors"
+          >
             {t("nav.products", { defaultValue: "Shop" })}
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
@@ -419,7 +432,7 @@ export default function SearchResults() {
           </span>
         </nav>
 
-        {/* Page header */}
+        {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
             {query
@@ -430,93 +443,34 @@ export default function SearchResults() {
               : t("search.allProducts", { defaultValue: "All Products" })}
           </h1>
           <p className="text-sm text-slate-500">
-            {t("search.resultCount", {
-              count: total,
-              defaultValue: `${total} products found`,
-            })}
+            {data
+              ? t("search.resultCount", {
+                  count: data.total,
+                  defaultValue: `${data.total} products found`,
+                })
+              : ""}
           </p>
         </div>
 
-        {/* Sort + filter bar */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
-          {/* Sort dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setSortOpen(!sortOpen)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+        {/* Mobile filter toggle */}
+        <button
+          onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+          className="lg:hidden flex items-center gap-2 mb-4 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+        >
+          <SlidersHorizontal className="w-4 h-4" />
+          {t("catalog.filters", { defaultValue: "Filters" })}
+          {activeFilterCount > 0 && (
+            <span
+              className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-bold text-white"
+              style={{ backgroundColor: colors.active.icon }}
             >
-              {t("search.sortBy", { defaultValue: "Sort by" })}: {currentSortLabel}
-              <ChevronDown className={`w-4 h-4 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
-            </button>
-            {sortOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setSortOpen(false)} />
-                <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-xl border border-slate-100 shadow-lg z-50 py-1">
-                  {SORT_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleSort(option.value)}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                        sort === option.value
-                          ? "font-semibold text-slate-900 bg-slate-50"
-                          : "text-slate-600 hover:bg-slate-50"
-                      }`}
-                    >
-                      {t(option.labelKey, { defaultValue: option.defaultLabel })}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Mobile filter toggle */}
-          <button
-            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            {t("catalog.filters", { defaultValue: "Filters" })}
-            {activeFilters.length > 0 && (
-              <span
-                className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-bold text-white"
-                style={{ backgroundColor: colors.active.icon }}
-              >
-                {activeFilters.length}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Active filter chips */}
-        {activeFilters.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {activeFilters.map((chip) => (
-              <span
-                key={`${chip.type}-${chip.value}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-sm text-slate-700"
-              >
-                {chip.label}
-                <button
-                  onClick={() => removeFilter(chip.type, chip.value)}
-                  className="p-0.5 rounded-full hover:bg-slate-100 transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
-            <button
-              onClick={clearAllFilters}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-              {t("search.clearAll", { defaultValue: "Clear all" })}
-            </button>
-          </div>
-        )}
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
 
         <div className="flex gap-8">
-          {/* ── Desktop sidebar ─────────────────────────────────── */}
+          {/* Desktop sidebar */}
           <aside className="hidden lg:block w-60 shrink-0">
             <div className="sticky top-24 bg-white rounded-2xl border border-slate-100 p-5">
               <h2 className="text-base font-semibold text-slate-900 mb-4">
@@ -526,7 +480,7 @@ export default function SearchResults() {
             </div>
           </aside>
 
-          {/* ── Mobile filter drawer ────────────────────────────── */}
+          {/* Mobile filter drawer */}
           {mobileFiltersOpen && (
             <div className="fixed inset-0 z-50 lg:hidden">
               <div
@@ -550,12 +504,25 @@ export default function SearchResults() {
             </div>
           )}
 
-          {/* ── Product grid ────────────────────────────────────── */}
+          {/* Product grid */}
           <div className="flex-1 min-w-0">
-            {total === 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="animate-pulse rounded-2xl bg-slate-200 aspect-3/4"
+                  />
+                ))}
+              </div>
+            ) : !data || data.items.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <div className="max-w-sm mx-auto space-y-3">
-                  <SearchX className="w-12 h-12 text-slate-300 mx-auto" />
+                  {query ? (
+                    <SearchX className="w-12 h-12 text-slate-300 mx-auto" />
+                  ) : (
+                    <Search className="w-10 h-10 text-slate-300 mx-auto" />
+                  )}
                   <h3 className="text-lg font-semibold text-slate-800">
                     {t("search.noResults", { defaultValue: "No results found" })}
                   </h3>
@@ -566,16 +533,19 @@ export default function SearchResults() {
                           defaultValue: `We couldn't find anything for "${query}". Try different keywords or adjust your filters.`,
                         })
                       : t("search.noResultsHint", {
-                          defaultValue: "Try adjusting your filters to see more products.",
+                          defaultValue:
+                            "Try adjusting your filters to see more products.",
                         })}
                   </p>
-                  {activeFilters.length > 0 && (
+                  {activeFilterCount > 0 && (
                     <button
-                      onClick={clearAllFilters}
+                      onClick={clearFilters}
                       className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
                       style={{ backgroundColor: colors.active.icon }}
                     >
-                      {t("catalog.clearFilters", { defaultValue: "Clear all filters" })}
+                      {t("catalog.clearFilters", {
+                        defaultValue: "Clear all filters",
+                      })}
                     </button>
                   )}
                 </div>
@@ -583,105 +553,39 @@ export default function SearchResults() {
             ) : (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {paginated.map((product) => (
-                    <Link
-                      to={`/ecommerce/product/${product.id}`}
-                      key={product.id}
-                      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
-                    >
-                      {/* Image */}
-                      <div className="relative aspect-square overflow-hidden bg-slate-50">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                        {/* Store badge */}
-                        <span
-                          className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold"
-                          style={{
-                            backgroundColor: STORE_COLORS[product.store].bg,
-                            color: STORE_COLORS[product.store].text,
-                          }}
-                        >
-                          {product.store}
-                        </span>
-                        {/* Condition badge */}
-                        <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
-                          {product.condition}
-                        </span>
-                        {/* Boosted badge */}
-                        {product.boosted && (
-                          <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-0.5 bg-[#0f0f2d] text-white rounded-full text-[10px] font-semibold">
-                            <Sparkles className="w-3 h-3" />
-                            {t("featured.boosted", { defaultValue: "Boosted" })}
-                          </div>
-                        )}
-                        {/* Favorite button */}
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggleFavorite(product.id);
-                          }}
-                          className="absolute bottom-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
-                        >
-                          <Heart
-                            className={`w-4 h-4 transition-colors ${
-                              isFavorite(product.id)
-                                ? "fill-rose-500 text-rose-500"
-                                : "text-slate-400 hover:text-rose-400"
-                            }`}
-                          />
-                        </button>
-                      </div>
-
-                      {/* Info */}
-                      <div className="p-3.5">
-                        <h3 className="font-semibold text-slate-900 text-sm truncate">
-                          {product.name}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {product.category}
-                        </p>
-                        <p className="text-base font-bold text-slate-900 mt-1.5">
-                          {product.price}₾
-                        </p>
-                      </div>
-                    </Link>
+                  {data.items.map((product) => (
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="mt-8">
                     <Pagination>
                       <PaginationContent>
                         <PaginationItem>
                           <PaginationPrevious
-                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            onClick={() => goToPage(Math.max(1, page - 1))}
                             className={
-                              currentPage === 1
+                              page <= 1
                                 ? "pointer-events-none opacity-40"
                                 : "cursor-pointer"
                             }
                           />
                         </PaginationItem>
 
-                        {getPageNumbers().map((page, i) =>
-                          page === "ellipsis" ? (
+                        {getPageNumbers().map((pg, i) =>
+                          pg === "ellipsis" ? (
                             <PaginationItem key={`e-${i}`}>
                               <PaginationEllipsis />
                             </PaginationItem>
                           ) : (
-                            <PaginationItem key={page}>
+                            <PaginationItem key={pg}>
                               <PaginationLink
-                                isActive={currentPage === page}
-                                onClick={() => setCurrentPage(page)}
+                                isActive={page === pg}
+                                onClick={() => goToPage(pg as number)}
                                 className="cursor-pointer"
                               >
-                                {page}
+                                {pg}
                               </PaginationLink>
                             </PaginationItem>
                           )
@@ -689,9 +593,11 @@ export default function SearchResults() {
 
                         <PaginationItem>
                           <PaginationNext
-                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            onClick={() =>
+                              goToPage(Math.min(totalPages, page + 1))
+                            }
                             className={
-                              currentPage === totalPages
+                              page >= totalPages
                                 ? "pointer-events-none opacity-40"
                                 : "cursor-pointer"
                             }

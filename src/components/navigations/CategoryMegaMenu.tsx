@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { categoryNameToKey } from "@/shared/categories/categoryTranslations";
 import { getPlatformColors } from "@/shared/categories/platformColors";
 import { useCategories } from "@/shared/categories/useCategories";
-import type { CategoryItem } from "@/shared/categories/types";
+import useGetSubEcommerceCategories from "@/shared/api/useGetSubEcommerceCategories";
+import type { EcommerceCategory } from "@/shared/api/useGetMainEcommerceCategories";
 
 export default function CategoryMegaMenu({
   isOpen,
@@ -22,14 +23,17 @@ export default function CategoryMegaMenu({
   const closeTimeoutRef = useRef<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Reset active index when menu opens
+  const activeCategory = categories?.[activeIndex];
+
+  const { data: subcategories, isLoading: subsLoading } =
+    useGetSubEcommerceCategories(activeCategory?.id ?? null);
+
   useEffect(() => {
     if (isOpen) {
       setActiveIndex(0);
     }
   }, [isOpen]);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (closeTimeoutRef.current) {
@@ -51,21 +55,21 @@ export default function CategoryMegaMenu({
     }
   }, []);
 
-  const getCategorySlug = (cat: CategoryItem) =>
-    cat.name.toLowerCase().replace(/\s+/g, "-");
+  const getCategorySlug = (cat: { url?: string; name: string }) =>
+    cat.url || cat.name.toLowerCase().replace(/\s+/g, "-");
 
-  const handleCategoryClick = (category: CategoryItem) => {
-    navigate(`/ecommerce/category/${getCategorySlug(category)}`);
+  const handleCategoryClick = (cat: { url?: string; name: string }) => {
+    navigate(`/ecommerce/category/${getCategorySlug(cat)}`);
     window.scrollTo(0, 0);
     onClose();
   };
 
   const handleSubcategoryClick = (
-    category: CategoryItem,
-    subcategory: CategoryItem
+    parentCat: { url?: string; name: string },
+    sub: EcommerceCategory
   ) => {
     navigate(
-      `/ecommerce/category/${getCategorySlug(category)}?sub=${getCategorySlug(subcategory)}`
+      `/ecommerce/category/${getCategorySlug(parentCat)}?sub=${sub.slug}`
     );
     window.scrollTo(0, 0);
     onClose();
@@ -74,8 +78,6 @@ export default function CategoryMegaMenu({
   if (!isOpen || isLoading || !categories || categories.length === 0) {
     return null;
   }
-
-  const activeCategory = categories[activeIndex];
 
   return (
     <div
@@ -118,6 +120,13 @@ export default function CategoryMegaMenu({
                     className="w-5 h-5 object-contain shrink-0"
                     style={{ opacity: isActive ? 1 : 0.5 }}
                   />
+                ) : category.imageUrl ? (
+                  <img
+                    src={category.imageUrl}
+                    alt=""
+                    className="w-5 h-5 object-contain shrink-0"
+                    style={{ opacity: isActive ? 1 : 0.5 }}
+                  />
                 ) : category.icon ? (
                   <category.icon
                     className="w-5 h-5 shrink-0"
@@ -151,7 +160,6 @@ export default function CategoryMegaMenu({
         <div className="flex-1 overflow-y-auto p-6">
           {activeCategory && (
             <div className="animate-in fade-in duration-200">
-              {/* Category header */}
               <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
                 <h3
                   className="text-lg font-bold"
@@ -174,47 +182,53 @@ export default function CategoryMegaMenu({
                 </button>
               </div>
 
-              {/* Subcategories grid */}
-              {activeCategory.childItems &&
-              activeCategory.childItems.length > 0 ? (
+              {subsLoading ? (
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                  {activeCategory.childItems.map((subcategory) => {
-                    const subKey = categoryNameToKey[subcategory.name];
-                    const subDisplayName = subKey
-                      ? t(subKey)
-                      : subcategory.name;
-
-                    return (
-                      <button
-                        key={subcategory.name}
-                        onClick={() =>
-                          handleSubcategoryClick(activeCategory, subcategory)
-                        }
-                        className="group flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm transition-all duration-200 hover:shadow-md cursor-pointer border border-transparent hover:border-slate-100"
-                        style={{ color: colors.inactive.text }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor =
-                            colors.active.background;
-                          e.currentTarget.style.color = colors.active.text;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                          e.currentTarget.style.color = colors.inactive.text;
-                        }}
-                      >
-                        {subcategory.iconUrl ? (
-                          <img
-                            src={subcategory.iconUrl}
-                            alt=""
-                            className="w-5 h-5 object-contain shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
-                          />
-                        ) : subcategory.icon ? (
-                          <subcategory.icon className="w-4 h-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
-                        ) : null}
-                        <span className="font-medium">{subDisplayName}</span>
-                      </button>
-                    );
-                  })}
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="animate-pulse h-10 bg-slate-100 rounded-xl"
+                    />
+                  ))}
+                </div>
+              ) : subcategories && subcategories.length > 0 ? (
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                  {subcategories.map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() =>
+                        handleSubcategoryClick(activeCategory, sub)
+                      }
+                      className="group flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm transition-all duration-200 hover:shadow-md cursor-pointer border border-transparent hover:border-slate-100"
+                      style={{ color: colors.inactive.text }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor =
+                          colors.active.background;
+                        e.currentTarget.style.color = colors.active.text;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = colors.inactive.text;
+                      }}
+                    >
+                      {sub.image_url ? (
+                        <img
+                          src={sub.image_url}
+                          alt=""
+                          className="w-5 h-5 object-contain shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                        />
+                      ) : (
+                        <span
+                          className="w-1.5 h-1.5 rounded-full shrink-0"
+                          style={{
+                            backgroundColor: colors.active.icon,
+                            opacity: 0.4,
+                          }}
+                        />
+                      )}
+                      <span className="font-medium">{sub.name}</span>
+                    </button>
+                  ))}
                 </div>
               ) : (
                 <p className="text-sm text-slate-400">
@@ -256,6 +270,13 @@ export default function CategoryMegaMenu({
                     className="w-5 h-5 object-contain shrink-0"
                     style={{ opacity: isActive ? 1 : 0.5 }}
                   />
+                ) : category.imageUrl ? (
+                  <img
+                    src={category.imageUrl}
+                    alt=""
+                    className="w-5 h-5 object-contain shrink-0"
+                    style={{ opacity: isActive ? 1 : 0.5 }}
+                  />
                 ) : category.icon ? (
                   <category.icon
                     className="w-5 h-5 shrink-0"
@@ -282,71 +303,74 @@ export default function CategoryMegaMenu({
                 </svg>
               </button>
 
-              {/* Expanded subcategories */}
-              {isActive &&
-                category.childItems &&
-                category.childItems.length > 0 && (
-                  <div className="px-4 pb-3 animate-in fade-in slide-in-from-top-1 duration-200">
-                    <div className="flex items-center justify-between mb-2 px-2">
-                      <span
-                        className="text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: colors.active.text }}
-                      >
-                        {displayName}
-                      </span>
-                      <button
-                        onClick={() => handleCategoryClick(category)}
-                        className="text-xs font-medium px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 cursor-pointer"
-                        style={{
-                          backgroundColor: colors.active.background,
-                          color: colors.active.text,
-                        }}
-                      >
-                        {tEcom("categories.viewAll")}
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 gap-0.5">
-                      {category.childItems.map((subcategory) => {
-                        const subKey = categoryNameToKey[subcategory.name];
-                        const subDisplayName = subKey
-                          ? t(subKey)
-                          : subcategory.name;
-
-                        return (
-                          <button
-                            key={subcategory.name}
-                            onClick={() =>
-                              handleSubcategoryClick(category, subcategory)
-                            }
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-left text-sm transition-colors duration-150 cursor-pointer"
-                            style={{ color: colors.inactive.text }}
-                          >
-                            {subcategory.iconUrl ? (
-                              <img
-                                src={subcategory.iconUrl}
-                                alt=""
-                                className="w-4 h-4 object-contain shrink-0 opacity-60"
-                              />
-                            ) : subcategory.icon ? (
-                              <subcategory.icon className="w-4 h-4 shrink-0 opacity-50" />
-                            ) : (
-                              <span
-                                className="w-1.5 h-1.5 rounded-full shrink-0"
-                                style={{
-                                  backgroundColor: colors.active.icon,
-                                  opacity: 0.4,
-                                }}
-                              />
-                            )}
-                            <span className="font-medium">
-                              {subDisplayName}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
+              {isActive && (
+                <div className="px-4 pb-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="flex items-center justify-between mb-2 px-2">
+                    <span
+                      className="text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.active.text }}
+                    >
+                      {displayName}
+                    </span>
+                    <button
+                      onClick={() => handleCategoryClick(category)}
+                      className="text-xs font-medium px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 cursor-pointer"
+                      style={{
+                        backgroundColor: colors.active.background,
+                        color: colors.active.text,
+                      }}
+                    >
+                      {tEcom("categories.viewAll")}
+                    </button>
                   </div>
-                )}
+                  {subsLoading ? (
+                    <div className="grid grid-cols-1 gap-0.5">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="animate-pulse h-8 bg-slate-100 rounded-lg"
+                        />
+                      ))}
+                    </div>
+                  ) : subcategories && subcategories.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-0.5">
+                      {subcategories.map((sub) => (
+                        <button
+                          key={sub.id}
+                          onClick={() =>
+                            handleSubcategoryClick(category, sub)
+                          }
+                          className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-left text-sm transition-colors duration-150 cursor-pointer"
+                          style={{ color: colors.inactive.text }}
+                        >
+                          {sub.image_url ? (
+                            <img
+                              src={sub.image_url}
+                              alt=""
+                              className="w-4 h-4 object-contain shrink-0 opacity-60"
+                            />
+                          ) : (
+                            <span
+                              className="w-1.5 h-1.5 rounded-full shrink-0"
+                              style={{
+                                backgroundColor: colors.active.icon,
+                                opacity: 0.4,
+                              }}
+                            />
+                          )}
+                          <span className="font-medium">{sub.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-400 px-4 py-2">
+                      {t("noSubcategories", {
+                        defaultValue: "No subcategories available",
+                      })}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}

@@ -1,91 +1,121 @@
-import { useCallback, useSyncExternalStore } from "react";
+import { useAuth } from "@/context/useAuth";
+import { useCallback, useMemo } from "react";
 import type { Product } from "../ProductCatalog";
-
-// ── Types ──────────────────────────────────────────────────────────────
+import type { ServerCartItem } from "../types/cart";
+import {
+  useAddToCart,
+  useCheckout,
+  useClearCart,
+  useGetCart,
+  useRemoveCartItem,
+  useUpdateCartItem,
+} from "./useCartQuery";
 
 export interface CartItem {
+  id: string;
   product: Product;
   quantity: number;
+  subtotal: number;
+  stockQuantity: number;
 }
 
-// ── External store (same pattern as useEcommerceFavorites) ─────────────
-
-const STORAGE_KEY = "ecommerce_cart";
-
-function getSnapshot(): CartItem[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
-  } catch {
-    return [];
-  }
+function serverItemToCartItem(item: ServerCartItem): CartItem {
+  return {
+    id: item.id,
+    product: {
+      id: item.product_id,
+      name: item.product_title,
+      price: item.unit_price,
+      image: item.product_image_url,
+      store: "Alta",
+      condition: "New",
+      category: "",
+      subcategory: "",
+    },
+    quantity: item.quantity,
+    subtotal: item.subtotal,
+    stockQuantity: item.stock_quantity,
+  };
 }
-
-let cachedSnapshot = getSnapshot();
-const listeners = new Set<() => void>();
-
-function subscribe(callback: () => void) {
-  listeners.add(callback);
-  return () => listeners.delete(callback);
-}
-
-function emitChange() {
-  cachedSnapshot = getSnapshot();
-  listeners.forEach((l) => l());
-}
-
-function persist(items: CartItem[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  emitChange();
-}
-
-function addToCart(product: Product, quantity = 1) {
-  const current = getSnapshot();
-  const existing = current.find((item) => item.product.id === product.id);
-  if (existing) {
-    persist(
-      current.map((item) =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + quantity }
-          : item,
-      ),
-    );
-  } else {
-    persist([...current, { product, quantity }]);
-  }
-}
-
-function removeFromCart(productId: number) {
-  const current = getSnapshot();
-  persist(current.filter((item) => item.product.id !== productId));
-}
-
-function updateQuantity(productId: number, quantity: number) {
-  if (quantity <= 0) {
-    removeFromCart(productId);
-    return;
-  }
-  const current = getSnapshot();
-  persist(
-    current.map((item) =>
-      item.product.id === productId ? { ...item, quantity } : item,
-    ),
-  );
-}
-
-function clearCart() {
-  persist([]);
-}
-
-// ── Hook ───────────────────────────────────────────────────────────────
 
 export default function useEcommerceCart() {
-  const items = useSyncExternalStore(subscribe, () => cachedSnapshot, () => []);
+  const { isAuthenticated, login } = useAuth();
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0,
+  const { data: cart, isLoading } = useGetCart();
+  const addMutation = useAddToCart();
+  const updateMutation = useUpdateCartItem();
+  const removeMutation = useRemoveCartItem();
+  const clearMutation = useClearCart();
+  const checkoutMutation = useCheckout();
+
+  const items: CartItem[] = useMemo(
+    () => (cart?.items ?? []).map(serverItemToCartItem),
+    [cart?.items],
+  );
+
+  const totalItems = cart?.items?.reduce((sum, i) => sum + i.quantity, 0) ?? 0;
+  const totalPrice = cart?.total ?? 0;
+
+  const addToCart = useCallback(
+    (product: Product, quantity = 1) => {
+      if (!isAuthenticated) {
+        login();
+        return;
+      }
+      addMutation.mutate({ product_id: product.id, quantity });
+    },
+    [isAuthenticated, login, addMutation],
+  );
+
+  const removeFromCart = useCallback(
+    (productId: number) => {
+      if (!isAuthenticated) {
+        login();
+        return;
+      }
+      const item = cart?.items.find((i) => i.product_id === productId);
+      if (item) removeMutation.mutate(item.id);
+    },
+    [isAuthenticated, login, cart?.items, removeMutation],
+  );
+
+  const updateQuantity = useCallback(
+    (productId: number, quantity: number) => {
+      if (!isAuthenticated) {
+        login();
+        return;
+      }
+      const item = cart?.items.find((i) => i.product_id === productId);
+      if (!item) return;
+      if (quantity <= 0) {
+        removeMutation.mutate(item.id);
+      } else {
+        updateMutation.mutate({ itemId: item.id, quantity });
+      }
+    },
+    [isAuthenticated, login, cart?.items, removeMutation, updateMutation],
+  );
+
+  const clearCart = useCallback(() => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    clearMutation.mutate();
+  }, [isAuthenticated, login, clearMutation]);
+
+  const checkout = useCallback(() => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    checkoutMutation.mutate();
+  }, [isAuthenticated, login, checkoutMutation]);
+
+  const isInCart = useCallback(
+    (productId: number) =>
+      cart?.items?.some((i) => i.product_id === productId) ?? false,
+    [cart?.items],
   );
 
   return {
@@ -96,9 +126,14 @@ export default function useEcommerceCart() {
     removeFromCart,
     updateQuantity,
     clearCart,
-    isInCart: useCallback(
-      (productId: number) => items.some((item) => item.product.id === productId),
-      [items],
-    ),
+    checkout,
+    isInCart,
+    isLoading,
+    isCheckingOut: checkoutMutation.isPending,
+    isMutating:
+      addMutation.isPending ||
+      updateMutation.isPending ||
+      removeMutation.isPending ||
+      clearMutation.isPending,
   };
 }

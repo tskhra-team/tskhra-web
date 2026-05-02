@@ -1,4 +1,4 @@
-import tailwindcss from "@tailwindcss/vite";
+ import tailwindcss from "@tailwindcss/vite";
 // import basicSsl from "@vitejs/plugin-basic-ssl";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -29,9 +29,26 @@ export default defineConfig({
       },
     }),
   ],
-  // server: {
-  //   host: true,
-  // },
+  server: {
+    proxy: {
+      "/api/python": {
+        target: "https://armory-monsieur-zigzagged.ngrok-free.dev",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/python/, "/ecommerce/products"),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+      "/api/cart": {
+        target: "https://armory-monsieur-zigzagged.ngrok-free.dev",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/cart/, "/ecommerce/cart"),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

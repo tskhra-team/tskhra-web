@@ -2,7 +2,9 @@ import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { MOCK_PRODUCTS } from "./ProductCatalog";
+import useSearchEcommerceProducts from "@/shared/api/useSearchEcommerceProducts";
+import type { EcommerceProduct } from "@/shared/api/useGetEcommerceProducts";
+import { useCategories } from "@/shared/categories/useCategories";
 
 const DOT_GAP = 28;
 const DOT_RADIUS = 1.2;
@@ -108,11 +110,11 @@ export default function HeroSection() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const filteredProducts = debouncedQuery.trim().length >= 2
-    ? MOCK_PRODUCTS.filter((p) =>
-        p.name.toLowerCase().includes(debouncedQuery.toLowerCase())
-      ).slice(0, 8)
-    : [];
+  const { data: searchData } = useSearchEcommerceProducts(
+    { q: debouncedQuery, limit: 6 },
+    debouncedQuery.trim().length >= 2
+  );
+  const suggestions = searchData?.items ?? [];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,10 +124,31 @@ export default function HeroSection() {
     }
   };
 
-  const handleProductClick = (productId: number) => {
+  const { data: topCategories } = useCategories("ecommerce");
+
+  const handleProductClick = (product: EcommerceProduct) => {
     setIsDropdownOpen(false);
     setSearchQuery("");
-    navigate(`/ecommerce/product/${productId}`);
+
+    const cat = product.category;
+    if (cat) {
+      const topCat = topCategories?.find((c) => c.id === cat.id);
+      if (topCat) {
+        const slug = topCat.url || topCat.name.toLowerCase().replace(/\s+/g, "-");
+        navigate(`/ecommerce/category/${slug}`);
+      } else {
+        const parentCat = topCategories?.find((c) => c.id === cat.parent_id);
+        if (parentCat) {
+          const parentSlug =
+            parentCat.url || parentCat.name.toLowerCase().replace(/\s+/g, "-");
+          navigate(`/ecommerce/category/${parentSlug}?sub=${cat.slug}`);
+        } else {
+          navigate(`/ecommerce/category/${cat.slug}`);
+        }
+      }
+    } else {
+      navigate(`/ecommerce/product/${product.id}`);
+    }
     window.scrollTo(0, 0);
   };
 
@@ -163,7 +186,7 @@ export default function HeroSection() {
 
         <div ref={searchRef} className="max-w-xl mx-auto relative z-50">
           <form onSubmit={handleSearch}>
-            <div className={`relative flex items-center bg-white shadow-lg ${isDropdownOpen && filteredProducts.length > 0 ? "rounded-t-2xl" : "rounded-full"}`}>
+            <div className={`relative flex items-center bg-white shadow-lg ${isDropdownOpen && suggestions.length > 0 ? "rounded-t-2xl" : "rounded-full"}`}>
               <Search className="absolute left-4 w-5 h-5 text-[#0f0f2d]/40" />
               <input
                 type="text"
@@ -187,29 +210,35 @@ export default function HeroSection() {
           </form>
 
           {/* Search Results Dropdown */}
-          {isDropdownOpen && filteredProducts.length > 0 && (
+          {isDropdownOpen && suggestions.length > 0 && (
             <div className="absolute left-0 right-0 bg-white rounded-b-2xl shadow-lg max-h-80 overflow-y-auto z-50 border-t border-slate-100">
-              {filteredProducts.map((product) => (
+              {suggestions.map((product) => (
                 <button
                   key={product.id}
-                  onClick={() => handleProductClick(product.id)}
+                  onClick={() => handleProductClick(product)}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer text-left"
                 >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
-                  />
+                  {product.cover_image_url ? (
+                    <img
+                      src={product.cover_image_url}
+                      alt={product.title}
+                      className="w-10 h-10 rounded-lg object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 shrink-0" />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[#0f0f2d] truncate">
-                      {product.name}
+                      {product.title}
                     </p>
-                    <p className="text-xs text-[#0f0f2d]/50">
-                      {product.category}
-                    </p>
+                    {product.brand && (
+                      <p className="text-xs text-[#0f0f2d]/50">
+                        {product.brand.name}
+                      </p>
+                    )}
                   </div>
                   <span className="text-sm font-bold text-[#0f0f2d] shrink-0">
-                    {product.price}₾
+                    {product.price.toFixed(2)}₾
                   </span>
                 </button>
               ))}

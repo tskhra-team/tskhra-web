@@ -1,42 +1,31 @@
-import {
-  Laptop,
-  Shirt,
-  Home,
-  Dumbbell,
-  BookOpen,
-  Gamepad2,
-  Baby,
-  Car,
-} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
-const CATEGORIES = [
-  { key: "electronics", slug: "electronics", icon: Laptop, itemCount: 2_340 },
-  { key: "fashion", slug: "fashion-&-clothing", icon: Shirt, itemCount: 5_120 },
-  { key: "home", slug: "home-&-garden", icon: Home, itemCount: 1_890 },
-  { key: "sports", slug: "sports-&-outdoors", icon: Dumbbell, itemCount: 980 },
-  { key: "books", slug: "books-&-media", icon: BookOpen, itemCount: 3_450 },
-  { key: "gaming", slug: "gaming", icon: Gamepad2, itemCount: 1_560 },
-  { key: "kids", slug: "kids-&-baby", icon: Baby, itemCount: 2_100 },
-  { key: "automotive", slug: "automotive", icon: Car, itemCount: 760 },
-];
-
-const CATEGORY_NAMES: Record<string, { en: string; ka: string }> = {
-  electronics: { en: "Electronics", ka: "ელექტრონიკა" },
-  fashion: { en: "Fashion & Clothing", ka: "მოდა და ტანსაცმელი" },
-  home: { en: "Home & Garden", ka: "სახლი და ბაღი" },
-  sports: { en: "Sports & Outdoors", ka: "სპორტი" },
-  books: { en: "Books & Media", ka: "წიგნები" },
-  gaming: { en: "Gaming", ka: "გეიმინგი" },
-  kids: { en: "Kids & Baby", ka: "საბავშვო" },
-  automotive: { en: "Automotive", ka: "ავტო" },
-};
+import { useCategories } from "@/shared/categories/useCategories";
 
 export default function PopularCategories() {
-  const { t, i18n } = useTranslation("ecommerce");
+  const { t } = useTranslation("ecommerce");
   const navigate = useNavigate();
-  const lang = i18n.language === "ka" ? "ka" : "en";
+  const { data: categories, isLoading } = useCategories("ecommerce");
+
+  if (isLoading) {
+    return (
+      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-14">
+        <div className="container mx-auto">
+          <div className="text-center mb-10">
+            <div className="animate-pulse h-6 w-32 bg-slate-200 rounded-full mx-auto mb-3" />
+            <div className="animate-pulse h-8 w-64 bg-slate-200 rounded-lg mx-auto" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse h-32 bg-slate-200 rounded-2xl" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!categories || categories.length === 0) return null;
 
   return (
     <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-14">
@@ -56,32 +45,40 @@ export default function PopularCategories() {
 
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => {
-                navigate(`/ecommerce/category/${cat.slug}`);
-                window.scrollTo(0, 0);
-              }}
-              className="group flex flex-col items-center gap-3 p-6 sm:p-8 rounded-2xl bg-[#f8f8fa] hover:bg-[#0f0f2d] transition-colors duration-300 text-center cursor-pointer"
-            >
-              <div className="w-12 h-12 rounded-full bg-white group-hover:bg-white/15 flex items-center justify-center transition-colors duration-300">
-                <cat.icon
-                  className="w-5 h-5 text-[#0f0f2d] group-hover:text-white transition-colors duration-300"
-                  strokeWidth={1.8}
-                />
-              </div>
+          {categories.map((cat) => {
+            const slug = cat.url || cat.name.toLowerCase().replace(/\s+/g, "-");
 
-              <div>
-                <h3 className="font-semibold text-[#0f0f2d] group-hover:text-white text-sm sm:text-base transition-colors duration-300">
-                  {CATEGORY_NAMES[cat.key][lang]}
-                </h3>
-                <p className="text-[#0f0f2d]/40 group-hover:text-white/50 text-xs mt-1 transition-colors duration-300">
-                  {cat.itemCount.toLocaleString()} {t("categories.items")}
-                </p>
-              </div>
-            </button>
-          ))}
+            return (
+              <button
+                key={cat.name}
+                onClick={() => {
+                  navigate(`/ecommerce/category/${slug}`);
+                  window.scrollTo(0, 0);
+                }}
+                className="group flex flex-col items-center gap-3 p-6 sm:p-8 rounded-2xl bg-[#f8f8fa] hover:bg-[#0f0f2d] transition-colors duration-300 text-center cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full bg-white group-hover:bg-white/15 flex items-center justify-center transition-colors duration-300 overflow-hidden">
+                  {cat.imageUrl ? (
+                    <img
+                      src={cat.imageUrl}
+                      alt=""
+                      className="w-8 h-8 object-contain"
+                    />
+                  ) : cat.icon ? (
+                    <cat.icon
+                      className="w-5 h-5 text-[#0f0f2d] group-hover:text-white transition-colors duration-300"
+                    />
+                  ) : null}
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-[#0f0f2d] group-hover:text-white text-sm sm:text-base transition-colors duration-300">
+                    {cat.name}
+                  </h3>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>

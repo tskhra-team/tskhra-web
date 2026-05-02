@@ -8,7 +8,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Minus, Plus, Trash2, X } from "lucide-react";
+import { useAuth } from "@/context/useAuth";
+import { Loader2, Minus, Plus, Trash2, X } from "lucide-react";
 import { TbArrowNarrowUpDashed } from "react-icons/tb";
 import { HiOutlineChatBubbleBottomCenterText } from "react-icons/hi2";
 import { GiShoppingCart } from "react-icons/gi";
@@ -22,10 +23,21 @@ import useEcommerceCart from "./hooks/useEcommerceCart";
 export default function ShoppingCart() {
   const location = useLocation();
   const { t } = useTranslation("ecommerce");
+  const { isAuthenticated, login } = useAuth();
   const [open, setOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const { items, totalItems, totalPrice, removeFromCart, updateQuantity, clearCart } =
-    useEcommerceCart();
+  const {
+    items,
+    totalItems,
+    totalPrice,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    checkout,
+    isLoading,
+    isCheckingOut,
+    isMutating,
+  } = useEcommerceCart();
 
   useEffect(() => {
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
@@ -35,6 +47,150 @@ export default function ShoppingCart() {
 
   // Only show on ecommerce routes
   if (!location.pathname.startsWith("/ecommerce")) return null;
+
+  const renderCartBody = () => {
+    if (isAuthenticated && isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        </div>
+      );
+    }
+
+    if (!isAuthenticated) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-16 text-center"
+        >
+          <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+            <GiShoppingCart className="w-8 h-8 text-slate-400" />
+          </div>
+          <h3 className="text-base font-semibold text-slate-700 mb-1">
+            {t("cart.loginRequired")}
+          </h3>
+          <p className="text-sm text-slate-500 max-w-60 mb-4">
+            {t("cart.emptyDescription")}
+          </p>
+          <Button
+            onClick={login}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {t("cart.loginButton")}
+          </Button>
+        </motion.div>
+      );
+    }
+
+    if (items.length === 0) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center justify-center py-16 text-center"
+        >
+          <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+            <GiShoppingCart className="w-8 h-8 text-slate-400" />
+          </div>
+          <h3 className="text-base font-semibold text-slate-700 mb-1">
+            {t("cart.emptyTitle")}
+          </h3>
+          <p className="text-sm text-slate-500 max-w-60">
+            {t("cart.emptyDescription")}
+          </p>
+        </motion.div>
+      );
+    }
+
+    return items.map((item) => (
+      <motion.div
+        key={item.id}
+        layout
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -40, height: 0, marginBottom: 0 }}
+        transition={{ duration: 0.25 }}
+        className="flex gap-4 p-3 rounded-2xl bg-slate-50/80 border border-slate-100"
+      >
+        {/* Product Image */}
+        <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-white">
+          <img
+            src={item.product.image}
+            alt={item.product.name}
+            className="w-full h-full object-cover"
+          />
+          {item.product.store &&
+            STORE_COLORS[item.product.store] && (
+              <span
+                className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold"
+                style={{
+                  backgroundColor: STORE_COLORS[item.product.store].bg,
+                  color: STORE_COLORS[item.product.store].text,
+                }}
+              >
+                {item.product.store}
+              </span>
+            )}
+        </div>
+
+        {/* Product Info */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between">
+          <div>
+            <h4 className="text-sm font-semibold text-slate-900 truncate">
+              {item.product.name}
+            </h4>
+            {item.product.category && (
+              <p className="text-xs text-slate-500 mt-0.5">
+                {item.product.category}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between mt-2">
+            {/* Quantity Controls */}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() =>
+                  updateQuantity(item.product.id, item.quantity - 1)
+                }
+                disabled={isMutating}
+                className="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              <span className="w-8 text-center text-sm font-semibold text-slate-800">
+                {item.quantity}
+              </span>
+              <button
+                onClick={() =>
+                  updateQuantity(item.product.id, item.quantity + 1)
+                }
+                disabled={isMutating}
+                className="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Price */}
+            <p className="text-sm font-bold text-slate-900">
+              {item.subtotal}₾
+            </p>
+          </div>
+        </div>
+
+        {/* Remove Button */}
+        <button
+          onClick={() => removeFromCart(item.product.id)}
+          disabled={isMutating}
+          className="self-start p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </motion.div>
+    ));
+  };
 
   return (
     <>
@@ -119,6 +275,7 @@ export default function ShoppingCart() {
                 variant="ghost"
                 size="sm"
                 onClick={clearCart}
+                disabled={isMutating}
                 className="text-xs text-slate-500 hover:text-rose-600"
               >
                 {t("cart.clearAll")}
@@ -136,103 +293,7 @@ export default function ShoppingCart() {
         {/* Cart Items (Scrollable) */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin">
           <AnimatePresence mode="popLayout">
-            {items.length > 0 ? (
-              items.map((item) => (
-                <motion.div
-                  key={item.product.id}
-                  layout
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40, height: 0, marginBottom: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="flex gap-4 p-3 rounded-2xl bg-slate-50/80 border border-slate-100"
-                >
-                  {/* Product Image */}
-                  <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-white">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <span
-                      className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold"
-                      style={{
-                        backgroundColor: STORE_COLORS[item.product.store].bg,
-                        color: STORE_COLORS[item.product.store].text,
-                      }}
-                    >
-                      {item.product.store}
-                    </span>
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-900 truncate">
-                        {item.product.name}
-                      </h4>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        {item.product.category}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-2">
-                      {/* Quantity Controls */}
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.product.id, item.quantity - 1)
-                          }
-                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="w-8 text-center text-sm font-semibold text-slate-800">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.product.id, item.quantity + 1)
-                          }
-                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      {/* Price */}
-                      <p className="text-sm font-bold text-slate-900">
-                        {item.product.price * item.quantity}₾
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Remove Button */}
-                  <button
-                    onClick={() => removeFromCart(item.product.id)}
-                    className="self-start p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </motion.div>
-              ))
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center py-16 text-center"
-              >
-                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                  <GiShoppingCart className="w-8 h-8 text-slate-400" />
-                </div>
-                <h3 className="text-base font-semibold text-slate-700 mb-1">
-                  {t("cart.emptyTitle")}
-                </h3>
-                <p className="text-sm text-slate-500 max-w-60">
-                  {t("cart.emptyDescription")}
-                </p>
-              </motion.div>
-            )}
+            {renderCartBody()}
           </AnimatePresence>
         </div>
 
@@ -263,9 +324,14 @@ export default function ShoppingCart() {
             {/* Checkout Button */}
             <Button
               className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base shadow-lg shadow-blue-600/20"
-              onClick={() => setOpen(false)}
+              onClick={checkout}
+              disabled={isCheckingOut || isMutating}
             >
-              {t("cart.checkout")}
+              {isCheckingOut ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                t("cart.checkout")
+              )}
             </Button>
           </SheetFooter>
         )}
