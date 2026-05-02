@@ -32,7 +32,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api/python": {
-        target: "https://armory-monsieur-zigzagged.ngrok-free.dev",
+        target: "https://sessile-nettlelike-antoinette.ngrok-free.dev",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/python/, "/ecommerce/products"),
         headers: {
@@ -40,7 +40,7 @@ export default defineConfig({
         },
       },
       "/api/cart": {
-        target: "https://armory-monsieur-zigzagged.ngrok-free.dev",
+        target: "https://sessile-nettlelike-antoinette.ngrok-free.dev",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/cart/, "/ecommerce/cart"),
         headers: {
