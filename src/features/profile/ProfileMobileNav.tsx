@@ -12,6 +12,7 @@ import {
   LogOut,
   MessageSquare,
   Shield,
+  Store,
   UserCircle,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -46,6 +47,11 @@ export default function ProfileMobileNav({
     { value: "favorites", label: t("tabs.favorites"), icon: Heart },
     { value: "reviews", label: t("tabs.reviews"), icon: MessageSquare },
     { value: "add-business", label: t("tabs.addBusiness"), icon: Building2 },
+    {
+      value: "seller-profiles",
+      label: t("tabs.sellerProfiles"),
+      icon: Store,
+    },
     { value: "security", label: t("tabs.security"), icon: Shield },
   ];
 

@@ -47,6 +47,14 @@ export default defineConfig({
           "ngrok-skip-browser-warning": "true",
         },
       },
+      "/api/seller": {
+        target: "https://sessile-nettlelike-antoinette.ngrok-free.dev",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/seller/, "/ecommerce/provider"),
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
     },
   },
   resolve: {
