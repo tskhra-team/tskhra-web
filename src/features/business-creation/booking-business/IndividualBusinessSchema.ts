@@ -224,12 +224,12 @@ export const createIndividualBusinessSchema = (t: TFunction) => {
       .string()
       .required(t("booking:validation.descriptionRequiredKa"))
       .min(10, t("booking:validation.descriptionMin"))
-      .max(250, t("booking:validation.descriptionMax")),
-    description: createEnFieldSchema(
-      t("booking:validation.descriptionRequired"),
-      10,
-      250,
-    ),
+      .max(400, t("booking:validation.descriptionMax")),
+    description: yup
+      .string()
+      .required(t("booking:validation.descriptionRequired"))
+      .min(10, t("booking:validation.descriptionMin"))
+      .max(400, t("booking:validation.descriptionMax")),
     mainCategory: yup
       .string()
       .required(t("booking:validation.mainCategoryRequired")),

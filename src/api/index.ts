@@ -3,6 +3,7 @@ import { keycloakClient } from "@/features/auth/useKeycloak";
 
 const BASE_URL = "http://10.227.164.247:8081";
 const BASE_URL_PYTHON = "/api/python";
+const AI_CHAT_BASE_URL = "http://10.227.164.168:8001";
 
 export const publicInstance = axios.create({
   baseURL: BASE_URL,
@@ -32,4 +33,8 @@ privateInstancePython.interceptors.request.use(async (config) => {
     config.headers.Authorization = `Bearer ${keycloakClient.token}`;
   }
   return config;
+});
+export const chatInstance = axios.create({
+  baseURL: AI_CHAT_BASE_URL,
+  headers: { "Content-Type": "application/json" },
 });

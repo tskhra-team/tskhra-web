@@ -7,6 +7,7 @@ type IndividualBusinessResponseData = {
   status: number;
   message: string;
   businessId: string;
+  providerId: string;
 };
 
 type CreateBusinessRequest = {
