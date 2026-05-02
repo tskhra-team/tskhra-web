@@ -127,6 +127,16 @@
     "total": "Total",
     "checkout": "Checkout",
     "addToCart": "Add to Cart",
-    "addMore": "Add More to Cart"
+    "addMore": "Add More to Cart",
+    "errors": {
+      "outOfStock": "Product is not available or insufficient stock",
+      "conflict": "This cart has already been checked out",
+      "notFound": "Item not found in cart",
+      "serviceError": "Service temporarily unavailable. Please try again.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "checkoutSuccess": "Order placed successfully!",
+    "loginRequired": "Log in to use your cart",
+    "loginButton": "Log In"
   }
 }

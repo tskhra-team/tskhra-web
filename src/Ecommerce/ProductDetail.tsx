@@ -232,7 +232,7 @@ export default function ProductDetail() {
   const { t } = useTranslation("ecommerce");
   const colors = getPlatformColors("ecommerce");
   const { isFavorite, toggleFavorite } = useEcommerceFavorites();
-  const { addToCart, isInCart } = useEcommerceCart();
+  const { addToCart, isInCart, isMutating } = useEcommerceCart();
   const { isAuthenticated, login } = useAuth();
   const { data: profile } = useGetProfile();
 
@@ -478,14 +478,14 @@ export default function ProductDetail() {
             {/* ── Add to Cart Button ───────────────────────────────── */}
             <button
               onClick={() => addToCart(toCartProduct(product))}
-              disabled={product.stock_quantity <= 0}
+              disabled={product.stock_quantity <= 0 || isMutating}
               className={`w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl text-base font-semibold transition-all duration-200 cursor-pointer ${
                 product.stock_quantity <= 0
                   ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                   : isInCart(product.id)
                     ? "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
                     : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
-              }`}
+              } disabled:opacity-60 disabled:cursor-not-allowed`}
             >
               <GiShoppingCart className="w-5 h-5" />
               {product.stock_quantity <= 0

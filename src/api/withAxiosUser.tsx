@@ -60,58 +60,62 @@ const WithAxiosUser: FC<Props> = ({ children }): ReactElement => {
   useEffect(() => {
     if (!actualAccessRef.current) return;
 
-    const requestInterceptor = privateInstance.interceptors.request.use(
-      (request) => {
-        if (request.headers) {
-          request.headers.Authorization = actualAccessRef.current
-            ? `Bearer ${actualAccessRef.current}`
-            : "";
-        }
-        return request;
-      },
-      (error) => Promise.reject(error.response),
-    );
+    const addInterceptors = (instance: typeof privateInstance) => {
+      const reqId = instance.interceptors.request.use(
+        (request) => {
+          if (request.headers) {
+            request.headers.Authorization = actualAccessRef.current
+              ? `Bearer ${actualAccessRef.current}`
+              : "";
+          }
+          return request;
+        },
+        (error) => Promise.reject(error.response),
+      );
 
-    const responseInterceptor = privateInstance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
+      const resId = instance.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+          const originalRequest = error.config;
 
-        // Handle 401 errors by refreshing Keycloak token
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          if (!isProcessingRef.current) {
-            isProcessingRef.current = true;
-            originalRequest._retry = true;
+          if (error.response?.status === 401 && !originalRequest._retry) {
+            if (!isProcessingRef.current) {
+              isProcessingRef.current = true;
+              originalRequest._retry = true;
 
-            const newToken = await refreshTokenHandler(actualAccessRef);
-            isProcessingRef.current = false;
+              const newToken = await refreshTokenHandler(actualAccessRef);
+              isProcessingRef.current = false;
 
-            if (newToken) {
-              originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              onRefreshed(newToken);
-              refreshSubscribers = [];
-              return privateInstance.request(originalRequest);
+              if (newToken) {
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                onRefreshed(newToken);
+                refreshSubscribers = [];
+                return instance.request(originalRequest);
+              }
             }
+
+            return new Promise((resolve) => {
+              subscribeTokenRefresh((token: string) => {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+                resolve(instance(originalRequest));
+              });
+            });
           }
 
-          // Queue requests while refresh is in progress
-          return new Promise((resolve) => {
-            subscribeTokenRefresh((token: string) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(privateInstance(originalRequest));
-            });
-          });
-        }
+          return Promise.reject(error);
+        },
+      );
 
-        return Promise.reject(error);
-      },
-    );
+      return { reqId, resId };
+    };
+
+    const main = addInterceptors(privateInstance);
 
     setIsSet(true);
 
     return () => {
-      privateInstance.interceptors.request.eject(requestInterceptor);
-      privateInstance.interceptors.response.eject(responseInterceptor);
+      privateInstance.interceptors.request.eject(main.reqId);
+      privateInstance.interceptors.response.eject(main.resId);
       refreshSubscribers = [];
     };
   }, [token]);
