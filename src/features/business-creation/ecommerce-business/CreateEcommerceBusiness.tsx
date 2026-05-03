@@ -10,27 +10,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Check, Info, Package } from "lucide-react";
+import useCreateProduct from "@/features/vendor-profile/hooks/useCreateProduct";
+import useGetSellerProfiles from "@/features/vendor-profile/hooks/useGetSellerProfiles";
+import type { ProductSpecification } from "@/features/vendor-profile/types";
+import useGetEcommerceFilters from "@/shared/api/useGetEcommerceFilters";
+import useGetMainEcommerceCategories, {
+  type EcommerceCategory,
+} from "@/shared/api/useGetMainEcommerceCategories";
+import useGetSubEcommerceCategories from "@/shared/api/useGetSubEcommerceCategories";
+import { isAxiosError } from "axios";
+import {
+  ArrowLeft,
+  Check,
+  Info,
+  Loader2,
+  Package,
+} from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
-const CATEGORIES = [
-  "Electronics",
-  "Fashion & Clothing",
-  "Home & Garden",
-  "Books & Media",
-  "Sports & Outdoors",
-] as const;
+function SubcategoryLevel({
+  parentId,
+  value,
+  onSelect,
+  label,
+  placeholder,
+}: {
+  parentId: number;
+  value: string;
+  onSelect: (cat: EcommerceCategory) => void;
+  label: string;
+  placeholder: string;
+}) {
+  const { data: subcategories } = useGetSubEcommerceCategories(parentId);
 
-const CATEGORY_SPECS: Record<string, string[]> = {
-  Electronics: ["Brand", "Model", "Warranty", "Color", "Weight"],
-  "Fashion & Clothing": ["Brand", "Size", "Color", "Material", "Gender"],
-  "Home & Garden": ["Brand", "Material", "Dimensions", "Color", "Weight"],
-  "Books & Media": ["Author", "Publisher", "Language", "Pages", "Format"],
-  "Sports & Outdoors": ["Brand", "Size", "Color", "Material", "Weight"],
-};
+  return (
+    <div className="space-y-2.5">
+      <Label className="text-sm font-medium">
+        {label} <span className="text-red-500">*</span>
+      </Label>
+      <Select
+        value={value}
+        onValueChange={(val) => {
+          const cat = subcategories?.find((c) => c.id === Number(val));
+          if (cat) onSelect(cat);
+        }}
+      >
+        <SelectTrigger className="w-full h-11 transition-all">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {subcategories?.map((sub) => (
+            <SelectItem key={sub.id} value={String(sub.id)}>
+              {sub.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
 
 interface EcommerceFormData {
   productTitle: string;
@@ -38,7 +79,8 @@ interface EcommerceFormData {
   price: string;
   stockQuantity: string;
   sku: string;
-  category: string;
+  categoryId: string;
+  brandId: string;
   coverImage: File[];
   additionalImages: File[];
   specifications: Record<string, string>;
@@ -48,6 +90,16 @@ export default function CreateEcommerceBusiness() {
   const { t } = useTranslation("common");
   const [, setSearchParams] = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const { data: sellerData } = useGetSellerProfiles();
+  const sellers = Array.isArray(sellerData)
+    ? sellerData
+    : sellerData?.sellers || [];
+  const activeSeller = sellers.find((s) => s.status === "ACTIVE");
+
+  const { data: categories } = useGetMainEcommerceCategories();
+  const [categoryPath, setCategoryPath] = useState<EcommerceCategory[]>([]);
 
   const {
     register,
@@ -64,21 +116,73 @@ export default function CreateEcommerceBusiness() {
       price: "",
       stockQuantity: "1",
       sku: "",
-      category: "",
+      categoryId: "",
+      brandId: "",
       coverImage: [],
       additionalImages: [],
       specifications: {},
     },
   });
 
-  const selectedCategory = watch("category");
-  const specFields = selectedCategory
-    ? CATEGORY_SPECS[selectedCategory] || []
-    : [];
+  const selectedCategoryId = watch("categoryId");
 
-  const onSubmit = (data: EcommerceFormData) => {
-    console.log("Ecommerce product submitted:", data);
-    setSubmitted(true);
+  const { data: filtersData } = useGetEcommerceFilters(
+    { category_id: selectedCategoryId ? Number(selectedCategoryId) : null },
+    !!selectedCategoryId,
+  );
+  const brands = filtersData?.brands || [];
+  const specFields = [
+    ...new Set(
+      filtersData?.filters?.flatMap((group) =>
+        group.fields.map((field) => field.field_name),
+      ) ?? [],
+    ),
+  ];
+
+  const createMutation = useCreateProduct();
+
+  const onSubmit = async (data: EcommerceFormData) => {
+    if (!activeSeller) return;
+    setSubmitError("");
+
+    const specifications: ProductSpecification[] = Object.entries(
+      data.specifications,
+    )
+      .filter(([, value]) => value.trim())
+      .map(([field_name, field_value]) => ({ field_name, field_value }));
+
+    const allImages = [...data.coverImage, ...data.additionalImages];
+
+    try {
+      await createMutation.mutateAsync({
+        supplierId: activeSeller.supplier_id,
+        data: {
+          category_id: Number(data.categoryId),
+          brand_id: Number(data.brandId),
+          title: data.productTitle,
+          description: data.description,
+          price: Number(data.price),
+          quantity: Number(data.stockQuantity),
+          sku: data.sku,
+          specifications,
+        },
+        images: allImages,
+      });
+      setSubmitted(true);
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.data?.message) {
+        setSubmitError(error.response.data.message);
+      } else if (isAxiosError(error) && error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        setSubmitError(
+          Array.isArray(detail)
+            ? detail.map((d: { msg: string }) => d.msg).join(". ")
+            : detail,
+        );
+      } else {
+        setSubmitError(t("ecommerceForm.validation.submitFailed"));
+      }
+    }
   };
 
   if (submitted) {
@@ -144,6 +248,14 @@ export default function CreateEcommerceBusiness() {
             </p>
           </div>
         </div>
+
+        {!activeSeller && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-sm text-amber-700">
+              {t("ecommerceForm.validation.noActiveSeller")}
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -383,7 +495,7 @@ export default function CreateEcommerceBusiness() {
 
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
-              {/* Category */}
+              {/* Category & Brand */}
               <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm lg:sticky lg:top-8">
                 <CardHeader className="pb-6 space-y-1">
                   <CardTitle className="text-2xl font-semibold tracking-tight">
@@ -393,56 +505,151 @@ export default function CreateEcommerceBusiness() {
                 <CardContent className="space-y-5">
                   <div className="space-y-2.5">
                     <Label className="text-sm font-medium">
-                      {t("ecommerceForm.category")}
+                      {t("ecommerceForm.category")}{" "}
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      value={
+                        categoryPath.length > 0
+                          ? String(categoryPath[0].id)
+                          : ""
+                      }
+                      onValueChange={(value) => {
+                        const cat = categories?.find(
+                          (c) => c.id === Number(value),
+                        );
+                        if (!cat) return;
+                        setCategoryPath([cat]);
+                        setValue("brandId", "");
+                        setValue("specifications", {});
+                        setValue("categoryId", value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full h-11 transition-all">
+                        <SelectValue
+                          placeholder={t("ecommerceForm.categoryPlaceholder")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map((cat) => (
+                          <SelectItem key={cat.id} value={String(cat.id)}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {categoryPath.map(
+                    (cat, index) =>
+                      cat.has_subcategories && (
+                        <SubcategoryLevel
+                          key={cat.id}
+                          parentId={cat.id}
+                          value={
+                            categoryPath[index + 1]
+                              ? String(categoryPath[index + 1].id)
+                              : ""
+                          }
+                          onSelect={(sub) => {
+                            const newPath = [
+                              ...categoryPath.slice(0, index + 1),
+                              sub,
+                            ];
+                            setCategoryPath(newPath);
+                            setValue("brandId", "");
+                            setValue("specifications", {});
+                            setValue("categoryId", String(sub.id));
+                          }}
+                          label={t("ecommerceForm.subcategory")}
+                          placeholder={t(
+                            "ecommerceForm.subcategoryPlaceholder",
+                          )}
+                        />
+                      ),
+                  )}
+                  <input
+                    type="hidden"
+                    {...register("categoryId", {
+                      required: t(
+                        "ecommerceForm.validation.categoryRequired",
+                      ),
+                    })}
+                  />
+                  {errors.categoryId && !selectedCategoryId && (
+                    <p className="text-xs text-red-500 font-medium">
+                      {errors.categoryId.message}
+                    </p>
+                  )}
+
+                  <div className="space-y-2.5">
+                    <Label className="text-sm font-medium">
+                      {t("ecommerceForm.brand")}{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <Controller
-                      name="category"
+                      name="brandId"
                       control={control}
                       rules={{
-                        required: t(
-                          "ecommerceForm.validation.categoryRequired",
-                        ),
+                        required: t("ecommerceForm.validation.brandRequired"),
                       }}
                       render={({ field }) => (
                         <Select
                           value={field.value}
-                          onValueChange={(value) => {
-                            setValue("specifications", {});
-                            field.onChange(value);
-                          }}
+                          onValueChange={field.onChange}
+                          disabled={!selectedCategoryId}
                         >
                           <SelectTrigger className="w-full h-11 transition-all">
                             <SelectValue
-                              placeholder={t(
-                                "ecommerceForm.categoryPlaceholder",
-                              )}
+                              placeholder={t("ecommerceForm.brandPlaceholder")}
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            {CATEGORIES.map((cat) => (
-                              <SelectItem key={cat} value={cat}>
-                                {cat}
-                              </SelectItem>
-                            ))}
+                            {brands
+                              .filter(
+                                (brand, i, arr) =>
+                                  arr.findIndex((b) => b.id === brand.id) === i,
+                              )
+                              .map((brand) => (
+                                <SelectItem
+                                  key={brand.id}
+                                  value={String(brand.id)}
+                                >
+                                  {brand.name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       )}
                     />
-                    {errors.category && (
+                    {errors.brandId && (
                       <p className="text-xs text-red-500 font-medium">
-                        {errors.category.message}
+                        {errors.brandId.message}
                       </p>
                     )}
                   </div>
                 </CardContent>
 
                 <div className="px-6 pb-6 space-y-3">
+                  {submitError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-600">{submitError}</p>
+                    </div>
+                  )}
                   <Button
                     type="submit"
                     size="lg"
+                    disabled={createMutation.isPending || !activeSeller}
                     className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
                   >
-                    {t("ecommerceForm.publishProduct")}
+                    {createMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t("ecommerceForm.publishing")}
+                      </>
+                    ) : (
+                      t("ecommerceForm.publishProduct")
+                    )}
                   </Button>
                   <Button
                     type="button"

@@ -23,6 +23,12 @@ const FavoritesTab = lazy(() => import("@/features/profile/FavoritesTab"));
 const ReviewsTab = lazy(() => import("@/features/profile/ReviewsTab"));
 const AddBusinessTab = lazy(() => import("@/features/profile/AddBusinessTab"));
 const SecurityTab = lazy(() => import("@/features/profile/SecurityTab"));
+const SellerProfilesTab = lazy(
+  () => import("@/features/vendor-profile/SellerProfilesTab"),
+);
+const MyProductsTab = lazy(
+  () => import("@/features/vendor-profile/MyProductsTab"),
+);
 
 export default function Profile() {
   const { data: profile } = useGetProfile();
@@ -61,6 +67,12 @@ export default function Profile() {
       </Suspense>
       <Suspense fallback={<InfoTabSkeleton />}>
         {tab === "security" && <SecurityTab />}
+      </Suspense>
+      <Suspense fallback={<InfoTabSkeleton />}>
+        {tab === "seller-profiles" && <SellerProfilesTab />}
+      </Suspense>
+      <Suspense fallback={<InfoTabSkeleton />}>
+        {tab === "my-products" && <MyProductsTab />}
       </Suspense>
     </>
   );
