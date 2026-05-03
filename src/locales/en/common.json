@@ -83,6 +83,8 @@
     "organization": "Organization",
     "category": "Category",
     "categoryPlaceholder": "Select a category",
+    "subcategory": "Subcategory",
+    "subcategoryPlaceholder": "Select a subcategory",
     "productImages": "Product Images",
     "coverImage": "Cover Image",
     "additionalImages": "Additional Images",
@@ -90,10 +92,13 @@
     "specifications": "Product Specifications",
     "enterSpec": "Enter",
     "selectCategoryForSpecs": "Select a category first to see available options",
+    "brand": "Brand",
+    "brandPlaceholder": "Select a brand",
     "publishProduct": "Publish Product",
+    "publishing": "Publishing...",
     "cancel": "Cancel",
-    "successTitle": "Product Published!",
-    "successMessage": "Your product has been submitted successfully and will appear in the catalog.",
+    "successTitle": "Product Submitted!",
+    "successMessage": "Your product has been submitted for review and will appear in the catalog once approved.",
     "addAnother": "Add Another Product",
     "validation": {
       "productTitleRequired": "Product title is required",
@@ -104,7 +109,10 @@
       "stockMin": "Stock must be at least 1",
       "skuRequired": "SKU is required",
       "categoryRequired": "Category is required",
-      "coverImageRequired": "Cover image is required"
+      "brandRequired": "Brand is required",
+      "coverImageRequired": "Cover image is required",
+      "noActiveSeller": "You need an active seller profile to create products. Please register and wait for approval.",
+      "submitFailed": "Failed to submit product. Please try again."
     }
   }
 }

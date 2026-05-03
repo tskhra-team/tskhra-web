@@ -5,10 +5,11 @@ import CreateEcommerceBusiness from "@/features/business-creation/ecommerce-busi
 import { scrollToTop } from "@/utils";
 import { Calendar, Check, ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function CreateBusiness() {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedType = searchParams.get("business");
 
@@ -135,7 +136,7 @@ export default function CreateBusiness() {
                 </li>
               </ul>
               <Button
-                onClick={() => handleClick("ecommerce")}
+                onClick={() => navigate("/profile?section=seller-profiles")}
                 size="lg"
                 className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
               >
