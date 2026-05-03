@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   LogOut,
   MessageSquare,
+  Package,
   Shield,
   Store,
   UserCircle,
@@ -51,6 +52,11 @@ export default function ProfileMobileNav({
       value: "seller-profiles",
       label: t("tabs.sellerProfiles"),
       icon: Store,
+    },
+    {
+      value: "my-products",
+      label: t("tabs.myProducts"),
+      icon: Package,
     },
     { value: "security", label: t("tabs.security"), icon: Shield },
   ];

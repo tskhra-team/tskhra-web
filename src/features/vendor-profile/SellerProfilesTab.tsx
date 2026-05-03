@@ -14,7 +14,7 @@ export default function SellerProfilesTab() {
   const navigate = useNavigate();
   const { showModal } = useModal();
   const { data: profile } = useGetProfile();
-  const { data, isLoading, error } = useGetSellerProfiles();
+  const { data, isLoading } = useGetSellerProfiles();
   const [showForm, setShowForm] = useState(false);
 
   const handleRegister = () => {

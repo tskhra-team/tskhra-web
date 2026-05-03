@@ -9,6 +9,7 @@
     "reviews": "My Reviews",
     "addBusiness": "Add Business",
     "sellerProfiles": "Seller Profiles",
+    "myProducts": "My Products",
     "security": "Security"
   },
   "infoTab": {
@@ -161,6 +162,23 @@
       "notVerifiedMessage": "You need to complete verification before registering as a seller.",
       "close": "Close",
       "goToVerify": "Go to Verification"
+    }
+  },
+  "myProducts": {
+    "title": "My Products",
+    "addProduct": "Add Product",
+    "addFirst": "Add Your First Product",
+    "emptyTitle": "No Products Yet",
+    "emptyDescription": "Create your first product to start selling on the marketplace.",
+    "noSellerTitle": "No Active Seller Profile",
+    "noSellerDescription": "You need an active seller profile to manage products. Register as a seller first.",
+    "draftsSection": "Drafts & Pending",
+    "liveSection": "Live Products",
+    "untitled": "Untitled Product",
+    "status": {
+      "live": "Live",
+      "draft": "Draft",
+      "pending": "Pending"
     }
   },
   "security": {

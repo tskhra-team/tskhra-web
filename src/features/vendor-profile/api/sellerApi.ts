@@ -8,7 +8,9 @@ import type {
 
 export const sellerApi = {
   getProfiles: () =>
-    privateInstanceSeller.get("/profile").then((r) => r.data),
+    privateInstanceSeller
+      .get<SellerProfilesResponse>("/profile")
+      .then((r) => r.data),
 
   registerProfile: (data: RegisterSellerRequest) =>
     privateInstanceSeller
