@@ -104,13 +104,16 @@ export default function useEcommerceCart() {
     clearMutation.mutate();
   }, [isAuthenticated, login, clearMutation]);
 
-  const checkout = useCallback(() => {
-    if (!isAuthenticated) {
-      login();
-      return;
-    }
-    checkoutMutation.mutate();
-  }, [isAuthenticated, login, checkoutMutation]);
+  const checkout = useCallback(
+    (onSuccess?: () => void) => {
+      if (!isAuthenticated) {
+        login();
+        return;
+      }
+      checkoutMutation.mutate(undefined, { onSuccess });
+    },
+    [isAuthenticated, login, checkoutMutation],
+  );
 
   const isInCart = useCallback(
     (productId: number) =>
