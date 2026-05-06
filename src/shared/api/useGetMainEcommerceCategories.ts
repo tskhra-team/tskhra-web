@@ -20,7 +20,7 @@ interface CategoriesResponse {
 
 const getEcommerceCategories = async (parentId?: number | null) => {
   const response = await publicInstancePython.get<CategoriesResponse>(
-    "/categories",
+    "/ecommerce/products/categories",
     {
       params: parentId != null ? { parent_id: parentId } : undefined,
     }
