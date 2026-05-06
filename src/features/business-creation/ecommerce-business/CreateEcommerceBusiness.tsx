@@ -131,13 +131,12 @@ export default function CreateEcommerceBusiness() {
     !!selectedCategoryId,
   );
   const brands = filtersData?.brands || [];
-  const specFields = [
-    ...new Set(
-      filtersData?.filters?.flatMap((group) =>
-        group.fields.map((field) => field.field_name),
-      ) ?? [],
-    ),
-  ];
+  const allSpecFields = (filtersData?.filters ?? []).flatMap((g) => g.fields);
+  const specFields = allSpecFields.filter(
+    (f, i, arr) => arr.findIndex((x) => x.field_name === f.field_name) === i,
+  );
+
+  const [activeSpecField, setActiveSpecField] = useState<string>("");
 
   const createMutation = useCreateProduct();
 
@@ -158,7 +157,7 @@ export default function CreateEcommerceBusiness() {
         supplierId: activeSeller.supplier_id,
         data: {
           category_id: Number(data.categoryId),
-          brand_id: Number(data.brandId),
+          brand_id: data.brandId ? Number(data.brandId) : 1,
           title: data.productTitle,
           description: data.description,
           price: Number(data.price),
@@ -467,20 +466,77 @@ export default function CreateEcommerceBusiness() {
                     {t("ecommerceForm.specifications")}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   {specFields.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      {specFields.map((spec) => (
-                        <div key={spec} className="space-y-2.5">
-                          <Label className="text-sm font-medium">{spec}</Label>
-                          <Input
-                            {...register(`specifications.${spec}`)}
-                            placeholder={`${t("ecommerceForm.enterSpec")} ${spec.toLowerCase()}`}
-                            className="h-11 transition-all"
+                    <>
+                      <Select
+                        value={activeSpecField}
+                        onValueChange={setActiveSpecField}
+                      >
+                        <SelectTrigger className="w-full h-11 transition-all">
+                          <SelectValue
+                            placeholder={t("ecommerceForm.selectSpec")}
                           />
-                        </div>
-                      ))}
-                    </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {specFields.map((field) => (
+                            <SelectItem
+                              key={field.field_name}
+                              value={field.field_name}
+                            >
+                              <span className="flex items-center justify-between w-full gap-2">
+                                {field.field_name}
+                                {watch(`specifications.${field.field_name}`) && (
+                                  <Check className="w-4 h-4 text-green-500" />
+                                )}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {activeSpecField && (() => {
+                        const field = specFields.find(
+                          (f) => f.field_name === activeSpecField,
+                        );
+                        if (!field) return null;
+                        const currentValue = watch(
+                          `specifications.${field.field_name}`,
+                        );
+                        return (
+                          <div className="space-y-3">
+                            <Label className="text-sm font-medium">
+                              {field.field_name}
+                            </Label>
+                            {field.options.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {field.options.map((opt) => (
+                                  <button
+                                    key={opt.option_id}
+                                    type="button"
+                                    onClick={() =>
+                                      setValue(
+                                        `specifications.${field.field_name}`,
+                                        currentValue === opt.option_value
+                                          ? ""
+                                          : opt.option_value,
+                                      )
+                                    }
+                                    className={`px-3 py-1.5 text-sm rounded-full border transition-all cursor-pointer ${
+                                      currentValue === opt.option_value
+                                        ? "bg-primary text-primary-foreground border-primary"
+                                        : "bg-muted/50 border-border hover:border-primary/50"
+                                    }`}
+                                  >
+                                    {opt.option_value}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </>
                   ) : (
                     <div className="flex items-center gap-3 text-muted-foreground py-4">
                       <Info className="w-5 h-5 shrink-0" />
@@ -523,6 +579,7 @@ export default function CreateEcommerceBusiness() {
                         setValue("brandId", "");
                         setValue("specifications", {});
                         setValue("categoryId", value);
+                        setActiveSpecField("");
                       }}
                     >
                       <SelectTrigger className="w-full h-11 transition-all">
@@ -560,6 +617,7 @@ export default function CreateEcommerceBusiness() {
                             setValue("brandId", "");
                             setValue("specifications", {});
                             setValue("categoryId", String(sub.id));
+                            setActiveSpecField("");
                           }}
                           label={t("ecommerceForm.subcategory")}
                           placeholder={t(
@@ -584,15 +642,11 @@ export default function CreateEcommerceBusiness() {
 
                   <div className="space-y-2.5">
                     <Label className="text-sm font-medium">
-                      {t("ecommerceForm.brand")}{" "}
-                      <span className="text-red-500">*</span>
+                      {t("ecommerceForm.brand")}
                     </Label>
                     <Controller
                       name="brandId"
                       control={control}
-                      rules={{
-                        required: t("ecommerceForm.validation.brandRequired"),
-                      }}
                       render={({ field }) => (
                         <Select
                           value={field.value}
@@ -608,25 +662,20 @@ export default function CreateEcommerceBusiness() {
                             {brands
                               .filter(
                                 (brand, i, arr) =>
-                                  arr.findIndex((b) => b.id === brand.id) === i,
+                                  arr.findIndex((b) => b.brand_id === brand.brand_id) === i,
                               )
                               .map((brand) => (
                                 <SelectItem
-                                  key={brand.id}
-                                  value={String(brand.id)}
+                                  key={brand.brand_id}
+                                  value={String(brand.brand_id)}
                                 >
-                                  {brand.name}
+                                  {brand.brand_name}
                                 </SelectItem>
                               ))}
                           </SelectContent>
                         </Select>
                       )}
                     />
-                    {errors.brandId && (
-                      <p className="text-xs text-red-500 font-medium">
-                        {errors.brandId.message}
-                      </p>
-                    )}
                   </div>
                 </CardContent>
 

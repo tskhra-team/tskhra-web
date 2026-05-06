@@ -348,7 +348,7 @@ export default function SearchResults() {
               <div className="space-y-2">
                 {visibleBrands.map((brand) => (
                   <label
-                    key={brand.id}
+                    key={brand.brand_id}
                     className={`flex items-center gap-2.5 cursor-pointer group ${
                       brand.product_count === 0
                         ? "opacity-40 pointer-events-none"
@@ -356,12 +356,12 @@ export default function SearchResults() {
                     }`}
                   >
                     <Checkbox
-                      checked={selectedBrands.includes(brand.id)}
-                      onCheckedChange={() => toggleBrand(brand.id)}
+                      checked={selectedBrands.includes(brand.brand_id)}
+                      onCheckedChange={() => toggleBrand(brand.brand_id)}
                       disabled={brand.product_count === 0}
                     />
                     <span className="text-sm text-slate-700 group-hover:text-slate-900 flex-1">
-                      {brand.name}
+                      {brand.brand_name}
                     </span>
                     {brand.product_count != null && (
                       <span className="text-xs text-slate-400">

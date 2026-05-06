@@ -65,7 +65,7 @@ export type VendorDraft = {
   quantity: number;
   sku: string;
   category_id: number;
-  brand_id: number;
+  brand_id?: number;
   specifications: ProductSpecification[];
   images: string[];
   cover_image_url: string | null;
@@ -82,7 +82,7 @@ export type VendorLiveProduct = {
   cover_image_url: string;
   images: string[];
   category_id: number;
-  brand_id: number;
+  brand_id?: number;
   specifications: ProductSpecification[];
 };
 

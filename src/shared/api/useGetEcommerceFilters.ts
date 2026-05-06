@@ -23,8 +23,8 @@ export interface FilterGroup {
 }
 
 export interface FilterBrand {
-  id: number;
-  name: string;
+  brand_id: number;
+  brand_name: string;
   logo_url?: string;
   product_count?: number;
 }
