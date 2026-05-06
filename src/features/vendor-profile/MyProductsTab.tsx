@@ -94,9 +94,9 @@ export default function MyProductsTab() {
                 {t("myProducts.draftsSection")}
               </h3>
               <div className="space-y-3">
-                {drafts.map((draft) => (
+                {drafts.map((draft, index) => (
                   <VendorProductCard
-                    key={draft.task_id}
+                    key={draft.task_id ?? `draft-${index}`}
                     title={draft.title || t("myProducts.untitled")}
                     price={draft.price || 0}
                     imageUrl={draft.cover_image_url}

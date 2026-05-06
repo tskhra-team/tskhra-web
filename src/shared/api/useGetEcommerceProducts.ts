@@ -66,7 +66,7 @@ const getEcommerceProducts = async (filters: ProductFilters) => {
   if (filters.brand_ids && filters.brand_ids.length > 0)
     params.brand_ids = filters.brand_ids;
 
-  const response = await publicInstancePython.get<ProductsResponse>("/", {
+  const response = await publicInstancePython.get<ProductsResponse>("/ecommerce/products/", {
     params,
   });
 

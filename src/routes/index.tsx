@@ -32,6 +32,8 @@ const MagicChainPage = lazy(() => import("@/pages/MagicChainPage"));
 const DiscoverChainPage = lazy(() => import("@/pages/DiscoverChainPage"));
 const ChainDetailPage = lazy(() => import("@/pages/ChainDetailPage"));
 const MyChainsPage = lazy(() => import("@/pages/MyChainsPage"));
+const MyOrdersPage = lazy(() => import("@/pages/MyOrdersPage"));
+const PaymentVerifyPage = lazy(() => import("@/pages/PaymentVerifyPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
@@ -267,6 +269,22 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <MyBookingsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce/orders",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <MyOrdersPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce/orders/verify/:orderId",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <PaymentVerifyPage />
           </Suspense>
         ),
       },

@@ -138,5 +138,45 @@
     "checkoutSuccess": "Order placed successfully!",
     "loginRequired": "Log in to use your cart",
     "loginButton": "Log In"
+  },
+  "orders": {
+    "title": "My Orders",
+    "empty": "You don't have any orders yet",
+    "emptyDescription": "Your orders will appear here after checkout",
+    "orderNumber": "Order #{{id}}",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "total": "Total",
+    "date": "Date",
+    "status": "Status",
+    "pay": "Pay Now",
+    "viewDetails": "View Details",
+    "backToShop": "Back to Shop",
+    "page": "Page {{page}} of {{total}}",
+    "statuses": {
+      "pending": "Pending Payment",
+      "paid": "Paid",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "checked_out": "Awaiting Payment"
+    }
+  },
+  "payment": {
+    "verifying": "Verifying your payment...",
+    "success": "Payment Successful",
+    "successDescription": "Your payment has been confirmed. Thank you for your purchase!",
+    "failed": "Payment Failed",
+    "failedDescription": "We couldn't verify your payment. Please try again or contact support.",
+    "backToOrders": "Back to Orders",
+    "tryAgain": "Try Again",
+    "errors": {
+      "forbidden": "You do not have access to this order",
+      "notFound": "Order not found",
+      "validationError": "Order cannot be paid in its current status",
+      "paymentFailed": "Payment processing failed. Please try again.",
+      "generic": "Something went wrong. Please try again."
+    }
   }
 }
