@@ -65,10 +65,13 @@ export function PaginationControls({
     return pages;
   };
 
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   const handlePrevious = (e: React.MouseEvent) => {
     e.preventDefault();
     if (currentPage > 0) {
       onPageChange(currentPage - 1);
+      scrollToTop();
     }
   };
 
@@ -76,12 +79,14 @@ export function PaginationControls({
     e.preventDefault();
     if (currentPage < totalPages - 1) {
       onPageChange(currentPage + 1);
+      scrollToTop();
     }
   };
 
   const handlePageClick = (e: React.MouseEvent, page: number) => {
     e.preventDefault();
     onPageChange(page);
+    scrollToTop();
   };
 
   const pages = getPageNumbers();
