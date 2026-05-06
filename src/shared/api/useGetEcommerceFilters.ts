@@ -23,8 +23,8 @@ export interface FilterGroup {
 }
 
 export interface FilterBrand {
-  id: number;
-  name: string;
+  brand_id: number;
+  brand_name: string;
   logo_url?: string;
   product_count?: number;
 }
@@ -49,7 +49,7 @@ const getEcommerceFilters = async (params: FilterParams) => {
   if (params.max_price != null) queryParams.max_price = params.max_price;
   if (params.in_stock != null) queryParams.in_stock = params.in_stock;
 
-  const response = await publicInstancePython.get<FiltersResponse>("/filters", {
+  const response = await publicInstancePython.get<FiltersResponse>("/ecommerce/products/filters", {
     params: queryParams,
   });
 

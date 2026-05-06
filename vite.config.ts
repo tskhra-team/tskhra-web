@@ -29,34 +29,6 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
-    proxy: {
-      "/api/python": {
-        target: "https://sessile-nettlelike-antoinette.ngrok-free.dev",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/python/, "/ecommerce/products"),
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        },
-      },
-      "/api/cart": {
-        target: "https://sessile-nettlelike-antoinette.ngrok-free.dev",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/cart/, "/ecommerce/cart"),
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        },
-      },
-      "/api/seller": {
-        target: "https://sessile-nettlelike-antoinette.ngrok-free.dev",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/seller/, "/ecommerce/provider"),
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        },
-      },
-    },
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

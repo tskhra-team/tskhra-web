@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   HistoryTabSkeleton,
   InfoTabSkeleton,
@@ -107,6 +107,7 @@ export default function Profile() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-70">
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
                 <ProfileMobileNav
                   currentSection={tab}
                   onSectionChange={handleSectionChange}
