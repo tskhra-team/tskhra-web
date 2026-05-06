@@ -32,5 +32,11 @@
     "conversation": "Conversation",
     "noConversations": "No conversations yet",
     "selectConversation": "Select a conversation to view"
+  },
+  "insights": {
+    "title": "AI Business Insights",
+    "subtitle": "Smart recommendations to grow your business",
+    "getInsights": "Get Insights",
+    "loading": "Analyzing..."
   }
 }

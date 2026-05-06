@@ -1,9 +1,9 @@
-import axios from "axios";
 import { keycloakClient } from "@/features/auth/useKeycloak";
+import axios from "axios";
 
 const BASE_URL = "http://10.227.164.247:8081";
 const BASE_URL_PYTHON = "/api/python";
-const AI_CHAT_BASE_URL = "http://10.227.164.168:8001";
+const AI_CHAT_BASE_URL = "http://10.3.12.144:8001";
 
 export const publicInstance = axios.create({
   baseURL: BASE_URL,
@@ -15,7 +15,6 @@ export const privateInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 //handling when user is authorized, and allready has access_token
-
 
 export const publicInstancePython = axios.create({
   baseURL: BASE_URL_PYTHON,
