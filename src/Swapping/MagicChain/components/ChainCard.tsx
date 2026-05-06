@@ -73,6 +73,7 @@ export default function ChainCard({
                     link.categoryName,
                   )}
                   value={link.estimatedValue}
+                  image={link.imageUrl}
                 />
                 {linkIndex < chain.links.length - 1 && <ChainConnector />}
               </Fragment>

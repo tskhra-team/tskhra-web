@@ -3,6 +3,7 @@ export interface ChainLink {
   itemId: string;
   itemName: string;
   ownerId: number;
+  imageUrl: string;
   categoryName: string;
   estimatedValue: number;
 }
@@ -27,6 +28,7 @@ export interface ChainTradeLink {
   giverId: number;
   itemId: string;
   itemName: string;
+  imageUrl: string;
   receiverId: number;
   accepted: boolean;
   confirmed: boolean;

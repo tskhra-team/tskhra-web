@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageWithFallback } from "@/Swapping/ImageWithFallback";
 import ChainConnector from "@/Swapping/MagicChain/components/ChainConnector";
 import {
   MAGIC_GRADIENT,
@@ -40,7 +41,17 @@ function ChainTradeLinkNode({
       className="shrink-0 w-44 rounded-xl border-2 bg-white overflow-hidden border-gray-200"
     >
       <div className="h-16 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-        <Package className="w-6 h-6 text-gray-300" />
+        {link.imageUrl ? (
+          <ImageWithFallback
+            src={link.imageUrl}
+            alt={link.itemName}
+            className="w-full h-full object-contain"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Package className="w-6 h-6 text-gray-300" />
+          </div>
+        )}
       </div>
 
       <div className="p-3 space-y-2">

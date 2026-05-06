@@ -85,7 +85,7 @@ export default function TopBar() {
       {/* <SearchBar /> */}
       <div className="flex gap-2 sm:gap-3 lg:gap-4 items-center justify-end">
         {showLanguageSwitcher && <LanguageSwitcher />}
-        {isAuthenticated && !isMobile && (
+        {isAuthenticated && !isMobile && !isVerification && (
           <button
             onClick={handleFavoritesClick}
             className={`relative p-2 rounded-full transition-colors cursor-pointer ${isVerification ? "hover:bg-white/10 text-white" : "hover:bg-rose-50 text-slate-600 hover:text-rose-500"}`}
