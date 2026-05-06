@@ -10,7 +10,7 @@ interface CategoriesResponse {
 
 const getSubEcommerceCategories = async (parentId: number) => {
   const response = await publicInstancePython.get<CategoriesResponse>(
-    "/categories",
+    "/ecommerce/products/categories",
     {
       params: { parent_id: parentId },
     }

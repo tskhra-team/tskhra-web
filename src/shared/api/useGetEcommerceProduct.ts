@@ -42,7 +42,7 @@ interface ProductResponse {
 
 const getEcommerceProduct = async (productId: number) => {
   const response = await publicInstancePython.get<ProductResponse>(
-    `/${productId}`
+    `/ecommerce/products/${productId}`
   );
   return response.data;
 };
