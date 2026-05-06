@@ -2,8 +2,8 @@ import { keycloakClient } from "@/features/auth/useKeycloak";
 import axios from "axios";
 
 const BASE_URL = "http://10.227.164.247:8081";
+const AI_CHAT_BASE_URL = "http://10.3.12.144:8001";
 const BASE_URL_PYTHON = "http://10.227.164.247:8888";
-const AI_CHAT_BASE_URL = "http://10.227.164.168:8001";
 
 export const publicInstance = axios.create({
   baseURL: BASE_URL,

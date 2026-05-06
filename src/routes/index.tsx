@@ -29,6 +29,9 @@ const PostItemsPage = lazy(() => import("@/pages/PostItemsPage"));
 const TradeOfferPage = lazy(() => import("@/pages/TradeOfferPage"));
 const CounterOfferPage = lazy(() => import("@/pages/CounterOfferPage"));
 const MagicChainPage = lazy(() => import("@/pages/MagicChainPage"));
+const DiscoverChainPage = lazy(() => import("@/pages/DiscoverChainPage"));
+const ChainDetailPage = lazy(() => import("@/pages/ChainDetailPage"));
+const MyChainsPage = lazy(() => import("@/pages/MyChainsPage"));
 const MyOrdersPage = lazy(() => import("@/pages/MyOrdersPage"));
 const PaymentVerifyPage = lazy(() => import("@/pages/PaymentVerifyPage"));
 
@@ -198,6 +201,30 @@ export const routes = [
             element: (
               <Suspense fallback={<Loader />}>
                 <MagicChainPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "magic-chain/discover/:itemId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <DiscoverChainPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "magic-chain/chain/:chainId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <ChainDetailPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "magic-chain/me",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <MyChainsPage />
               </Suspense>
             ),
           },

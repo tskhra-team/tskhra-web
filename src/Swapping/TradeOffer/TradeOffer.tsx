@@ -69,7 +69,11 @@ export default function TradeOffer() {
 
   useEffect(() => {
     if (data?.content) {
-      setInventoryItems(data.content.map(mapItemToTradeItem));
+      setInventoryItems(
+        data.content
+          .filter((item) => item.status === "AVAILABLE")
+          .map(mapItemToTradeItem),
+      );
     }
   }, [data]);
 

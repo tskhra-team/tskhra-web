@@ -3,7 +3,7 @@ import type { CredResponse } from "@/Booking/useGetAIChatCreds";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const AI_CHAT_BASE_URL = "http://10.227.164.168:8001";
+const AI_CHAT_BASE_URL = "http://10.3.12.144:8001";
 
 type ChatAuth = {
   customer_id: number;
