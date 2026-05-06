@@ -29,6 +29,8 @@ const PostItemsPage = lazy(() => import("@/pages/PostItemsPage"));
 const TradeOfferPage = lazy(() => import("@/pages/TradeOfferPage"));
 const CounterOfferPage = lazy(() => import("@/pages/CounterOfferPage"));
 const MagicChainPage = lazy(() => import("@/pages/MagicChainPage"));
+const MyOrdersPage = lazy(() => import("@/pages/MyOrdersPage"));
+const PaymentVerifyPage = lazy(() => import("@/pages/PaymentVerifyPage"));
 
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const VerificationPage = lazy(() => import("@/pages/VerificationPage"));
@@ -240,6 +242,22 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <MyBookingsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce/orders",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <MyOrdersPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/ecommerce/orders/verify/:orderId",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <PaymentVerifyPage />
           </Suspense>
         ),
       },

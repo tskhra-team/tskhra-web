@@ -16,7 +16,7 @@ import { GiShoppingCart } from "react-icons/gi";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { STORE_COLORS } from "./ProductCatalog";
 import useEcommerceCart from "./hooks/useEcommerceCart";
 
@@ -24,6 +24,7 @@ export default function ShoppingCart() {
   const location = useLocation();
   const { t } = useTranslation("ecommerce");
   const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const {
@@ -324,7 +325,12 @@ export default function ShoppingCart() {
             {/* Checkout Button */}
             <Button
               className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base shadow-lg shadow-blue-600/20"
-              onClick={checkout}
+              onClick={() => {
+                checkout(() => {
+                  setOpen(false);
+                  navigate("/ecommerce/orders");
+                });
+              }}
               disabled={isCheckingOut || isMutating}
             >
               {isCheckingOut ? (

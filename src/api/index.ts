@@ -59,6 +59,20 @@ privateInstanceSeller.interceptors.request.use(async (config) => {
   }
   return config;
 });
+export const privateInstancePayment = axios.create({
+  baseURL: `${BASE_URL_PYTHON}/ecommerce/payment`,
+  headers: { "Content-Type": "application/json" },
+});
+
+privateInstancePayment.interceptors.request.use(addNgrokSkipWarning);
+privateInstancePayment.interceptors.request.use(async (config) => {
+  if (keycloakClient.authenticated && keycloakClient.token) {
+    await keycloakClient.updateToken(5).catch(() => {});
+    config.headers.Authorization = `Bearer ${keycloakClient.token}`;
+  }
+  return config;
+});
+
 export const chatInstance = axios.create({
   baseURL: AI_CHAT_BASE_URL,
   headers: { "Content-Type": "application/json" },

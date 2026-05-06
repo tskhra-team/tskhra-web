@@ -1,9 +1,13 @@
+import { useAuth } from "@/context/useAuth";
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import CategoryMegaMenu from "./CategoryMegaMenu";
 
 export default function EcommerceNavigation() {
   const { t } = useTranslation("ecommerce");
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const closeTimeoutRef = useRef<number | null>(null);
 
@@ -16,6 +20,15 @@ export default function EcommerceNavigation() {
       hasMegaMenu: true,
     },
     { name: t("nav.deals"), link: "#", color: "#A31621" },
+    ...(isAuthenticated
+      ? [
+          {
+            name: t("orders.title"),
+            link: "/ecommerce/orders",
+            color: "#0D9488",
+          },
+        ]
+      : []),
   ];
 
   const openMegaMenu = useCallback(() => {
@@ -46,6 +59,7 @@ export default function EcommerceNavigation() {
           <div
             key={item.name}
             className="relative text-slate-700 px-4 sm:px-6 lg:px-8 h-full flex items-center cursor-pointer transition-all duration-300 group font-semibold text-sm sm:text-base"
+            onClick={item.link !== "#" ? () => navigate(item.link) : undefined}
             onMouseEnter={item.hasMegaMenu ? openMegaMenu : undefined}
             onMouseLeave={item.hasMegaMenu ? closeMegaMenu : undefined}
           >
