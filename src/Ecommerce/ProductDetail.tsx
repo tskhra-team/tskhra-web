@@ -20,7 +20,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { GiShoppingCart } from "react-icons/gi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { getAverageRating, getReviewsForProduct, type Review } from "./mockReviews";
@@ -256,6 +256,10 @@ export default function ProductDetail() {
 
   const relatedProducts =
     relatedData?.items.filter((p) => p.id !== productId) ?? [];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [productId]);
 
   if (isLoading) {
     return <ProductDetailSkeleton />;

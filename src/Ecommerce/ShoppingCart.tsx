@@ -11,7 +11,6 @@ import {
 import { useAuth } from "@/context/useAuth";
 import { Loader2, Minus, Plus, Trash2, X } from "lucide-react";
 import { TbArrowNarrowUpDashed } from "react-icons/tb";
-import { HiOutlineChatBubbleBottomCenterText } from "react-icons/hi2";
 import { GiShoppingCart } from "react-icons/gi";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -207,24 +206,12 @@ export default function ShoppingCart() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-30 right-4 sm:bottom-34 sm:right-6 z-40 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-md hover:bg-slate-50 transition-colors cursor-pointer"
+          className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-md hover:bg-slate-50 transition-colors cursor-pointer"
         >
           <TbArrowNarrowUpDashed className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
         </motion.button>
       )}
     </AnimatePresence>
-
-    {/* ── Chat Button ──────────────────────────────────────── */}
-    <motion.button
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="fixed bottom-18 right-4 sm:bottom-22 sm:right-6 z-40 flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-slate-600 border border-slate-200 shadow-md hover:bg-slate-50 transition-colors cursor-pointer"
-    >
-      <HiOutlineChatBubbleBottomCenterText className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
-    </motion.button>
 
     <Sheet open={open} onOpenChange={setOpen}>
       {/* ── Floating Cart Button ──────────────────────────────── */}

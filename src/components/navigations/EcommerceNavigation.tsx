@@ -12,14 +12,13 @@ export default function EcommerceNavigation() {
   const closeTimeoutRef = useRef<number | null>(null);
 
   const navItems = [
-    { name: t("nav.products"), link: "#", color: "#3659FA" },
+    { name: t("nav.products"), link: "/ecommerce/catalog", color: "#3659FA" },
     {
       name: t("nav.categories"),
       link: "#",
       color: "#FF6439",
       hasMegaMenu: true,
     },
-    { name: t("nav.deals"), link: "#", color: "#A31621" },
     ...(isAuthenticated
       ? [
           {

@@ -1,7 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Search, SlidersHorizontal, X, ChevronRight, Heart } from "lucide-react";
-import useEcommerceFavorites from "@/Ecommerce/hooks/useEcommerceFavorites";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, SlidersHorizontal, X, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Pagination,
@@ -12,10 +11,11 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { Checkbox } from "@/components/ui/checkbox";
 import { getPlatformColors } from "@/shared/categories/platformColors";
+import useGetEcommerceProducts from "@/shared/api/useGetEcommerceProducts";
+import type { EcommerceProduct } from "@/shared/api/useGetEcommerceProducts";
 
-// ── Types ──────────────────────────────────────────────────────────────
+// ── Legacy types & data (consumed by other files — do not remove) ─────
 
 export type Store = "Alta" | "Elit" | "Informal";
 export type Condition = "New" | "Like New" | "Used";
@@ -38,18 +38,13 @@ export interface Product {
   boosted?: boolean;
 }
 
-// ── Store badge colors ─────────────────────────────────────────────────
-
 export const STORE_COLORS: Record<Store, { bg: string; text: string }> = {
   Alta: { bg: "#DBEAFE", text: "#1E40AF" },
   Elit: { bg: "#FEF3C7", text: "#92400E" },
   Informal: { bg: "#D1FAE5", text: "#065F46" },
 };
 
-// ── Mock products (25) ─────────────────────────────────────────────────
-
 export const MOCK_PRODUCTS: Product[] = [
-  // ── Electronics ──
   { id: 1, name: "Samsung Galaxy S24 Ultra", price: 3499, image: "https://picsum.photos/seed/galaxy24/400/400", store: "Alta", condition: "New", category: "Electronics", subcategory: "Phones & Tablets", boosted: true },
   { id: 2, name: "Apple iPhone 15 Pro Max", price: 4299, image: "https://picsum.photos/seed/iphone15/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "Phones & Tablets", boosted: true },
   { id: 3, name: "iPad Pro 12.9\" M2", price: 3899, image: "https://picsum.photos/seed/ipadpro/400/400", store: "Alta", condition: "Like New", category: "Electronics", subcategory: "Phones & Tablets" },
@@ -60,7 +55,6 @@ export const MOCK_PRODUCTS: Product[] = [
   { id: 8, name: "Canon EOS R50 Camera", price: 2199, image: "https://picsum.photos/seed/canonr50/400/400", store: "Elit", condition: "New", category: "Electronics", subcategory: "Cameras & Photo" },
   { id: 9, name: "PlayStation 5 Slim", price: 1599, image: "https://picsum.photos/seed/ps5slim/400/400", store: "Informal", condition: "Like New", category: "Electronics", subcategory: "Gaming Consoles", boosted: true },
   { id: 10, name: "USB-C Charging Hub 7-in-1", price: 89, image: "https://picsum.photos/seed/usbhub/400/400", store: "Informal", condition: "New", category: "Electronics", subcategory: "Accessories" },
-  // ── Fashion & Clothing ──
   { id: 11, name: "Levi's 501 Original Jeans", price: 189, image: "https://picsum.photos/seed/levis501/400/400", store: "Informal", condition: "Like New", category: "Fashion & Clothing", subcategory: "Men's Clothing" },
   { id: 12, name: "The North Face Jacket", price: 599, image: "https://picsum.photos/seed/northface/400/400", store: "Informal", condition: "Used", category: "Fashion & Clothing", subcategory: "Men's Clothing" },
   { id: 13, name: "Zara Oversized Blazer", price: 219, image: "https://picsum.photos/seed/blazer/400/400", store: "Elit", condition: "New", category: "Fashion & Clothing", subcategory: "Women's Clothing", boosted: true },
@@ -68,17 +62,14 @@ export const MOCK_PRODUCTS: Product[] = [
   { id: 15, name: "Nike Air Max 90", price: 389, image: "https://picsum.photos/seed/airmax90/400/400", store: "Informal", condition: "Like New", category: "Fashion & Clothing", subcategory: "Shoes", boosted: true },
   { id: 16, name: "Adidas Ultraboost 23", price: 449, image: "https://picsum.photos/seed/ultraboost/400/400", store: "Elit", condition: "New", category: "Fashion & Clothing", subcategory: "Shoes" },
   { id: 17, name: "Leather Crossbody Bag", price: 179, image: "https://picsum.photos/seed/crossbody/400/400", store: "Alta", condition: "New", category: "Fashion & Clothing", subcategory: "Bags & Accessories" },
-  // ── Home & Garden ──
   { id: 18, name: "IKEA KALLAX Shelf Unit", price: 199, image: "https://picsum.photos/seed/kallax/400/400", store: "Informal", condition: "Used", category: "Home & Garden", subcategory: "Furniture" },
   { id: 19, name: "Philips Air Fryer XXL", price: 449, image: "https://picsum.photos/seed/airfryer/400/400", store: "Alta", condition: "New", category: "Home & Garden", subcategory: "Kitchen & Dining", boosted: true },
   { id: 20, name: "Dyson V15 Vacuum", price: 1899, image: "https://picsum.photos/seed/dysonv15/400/400", store: "Elit", condition: "New", category: "Home & Garden", subcategory: "Home Decor" },
   { id: 21, name: "Bosch Drill Set 18V", price: 349, image: "https://picsum.photos/seed/boschdrill/400/400", store: "Informal", condition: "Like New", category: "Home & Garden", subcategory: "Garden & Outdoor" },
   { id: 22, name: "Cotton Bedding Set King", price: 159, image: "https://picsum.photos/seed/bedding/400/400", store: "Alta", condition: "New", category: "Home & Garden", subcategory: "Bedding & Bath" },
-  // ── Books & Media ──
   { id: 23, name: "Harry Potter Box Set", price: 129, image: "https://picsum.photos/seed/hpbooks/400/400", store: "Informal", condition: "Like New", category: "Books & Media", subcategory: "Fiction" },
   { id: 24, name: "Sapiens by Yuval Harari", price: 39, image: "https://picsum.photos/seed/sapiens/400/400", store: "Elit", condition: "New", category: "Books & Media", subcategory: "Non-Fiction" },
   { id: 25, name: "Vinyl Record Collection (Jazz)", price: 249, image: "https://picsum.photos/seed/vinyl/400/400", store: "Alta", condition: "Used", category: "Books & Media", subcategory: "Movies & Music" },
-  // ── Sports & Outdoors ──
   { id: 26, name: "Wilson Pro Tennis Racket", price: 299, image: "https://picsum.photos/seed/tennisracket/400/400", store: "Alta", condition: "Used", category: "Sports & Outdoors", subcategory: "Sports Equipment" },
   { id: 27, name: "Yoga Mat Premium Cork", price: 89, image: "https://picsum.photos/seed/yogamat/400/400", store: "Informal", condition: "New", category: "Sports & Outdoors", subcategory: "Exercise & Fitness" },
   { id: 28, name: "Camping Tent 4-Person", price: 379, image: "https://picsum.photos/seed/tent/400/400", store: "Elit", condition: "New", category: "Sports & Outdoors", subcategory: "Camping & Hiking", boosted: true },
@@ -86,69 +77,106 @@ export const MOCK_PRODUCTS: Product[] = [
   { id: 30, name: "Hiking Backpack 65L", price: 199, image: "https://picsum.photos/seed/hikebag/400/400", store: "Alta", condition: "New", category: "Sports & Outdoors", subcategory: "Outdoor Gear" },
 ];
 
-const ALL_CONDITIONS: Condition[] = ["New", "Like New", "Used"];
+// ── Sort options ──────────────────────────────────────────────────────
+
+const SORT_OPTIONS = [
+  { value: "popular", labelKey: "catalog.sortPopular", defaultLabel: "Popular" },
+  { value: "newest", labelKey: "catalog.sortNewest", defaultLabel: "Newest" },
+  { value: "price_asc", labelKey: "catalog.sortPriceAsc", defaultLabel: "Price: Low → High" },
+  { value: "price_desc", labelKey: "catalog.sortPriceDesc", defaultLabel: "Price: High → Low" },
+] as const;
 
 const ITEMS_PER_PAGE = 8;
 
-// ── Component ──────────────────────────────────────────────────────────
+// ── Product Card ──────────────────────────────────────────────────────
+
+function ProductCard({ product }: { product: EcommerceProduct }) {
+  return (
+    <Link
+      to={`/ecommerce/product/${product.id}`}
+      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
+    >
+      <div className="relative aspect-square overflow-hidden bg-slate-50">
+        {product.cover_image_url ? (
+          <img
+            src={product.cover_image_url}
+            alt={product.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-300">
+            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
+        {product.stock_quantity <= 0 && (
+          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-red-50/90 backdrop-blur-sm text-[11px] font-medium text-red-600">
+            Out of stock
+          </span>
+        )}
+      </div>
+      <div className="p-3.5">
+        {product.brand && (
+          <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">
+            {product.brand.name}
+          </p>
+        )}
+        <h3 className="font-semibold text-slate-900 text-sm truncate">
+          {product.title}
+        </h3>
+        <p className="text-base font-bold text-slate-900 mt-1.5">
+          {product.price.toFixed(2)}₾
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+// ── Component ─────────────────────────────────────────────────────────
 
 export default function ProductCatalog() {
   const { t } = useTranslation("ecommerce");
+  const navigate = useNavigate();
   const colors = getPlatformColors("ecommerce");
-  const { isFavorite, toggleFavorite } = useEcommerceFavorites();
 
-  // Filters state
   const [search, setSearch] = useState("");
-  const [selectedConditions, setSelectedConditions] = useState<Condition[]>([]);
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
+  const [sortBy, setSortBy] = useState("popular");
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  // Toggle helpers
-  const toggleFilter = <T,>(arr: T[], item: T, setter: (v: T[]) => void) => {
-    setter(arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]);
-    setCurrentPage(1);
-  };
+  const { data, isLoading } = useGetEcommerceProducts({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    min_price: priceMin ? Number(priceMin) : null,
+    max_price: priceMax ? Number(priceMax) : null,
+    sort_by: sortBy,
+    in_stock: true,
+  });
 
-  // Filtered products
-  const filtered = useMemo(() => {
-    return MOCK_PRODUCTS.filter((p) => {
-      if (search && !p.name.toLowerCase().includes(search.toLowerCase()))
-        return false;
-      if (selectedConditions.length && !selectedConditions.includes(p.condition))
-        return false;
-      if (priceMin && p.price < Number(priceMin)) return false;
-      if (priceMax && p.price > Number(priceMax)) return false;
-      return true;
-    });
-  }, [search, selectedConditions, priceMin, priceMax]);
+  const products = data?.items ?? [];
+  const totalPages = data?.total_pages ?? 1;
+  const totalCount = data?.total ?? 0;
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-
-  useEffect(() => {
-    setCurrentPage((p) => Math.min(p, totalPages));
-  }, [totalPages]);
-
-  const paginated = filtered.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  const activeFilterCount =
-    selectedConditions.length +
-    (priceMin ? 1 : 0) +
-    (priceMax ? 1 : 0);
+  const activeFilterCount = (priceMin ? 1 : 0) + (priceMax ? 1 : 0);
 
   const clearFilters = () => {
-    setSelectedConditions([]);
     setPriceMin("");
     setPriceMax("");
-    setSearch("");
+    setSortBy("popular");
     setCurrentPage(1);
   };
 
-  // Pagination range
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/ecommerce/search?q=${encodeURIComponent(search.trim())}`);
+    }
+  };
+
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
     if (totalPages <= 5) {
@@ -165,33 +193,29 @@ export default function ProductCatalog() {
     return pages;
   };
 
-  // ── Filter sidebar content (shared between desktop & mobile) ───────
+  // ── Filter sidebar content ─────────────────────────────────────────
 
   const filterContent = (
     <div className="space-y-6">
-      {/* Condition filter */}
+      {/* Sort */}
       <div>
         <h3 className="text-sm font-semibold text-slate-800 mb-3">
-          {t("catalog.condition", { defaultValue: "Condition" })}
+          {t("catalog.sortLabel", { defaultValue: "Sort by" })}
         </h3>
-        <div className="space-y-2">
-          {ALL_CONDITIONS.map((cond) => (
-            <label
-              key={cond}
-              className="flex items-center gap-2.5 cursor-pointer group"
-            >
-              <Checkbox
-                checked={selectedConditions.includes(cond)}
-                onCheckedChange={() =>
-                  toggleFilter(selectedConditions, cond, setSelectedConditions)
-                }
-              />
-              <span className="text-sm text-slate-700 group-hover:text-slate-900">
-                {t(`catalog.condition${cond.replace(/\s/g, "")}`, { defaultValue: cond })}
-              </span>
-            </label>
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30 bg-white"
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {t(opt.labelKey, { defaultValue: opt.defaultLabel })}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
       {/* Price range */}
@@ -204,7 +228,10 @@ export default function ProductCatalog() {
             type="number"
             placeholder={t("catalog.priceMin", { defaultValue: "Min" })}
             value={priceMin}
-            onChange={(e) => setPriceMin(e.target.value)}
+            onChange={(e) => {
+              setPriceMin(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30"
           />
           <span className="text-slate-400 text-sm">–</span>
@@ -212,7 +239,10 @@ export default function ProductCatalog() {
             type="number"
             placeholder={t("catalog.priceMax", { defaultValue: "Max" })}
             value={priceMax}
-            onChange={(e) => setPriceMax(e.target.value)}
+            onChange={(e) => {
+              setPriceMax(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30"
           />
         </div>
@@ -257,7 +287,7 @@ export default function ProductCatalog() {
           </h1>
 
           {/* Search bar */}
-          <div className="relative w-full sm:w-80">
+          <form onSubmit={handleSearch} className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
@@ -265,24 +295,19 @@ export default function ProductCatalog() {
                 defaultValue: "Search products...",
               })}
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-shadow"
             />
             {search && (
               <button
-                onClick={() => {
-                  setSearch("");
-                  setCurrentPage(1);
-                }}
+                type="button"
+                onClick={() => setSearch("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
-          </div>
+          </form>
         </div>
 
         {/* Mobile filter toggle */}
@@ -342,12 +367,28 @@ export default function ProductCatalog() {
             {/* Results count */}
             <p className="text-sm text-slate-500 mb-4">
               {t("catalog.showing", {
-                count: filtered.length,
-                defaultValue: `${filtered.length} products found`,
+                count: totalCount,
+                defaultValue: `${totalCount} products found`,
               })}
             </p>
 
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-2xl border border-slate-100 overflow-hidden"
+                  >
+                    <div className="aspect-square bg-slate-100 animate-pulse" />
+                    <div className="p-3.5 space-y-2">
+                      <div className="h-3 bg-slate-100 rounded animate-pulse w-1/3" />
+                      <div className="h-4 bg-slate-100 rounded animate-pulse w-2/3" />
+                      <div className="h-5 bg-slate-100 rounded animate-pulse w-1/4 mt-1" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : products.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
                 <div className="max-w-sm mx-auto space-y-3">
                   <Search className="w-10 h-10 text-slate-300 mx-auto" />
@@ -376,56 +417,8 @@ export default function ProductCatalog() {
             ) : (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {paginated.map((product) => (
-                    <Link
-                      to={`/ecommerce/product/${product.id}`}
-                      key={product.id}
-                      className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-blue-100 transition-all duration-300 cursor-pointer"
-                    >
-                      {/* Image */}
-                      <div className="relative aspect-square overflow-hidden bg-slate-50">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                        {/* Condition badge */}
-                        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-slate-700">
-                          {t(`catalog.condition${product.condition.replace(/\s/g, "")}`, { defaultValue: product.condition })}
-                        </span>
-                        {/* Favorite button */}
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggleFavorite(product.id);
-                          }}
-                          className="absolute bottom-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-colors cursor-pointer"
-                        >
-                          <Heart
-                            className={`w-4 h-4 transition-colors ${
-                              isFavorite(product.id)
-                                ? "fill-rose-500 text-rose-500"
-                                : "text-slate-400 hover:text-rose-400"
-                            }`}
-                          />
-                        </button>
-                      </div>
-
-                      {/* Info */}
-                      <div className="p-3.5">
-                        <h3 className="font-semibold text-slate-900 text-sm truncate">
-                          {product.name}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {product.category}
-                        </p>
-                        <p className="text-base font-bold text-slate-900 mt-1.5">
-                          {product.price}₾
-                        </p>
-                      </div>
-                    </Link>
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
 
