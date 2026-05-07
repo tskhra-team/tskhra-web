@@ -1,10 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { MAGIC_GRADIENT } from "@/Swapping/MagicChain/types";
 import { Link2, Wand2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -13,11 +7,13 @@ import { useTranslation } from "react-i18next";
 export default function FixedButtons({
   selectedItemId,
   handleAutoChain,
+  handleManualChain,
   isPending,
   step,
 }: {
   selectedItemId: string | null;
   handleAutoChain: () => void;
+  handleManualChain: () => void;
   isPending: boolean;
   step: "select" | "discovering" | "results";
 }) {
@@ -42,23 +38,15 @@ export default function FixedButtons({
               <Wand2 className="w-5 h-5 mr-2" />
               {t("swapping:magicChain.autoChain")}
             </Button>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    disabled
-                    className="flex-1 h-12 text-base font-bold rounded-xl border-2 border-purple-200 text-purple-400"
-                  >
-                    <Link2 className="w-5 h-5 mr-2" />
-                    {t("swapping:magicChain.manualChain")}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t("swapping:magicChain.comingSoon")}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Button
+              variant="outline"
+              onClick={handleManualChain}
+              disabled={isPending}
+              className="flex-1 h-12 text-base font-bold rounded-xl border-2 border-purple-200 text-purple-600 hover:bg-purple-50 cursor-pointer"
+            >
+              <Link2 className="w-5 h-5 mr-2" />
+              {t("swapping:magicChain.manualChain")}
+            </Button>
           </div>
         </motion.div>
       )}
