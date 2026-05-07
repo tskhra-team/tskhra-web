@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 export default function ChainTradeCard({ chain }: { chain: ChainTrade }) {
   const { t } = useTranslation(["swapping"]);
   const navigate = useNavigate();
-  const style = STATUS_CONFIG[chain.status];
+  const style = STATUS_CONFIG[chain.status] ?? STATUS_CONFIG.PROPOSED;
   const StatusIcon = style.icon;
 
   const expiresDate = new Date(chain.expiresAt);
