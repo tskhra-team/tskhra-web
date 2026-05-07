@@ -2,10 +2,11 @@ import { MagicSwap, SwapCards } from "@/Swapping/Hero/SwapCards";
 import { ArrowRight, ArrowRightLeft, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const tabs = [
-  { id: "basic", label: "Basic Swap", icon: ArrowRightLeft },
-  { id: "magic", label: "Magic Chain", icon: Sparkles },
+  { id: "basic", labelKey: "swapping:hero.tabBasicSwap", icon: ArrowRightLeft },
+  { id: "magic", labelKey: "swapping:hero.tabMagicChain", icon: Sparkles },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
@@ -19,6 +20,7 @@ const handleScroll = () => {
 };
 
 export default function SwapHero() {
+  const { t } = useTranslation(["swapping"]);
   const [activeTab, setActiveTab] = useState<TabId>("basic");
 
   return (
@@ -47,7 +49,7 @@ export default function SwapHero() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="block"
               >
-                Trade
+                {t("swapping:hero.trade")}
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, x: -50 }}
@@ -56,7 +58,7 @@ export default function SwapHero() {
                 className="block"
                 style={{ color: "var(--swap-primary)" }}
               >
-                Anything
+                {t("swapping:hero.anything")}
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, x: -50 }}
@@ -64,7 +66,7 @@ export default function SwapHero() {
                 transition={{ delay: 0.7, duration: 0.6 }}
                 className="block"
               >
-                With Anyone
+                {t("swapping:hero.withAnyone")}
               </motion.span>
             </h1>
 
@@ -79,8 +81,7 @@ export default function SwapHero() {
                 lineHeight: "1.6",
               }}
             >
-              The modern platform for trading goods, skills, and services. No
-              money needed, just swap what you have for what you want.
+              {t("swapping:hero.description")}
             </motion.p>
 
             <motion.div
@@ -102,7 +103,7 @@ export default function SwapHero() {
                 }}
                 onClick={() => handleScroll()}
               >
-                Start Swapping
+                {t("swapping:hero.startSwapping")}
                 <motion.div
                   animate={{ x: [0, 5, 0] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
@@ -156,7 +157,7 @@ export default function SwapHero() {
                 whileTap={{ scale: 0.95 }}
               >
                 <tab.icon className="w-4 h-4" />
-                {tab.label}
+                {t(tab.labelKey)}
               </motion.button>
             ))}
           </div>

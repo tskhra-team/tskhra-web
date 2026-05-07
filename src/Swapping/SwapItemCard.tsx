@@ -85,6 +85,9 @@ export function SwapItemCard({ item }: SwapItemCardProps) {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           className="absolute top-4 right-4 w-10 h-10 rounded-full bg-swap-primary/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-swap-secondary hover:text-swap-primary transition-colors"
         >
           <Heart className="w-5 h-5" />

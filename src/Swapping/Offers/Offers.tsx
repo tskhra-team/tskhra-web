@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
+import { motion } from "motion/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +28,9 @@ function getStatusLabel(
   t: (key: string) => string,
 ) {
   if (!status) return t("swapping:offers.statusAll");
-  return t(`swapping:offers.status${status.charAt(0)}${status.slice(1).toLowerCase()}`);
+  return t(
+    `swapping:offers.status${status.charAt(0)}${status.slice(1).toLowerCase()}`,
+  );
 }
 
 export default function Offers() {
@@ -75,23 +79,52 @@ export default function Offers() {
           {t("swapping:offers.title")}
         </h1>
 
-        <div className="flex flex-wrap gap-2 mb-8">
-          {STATUS_FILTERS.map((status) => (
-            <Button
-              key={status ?? "ALL"}
-              size="sm"
-              variant={activeStatus === status ? "default" : "outline"}
-              onClick={() => handleStatusChange(status)}
-              className={
-                activeStatus === status
-                  ? "bg-swap-primary text-white"
-                  : "border-swap-primary/30 text-swap-text2 hover:bg-swap-primary/5"
-              }
-            >
-              {getStatusLabel(status, t)}
-            </Button>
-          ))}
-        </div>
+        <Tabs
+          value={activeStatus ?? "ALL"}
+          onValueChange={(v) =>
+            handleStatusChange(
+              v === "ALL" ? undefined : (v as TradeOfferStatus),
+            )
+          }
+          className="mb-8"
+        >
+          <TabsList
+            variant="line"
+            className="flex w-full! justify-start bg-white/40 backdrop-blur-md border border-swap-primary/20 rounded-xl p-1.5 gap-0 h-auto overflow-x-auto scrollbar-hide"
+          >
+            {STATUS_FILTERS.map((status) => {
+              const value = status ?? "ALL";
+              const isActive = (activeStatus ?? "ALL") === value;
+              return (
+                <TabsTrigger key={value} value={value} asChild>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    className={`relative cursor-pointer rounded-lg px-3 py-2 text-xs sm:text-sm font-semibold tracking-wide uppercase transition-colors duration-200 shrink-0 border-none bg-transparent shadow-none after:hidden data-[state=active]:text-white data-[state=active]:bg-transparent ${
+                      isActive
+                        ? "text-white"
+                        : "text-swap-text2/70 hover:text-swap-text"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="offersTabIndicator"
+                        className="absolute inset-0 rounded-lg bg-swap-primary shadow-md shadow-swap-primary/20 "
+                        transition={{
+                          type: "spring",
+                          bounce: 0.2,
+                          duration: 0.5,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">
+                      {getStatusLabel(status, t)}
+                    </span>
+                  </motion.button>
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+        </Tabs>
 
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex-1 min-w-0">

@@ -41,7 +41,17 @@
   "hero": {
     "searchPlaceholder": "What do you want?",
     "categoryPlaceholder": "Category",
-    "findSwaps": "Find Swaps"
+    "findSwaps": "Find Swaps",
+    "trade": "Trade",
+    "anything": "Anything",
+    "withAnyone": "With Anyone",
+    "description": "The modern platform for trading goods, skills, and services. No money needed, just swap what you have for what you want.",
+    "startSwapping": "Start Swapping",
+    "tabBasicSwap": "Basic Swap",
+    "tabMagicChain": "Magic Chain",
+    "popularCategories": "Popular Categories",
+    "itemsAvailable": "items available",
+    "exploreCategory": "Explore Category"
   },
   "validation": {
     "titleRequired": "Title is required",

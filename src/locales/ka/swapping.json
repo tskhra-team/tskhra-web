@@ -41,7 +41,17 @@
   "hero": {
     "searchPlaceholder": "რას ეძებთ?",
     "categoryPlaceholder": "კატეგორია",
-    "findSwaps": "ძიება"
+    "findSwaps": "ძიება",
+    "trade": "გაცვალე",
+    "anything": "ნებისმიერი",
+    "withAnyone": "ნებისმიერთან",
+    "description": "თანამედროვე პლატფორმა საქონლის, უნარებისა და სერვისების გაცვლისთვის. ფული არ არის საჭირო, უბრალოდ გაცვალეთ რაც გაქვთ იმაზე, რაც გსურთ.",
+    "startSwapping": "დაიწყე გაცვლა",
+    "tabBasicSwap": "ჩვეულებრივი გაცვლა",
+    "tabMagicChain": "მაგიური ჯაჭვი",
+    "popularCategories": "პოპულარული კატეგორიები",
+    "itemsAvailable": "ნივთი ხელმისაწვდომია",
+    "exploreCategory": "კატეგორიის ნახვა"
   },
   "validation": {
     "titleRequired": "სათაური აუცილებელია",

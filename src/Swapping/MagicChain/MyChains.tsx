@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PaginationControls } from "@/shared/pagination/Pagination";
 import ChainTradeCard from "@/Swapping/MagicChain/components/ChainTradeCard";
 import {
@@ -86,29 +87,53 @@ export default function MyChains() {
         </p>
 
         {/* Status tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto scrollbar-hide pb-1">
-          {STATUS_TABS.map((status) => {
-            const isActive = activeStatus === status;
-            return (
-              <Button
-                key={status ?? "all"}
-                variant={isActive ? "default" : "outline"}
-                size="sm"
-                className={`rounded-full text-xs cursor-pointer shrink-0 ${
-                  isActive
-                    ? "text-white border-transparent"
-                    : "border-purple-200 text-purple-600 hover:bg-purple-50"
-                }`}
-                style={isActive ? { background: MAGIC_GRADIENT } : undefined}
-                onClick={() => setActiveStatus(status)}
-              >
-                {status
-                  ? t(`swapping:magicChain.detail.status.${status}`)
-                  : t("swapping:magicChain.statusAll")}
-              </Button>
-            );
-          })}
-        </div>
+        <Tabs
+          value={statusParam}
+          onValueChange={(v) =>
+            setActiveStatus(v === "all" ? null : (v as ChainTradeStatus))
+          }
+          className="mb-8"
+        >
+          <TabsList
+            variant="line"
+            className="flex w-full! justify-start bg-white/40 backdrop-blur-md border border-purple-200/40 rounded-xl p-1.5 gap-0 h-auto overflow-x-auto scrollbar-hide"
+          >
+            {STATUS_TABS.map((status) => {
+              const value = status ?? "all";
+              const isActive = statusParam === value;
+              return (
+                <TabsTrigger key={value} value={value} asChild>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    className={`relative cursor-pointer rounded-lg px-5 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-200 flex-1 border-none bg-transparent shadow-none after:hidden data-[state=active]:text-white data-[state=active]:bg-transparent ${
+                      isActive
+                        ? "text-white"
+                        : "text-purple-500/70 hover:text-purple-700"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="magicTabIndicator"
+                        className="absolute inset-0 rounded-lg shadow-md shadow-purple-500/20"
+                        style={{ background: MAGIC_GRADIENT }}
+                        transition={{
+                          type: "spring",
+                          bounce: 0.2,
+                          duration: 0.5,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">
+                      {status
+                        ? t(`swapping:magicChain.detail.status.${status}`)
+                        : t("swapping:magicChain.statusAll")}
+                    </span>
+                  </motion.button>
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+        </Tabs>
 
         {/* Loading */}
         {isLoading && (
