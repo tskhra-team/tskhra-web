@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
+  patchOrderStatus,
   useGetOrderHistory,
   useProcessPayment,
 } from "./hooks/usePaymentQuery";
@@ -65,7 +66,7 @@ export default function MyOrders() {
     );
   }
 
-  const orders = data?.items ?? [];
+  const orders = (data?.items ?? []).map(patchOrderStatus);
   const totalPages = data?.total_pages ?? 1;
 
   return (

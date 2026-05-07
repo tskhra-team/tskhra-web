@@ -13,6 +13,32 @@ import type {
 
 export const ORDER_QUERY_KEY = ["ecommerce", "orders"] as const;
 
+const PAID_ORDERS_KEY = "ecommerce_paid_orders";
+
+function getPaidOrderIds(): Set<string> {
+  try {
+    return new Set(JSON.parse(sessionStorage.getItem(PAID_ORDERS_KEY) || "[]"));
+  } catch {
+    return new Set();
+  }
+}
+
+function markOrderAsPaid(orderId: string) {
+  const ids = getPaidOrderIds();
+  ids.add(orderId);
+  sessionStorage.setItem(PAID_ORDERS_KEY, JSON.stringify([...ids]));
+}
+
+export function patchOrderStatus(order: Order): Order {
+  if (
+    (order.status === "pending" || order.status === "checked_out") &&
+    getPaidOrderIds().has(order.id)
+  ) {
+    return { ...order, status: "paid" };
+  }
+  return order;
+}
+
 function usePaymentErrorHandler() {
   const { t } = useTranslation("ecommerce");
 
@@ -87,7 +113,10 @@ export function useVerifyPayment() {
 
   return useMutation<OrderWithPayment, AxiosError<PaymentApiError>, string>({
     mutationFn: (orderId) => paymentApi.verifyPayment(orderId),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.payment?.status === "completed") {
+        markOrderAsPaid(data.id);
+      }
       queryClient.invalidateQueries({ queryKey: [...ORDER_QUERY_KEY] });
     },
     onError,
