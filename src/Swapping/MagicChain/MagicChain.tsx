@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import FixedButtons from "@/Swapping/MagicChain/components/FixedButtons";
+import ManualChainModal from "@/Swapping/MagicChain/components/ManualChainModal";
 import SelectableItemCard from "@/Swapping/MagicChain/components/SelectableItemCard";
 import useGetMyItems from "@/Swapping/MyItems/useGetMyItems";
 import { ArrowLeft, History, Package, Sparkles } from "lucide-react";
@@ -15,12 +16,20 @@ export default function MagicChain() {
   const navigate = useNavigate();
 
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [manualModalOpen, setManualModalOpen] = useState(false);
 
   const { data: items, isLoading } = useGetMyItems(0, 50);
+
+  const selectedItem = items?.content.find((i) => i.id === selectedItemId);
 
   const handleAutoChain = () => {
     if (!selectedItemId) return;
     navigate(`/swapping/magic-chain/discover/${selectedItemId}`);
+  };
+
+  const handleManualChain = () => {
+    if (!selectedItemId) return;
+    setManualModalOpen(true);
   };
 
   return (
@@ -123,10 +132,19 @@ export default function MagicChain() {
 
         <FixedButtons
           handleAutoChain={handleAutoChain}
+          handleManualChain={handleManualChain}
           isPending={false}
           selectedItemId={selectedItemId}
           step="select"
         />
+
+        {selectedItem && (
+          <ManualChainModal
+            open={manualModalOpen}
+            onOpenChange={setManualModalOpen}
+            myItem={selectedItem}
+          />
+        )}
       </div>
     </div>
   );

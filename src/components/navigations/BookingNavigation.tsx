@@ -6,9 +6,9 @@ export default function BookingNavigation() {
   const location = useLocation();
 
   const navItems = [
-    { name: t("nav.services"), link: "/services", color: "#FF6439" },
+    // { name: t("nav.services"), link: "/services", color: "#FF6439" },
     { name: t("nav.myBookings"), link: "/my-bookings", color: "#3659FA" },
-    { name: t("nav.schedule"), link: "#", color: "#A31621" },
+    // { name: t("nav.schedule"), link: "#", color: "#A31621" },
   ];
 
   return (
