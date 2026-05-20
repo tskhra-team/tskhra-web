@@ -120,6 +120,7 @@ export default function IndividualBusinessForm() {
 
   const { data: questions, isLoading: isLoadingQuestions } = useGetAIQuestions(
     mainCategory,
+    i18n.language.toLocaleLowerCase(),
     !!mainCategory,
   );
 

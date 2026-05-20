@@ -8,18 +8,18 @@ interface Questions {
   category: number;
 }
 
-const getAiQuestions = async (category: string) => {
+const getAiQuestions = async (category: string, lang: string) => {
   const response = await privateInstance.get(`/chatbot/questions`, {
-    params: { category },
+    params: { category, lang },
   });
 
   return response.data;
 };
 
-const useGetAIQuestions = (categoryId: string, enabled: boolean) => {
+const useGetAIQuestions = (categoryId: string, lang: string, enabled: boolean) => {
   return useQuery<Questions, AxiosError<ErrorResponse>>({
-    queryFn: () => getAiQuestions(categoryId),
-    queryKey: ["getAiQuestion", categoryId],
+    queryFn: () => getAiQuestions(categoryId, lang),
+    queryKey: ["getAiQuestion", categoryId, lang],
     enabled: enabled,
   });
 };
